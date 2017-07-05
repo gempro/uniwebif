@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Uniwebif Guide</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="description" content="">
+<meta name="author" content="">
+<meta name="keywords" content="">
+<style type="text/css">
+<!--
+body {
+	padding-right: 20px;
+	padding-bottom: 20px;
+	padding-left: 20px;
+}
+a:link {
+	color: #878BD2;
+}
+a:visited {
+	color: #878BD2;
+}
+a:hover {
+	color: #878BD2;
+}
+a:active {
+	color: #878BD2;
+}
+.spacer {
+	clear: both;
+	width:100%;
+	height: 500px;
+}
+-->
+</style>
+</head>
+<body>
+<a name="top"></a>
+<h1>Uniwebif Guide</h1>
+<a href="#search">Search</a> <br />
+<a href="#timer">Timer</a> <br />
+<a href="#crawler_tools">Crawler Tools</a> <br />
+<a href="#settings">Settings</a> <br />
+<a href="#records">Records</a> <br />
+<a href="#channelzapper">Channel Zapper</a> <br />
+<br />
+<hr>
+<br />
+<h2><a name="search"></a>Search</h2>
+<p><img src="images/search.png" width="1030" height="193"></p>
+<p>1. Searchterm</p>
+<p>2. Select the checkbox to search only in choosen channel</p>
+<p>3. Define the area to search</p>
+<p>4. Select the channel to search</p>
+<p>5. Choose location where broadcast's should save when sending a timer</p>
+<p>6. Save the term and options for automatic search</p>
+<a href="#top">top</a><br />
+<hr>
+<br />
+<h2><a name="timer"></a>Timer</h2>
+<p><img src="images/timer.png" width="1029" height="222"></p>
+<p><img src="images/manual_set_timer.png" align="baseline"> - Manual set timer</p>
+<p><img src="images/automatic_search.png" width="15" height="15" align="baseline"> - Found by automatic search</p>
+<p><img src="images/event_running.png" width="15" height="15" align="baseline"> - Event is current running</p>
+<p><img src="images/incoming_event.png" width="15" height="15" align="baseline"> - Event is incoming</p>
+<p><img src="images/expired_event.png" width="15" height="15" align="baseline"> - Event is expired</p>
+<p><img src="images/already_sent.png" width="15" height="15"> - Timer was sent to Receiver</p>
+<p><img src="images/not_sent.png" width="15" height="15"> - Timer was not sent to Receiver</p>
+<a href="#top">top</a><br />
+<hr>
+<br />
+<h2><a name="crawler_tools"></a>Crawler Tools</h2>
+<p><strong>Crawl channel ID's</strong> - <em>When bouquets are already in database, this option will save all channels within the bouquets. The channels are displayed in &gt; Settings &gt; Channel list.</em></p>
+<p><strong>Crawl EPG from channels</strong> - <em>This option crawl the EPG from the  channels, which are selected in  channel list. Any existing EPG in database will deleted before.</em></p>
+<p><strong>Crawl channel separate</strong> - <em>At this page channels could crawl separate.  It display the date from the last broadcast., The date from the last crawl  and the summary of EPG entries of the channel. <br>
+  The opening from this page could take some time. By clicking 'Crawl channel' the existing EPG from the channel in database will deleted before.</em></p>
+<p><strong>Crawl search - Write timer in database</strong> - <em>This option search the saved searchterms within EPG and save the timer in database.</em></p>
+<p><strong>Send timer from database to Receiver</strong> - <em>This option send the timer in database to the Receiver.</em></p>
+<a href="#top">top</a><br />
+<hr>
+<br />
+<h2><a name="settings"></a>Settings</h2>
+<h3>Main Settings</h3>
+<p><u>Crawler</u></p>
+<p>How many <strong>EPG entries</strong> per channel should be write in database | <em>Set here how many broadcasts per channel should be saved in database.</em></p>
+<p>How many <strong>Channels/Services</strong> per Bouquet should be write in database | <em>Only relevant when not all channels from a bouquet should be saved in database.</em></p>
+<p><strong>Activate</strong> automatic Search Crawler | <em>If this option is activated, the script will search the saved searchterms within EPG.</em></p>
+<p><strong>Activate</strong> automatic EPG Crawler | <em>If this option is activated, the script crawl the channel when the sunnmary of broadcasts is under the summary which are set.<br>
+  </em><strong>Remenber the script turn on the Receiver at set time, zapped to the channel and read the EPG. So if the Receiver is turned on before the process begins, the zapping does not work.</strong><br>
+</p>
+<p>Crawler should start at remaining EPG entries | <em>Set here the minimum  of broadcasts before the automatic Crawler  starts.</em></p>
+<p>Set time when EPG Crawler should start | <em>Set here the time in 24 format when  crawling should start.</em></p>
+<p>When crawling finished, change to this channel | <em>Set here the channel to zapp, before Receiver turned off.<br>
+  <br>
+  </em></p>
+<p><u>Settings</u></p>
+<p>Activate Cron | <em>If this option is selected, the cron.php will do nothing.</em> <em>All automatic processes are stopped.</em></p>
+<p>Displayed  time format | <em>Select here the displayed time format</em>.</p>
+<p>Period of time from <strong>start</strong>, at Broadcast list | <em>Set here the  time for start at 'Broadcast now'</em><br>
+  As example: Now it's 11:00 AM. When clicking 'Broadcast now' all broadcasts will displayed that starts at 11:00 AM.<br>
+  If period of time is set 10 Minutes, broadcast's with start between 10:50 AM and 11:00 AM are  displayed.</p>
+<p>Period of time from <strong>end</strong>, at Broadcast list | <em>Set here the  time for end at 'Broadcast now'</em><br>
+  As example: Now it's 12h AM. When clicking 'Broadcast now' all broadcasts  displayed that are between 12:00 AM and  12:05 AM.(5 minutes was the lowest time value)<br>
+  If period of time is set 10 Minutes, broadcasts with end between 12:05 AM and 12:15 AM are displayed.<br>
+The time which was set here, was also the <strong>browse time</strong> for Broadcast list.</p>
+<p>Period of time from <strong>start</strong>, at Primetime list | <em>Same as for 'Broadcast now' list</em></p>
+<p>Period of time from <strong>end</strong>, at Primetime list | <em>Same as for 'Broadcast now' list</em></p>
+<p> Display EPG at search  from broadcasts who already expired | <em>Usually only broadcast  are displayed who are not expired. Click here to show also expired broadcasts.</em></p>
+<p>Display <strong>Ticker</strong> on startpage | <em>This option display a ticker with incoming timer on startpage.  The ticker are displayed only on devices with wide screen.</em></p>
+<p>Period of time from Ticker | <em>All timer within the time period are shown.</em></p>
+<p>Mark searchterm at search results | <em>Mark's searchterms within the results. It  work when  case sensitiv terms was found.</em></p>
+<p>Delete EPG which is older than ... hours | <em>Expired broadcasts will deleted from database.</em></p>
+<p>Send timer automatic to Receiver | <em>Send timer automatic from Timerlist to Receiver.</em></p>
+<p>Delete expired timer from Timerlist | <em>Expired timers will deleted from database.</em></p>
+<p>Additional record time at end from broadcast | <em>Add some time to the end from broadcast.</em></p>
+<p>&nbsp;</p>
+<p><u>Channel Zapper</u><br>
+</p>
+<p><strong>Activate</strong> automatic Channel Zapper | <em>If this option is activated the Channel Zapper will begin zapping at the set time.</em><br>
+    <em>This function stands alone and ensures  that the EPG on Receiver is up to date.</em><br>
+</p>
+<p>Wait on channel (in seconds) | <em>Time to remain on a channel to read the EPG.</em> <em>The time is valid for the zapping while crawling and stand alone Channel Zapper.</em></p>
+<p>Set time when Channel Zapper should start | <em>Set here the time in 24h format when  Channel Zapper should start. Take care that crawling process and zapping from Channel Zapper has no time conflict.</em></p>
+<p>Repeat zapping | <em>Set here the repeat time for the zapping.</em></p>
+<p>When zapping finished, change to this channel | <em>The  channel which was zapped before Receiver turned off. The choosen channel is the same like for the Crawler.</em></p>
+<p>&nbsp;</p>
+<p><strong>Channel List</strong> - Display the channels which are in database.  </p>
+<p><strong>Bouquet List</strong> - Display the bouquets which are in database. </p>
+<p><a href="#top">top</a></p>
+<hr>
+<p><a name="records"></a>Records</p>
+<p>Recorded files on Receiver could be streamed, downloaded and deleted.</p>
+<p><a href="#top">top</a></p>
+<hr>
+<p><a name="channelzapper"></a>Channel Zapper</p>
+<p>Start's the Channel Zapper manually. All channels which are selected in Channel list will zapped.</p>
+<p><a href="#top">top</a></p>
+<hr>
+<div class="spacer"></div>
+</body>
+</html>

@@ -1,0 +1,606 @@
+﻿<?php 
+session_start();
+//
+include("inc/dashboard_config.php");
+include_once("functions/broadcast_list_inc.php");
+include_once("functions/primetime_list_inc.php");
+
+	// check connection
+	if (mysqli_connect_errno()) {
+	printf("Connection failed: %s\n", mysqli_connect_error());
+	exit(); 
+	}
+	// select oldest entry
+	$query = mysqli_query($dbmysqli, "SELECT e2eventservicename, e2eventstart FROM `epg_data` ORDER BY e2eventstart ASC LIMIT 0 , 1");
+	$first_entry = mysqli_fetch_assoc($query);
+	
+	if ($time_format == '1')
+	{
+	// time format 1
+	$date_first = date("d.m.Y H:i", $first_entry['e2eventstart']);
+	}
+	if ($time_format == '2')
+	{
+	// time format 2
+	$date_first = date("n/d/Y g:i A", $first_entry['e2eventstart']);
+	}
+	
+	// select latest entry
+	$query = mysqli_query($dbmysqli, "SELECT e2eventservicename, e2eventstart FROM `epg_data` ORDER BY e2eventstart DESC LIMIT 0 , 1");
+	$last_entry = mysqli_fetch_assoc($query);
+	
+	if ($time_format == '1')
+	{
+	// time format 1
+	$date_latest = date("d.m.Y H:i", $last_entry['e2eventstart']);
+	}
+	if ($time_format == '2')
+	{
+	// time format 2
+	$date_latest = date("n/d/Y g:i A", $last_entry['e2eventstart']);
+	}
+	
+	if ($date_first == '01.01.1970 01:00' or $date_first == '1/01/1970 1:00 AM'){ $date_first = 'no data'; }
+	if ($date_latest == '01.01.1970 01:00' or $date_latest == '1/01/1970 1:00 AM'){ $date_latest = 'no data'; }
+	if ($first_entry['e2eventservicename'] == ''){ $first_entry['e2eventservicename'] = 'no data'; }	
+	if ($last_entry['e2eventservicename'] == ''){ $last_entry['e2eventservicename'] = 'no data'; }
+	
+	// count timer for display ticker
+	$ticker_time_end = $time + $ticker_time;
+	$stmt = $dbmysqli->prepare('SELECT COUNT(*) AS sum_timer FROM timer WHERE show_ticker = "1" AND e2eventstart BETWEEN "'.$time.'" AND "'.$ticker_time_end.'" ');
+	if( !is_a($stmt, 'MySQLI_Stmt') || $dbmysqli->errno > 0 )
+	throw new Exception( $dbmysqli->error, $dbmysqli->errno );
+		
+	$stmt->execute();
+	$stmt->bind_result($sum_timer);
+	$stmt->fetch();
+	$stmt->close();
+		
+	if ($sum_timer == '0'){ $activate_ticker = "no"; } else { $activate_ticker = 'yes'; }
+	
+	//percent for latest epg
+	$time_now = time();
+	
+	if(!isset($last_entry['e2eventstart']) or $last_entry['e2eventstart'] == "") { $last_entry['e2eventstart'] = ""; 
+	
+	} else { 
+	
+	$last_entry['e2eventstart'] = $last_entry['e2eventstart']; }
+	
+	if ($last_entry['e2eventstart'] == '')
+	{
+	$percent_latest = '0';
+	$percent = '0';
+	
+	} else {
+	
+	$diff = $last_entry['e2eventstart'] - $time_now;
+	$percent = $diff *100000 / $last_entry['e2eventstart'];
+	};
+	
+	$percent_latest = round($percent,1);
+	
+	if ($percent_latest > 30)
+	{
+	$pb1_status = 'primary';
+	}
+	if ($percent_latest < 30)
+	{
+	$pb1_status = 'warning';
+	}
+	if ($percent_latest < 10)
+	{
+	$pb1_status = 'danger';
+	}
+	
+	if ($percent_latest < 5 ){ $progressbar2 = '<div class="progress progress-striped active">
+	<div class="progress-bar progress-bar-'.$pb1_status.'" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: '.$percent_latest.'%"></div>
+	&nbsp;'.$percent_latest.' %</div>'; } 
+	
+	else { $progressbar2 = '<div class="progress progress-striped active">
+	<div class="progress-bar progress-bar-'.$pb1_status.'" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: '.$percent_latest.'%">'.$percent_latest.' %</div></div>'; }
+
+//
+function DiskSpace() {
+	function getByte($bytes) {
+	$symbol = "Bytes";
+	if ($bytes > 1024) {
+		$symbol = " KB";
+		$bytes /= 1024;
+	}
+	if ($bytes > 1024) {
+		$symbol = " MB";
+		$bytes /= 1024;
+	}
+	if ($bytes > 1024) {
+		$symbol = " GB";
+		$bytes /= 1024;
+	}
+	$bytes = round($bytes, 2);
+	return $bytes.$symbol;
+	}
+	function getFreespace($path) {
+	if (preg_match("#^(https?|ftps?)://#si", $path)) {
+	return false;
+	}
+	$freeBytes = disk_free_space($path);
+	$totalBytes = disk_total_space($path);
+	$usedBytes = $totalBytes - $freeBytes;
+	
+	$percentFree = 100 / $totalBytes * $freeBytes;
+	$percentUsed = 100 / $totalBytes * $usedBytes;
+	
+	echo "<div class=\"panel panel-primary text-center no-boder bg-color-blue\">
+	<div class=\"panel-body\"> <i class=\"fa fa-bar-chart-o fa-5x\"></i>";
+	echo "<div class=\"spacer_10\"></div>";
+	echo "Disk space: ".getByte($totalBytes)."<br />";
+	echo "Used: ".getByte($usedBytes);
+	printf(" (%01.2f%%)", $percentUsed);
+	echo "</div>";
+	echo "<div class=\"panel-footer back-footer-blue\">";
+	echo "<strong>Free: ".getByte($freeBytes);
+	printf(" (%01.2f%%)", $percentFree);
+	echo "</strong></div></div>";
+	}
+	getFreespace(".");
+}
+
+function DatabaseSpace() {
+include("inc/dashboard_config.php");
+
+	$total = 0;
+	$sql = "Show Table Status";
+	
+	if ($result = mysqli_query($dbmysqli,$sql))
+	{
+	// Fetch one and one row
+	while ($row = mysqli_fetch_array($result)) {	
+	{
+	$summary = $row["Index_length"] + $row["Data_length"];
+	$total += $summary;
+	}
+    }
+  // Free result set
+  mysqli_free_result($result);
+}
+//close db
+mysqli_close($dbmysqli);
+
+function getDatabaseByte($bytes) {
+	
+	$symbol = "Bytes";
+	if ($bytes > 1024) {
+		$symbol = " KB";
+		$bytes /= 1024;
+	}
+	if ($bytes > 1024) {
+		$symbol = " MB";
+		$bytes /= 1024;
+	}
+	if ($bytes > 1024) {
+		$symbol = " GB";
+		$bytes /= 1024;
+	}
+	$bytes = round($bytes, 2);
+	return $bytes.$symbol;
+	}
+
+	$totalBytes = $total;
+	
+	// count all epg entries
+	include("inc/dashboard_config.php");
+	$stmt = $dbmysqli->prepare('SELECT COUNT(*) AS TOTAL_EPG FROM epg_data');
+	if( !is_a($stmt, 'MySQLI_Stmt') || $dbmysqli->errno > 0 )
+	throw new Exception( $dbmysqli->error, $dbmysqli->errno );
+	
+	$stmt->execute();
+	$stmt->bind_result($count_all_epg);
+	$stmt->fetch();
+	$stmt->close();
+	
+	echo "<div class=\"alert alert-info text-center\"> <i class=\"fa fa-bar-chart-o fa-5x\"></i>";
+	echo "<h3>".getByte($totalBytes)."</h3>
+	<div class=\"spacer_10\"></div>EPG Entries total: <strong>$count_all_epg</strong></div>
+	"; }
+?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Uniwebif : Dashboard</title>
+<!-- BOOTSTRAP STYLES-->
+<link href="assets/css/bootstrap.css" rel="stylesheet" />
+<!-- FONTAWESOME STYLES-->
+<link href="assets/css/font-awesome.css" rel="stylesheet" />
+<!-- CUSTOM STYLES-->
+<link href="assets/css/custom.css" rel="stylesheet" />
+<!-- GOOGLE FONTS-->
+<!--<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css' />-->
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/ie_sse.js"></script>
+<script type="text/javascript" src="js/functions.js"></script>
+<script type="text/javascript" src="js/animatedcollapse.js">
+/***********************************************
+* Animated Collapsible DIV v2.4- (c) Dynamic Drive DHTML code library (www.dynamicdrive.com)
+* Please keep this notice intact
+* Visit Dynamic Drive at http://www.dynamicdrive.com/ for this script and 100s more
+***********************************************/
+</script>
+<script type="text/javascript">
+animatedcollapse.addDiv('div_crawl_complete', 'fade=1,speed=400,height=auto')
+animatedcollapse.addDiv('crawl_complete_status', 'fade=1,height=auto')
+animatedcollapse.addDiv('div_crawl_channel_id', 'fade=1,speed=400,height=auto')
+animatedcollapse.addDiv('crawl_channel_id_status', 'fade=1,height=auto')
+animatedcollapse.addDiv('div_crawl_search', 'fade=1,speed=400,height=auto')
+animatedcollapse.addDiv('crawl_search_status', 'fade=1,height=auto')
+animatedcollapse.addDiv('div_send_timer', 'fade=1,speed=400,height=auto')
+animatedcollapse.addDiv('send_timer_status', 'fade=1,height=auto')
+animatedcollapse.addDiv('div_start_channelzapper', 'fade=1,speed=400,height=auto')
+animatedcollapse.addDiv('channelzapper_status', 'fade=1,height=auto')
+animatedcollapse.addDiv('broadcast_main_div', 'fade=1,height=auto')
+animatedcollapse.addDiv('primetime_main_today', 'fade=1,height=auto');
+animatedcollapse.addDiv('channelbrowser_main_today', 'fade=1,height=auto');
+animatedcollapse.ontoggle=function($, divobj, state){ //fires each time a DIV is expanded/contracted
+//$: Access to jQuery
+//divobj: DOM reference to DIV being expanded/ collapsed. Use "divobj.id" to get its ID
+//state: "block" or "none", depending on state
+}
+animatedcollapse.init()
+</script>
+<script type="text/javascript">
+// load on start
+	$.post("functions/progressbar1.php",
+	function(data){
+	// write data in container
+	$("#progressbar1").html(data);
+	}
+);
+
+// reload progressbar
+var file = "functions/progressbar1.php";
+var seconds_load = 180;
+
+$(document).ready(function() {
+       
+    setInterval(function() {
+        $('#progressbar1').load(file + '?ts=' + (new Date().getTime()));
+    }, (seconds_load*500));
+});
+
+document.addEventListener('DOMContentLoaded', checkWidth);
+document.addEventListener('resize', checkWidth);
+function checkWidth() {
+if (document.querySelector('html').clientWidth > 1200) {	
+	// load ticker
+$(document).ready(function() {
+	$.post("ticker/ticker.php",
+	function(data){
+	// write data in container
+	$("#ticker").html(data);	
+	});
+});
+}
+};
+</script>
+</head>
+<body>
+<a id="top"></a>
+<div id="scroll_top_channelbrowser_list" class="scroll_top_channelbrowser_list"><a href="#" title="to Channelbrowser"><script language="JavaScript" type="text/javascript"> document.write ("<i class=\"glyphicon glyphicon-circle-arrow-up fa-"+channelbrowser_btn_size+"x\"></i>");</script></a></div>
+<div id="scroll_top_primetime_list" class="scroll_top_primetime_list"><a href="#" title="to Primetime"><script language="JavaScript" type="text/javascript"> document.write ("<i class=\"glyphicon glyphicon-circle-arrow-up fa-"+primetime_btn_size+"x\"></i>");</script></a></div>
+<div id="scroll_top_broadcast_list" class="scroll_top_broadcast_list"><a href="#" title="to Broadcast"><script language="JavaScript" type="text/javascript"> document.write ("<i class=\"glyphicon glyphicon-circle-arrow-up fa-"+broadcast_btn_size+"x\"></i>");</script></a></div>
+<div id="scroll_top" class="scroll_top"><a href="#" title="to top"><script language="JavaScript" type="text/javascript"> document.write ("<i class=\"glyphicon glyphicon-circle-arrow-up fa-"+scrolltop_btn_size+"x\"></i>");</script></a></div>
+<div id="wrapper">
+  <div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="adjust-nav">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" onclick="nav_icon_scroll()" data-toggle="collapse" data-target=".sidebar-collapse"> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button>
+        <a class="navbar-brand" href="dashboard.php"><i class="fa fa-square-o"></i>&nbsp;Dashboard</a> </div>
+      <div class="navbar-collapse collapse">
+        <ul class="nav navbar-nav navbar-right">
+          <div class="row">
+            <div class="col-md-12">
+              <div id="navbar_info">oldest EPG: <span class="badge"><?php echo $date_first; echo " - "; echo utf8_encode($first_entry['e2eventservicename']); ?></span> latest EPG: <span class="badge-success"><?php echo $date_latest; echo " - "; echo utf8_encode($last_entry['e2eventservicename']); ?></span> </div>
+              <!--navbar_info-->
+            </div>
+          </div>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <!-- /. NAV TOP  -->
+  <nav class="navbar-default navbar-side" role="navigation">
+    <div class="sidebar-collapse">
+      <ul class="nav" id="main-menu">
+          <script language="JavaScript" type="text/javascript"> document.write(navbar_header);</script>
+        <li> <a href="dashboard.php"><i class="fa fa-home"></i>HOME</a> </li>
+        <li> <a href="search.php"><i class="fa fa-search"></i>Search</a> </li>
+        <li> <a href="timer.php"><i class="fa fa-clock-o"></i>Timer</a> </li>
+        <li> <a href="#"><i class="fa fa-wrench"></i>Crawler Tools<span class="fa arrow"></span></a>
+          <ul class="nav nav-second-level">
+            <li> <a href="#" onclick="animatedcollapse.toggle('div_crawl_channel_id');"><i class="fa fa-chevron-right"></i>Crawl channel ID's</a> </li>
+            <li> <a href="#" onclick="animatedcollapse.toggle('div_crawl_complete');"><i class="fa fa-chevron-right"></i>Crawl EPG from channels</a> </li>
+            <li> <a href="crawl_channel_separate.php"><i class="fa fa-chevron-right"></i>Crawl channel separate</a> </li>
+            <li> <a href="#" onclick="animatedcollapse.toggle('div_crawl_search');"><i class="fa fa-chevron-right"></i>Crawl search - Write timer in database</a></li>
+            <li> <a href="#" onclick="animatedcollapse.toggle('div_send_timer');"><i class="fa fa-chevron-right"></i>Send timer from database to Receiver</a> </li>
+          </ul>
+        </li>
+        <li> <a href="#"><i class="fa fa-cog"></i>Settings<span class="fa arrow"></span></a>
+          <ul class="nav nav-second-level">
+            <li> <a href="settings.php"><i class="fa fa-cog"></i>Main Settings</a> </li>
+            <li> <a href="channel_list.php"><i class="fa fa-list"></i>Channel List</a> </li>
+            <li> <a href="bouquet_list.php"><i class="fa fa-list"></i>Bouquet List</a> </li>
+          </ul>
+        </li>
+        <li> <a href="records.php"><i class="glyphicon glyphicon-record"></i>Records</a> </li>
+        <li> <a href="#" onclick="animatedcollapse.toggle('div_start_channelzapper');"> <i class="fa fa-arrow-up"></i>Channel Zapper</a> </li>
+        <li> <a id="116" onclick="power_control(this.id)" style="cursor:pointer;"> <i class="glyphicon glyphicon-off"></i>Wake up / Standby <span id="pc116"></span></a> </li>
+      </ul>
+    </div>
+  </nav>
+  <!-- /. NAV SIDE  -->
+  <div id="page-wrapper">
+    <div id="page-inner">
+      <div class="row">
+        <div class="col-md-12">
+          <h2>Dashboard</h2>
+        </div>
+      </div>
+      <!-- /. ROW  -->
+      <!--crawl channel id-->
+      <div id="div_crawl_channel_id">
+        <h1>Crawl channel ID's</h1>
+        <input type="submit" class="btn btn-success" id="crawl_channel_id_btn" value="Click to confirm" onclick="animatedcollapse.show('crawl_channel_id_status'); crawl_channel_id();">
+        <div id="crawl_channel_id_status"><img src="images/loading.gif" width="16" height="16" align="absmiddle"> </div>
+        <!--status-->
+      </div>
+      <!-- crawl channel id -->
+      <!--crawl complete-->
+      <div id="div_crawl_complete">
+        <h1>Crawl EPG from channels</h1>
+        <input type="submit" class="btn btn-success" id="crawl_complete_btn" value="Click to confirm" onclick="animatedcollapse.show('crawl_complete_status'); crawl_complete();">
+        <div id="crawl_complete_status"><img src="images/loading.gif" width="16" height="16" align="absmiddle"> </div>
+        <!--status-->
+      </div>
+      <!--div_crawl_complete-->
+      <!--crawl mysearch id-->
+      <div id="div_crawl_search">
+        <h1>Crawl search - Write timer in database</h1>
+        <input type="submit" class="btn btn-success" id="crawl_search_btn" value="Click to confirm" onclick="animatedcollapse.show('crawl_search_status'); crawl_saved_search();">
+        <div id="crawl_search_status"><img src="images/loading.gif" width="16" height="16" align="absmiddle"> </div>
+        <!--status-->
+      </div>
+      <!--div_mysearch-->
+      <!--send timer-->
+      <div id="div_send_timer">
+        <h1>Send timer from database to Receiver</h1>
+        <input type="submit" class="btn btn-success" id="send_timer_btn" value="Click to confirm" onclick="animatedcollapse.show('send_timer_status'); send_timer();">
+        <div id="send_timer_status"><img src="images/loading.gif" width="16" height="16" align="absmiddle"> </div>
+        <!--status-->
+      </div>
+      <!--send timer-->
+      <!--channelzapper-->
+      <div id="div_start_channelzapper">
+        <h1>Start Channel Zapper</h1>
+        <input type="submit" class="btn btn-success" id="start_channelzapper_btn" value="Click to confirm" onclick="animatedcollapse.show('channelzapper_status'); start_channelzapper();">
+        <div id="channelzapper_status"><img src="images/loading.gif" width="16" height="16" align="absmiddle"> </div>
+        <!--status-->
+      </div>
+      <!--div_channelzapper-->
+      <hr />
+      <!-- /. ROW  -->
+      <div class="row">
+        <div class="col-md-4">
+          <div id="broadcast_banner" style="cursor: pointer;"> <i class="fa fa-desktop fa-5x"></i>
+            <h3>Broadcast now</h3>
+          </div>
+          <!--bc banner-->
+        </div>
+        <div class="col-md-4">
+          <div id="primetime_banner" style="cursor: pointer;"> <i class="fa fa-film fa-5x"></i>
+            <h3>Prime Time</h3>
+          </div>
+          <!--bc banner-->
+        </div>
+        <div class="col-md-4">
+          <div id="channelbrowser_banner" style="cursor: pointer;"> <i class="fa fa-globe fa-5x"></i>
+            <h3>Channel Browser</h3>
+          </div>
+          <!--bc banner-->
+        </div>
+      </div>
+      <hr />
+      <div class="row">
+        <div class="col-md-3"> <?php echo DiskSpace(); ?> </div>
+        <div class="col-md-3"> <?php echo DatabaseSpace(); ?> </div>
+        <div class="col-md-6">
+          <h5>EPG INFORMATION</h5>
+          <div id="progressbar1"><img src="images/loading.gif" width="16" height="16"></div>
+          Time left to latest EPG entry
+          <div id="progressbar2"> <? echo $progressbar2; ?> </div>
+        </div>
+      </div>
+      <hr />
+      <div class="row" <? if ($timer_ticker == '1' and $activate_ticker != 'no'){ echo ''; } else { echo 'style="display:none;"'; } ?>>
+        <div class="col-md-12">
+          <div id="ticker_content">
+            <div id="ticker"></div>
+          </div>
+          <!-- ticker content -->
+          <hr />
+        </div>
+        <!-- col -->
+      </div>
+      <!-- row -->
+      <a name="broadcast_list" id="broadcast_list"></a>
+      <div class="row">
+        <div class="col-md-12">
+          <h5>Broadcast</h5>
+          <ul class="nav nav-tabs">
+            <li class="active">
+              <button id="now_today" href="#display_now_today" class="btn btn-default" onClick="broadcast_main(this.id);" data-toggle="tab">Broadcast now</button>
+            </li>
+            <li class="">
+              <button id="time_forward" href="#display_time_forward" class="btn btn-default" onClick="broadcast_main(this.id);" data-toggle="tab"><?php echo $dur_up_broadcast/60; ?> min +</button>
+            </li>
+            <li class="">
+              <button id="time_backward" href="#display_time_backward" class="btn btn-default" onClick="broadcast_main(this.id);" data-toggle="tab"><?php echo $dur_up_broadcast/60; ?> min -</button>
+            </li>
+            <li class="">
+              <button id="day_forward" href="#display_day_forward" class="btn btn-default" onClick="broadcast_main(this.id)" data-toggle="tab">Day +</button>
+            </li>
+            <li class="">
+              <button id="day_backward" href="#display_day_backward" class="btn btn-default" onClick="broadcast_main(this.id)" data-toggle="tab">Day -</button>
+            </li>
+          </ul>
+          <div class="tab-content">
+            <div class="tab-pane fade active in" id="display_now_today">
+              <h4>Broadcast now</h4>
+              <div id="broadcast_main_now_today">
+                <?php if(!isset($broadcast_list_main_today) or $broadcast_list_main_today == ""){ $broadcast_list_main_today = ""; } else { echo $broadcast_list_main_today; } ?>
+              </div>
+              <!--broadcast_main_now_today-->
+            </div>
+            <div class="tab-pane fade" id="display_day_forward">
+              <h4>Broadcast</h4>
+              <div id="broadcast_main_day_forward"> </div>
+              <!--broadcast_main_day_forward-->
+            </div>
+            <div class="tab-pane fade" id="display_day_backward">
+              <h4>Broadcast</h4>
+              <div id="broadcast_main_day_backward"> </div>
+              <!--broadcast_main_day_forward-->
+            </div>
+            <div class="tab-pane fade" id="display_time_forward">
+              <h4>Broadcast</h4>
+              <div id="broadcast_main_time_forward"> </div>
+              <!--broadcast_main_hour_forward-->
+            </div>
+            <div class="tab-pane fade" id="display_time_backward">
+              <h4>Broadcast</h4>
+              <div id="broadcast_main_time_backward"> </div>
+              <!--broadcast_main_hour_backward-->
+            </div>
+          </div>
+        </div>
+      </div>
+      <a name="primetime_list" id="primetime_list"></a>
+      <!-- /. ROW  -->
+      <hr />
+      <div class="row">
+        <div class="col-md-12">
+          <h5>PRIMETIME</h5>
+          <ul class="nav nav-tabs">
+            <li class="active">
+              <button id="primetime_today" href="#display_primetime_today" class="btn btn-default" onClick="primetime_main(this.id); animatedcollapse.show('primetime_main_today');" data-toggle="tab">Primetime today</button>
+            </li>
+            <li class="">
+              <button id="primetime_day_forward" href="#display_primetime_day_forward" class="btn btn-default" onClick="primetime_main(this.id); animatedcollapse.show('primetime_main_today');" data-toggle="tab">Day +</button>
+            </li>
+            <li class="">
+              <button id="primetime_day_backward" href="#display_primetime_day_backward" class="btn btn-default" onClick="primetime_main(this.id); animatedcollapse.show('primetime_main_today');" data-toggle="tab">Day -</button>
+            </li>
+          </ul>
+          <div class="tab-content">
+            <div class="tab-pane fade active in" id="display_primetime_today">
+              <h4>Primetime today</h4>
+              <div id="primetime_main_today">
+                <?php if(!isset($primetime_list_main_today) or $primetime_list_main_today == ""){ $primetime_list_main_today = ""; } else { echo $primetime_list_main_today; } ?>
+              </div>
+              <!--primetime_main_today-->
+            </div>
+            <div class="tab-pane fade" id="display_primetime_day_forward">
+              <h4>Primetime</h4>
+              <div id="primetime_main_day_forward"> </div>
+              <!--primetime_main_day_forward-->
+            </div>
+            <div class="tab-pane fade" id="display_primetime_day_backward">
+              <h4>Primetime</h4>
+              <div id="primetime_main_day_backward"> </div>
+              <!--primetime_main_day_forward-->
+            </div>
+            <!---->
+          </div>
+        </div>
+        <div class="col-md-12"> <a name="channelbrowser_list" id="channelbrowser_list"></a>
+          <hr />
+          <h4>Channel Browser</h4>
+          <ul class="nav nav-tabs">
+            <li>
+              <select name="channel_id" id="channel_id" class="form-control">
+                <?php 
+				// get channels
+            	$sql = "SELECT * FROM channel_list ORDER BY e2servicename ASC";
+				
+				if ($result=mysqli_query($dbmysqli,$sql))
+				{
+				// Fetch one and one row
+				while ($obj = mysqli_fetch_object($result)) {
+				{
+				// set selected
+				if ($obj->cb_selected == "1")
+				{
+				$select = "selected=\"selected\"";
+				}
+				elseif ($obj->cb_selected == "0")
+				{
+				$select = "";
+				}
+				echo utf8_encode("<option value='$obj->e2servicereference' $select>$obj->e2servicename</option>"); }    
+				}
+				}
+				?>
+              </select>
+            </li>
+            <li class="active">
+              <button id="cb_now_today" href="#cb_display_now_today" class="btn btn-default" onClick="channelbrowser_main(this.id);" data-toggle="tab">Broadcast today</button>
+            </li>
+            <li class="">
+              <button id="cb_day_forward" href="#cb_display_day_forward" class="btn btn-default" onClick="channelbrowser_main(this.id)" data-toggle="tab">Day +</button>
+            </li>
+            <li class="">
+              <button id="cb_day_backward" href="#cb_display_day_backward" class="btn btn-default" onClick="channelbrowser_main(this.id)" data-toggle="tab">Day -</button>
+            </li>
+          </ul>
+          <div class="tab-content">
+            <div class="tab-pane fade active in" id="cb_display_now_today">
+              <h4>Broadcast today</h4>
+              <div id="channelbrowser_main_cb_now_today"> </div>
+              <!--channelbrowser_main_now_today-->
+            </div>
+            <div class="tab-pane fade" id="cb_display_day_forward">
+              <h4>Broadcast</h4>
+              <div id="channelbrowser_main_cb_day_forward"> </div>
+              <!--channelbrowser_main_day_forward-->
+            </div>
+            <div class="tab-pane fade" id="cb_display_day_backward">
+              <h4>Broadcast</h4>
+              <div id="channelbrowser_main_cb_day_backward"> </div>
+              <!--channelbrowser_main_day_forward-->
+            </div>
+            <!---->
+          </div>
+        </div>
+        <hr />
+        <div class="col-md-12">
+          <hr />
+        </div>
+      </div>
+      <!-- /. ROW  -->
+    </div>
+    <!-- /. PAGE INNER  -->
+  </div>
+  <!-- /. PAGE WRAPPER  -->
+</div>
+<!-- /. WRAPPER  -->
+<!-- SCRIPTS -AT THE BOTOM TO REDUCE THE LOAD TIME-->
+<!-- JQUERY SCRIPTS -->
+<script src="assets/js/jquery-1.10.2.js"></script>
+<!-- BOOTSTRAP SCRIPTS -->
+<script src="assets/js/bootstrap.min.js"></script>
+<!-- METISMENU SCRIPTS -->
+<script src="assets/js/jquery.metisMenu.js"></script>
+<!-- CUSTOM SCRIPTS -->
+<script src="assets/js/custom.js"></script>
+</body>
+</html>

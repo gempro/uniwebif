@@ -1,0 +1,93 @@
+<?php 
+//
+include("../inc/dashboard_config.php");
+
+	// ajax header
+ 	header('Content-Type: text/event-stream');
+	header('Cache-Control: no-cache');
+	
+	//recieve data
+	$activate_cron = $_REQUEST['activate_cron'];
+	$epg_entries_per_channel = $_REQUEST['epg_entries_per_channel'];
+	$channel_entries = $_REQUEST['channel_entries'];
+	$dur_down_broadcast = $_REQUEST['dur_down_broadcast'];
+	$dur_up_broadcast = $_REQUEST['dur_up_broadcast'];
+	$dur_down_primetime = $_REQUEST['dur_down_primetime'];
+	$dur_up_primetime = $_REQUEST['dur_up_primetime'];
+	$time_format = $_REQUEST['time_format'];
+	$epg_crawler = $_REQUEST['epg_crawler'];
+	$crawler_hour = $_REQUEST['crawler_hour'];
+	$crawler_minute = $_REQUEST['crawler_minute'];
+	$crawler_am_pm = $_REQUEST['crawler_am_pm'];
+	$search_crawler = $_REQUEST['search_crawler'];
+	$start_epg_crawler = $_REQUEST['start_epg_crawler'];
+	$display_old_epg = $_REQUEST['display_old_epg'];
+	$streaming_symbol = $_REQUEST['streaming_symbol'];
+	$timer_ticker = $_REQUEST['timer_ticker'];
+	$ticker_time = $_REQUEST['ticker_time'];
+	$mark_searchterm = $_REQUEST['mark_searchterm'];
+	$send_timer = $_REQUEST['send_timer'];
+	$delete_old_timer = $_REQUEST['delete_old_timer'];
+	$delete_old_epg = $_REQUEST['delete_old_epg'];
+	$del_time = $_REQUEST['del_time'];
+	$extra_rec_time = $_REQUEST['extra_rec_time'];
+	$cz_activate = $_REQUEST['cz_activate'];
+	$cz_wait_time = $_REQUEST['cz_wait_time'];
+	$cz_hour = $_REQUEST['cz_hour'];
+	$cz_minute = $_REQUEST['cz_minute'];
+	$cz_repeat = $_REQUEST['cz_repeat'];
+	$cz_am_pm = $_REQUEST['cz_am_pm'];
+	$cz_start_channel = $_REQUEST['cz_start_channel'];
+	
+	if (!is_numeric($cz_wait_time))
+	{
+    $cz_wait_time = '30';
+	}
+	if (!is_numeric($cz_hour) or $cz_hour > 23)
+	{
+    $cz_hour = '12';
+	}
+	if (!is_numeric($cz_minute) or $cz_minute > 59)
+	{
+    $cz_minute = '00';
+	}
+
+	$date_for_cz = date("d.m.Y ");
+	$cz_start = $date_for_cz.$cz_hour.':'.$cz_minute;
+	$cz_timestamp = strtotime($cz_start) + 86400;
+	
+	if (!is_numeric($crawler_hour) or $crawler_hour > 23)
+	{
+    $crawler_hour = '12';
+	}
+	if (!is_numeric($crawler_minute) or $crawler_minute > 59)
+	{
+    $crawler_minute = '00';
+	}
+	
+	$date_for_crawler = date("d.m.Y ");
+	$crawler_start = $date_for_crawler.$crawler_hour.':'.$crawler_minute;
+	$crawler_timestamp = strtotime($crawler_start) + 86400;
+	
+	if(!isset($epg_entries_per_channel) or $epg_entries_per_channel == "" or !isset($channel_entries) or $channel_entries == "") 
+	{ 
+	echo "data: data missed\n\n"; 
+	
+	} else { $epg_entries_per_channel = $epg_entries_per_channel; $channel_entries = $channel_entries;
+	
+	$sql = mysqli_query($dbmysqli, "UPDATE settings SET activate_cron = '$activate_cron', epg_entries_per_channel = '$epg_entries_per_channel', channel_entries = '$channel_entries', dur_down_broadcast = '$dur_down_broadcast', dur_up_broadcast = '$dur_up_broadcast', dur_down_primetime = '$dur_down_primetime', dur_up_primetime = '$dur_up_primetime', time_format = '$time_format', epg_crawler = '$epg_crawler', crawler_timestamp = '$crawler_timestamp', crawler_hour = '$crawler_hour', crawler_minute = '$crawler_minute', crawler_am_pm = '$crawler_am_pm', search_crawler = '$search_crawler', start_epg_crawler = '$start_epg_crawler', display_old_epg = '$display_old_epg', streaming_symbol = '$streaming_symbol', timer_ticker = '$timer_ticker', ticker_time= '$ticker_time', mark_searchterm = '$mark_searchterm', send_timer = '$send_timer', delete_old_timer = '$delete_old_timer', delete_old_epg = '$delete_old_epg', del_time = '$del_time', extra_rec_time = '$extra_rec_time', cz_activate = '$cz_activate', cz_wait_time = '$cz_wait_time', cz_repeat = '$cz_repeat', cz_hour = '$cz_hour', cz_minute = '$cz_minute', cz_am_pm = '$cz_am_pm', cz_start_channel = '$cz_start_channel', cz_timestamp = '$cz_timestamp' WHERE id = 0");
+	
+	$sql = mysqli_query($dbmysqli, "UPDATE channel_list SET zap_start = '0'");
+	$sql = mysqli_query($dbmysqli, "UPDATE channel_list SET zap_start = '1' WHERE e2servicereference = '$cz_start_channel'");
+	
+	// close db
+	mysqli_close($dbmysqli);
+	
+	sleep(1);
+	
+	// answer for ajax
+	echo "data: ok\n\n";
+
+	}
+	
+?>
