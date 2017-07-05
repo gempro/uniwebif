@@ -1,0 +1,40 @@
+
+ Installationsanleitung Universal Webinterface (Uniwebif)
+ --------------------------------------------------------
+
+ Benötige Funktionen auf dem Server/Webhost
+
+ - Aktiviertes mysqli Modul für die SQL Datenbank
+ 
+ - Aktiviertes allow_url_fopen für die Verwendung von file_get_contents
+
+ --------------------------------------------------------
+
+ 1. zip Datei entpacken
+
+ 2. SQL Datenbank 'uniwebif', Benutzername 'uniwebif' mit Passwort 'uniwebif' erstellen*
+
+ 3. SQL Datei in Datenbank 'uniwebif' importieren
+
+ 4. IP Adresse vom Server/Webhost in Datei inc/dashboard_config.php eintragen ( $script_location )
+
+ 5. Auf dem Server/Webhost Ordner mit Bezeichnung 'uniwebif' erstellen
+
+ 6. Alle Dateien und Ordner auf den Server/Webhost in Ordner /uniwebif hochladen
+
+ 7. CHMOD 777 für Datei: /uniwebif/functions/create_m3u.php
+
+ 8. CHMOD 777 für Ordner: /uniwebif/tmp
+
+ 9. settings.php im Browser öffnen
+
+ 10. Login Daten von Receiver eintragen: IP, Benutzername, Passwort
+
+  
+ Sind alle Schritte erledigt, bitte das Tutorial Video ansehen wo gezeigt wird wie das Script verwendet wird.
+
+ 
+ Wenn die Receiver Login Daten korrekt sind und trotzdem eine Fehlermeldung erscheint, bitte /help/help.html im Browser öffnen.
+
+ 
+ *falls andere SQL Login Daten verwendet werden, diese in der Datei /inc/dashboard_config.php ändern
