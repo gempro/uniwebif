@@ -10,7 +10,14 @@ Overview of the functions:
 - EPG to SQL
 - Optimized for mobile devices
 
+For hosting the script i have used a Raspberry Pi Modell B with 512mB RAM. So less ressources are required.
+
+Requirements on Server/Webspace:
+
+- Apache with activated PHP
+- Activated mysqli module for the SQL Database
+- Activated allow_url_fopen for the usage from file_get_contents, to get the XML files from Receiver
+
 Uniwebif was compatible with Enigma2 Receivers, but with some little changes it could be compatible with other too.
 
 Watch Tutorial for more Information: https://www.youtube.com/watch?v=lj4EOlJzquk
-
