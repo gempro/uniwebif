@@ -14,7 +14,7 @@ For hosting the script i have used a Raspberry Pi Modell B with 512mB RAM. So le
 
 Requirements on Server/Webspace:
 
-- Apache with activated PHP
+- Webserver like Apache2 with activated PHP
 - Activated mysqli module for the SQL Database
 - Activated allow_url_fopen for the usage from file_get_contents, to get the XML files from Receiver
 
