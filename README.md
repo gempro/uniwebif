@@ -1,7 +1,7 @@
 # uniwebif
 External and Universal Webinterface for Linux Receiver's
 
-If you're not happy with the Webinterface from your Linux Receiver you should have a look at it.
+If you're not happy with the Webinterface from your Linux Receiver, you should have a look at it.
 
 Overview of the functions:
 
