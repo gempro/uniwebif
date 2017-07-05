@@ -10,7 +10,7 @@ Overview of the functions:
 - EPG to SQL
 - Optimized for mobile devices
 
-For hosting the script i have used a Raspberry Pi Modell B with 512mB RAM. So less ressources are required.
+For hosting the script i have used a Raspberry Pi Modell B with 512mB RAM. So less ressources are needed.
 
 Requirements on Server/Webspace:
 
