@@ -31,10 +31,11 @@
  10. Insert Receiver Login data: IP, Username and Password
 
  
- If all steps done, please watch the Tutorial where furthermore functions from script are shown.
+ After all settings done, create a cronjob and call the cron.php file in folder /inc may every 3 minutes.
 
- 
- If the Receiver login is correct and you regardless got an error, please open /help/help.html in your Browser.
+ Watch the Tutorial where furthermore functions from script are shown. (https://www.youtube.com/watch?v=lj4EOlJzquk)
+
+ If the Receiver login is correct and you regardless got an error, please read /help/help.html in your Browser.
 
  
  *When using other SQL login data, change it in file /inc/dashboard_config.php
