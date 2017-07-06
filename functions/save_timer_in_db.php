@@ -34,7 +34,7 @@ include("../inc/dashboard_config.php");
 	// search all
 	if ($search_option == 'all' or $search_option == '')
 	{
-	$sql = 'SELECT * FROM epg_data '.$search_include.' MATCH (title_enc, e2eventservicename, description_enc, descriptionextended_enc) AGAINST ("%'.$raw_term.'%") AND e2eventend > '.$time.' '.$search_include2.' e2eventtitle LIKE "%'.$raw_term.'%" '.$search_include2.' e2eventservicename LIKE "%'.$raw_term.'%" '.$search_include2.' e2eventdescription LIKE "%'.$raw_term.'%" '.$search_include2.' e2eventdescriptionextended LIKE "%'.$raw_term.'%" '; 
+	$sql = 'SELECT * FROM epg_data '.$search_include.' MATCH (title_enc, e2eventservicename, description_enc, descriptionextended_enc) AGAINST ("%'.$raw_term.'%") AND e2eventend > '.$time.' '.$search_include2.' e2eventtitle LIKE "%'.$raw_term.'%" AND e2eventend > '.$time.' '.$search_include2.' e2eventservicename LIKE "%'.$raw_term.'%" AND e2eventend > '.$time.' '.$search_include2.' e2eventdescription LIKE "%'.$raw_term.'%" AND e2eventend > '.$time.' '.$search_include2.' e2eventdescriptionextended LIKE "%'.$raw_term.'%" AND e2eventend > '.$time.' '; 
 	}
 	
 	// search title
