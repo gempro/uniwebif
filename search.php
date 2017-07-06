@@ -21,12 +21,6 @@ include("inc/dashboard_config.php");
 	$search_channel = $_REQUEST["search_channel"];
 	$channel_id = $_REQUEST["channel_id"];
 	$record_location = $_REQUEST["record_location"];
-
-	// check connection
-	if (mysqli_connect_errno()) {
-	printf("Connection failed: %s\n", mysqli_connect_error());
-	exit(); 
-	}
 	
 	// select oldest entry
 	$query = mysqli_query($dbmysqli, "SELECT e2eventservicename, e2eventstart FROM `epg_data` ORDER BY e2eventstart ASC LIMIT 0 , 1");
@@ -114,10 +108,10 @@ include("inc/dashboard_config.php");
 	// search all
 	if ($option == 'all' or $option == '')
 	{
-	$sql = 'SELECT * FROM epg_data '.$search_include.' MATCH (title_enc, e2eventservicename, description_enc, descriptionextended_enc) AGAINST ("%'.$raw_term.'%") '.$exclude_time.' '.$search_include2.' e2eventtitle LIKE "%'.$raw_term.'%" '.$search_include2.' e2eventservicename LIKE "%'.$raw_term.'%" '.$search_include2.' e2eventdescription LIKE "%'.$raw_term.'%" '.$search_include2.' e2eventdescriptionextended LIKE "%'.$raw_term.'%" ORDER BY e2eventstart ASC';
+	$sql = 'SELECT * FROM epg_data '.$search_include.' MATCH (title_enc, e2eventservicename, description_enc, descriptionextended_enc) AGAINST ("%'.$raw_term.'%") '.$exclude_time.' '.$search_include2.' e2eventtitle LIKE "%'.$raw_term.'%" '.$exclude_time.' '.$search_include2.' e2eventservicename LIKE "%'.$raw_term.'%" '.$exclude_time.' '.$search_include2.' e2eventdescription LIKE "%'.$raw_term.'%" '.$exclude_time.' '.$search_include2.' e2eventdescriptionextended LIKE "%'.$raw_term.'%" '.$exclude_time.' ORDER BY e2eventstart ASC';
 	
 	// count hits
-	$stmt = $dbmysqli->prepare('SELECT COUNT(*) as count_search FROM epg_data '.$search_include.' MATCH (title_enc, e2eventservicename, description_enc, descriptionextended_enc) AGAINST ("%'.$raw_term.'%") '.$exclude_time.' '.$search_include2.' e2eventtitle LIKE "%'.$raw_term.'%" '.$search_include2.' e2eventservicename LIKE "%'.$raw_term.'%" '.$search_include2.' e2eventdescription LIKE "%'.$raw_term.'%" '.$search_include2.' e2eventdescriptionextended LIKE "%'.$raw_term.'%" ');
+	$stmt = $dbmysqli->prepare('SELECT COUNT(*) as count_search FROM epg_data '.$search_include.' MATCH (title_enc, e2eventservicename, description_enc, descriptionextended_enc) AGAINST ("%'.$raw_term.'%") '.$exclude_time.' '.$search_include2.' e2eventtitle LIKE "%'.$raw_term.'%" '.$exclude_time.' '.$search_include2.' e2eventservicename LIKE "%'.$raw_term.'%" '.$exclude_time.' '.$search_include2.' e2eventdescription LIKE "%'.$raw_term.'%" '.$exclude_time.' '.$search_include2.' e2eventdescriptionextended LIKE "%'.$raw_term.'%" '.$exclude_time.' ');
 	
 	if( !is_a($stmt, 'MySQLI_Stmt') || $dbmysqli->errno > 0 )
 	throw new Exception( $dbmysqli->error, $dbmysqli->errno );
