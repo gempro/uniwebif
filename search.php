@@ -17,6 +17,8 @@ include("inc/dashboard_config.php");
 	$searchterm = $_POST["searchterm"];
 	$searchterm = $_REQUEST["searchterm"];
 	$searchterm = str_replace("\"", "", $searchterm);
+	$searchterm = str_replace("'", "", $searchterm);
+	$searchterm = str_replace("%", "", $searchterm);
 	$option = $_REQUEST["option"];
 	$search_channel = $_REQUEST["search_channel"];
 	$channel_id = $_REQUEST["channel_id"];
