@@ -2,9 +2,26 @@
 //
 include("../inc/dashboard_config.php");
 
-// turn on Receiver
-	$turn_on_request = "http://$box_ip/web/remotecontrol?command=116";
+	// check power status
+	$xmlfile = 'http://'.$box_ip.'/web/powerstate';
+
+	$power_command = file_get_contents($xmlfile, false, $webrequest);
+
+	$xml = simplexml_load_string($power_command);
+
+	if(!isset($xml->e2instandby) or $xml->e2instandby == ""){ $xml->e2instandby = ""; }
+	
+	$power_status = $xml->e2instandby;
+	
+	$power_status = preg_replace('/\s+/', '', $power_status);
+	
+	if ($power_status == 'true')
+	{
+	// turn on Receiver
+	$turn_on_request = "http://$box_ip/web/powerstate?newstate=0";
 	$turn_on = file_get_contents($turn_on_request, false, $webrequest);
+	//
+	}
 	
 	sleep(10);
 	
@@ -54,7 +71,28 @@ include("../inc/dashboard_config.php");
 	sleep(10);
 	
 	// turn off Receiver
-	$turn_off = file_get_contents($turn_on_request, false, $webrequest);
+	//$turn_off = file_get_contents($turn_on_request, false, $webrequest);
+	
+	// check power status
+	$xmlfile = 'http://'.$box_ip.'/web/powerstate';
+
+	$power_command = file_get_contents($xmlfile, false, $webrequest);
+
+	$xml = simplexml_load_string($power_command);
+
+	if(!isset($xml->e2instandby) or $xml->e2instandby == ""){ $xml->e2instandby = ""; }
+	
+	$power_status = $xml->e2instandby;
+	
+	$power_status = preg_replace('/\s+/', '', $power_status);
+	
+	if ($power_status == 'false')
+	{
+	// turn off Receiver
+	$turn_off_request = "http://$box_ip/web/powerstate?newstate=0";
+	$turn_off = file_get_contents($turn_off_request, false, $webrequest);
+	//
+	}
 	
 	$sql = mysqli_query($dbmysqli, "OPTIMIZE TABLE `epg_data`");
 	
