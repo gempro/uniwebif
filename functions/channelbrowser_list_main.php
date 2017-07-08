@@ -206,7 +206,7 @@ $channelbrowser_list = $channelbrowser_list."
   <div id=\"row2\">
     <input id=\"channelbrowser_zap_btn_$obj->hash\" type=\"submit\" onClick=\"channelbrowser_zap(this.id)\" value=\"ZAPP TO CHANNEL\" class=\"btn btn-default\"/> </div>
   <div id=\"row3\">
-    <select name=\"\" id=\"rec_location_channelbrowser_$obj->hash\">$rec_dropdown_channelbrowser</select>
+    <select id=\"rec_location_channelbrowser_$obj->hash\" class=\"rec_location_dropdown\">$rec_dropdown_channelbrowser</select>
 	<span id=\"channelbrowser_status_zap_$obj->hash\"></span> <span id=\"channelbrowser_status_timer_$obj->hash\"></span> </div>
   <div style=\"clear:both\"></div>
 </div> </div>

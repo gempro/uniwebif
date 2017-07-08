@@ -32,7 +32,7 @@
 	}
 	
 	// channel dropdown
-	$sql2="SELECT * FROM `channel_list` ORDER BY e2servicename ASC";
+	$sql2 = "SELECT * FROM `channel_list` ORDER BY e2servicename ASC";
 	if ($result2 = mysqli_query($dbmysqli,$sql2))
 	{
 	// Fetch one and one row

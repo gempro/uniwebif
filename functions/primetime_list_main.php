@@ -190,7 +190,7 @@ include("../inc/dashboard_config.php");
   <div id=\"row2\">
     <input id=\"primetime_zap_btn_$obj->hash\" type=\"submit\" onClick=\"primetime_zap(this.id)\" value=\"ZAPP TO CHANNEL\" class=\"btn btn-default\"/> </div>
   <div id=\"row3\">
-    <select name=\"\" id=\"rec_location_primetime_$obj->hash\">$rec_dropdown_primetime</select>
+    <select id=\"rec_location_primetime_$obj->hash\" class=\"rec_location_dropdown\">$rec_dropdown_primetime</select>
 		<span id=\"primetime_status_zap_$obj->hash\"></span> <span id=\"primetime_status_timer_$obj->hash\"></span> </div>
   <div style=\"clear:both\"></div>
 </div> </div>

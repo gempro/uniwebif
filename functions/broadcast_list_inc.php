@@ -117,7 +117,7 @@
   <div id=\"row2\">
     <input id=\"broadcast_zap_btn_$obj->hash\" type=\"submit\" onClick=\"broadcast_zap(this.id)\" value=\"ZAPP TO CHANNEL\" class=\"btn btn-default\"/> </div>
   <div id=\"row3\">
-    <select name=\"\" id=\"rec_location_broadcast_$obj->hash\">$rec_dropdown_broadcast</select>
+    <select id=\"rec_location_broadcast_$obj->hash\" class=\"rec_location_dropdown\">$rec_dropdown_broadcast</select>
 		<span id=\"broadcast_status_zap_$obj->hash\"></span> <span id=\"broadcast_status_timer_$obj->hash\"></span> </div>
   <div style=\"clear:both\"></div>
 </div> </div>
