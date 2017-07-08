@@ -215,7 +215,7 @@ if(typeof(EventSource) !== "undefined") {
 	
 	var this_id = id.replace(/searchlist_timer_btn_/g, "");
 	
-	var record_location = document.getElementById("searchlist_record_location_"+this_id+"").value;
+	var record_location = document.getElementById("searchlist_record_location").value;
 	
 	document.getElementById("searchlist_status_timer_"+this_id+"").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
 	
