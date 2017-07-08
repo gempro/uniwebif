@@ -233,7 +233,7 @@ body {
 	margin-right: 5px;
 }
 #broadcast-tab-button-group #row3 {
-	width: auto;
+	max-width:90%;
 	float: left;
 	margin-right: 5px;
 	padding-top: 6px;
@@ -637,6 +637,26 @@ width:100%;
 width:100%;
 }
 }
+@media (max-width: 768px) {
+.search_list_term {
+max-width:90%;
+}
+.search_list_area {
+max-width:90%;
+}
+.search_list_channel {
+max-width:90%;
+}
+.search_list_rec_location {
+max-width:90%;
+}
+.search_list_wildcard {
+max-width:90%;
+}
+.search_list_active {
+max-width:90%;
+}
+}
 .highlight_e2eventtitle {
 	color: #000;
 	background-color:#FFFF00;
@@ -688,7 +708,9 @@ cursor:pointer;
 .sr_title :hover {
 text-decoration:underline;
 }
-
+.rec_location_dropdown {
+max-width:90%;
+}
 #scroll_top {
 	width:45px; 
 	height:45px;
@@ -1078,4 +1100,3 @@ width: 260px;
 border-radius: 0px;
 }
 }
-
