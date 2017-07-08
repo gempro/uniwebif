@@ -84,6 +84,20 @@ include("inc/dashboard_config.php");
     $sql = mysqli_query($dbmysqli, "UPDATE channel_list SET selected = 1 WHERE e2servicereference = '".$channel_id."'");
 	}
 	
+	// get record locations
+	$sql2 = "SELECT * FROM `record_locations` ORDER BY id ASC";
+	
+	if ($result2 = mysqli_query($dbmysqli,$sql2))
+	{
+	// Fetch one and one row
+	while ($obj = mysqli_fetch_object($result2)) {	
+	{
+	if(!isset($rec_dropdown_broadcast) or $rec_dropdown_broadcast == "") { $rec_dropdown_broadcast = ""; } else { $rec_dropdown_broadcast = $rec_dropdown_broadcast; }
+
+	$rec_dropdown_broadcast = $rec_dropdown_broadcast."<option value=\"$obj->id\">$obj->e2location</option>"; }
+	}
+	}
+	
 	// set selected in record locations dropdown
 	if ($record_location !== ''){
     // empty selected
@@ -254,11 +268,6 @@ include("inc/dashboard_config.php");
 	$date_end = "$date_end_weekday, $date_end_month/$date_end_day/$date_end_year - $date_end_hour:$date_end_minute $date_end_ampm";
 	}
 	
-	// get timezone
-	//if (date_default_timezone_get()){ $timezone = date_default_timezone_get(); }
-	//$timestamp = time();
-	//$date_now = date("d.m.Y - H:i", $timestamp);
-	
 	if(!isset($result_list) or $result_list == "") { $result_list = ""; } else { $result_list = $result_list; }
 	
 	$result_list = $result_list."
@@ -274,6 +283,8 @@ include("inc/dashboard_config.php");
 		<input id=\"searchlist_zap_btn_$obj->hash\" type=\"submit\" onClick=\"searchlist_zap(this.id)\" value=\"ZAPP TO CHANNEL\" class=\"btn btn-default\"/>
 		<span id=\"searchlist_status_zap_$obj->hash\"></span>
 		<span id=\"searchlist_status_timer_$obj->hash\"></span>
+		<div class=\"spacer_10\"></div>
+		<span>Record location: </span><select id=\"searchlist_record_location_$obj->hash\" class=\"rec_location_dropdown\">$rec_dropdown_broadcast</select>
 		<hr>";
 		}
     }
@@ -374,11 +385,6 @@ if(typeof(EventSource) !== "undefined") {
 function check_channel_search() {
 	if (search_channel.checked == true) { document.getElementById("channel_id").disabled = false; }
 	if (search_channel.checked == false) { document.getElementById("channel_id").disabled = true; }
-}
-</script>
-<script>
-function bamoida(){
-alert("lol");
 }
 </script>
 </head>
