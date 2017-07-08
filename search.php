@@ -63,7 +63,7 @@ include("inc/dashboard_config.php");
 	if($searchterm == "" or strlen($searchterm) < "3") {
 	
 	$p_save_search = "<p><strong>Please use more than 2 signs for searchterm</strong></p>";
-	
+
 	} else {
 	
 	if ($searchterm != '')
@@ -98,22 +98,20 @@ include("inc/dashboard_config.php");
 	if ($channel_id !== ''){ 
 	$search_include = 'WHERE e2eventservicereference = "'.$channel_id.'" AND'; 
 	$search_include2 = 'OR e2eventservicereference = "'.$channel_id.'" AND'; 
-	$search_include3 = 'AND e2eventservicereference = "'.$channel_id.'" ';
 	
 	} else { 
 	
 	$search_include = 'WHERE'; 
 	$search_include2 = 'OR'; 
-	$search_include3 = ''; 
 	}
 
 	// search all
 	if ($option == 'all' or $option == '')
 	{
-	$sql = 'SELECT * FROM epg_data '.$search_include.' MATCH (title_enc, e2eventservicename, description_enc, descriptionextended_enc) AGAINST ("%'.$raw_term.'%") '.$exclude_time.' '.$search_include2.' e2eventtitle LIKE "%'.$raw_term.'%" '.$exclude_time.' '.$search_include2.' e2eventservicename LIKE "%'.$raw_term.'%" '.$exclude_time.' '.$search_include2.' e2eventdescription LIKE "%'.$raw_term.'%" '.$exclude_time.' '.$search_include2.' e2eventdescriptionextended LIKE "%'.$raw_term.'%" '.$exclude_time.' ORDER BY e2eventstart ASC';
+	$sql = 'SELECT * FROM epg_data '.$search_include.' MATCH (title_enc, e2eventservicename, description_enc, descriptionextended_enc) AGAINST ("%'.$raw_term.'%") '.$exclude_time.' '.$search_include2.' e2eventtitle LIKE "%'.$raw_term.'%" '.$search_include2.' e2eventservicename LIKE "%'.$raw_term.'%" '.$search_include2.' e2eventdescription LIKE "%'.$raw_term.'%" '.$search_include2.' e2eventdescriptionextended LIKE "%'.$raw_term.'%" ORDER BY e2eventstart ASC';
 	
 	// count hits
-	$stmt = $dbmysqli->prepare('SELECT COUNT(*) as count_search FROM epg_data '.$search_include.' MATCH (title_enc, e2eventservicename, description_enc, descriptionextended_enc) AGAINST ("%'.$raw_term.'%") '.$exclude_time.' '.$search_include2.' e2eventtitle LIKE "%'.$raw_term.'%" '.$exclude_time.' '.$search_include2.' e2eventservicename LIKE "%'.$raw_term.'%" '.$exclude_time.' '.$search_include2.' e2eventdescription LIKE "%'.$raw_term.'%" '.$exclude_time.' '.$search_include2.' e2eventdescriptionextended LIKE "%'.$raw_term.'%" '.$exclude_time.' ');
+	$stmt = $dbmysqli->prepare('SELECT COUNT(*) as count_search FROM epg_data '.$search_include.' MATCH (title_enc, e2eventservicename, description_enc, descriptionextended_enc) AGAINST ("%'.$raw_term.'%") '.$exclude_time.' '.$search_include2.' e2eventtitle LIKE "%'.$raw_term.'%" '.$search_include2.' e2eventservicename LIKE "%'.$raw_term.'%" '.$search_include2.' e2eventdescription LIKE "%'.$raw_term.'%" '.$search_include2.' e2eventdescriptionextended LIKE "%'.$raw_term.'%" ');
 	
 	if( !is_a($stmt, 'MySQLI_Stmt') || $dbmysqli->errno > 0 )
 	throw new Exception( $dbmysqli->error, $dbmysqli->errno );
@@ -132,10 +130,10 @@ include("inc/dashboard_config.php");
 	// search title
 	if ($option == 'title')
 	{
-	$sql = 'SELECT * FROM epg_data '.$search_include.' title_enc LIKE "%'.$raw_term.'%" '.$exclude_time.' '.$search_include3.' ORDER BY e2eventstart ASC';
+	$sql = 'SELECT * FROM epg_data '.$search_include.' title_enc LIKE "%'.$raw_term.'%" '.$exclude_time.' ORDER BY e2eventstart ASC';
 	
 	// count hits
-	$stmt = $dbmysqli->prepare('SELECT COUNT(*) as count_search FROM epg_data '.$search_include.' title_enc LIKE "%'.$raw_term.'%" '.$exclude_time.' '.$search_include3.' ');
+	$stmt = $dbmysqli->prepare('SELECT COUNT(*) as count_search FROM epg_data '.$search_include.' title_enc LIKE "%'.$raw_term.'%" '.$exclude_time.' ');
 	
 	if( !is_a($stmt, 'MySQLI_Stmt') || $dbmysqli->errno > 0 )
 	throw new Exception( $dbmysqli->error, $dbmysqli->errno );
@@ -154,10 +152,10 @@ include("inc/dashboard_config.php");
 	// search description
 	if ($option == 'description')
 	{
-	$sql = 'SELECT * FROM epg_data '.$search_include.' description_enc LIKE "%'.$raw_term.'%" '.$exclude_time.' '.$search_include3.' ORDER BY e2eventstart ASC';
+	$sql = 'SELECT * FROM epg_data '.$search_include.' description_enc LIKE "%'.$raw_term.'%" '.$exclude_time.' ORDER BY e2eventstart ASC';
 	
 	// count hits
-	$stmt = $dbmysqli->prepare('SELECT COUNT(*) as count_search FROM epg_data '.$search_include.' description_enc LIKE "%'.$raw_term.'%" '.$exclude_time.' '.$search_include3.' ');
+	$stmt = $dbmysqli->prepare('SELECT COUNT(*) as count_search FROM epg_data '.$search_include.' description_enc LIKE "%'.$raw_term.'%" '.$exclude_time.' ');
 	
 	if( !is_a($stmt, 'MySQLI_Stmt') || $dbmysqli->errno > 0 )
 	throw new Exception( $dbmysqli->error, $dbmysqli->errno );
@@ -176,10 +174,10 @@ include("inc/dashboard_config.php");
 	// search extended description
 	if ($option == 'extdescription')
 	{
-	$sql = 'SELECT * FROM epg_data '.$search_include.' descriptionextended_enc LIKE "%'.$raw_term.'%" '.$exclude_time.' '.$search_include3.' ORDER BY e2eventstart ASC';
+	$sql = 'SELECT * FROM epg_data '.$search_include.' descriptionextended_enc LIKE "%'.$raw_term.'%" '.$exclude_time.' ORDER BY e2eventstart ASC';
 	
 	// count hits
-	$stmt = $dbmysqli->prepare('SELECT COUNT(*) as count_search FROM epg_data '.$search_include.' descriptionextended_enc LIKE "%'.$raw_term.'%" '.$exclude_time.' '.$search_include3.' ');
+	$stmt = $dbmysqli->prepare('SELECT COUNT(*) as count_search FROM epg_data '.$search_include.' descriptionextended_enc LIKE "%'.$raw_term.'%" '.$exclude_time.' ');
 	if( !is_a($stmt, 'MySQLI_Stmt') || $dbmysqli->errno > 0 )
 	throw new Exception( $dbmysqli->error, $dbmysqli->errno );
 	$stmt->execute();
@@ -256,30 +254,10 @@ include("inc/dashboard_config.php");
 	$date_end = "$date_end_weekday, $date_end_month/$date_end_day/$date_end_year - $date_end_hour:$date_end_minute $date_end_ampm";
 	}
 	
-	// get record locations
-	$sql2 = "SELECT * FROM `record_locations` ORDER BY id ASC";
-	if ($result2 = mysqli_query($dbmysqli,$sql2))
-	{
-	// Fetch one and one row
-	while ($obj2 = mysqli_fetch_object($result2)) {	
-	{
-	if(!isset($rec_dropdown_broadcast) or $rec_dropdown_broadcast == "") { $rec_dropdown_broadcast = ""; } else { $rec_dropdown_broadcast = $rec_dropdown_broadcast; }
-	$rec_dropdown_broadcast = "<option value=\"$obj2->id\">$obj2->e2location</option>"; }
-	}
-	}
-	
-	// record location
-	$sql2 = mysqli_query($dbmysqli, "SELECT * FROM `record_locations` ORDER BY id ASC");
-	
-	// Antwort der Datenbank in ein assoziatives Array übergeben
-	$result2 = mysqli_fetch_assoc($sql2);
-	
-	// MySQL-Version aus dem Resultat-Array auslesen
-	$id = $result2['id'];
-	$record_location = $result2['e2location'];
-	$rec_dropdown_broadcast = $rec_dropdown_broadcast."<option value=\"$id\">$record_location</option>";
-	////////
-	
+	// get timezone
+	//if (date_default_timezone_get()){ $timezone = date_default_timezone_get(); }
+	//$timestamp = time();
+	//$date_now = date("d.m.Y - H:i", $timestamp);
 	
 	if(!isset($result_list) or $result_list == "") { $result_list = ""; } else { $result_list = $result_list; }
 	
@@ -294,8 +272,6 @@ include("inc/dashboard_config.php");
 		Duration: $obj->total_min Min.<div class=\"spacer_5\"></div>
 		<input id=\"searchlist_timer_btn_$obj->hash\" type=\"submit\" onClick=\"searchlist_timer(this.id)\" value=\"SET TIMER\" class=\"btn btn-success\" title=\"send timer instantly\"/>
 		<input id=\"searchlist_zap_btn_$obj->hash\" type=\"submit\" onClick=\"searchlist_zap(this.id)\" value=\"ZAPP TO CHANNEL\" class=\"btn btn-default\"/>
-		<div class=\"spacer_10\"></div>
-		<span>Record location: </span><select id=\"searchlist_record_location_$obj->hash\" class=\"rec_location_dropdown\">$rec_dropdown_broadcast</select>
 		<span id=\"searchlist_status_zap_$obj->hash\"></span>
 		<span id=\"searchlist_status_timer_$obj->hash\"></span>
 		<hr>";
@@ -305,6 +281,8 @@ include("inc/dashboard_config.php");
   mysqli_free_result($result);
 	}
 }
+//close db
+//mysqli_close($dbmysqli);
 ?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -396,6 +374,11 @@ if(typeof(EventSource) !== "undefined") {
 function check_channel_search() {
 	if (search_channel.checked == true) { document.getElementById("channel_id").disabled = false; }
 	if (search_channel.checked == false) { document.getElementById("channel_id").disabled = true; }
+}
+</script>
+<script>
+function bamoida(){
+alert("lol");
 }
 </script>
 </head>
@@ -534,7 +517,7 @@ function check_channel_search() {
                 <input type="submit" value="Search trough" class="btn btn-success"/>
               </div>
               <div id="btn2">
-              <select name="record_location" id="searchlist_record_location">
+                <select name="record_location" id="searchlist_record_location">
                   <?php 
 					$sql = "SELECT * from record_locations order by id ASC";
 			
