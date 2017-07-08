@@ -19,6 +19,7 @@ include("inc/dashboard_config.php");
 	$searchterm = str_replace("\"", "", $searchterm);
 	$searchterm = str_replace("'", "", $searchterm);
 	$searchterm = str_replace("%", "", $searchterm);
+	
 	$option = $_REQUEST["option"];
 	$search_channel = $_REQUEST["search_channel"];
 	$channel_id = $_REQUEST["channel_id"];
@@ -59,22 +60,21 @@ include("inc/dashboard_config.php");
 	if ($first_entry['e2eventservicename'] == ''){ $first_entry['e2eventservicename'] = 'no data'; }	
 	if ($last_entry['e2eventservicename'] == ''){ $last_entry['e2eventservicename'] = 'no data'; }
 	
-	if($searchterm == "" ) {
-
+	if($searchterm == "" or strlen($searchterm) < "3") {
+	
+	$p_save_search = "<p><strong>Please use more than 2 signs for searchterm</strong></p>";
+	
 	} else {
 	
 	if ($searchterm != '')
+	
+	$p_save_search = "<p><a href=\"#save_search\" onclick=\"save_search()\">Save this search for timer</a></p>";
 
 	// wildcard
 	//if ($wildcard == 'on' ){ $wildcard_suche = utf8_decode("%".$searchterm."%"); } else { $wildcard_suche = utf8_decode($searchterm); }
-	
 	//
-	$raw_term = rawurlencode($searchterm);
 	
-	if (mysqli_connect_errno())
-	{
-	echo "Failed to connect to MySQL: " . mysqli_connect_error();
-	}
+	$raw_term = rawurlencode($searchterm);
 	
 	// set selected channel in dropdown
 	if ($search_channel == 'on'){
@@ -121,6 +121,12 @@ include("inc/dashboard_config.php");
 	$stmt->bind_result($count_search);
 	$stmt->fetch();
 	$stmt->close();
+	if ($count_search > 1000)
+	{
+	echo "There are more than 1000 results for this search.<br>Please define term more exactly. There is the risk that the process crash..<br>";
+	echo "<a href=\"javascript:history.back();\">back</a>";
+	exit;
+	}
 	}
 	  
 	// search title
@@ -137,6 +143,12 @@ include("inc/dashboard_config.php");
 	$stmt->bind_result($count_search);
 	$stmt->fetch();
 	$stmt->close();
+	if ($count_search > 1000)
+	{
+	echo "There are more than 1000 results for this search.<br>Please define term more exactly. There is the risk that the process crash..<br>";
+	echo "<a href=\"javascript:history.back();\">back</a>";
+	exit;
+	}
 	}
 	
 	// search description
@@ -153,6 +165,12 @@ include("inc/dashboard_config.php");
 	$stmt->bind_result($count_search);
 	$stmt->fetch();
 	$stmt->close();
+	if ($count_search > 1000)
+	{
+	echo "There are more than 1000 results for this search.<br>Please define term more exactly. There is the risk that the process crash..<br>";
+	echo "<a href=\"javascript:history.back();\">back</a>";
+	exit;
+	}
 	}
 	
 	// search extended description
@@ -168,6 +186,12 @@ include("inc/dashboard_config.php");
 	$stmt->bind_result($count_search);
 	$stmt->fetch();
 	$stmt->close();
+	if ($count_search > 1000)
+	{
+	echo "There are more than 1000 results for this search.<br>Please define term more exactly. There is the risk that the process crash..<br>";
+	echo "<a href=\"javascript:history.back();\">back</a>";
+	exit;
+	}
 	}
 	
 	if ($result = mysqli_query($dbmysqli,$sql))
@@ -232,10 +256,30 @@ include("inc/dashboard_config.php");
 	$date_end = "$date_end_weekday, $date_end_month/$date_end_day/$date_end_year - $date_end_hour:$date_end_minute $date_end_ampm";
 	}
 	
-	// get timezone
-	//if (date_default_timezone_get()){ $timezone = date_default_timezone_get(); }
-	//$timestamp = time();
-	//$date_now = date("d.m.Y - H:i", $timestamp);
+	// get record locations
+	$sql2 = "SELECT * FROM `record_locations` ORDER BY id ASC";
+	if ($result2 = mysqli_query($dbmysqli,$sql2))
+	{
+	// Fetch one and one row
+	while ($obj2 = mysqli_fetch_object($result2)) {	
+	{
+	if(!isset($rec_dropdown_broadcast) or $rec_dropdown_broadcast == "") { $rec_dropdown_broadcast = ""; } else { $rec_dropdown_broadcast = $rec_dropdown_broadcast; }
+	$rec_dropdown_broadcast = "<option value=\"$obj2->id\">$obj2->e2location</option>"; }
+	}
+	}
+	
+	// record location
+	$sql2 = mysqli_query($dbmysqli, "SELECT * FROM `record_locations` ORDER BY id ASC");
+	
+	// Antwort der Datenbank in ein assoziatives Array übergeben
+	$result2 = mysqli_fetch_assoc($sql2);
+	
+	// MySQL-Version aus dem Resultat-Array auslesen
+	$id = $result2['id'];
+	$record_location = $result2['e2location'];
+	$rec_dropdown_broadcast = $rec_dropdown_broadcast."<option value=\"$id\">$record_location</option>";
+	////////
+	
 	
 	if(!isset($result_list) or $result_list == "") { $result_list = ""; } else { $result_list = $result_list; }
 	
@@ -250,6 +294,8 @@ include("inc/dashboard_config.php");
 		Duration: $obj->total_min Min.<div class=\"spacer_5\"></div>
 		<input id=\"searchlist_timer_btn_$obj->hash\" type=\"submit\" onClick=\"searchlist_timer(this.id)\" value=\"SET TIMER\" class=\"btn btn-success\" title=\"send timer instantly\"/>
 		<input id=\"searchlist_zap_btn_$obj->hash\" type=\"submit\" onClick=\"searchlist_zap(this.id)\" value=\"ZAPP TO CHANNEL\" class=\"btn btn-default\"/>
+		<div class=\"spacer_10\"></div>
+		<span>Record location: </span><select id=\"searchlist_record_location_$obj->hash\" class=\"rec_location_dropdown\">$rec_dropdown_broadcast</select>
 		<span id=\"searchlist_status_zap_$obj->hash\"></span>
 		<span id=\"searchlist_status_timer_$obj->hash\"></span>
 		<hr>";
@@ -259,8 +305,6 @@ include("inc/dashboard_config.php");
   mysqli_free_result($result);
 	}
 }
-//close db
-//mysqli_close($dbmysqli);
 ?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -352,11 +396,6 @@ if(typeof(EventSource) !== "undefined") {
 function check_channel_search() {
 	if (search_channel.checked == true) { document.getElementById("channel_id").disabled = false; }
 	if (search_channel.checked == false) { document.getElementById("channel_id").disabled = true; }
-}
-</script>
-<script>
-function bamoida(){
-alert("lol");
 }
 </script>
 </head>
@@ -495,7 +534,7 @@ alert("lol");
                 <input type="submit" value="Search trough" class="btn btn-success"/>
               </div>
               <div id="btn2">
-                <select name="record_location" id="searchlist_record_location">
+              <select name="record_location" id="searchlist_record_location">
                   <?php 
 					$sql = "SELECT * from record_locations order by id ASC";
 			
@@ -528,7 +567,7 @@ alert("lol");
         if ($count_search == '1' ){ $sum = 'result'; } else { $sum = 'results'; }
         if($searchterm == "" ) { $desc_text = ''; } else { $desc_text = 'Found <strong>'.$count_search.'</strong> '.$sum.' with this term'; }
         echo $desc_text;
-        if ($searchterm !== ''){ echo '<p><a href="#save_search" onclick="save_search()">Save this search for timer</a></p>'; }
+        if ($searchterm !== ''){ echo $p_save_search; }
         ?>
             <div id="save_search_status"> </div>
             <!-- status -->
