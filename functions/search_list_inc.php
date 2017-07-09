@@ -48,7 +48,7 @@
 	//
 	
 	$sql = "SELECT * FROM `saved_search` ORDER BY id DESC";
-	if ($result=mysqli_query($dbmysqli,$sql))
+	if ($result = mysqli_query($dbmysqli,$sql))
 	{
 	// Fetch one and one row
 	while ($obj = mysqli_fetch_object($result)) {
@@ -70,6 +70,14 @@
 	$searchterm = rawurldecode($obj->searchterm);
 	$searchterm2 = $searchterm;
 	}
+	
+	if ($obj->e2eventservicereference == 'NULL')
+	{
+	$show_result_url = "";
+	
+	} else { 
+	
+	$show_result_url = "&search_channel=on&channel_id=$obj->e2eventservicereference"; }
 	
 	$saved_search_list = $saved_search_list."
 	<div id=\"search_list_div_$obj->id\">
@@ -132,6 +140,8 @@
 		  </select></p>
 		  </div>
 		  </div>
+		  <a href=\"search.php?searchterm=$obj->searchterm&option=$obj->search_option$show_result_url\" target=\"_blank\" title=\"Show results\" class=\"search_list_mg\">
+		  <i class=\"fa fa-search fa-1x\"></i></a>
 		<input id=\"saved_search_list_save_btn_$obj->id\" type=\"submit\" onClick=\"saved_search_list_save(this.id)\" value=\"SAVE\" class=\"btn btn-success\">
 		<input id=\"saved_search_list_delete_btn_$obj->id\" type=\"submit\" onClick=\"saved_search_list_delete(this.id)\" value=\"DELETE\" class=\"btn btn-danger\"/>
 		<span id=\"saved_search_list_status_$obj->id\"></span>
