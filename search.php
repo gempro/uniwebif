@@ -122,10 +122,10 @@ include("inc/dashboard_config.php");
 	// search all
 	if ($option == 'all' or $option == '')
 	{
-	$sql = 'SELECT * FROM epg_data '.$search_include.' MATCH (title_enc, e2eventservicename, description_enc, descriptionextended_enc) AGAINST ("%'.$raw_term.'%") '.$exclude_time.' '.$search_include2.' e2eventtitle LIKE "%'.$raw_term.'%" '.$search_include2.' e2eventservicename LIKE "%'.$raw_term.'%" '.$search_include2.' e2eventdescription LIKE "%'.$raw_term.'%" '.$search_include2.' e2eventdescriptionextended LIKE "%'.$raw_term.'%" ORDER BY e2eventstart ASC';
+	$sql = 'SELECT * FROM epg_data '.$search_include.' MATCH (title_enc, e2eventservicename, description_enc, descriptionextended_enc) AGAINST ("%'.$raw_term.'%") '.$exclude_time.' '.$search_include2.' title_enc LIKE "%'.$raw_term.'%" '.$exclude_time.' '.$search_include2.' e2eventservicename LIKE "%'.$raw_term.'%" '.$exclude_time.' '.$search_include2.' description_enc LIKE "%'.$raw_term.'%" '.$exclude_time.' '.$search_include2.' descriptionextended_enc LIKE "%'.$raw_term.'%" '.$exclude_time.' ORDER BY e2eventstart ASC';
 	
 	// count hits
-	$stmt = $dbmysqli->prepare('SELECT COUNT(*) as count_search FROM epg_data '.$search_include.' MATCH (title_enc, e2eventservicename, description_enc, descriptionextended_enc) AGAINST ("%'.$raw_term.'%") '.$exclude_time.' '.$search_include2.' e2eventtitle LIKE "%'.$raw_term.'%" '.$search_include2.' e2eventservicename LIKE "%'.$raw_term.'%" '.$search_include2.' e2eventdescription LIKE "%'.$raw_term.'%" '.$search_include2.' e2eventdescriptionextended LIKE "%'.$raw_term.'%" ');
+	$stmt = $dbmysqli->prepare('SELECT COUNT(*) as count_search FROM epg_data '.$search_include.' MATCH (title_enc, e2eventservicename, description_enc, descriptionextended_enc) AGAINST ("%'.$raw_term.'%") '.$exclude_time.' '.$search_include2.' title_enc LIKE "%'.$raw_term.'%" '.$exclude_time.' '.$search_include2.' e2eventservicename LIKE "%'.$raw_term.'%" '.$exclude_time.' '.$search_include2.' description_enc LIKE "%'.$raw_term.'%" '.$exclude_time.' '.$search_include2.' descriptionextended_enc LIKE "%'.$raw_term.'%" '.$exclude_time.' ');
 	
 	if( !is_a($stmt, 'MySQLI_Stmt') || $dbmysqli->errno > 0 )
 	throw new Exception( $dbmysqli->error, $dbmysqli->errno );
@@ -271,7 +271,8 @@ include("inc/dashboard_config.php");
 	if(!isset($result_list) or $result_list == "") { $result_list = ""; } else { $result_list = $result_list; }
 	
 	$result_list = $result_list."
-		<span class=\"sr_channel\" onclick=\"window.open('search.php?searchterm=$raw_term&option=$option&search_channel=on&channel_id=".$obj->e2eventservicereference."','_blank')\" title=\"Search the term only on this channel\"><span>$obj->e2eventservicename</span></span> | <span class=\"sr_title\" onclick=\"window.open('search.php?searchterm=$raw_term&option=$option','_blank')\" title=\"Search the term on all channels\"><span>Title: $obj->e2eventtitle</span></span> | Description: $obj->e2eventdescription
+		<div id=\"search_result_header\"><a href=\"search.php?searchterm=$raw_term&option=$option&search_channel=on&channel_id=".$obj->e2eventservicereference."\" target=\"_blank\" class=\"links\" title=\"Search the term only on this channel\"><strong>$obj->e2eventservicename</strong></a>
+		| $obj->e2eventtitle | Description: $obj->e2eventdescription</div>
 		<div class=\"spacer_10\"></div>
 		Extended description:
 		<div class=\"spacer_10\"></div>
@@ -493,7 +494,7 @@ function check_channel_search() {
           <div class="col-md-6">
             <div class="spacer_3"></div>
             <input name="searchterm" type="text" class="form-control" size="50" id="searchterm" value="<?php if(!isset($searchterm) or $searchterm == "") 
-			{ $searchterm = ""; } else { $searchterm = $searchterm; } echo $searchterm;?>">
+			{ $searchterm = ""; } else { $searchterm = $searchterm; } echo $searchterm; ?>">
             <div class="spacer_10"></div>
             <div id="radio-group">
               <div id="radio1">
@@ -566,29 +567,29 @@ function check_channel_search() {
             <input type="checkbox" name="search_channel" id="search_channel" onclick="check_channel_search()" <? if ($search_channel == 'on'){ echo "checked"; } ?> />
             Search only in this channel</label>
             <select name="channel_id" id="channel_id" class="form-control">
-              <?php 
-				// get channels
-				$sql = "SELECT * FROM channel_list ORDER BY e2servicename ASC";
-				
-				if ($result = mysqli_query($dbmysqli,$sql))
-				{
-				// Fetch one and one row
-				while ($obj = mysqli_fetch_object($result)) {
-				{
-				// set selected
-				if ($obj->selected == "1")
-				{
-				$select = "selected=\"selected\"";
-				}
-				elseif ($obj->selected == "0")
-				{
-				$select = "";
-				}
-				echo utf8_encode("<option value='$obj->e2servicereference' $select>$obj->e2servicename</option>
-				"); }    
-				}
-				} 
-				?>
+			<?php 
+			// get channels
+			$sql = "SELECT * FROM channel_list ORDER BY e2servicename ASC";
+			
+			if ($result = mysqli_query($dbmysqli,$sql))
+			{
+			// Fetch one and one row
+			while ($obj = mysqli_fetch_object($result)) {
+			{
+			// set selected
+			if ($obj->selected == "1")
+			{
+			$select = "selected=\"selected\"";
+			}
+			elseif ($obj->selected == "0")
+			{
+			$select = "";
+			}
+			echo utf8_encode("<option value='$obj->e2servicereference' $select>$obj->e2servicename</option>
+			"); }    
+			}
+			} 
+			?>
             </select>
           </div>
         </form>
