@@ -29,14 +29,12 @@ include("../inc/dashboard_config.php");
 	$sql = mysqli_query($dbmysqli, "UPDATE channel_list set cb_selected = '0'");
 	$sql = mysqli_query($dbmysqli, "UPDATE channel_list set cb_selected = '1' WHERE e2servicereference = '$channel'");
 	
-	//###
 	$date_for_cb = date("d.m.Y");
 	$date_start = $date_for_cb.'00:00';
 	$date_end = $date_for_cb.'23:59';
 	
 	$cb_time_start = strtotime($date_start);
 	$cb_time_end = strtotime($date_end);
-	//###
 	
 	if(!isset($time) or $time == "") 
 	{ 
@@ -206,12 +204,17 @@ $channelbrowser_list = $channelbrowser_list."
   <div id=\"row2\">
     <input id=\"channelbrowser_zap_btn_$obj->hash\" type=\"submit\" onClick=\"channelbrowser_zap(this.id)\" value=\"ZAPP TO CHANNEL\" class=\"btn btn-default\"/> </div>
   <div id=\"row3\">
-    <select id=\"rec_location_channelbrowser_$obj->hash\" class=\"rec_location_dropdown\">$rec_dropdown_channelbrowser</select>
-	<span id=\"channelbrowser_status_zap_$obj->hash\"></span> <span id=\"channelbrowser_status_timer_$obj->hash\"></span> </div>
+  <span id=\"channelbrowser_status_zap_$obj->hash\"></span>
+  <span id=\"channelbrowser_status_timer_$obj->hash\"></span>
+  </div>
   <div style=\"clear:both\"></div>
-</div> </div>
-	</div>
-	<div class=\"spacer_10\"></div>";
+  </div>
+  <div class=\"spacer_5\"></div>
+  <span>Record location: </span><select id=\"rec_location_channelbrowser_$obj->hash\" class=\"rec_location_dropdown\">$rec_dropdown_channelbrowser</select>
+  <div class=\"spacer_5\"></div>
+  </div>
+  </div>
+  <div class=\"spacer_10\"></div>";
 	}
 	}
 	if(!isset($channelbrowser_list) or $channelbrowser_list == "") { $channelbrowser_list = "No data for this day"; } else { $channelbrowser_list = $channelbrowser_list; }

@@ -116,14 +116,18 @@
     <input id=\"broadcast_timer_btn_$obj->hash\" type=\"submit\" onClick=\"broadcast_timer(this.id)\" value=\"SET TIMER\" class=\"btn btn-success\" title=\"send timer instantly\"/> </div>
   <div id=\"row2\">
     <input id=\"broadcast_zap_btn_$obj->hash\" type=\"submit\" onClick=\"broadcast_zap(this.id)\" value=\"ZAPP TO CHANNEL\" class=\"btn btn-default\"/> </div>
-  <div id=\"row3\">
-    <select id=\"rec_location_broadcast_$obj->hash\" class=\"rec_location_dropdown\">$rec_dropdown_broadcast</select>
-		<span id=\"broadcast_status_zap_$obj->hash\"></span> <span id=\"broadcast_status_timer_$obj->hash\"></span> </div>
+  <div id=\"row3\"><span id=\"broadcast_status_zap_$obj->hash\"></span> <span id=\"broadcast_status_timer_$obj->hash\"></span>
+  </div>
   <div style=\"clear:both\"></div>
-</div> </div>
-	</div>
-	<div class=\"spacer_10\"></div>";
-	if(!isset($broadcast_list_main_today) or $broadcast_list_main_today == "") { $broadcast_list_main_today = "No data for this day"; } else { $broadcast_list_main_today = $broadcast_list_main_today; }
+  </div>
+  <div class=\"spacer_5\"></div>
+  <span>Record location: </span><select id=\"rec_location_broadcast_$obj->hash\" class=\"rec_location_dropdown\">$rec_dropdown_broadcast</select>
+  <div class=\"spacer_5\"></div>
+  </div>
+  </div>
+  <div class=\"spacer_10\"></div>";
+  
+  if(!isset($broadcast_list_main_today) or $broadcast_list_main_today == "") { $broadcast_list_main_today = "No data for this day"; } else { $broadcast_list_main_today = $broadcast_list_main_today; }
 	
 	}
 }
