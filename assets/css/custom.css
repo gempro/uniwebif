@@ -595,7 +595,9 @@ display:none;
 	height: auto;
 	float: left;
 }
-
+#search_result_header .links {
+color:#000;
+}
 #saved_search_list {
 	width: 100%;
 	height: auto;
@@ -610,6 +612,9 @@ display:none;
 }
 .search_list_term {
 width:100%;
+}
+#saved_search_list .search_list_mg {
+color:#000;
 }
 /* For small screen */    
 @media (max-width: 768px) {
