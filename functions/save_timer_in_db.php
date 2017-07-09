@@ -22,13 +22,11 @@ include("../inc/dashboard_config.php");
 	if ($e2eventservicereference !== 'NULL'){ 
 	$search_include = 'WHERE e2eventservicereference = "'.$e2eventservicereference.'" AND'; 
 	$search_include2 = 'OR e2eventservicereference = "'.$e2eventservicereference.'" AND';
-	$search_include3 = 'AND e2eventservicereference = "'.$e2eventservicereference.'" ';
 	
 	} else { 
 	
 	$search_include = 'WHERE'; 
-	$search_include2 = 'OR'; 
-	$search_include3 = '';
+	$search_include2 = 'OR';
 	}
 	
 	// search all
@@ -40,19 +38,19 @@ include("../inc/dashboard_config.php");
 	// search title
 	if ($search_option == 'title')
 	{
-	$sql = 'SELECT * FROM epg_data '.$search_include.' title_enc LIKE "%'.$raw_term.'%" AND e2eventend > '.$time.' '.$search_include3.' ';
+	$sql = 'SELECT * FROM epg_data '.$search_include.' title_enc LIKE "%'.$raw_term.'%" AND e2eventend > '.$time.' ';
 	}
 	
 	// search description
 	if ($search_option == 'description')
 	{
-	$sql = 'SELECT * FROM epg_data '.$search_include.' description_enc LIKE "%'.$raw_term.'%" AND e2eventend > '.$time.' '.$search_include3.' ';
+	$sql = 'SELECT * FROM epg_data '.$search_include.' description_enc LIKE "%'.$raw_term.'%" AND e2eventend > '.$time.' ';
 	}
 	
 	// search extended description
 	if ($search_option == 'extdescription')
 	{
-	$sql = 'SELECT * FROM epg_data '.$search_include.' descriptionextended_enc LIKE "%'.$raw_term.'%" AND e2eventend > '.$time.' '.$search_include3.' ';
+	$sql = 'SELECT * FROM epg_data '.$search_include.' descriptionextended_enc LIKE "%'.$raw_term.'%" AND e2eventend > '.$time.' ';
 	}
 
 	if ($result2 = mysqli_query($dbmysqli,$sql))
