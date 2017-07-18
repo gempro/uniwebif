@@ -112,7 +112,7 @@ include("../inc/dashboard_config.php");
 	$timestamp_forward_start = $timestamp_dup + $timestamp;
 	$timestamp_forward_end = $timestamp_forward_start;
 	
-	$time_start = $timestamp_forward_start - $dur_down_broadcast;
+	$time_start = $timestamp_forward_start;
 	$time_end = $timestamp_forward_end + $dur_up_broadcast;
 	
 	if ($time_format == '1')
