@@ -2,7 +2,7 @@
 session_start();
 //
 include("inc/dashboard_config.php");
-	
+
 	// select oldest entry
 	$query = mysqli_query($dbmysqli, "SELECT e2eventservicename, e2eventstart FROM `epg_data` ORDER BY e2eventstart ASC LIMIT 0 , 1");
 	$first_entry = mysqli_fetch_assoc($query);
@@ -37,112 +37,7 @@ include("inc/dashboard_config.php");
 	if ($date_latest == '01.01.1970 01:00' or $date_latest == '1/01/1970 1:00 AM'){ $date_latest = 'no data'; }
 	if ($first_entry['e2eventservicename'] == ''){ $first_entry['e2eventservicename'] = 'no data'; }	
 	if ($last_entry['e2eventservicename'] == ''){ $last_entry['e2eventservicename'] = 'no data'; }
-	
-	$sql = "SELECT * from channel_list order by e2servicename ASC";
-	
-	// delete selected channels
-	if(isset($_POST['channel_delete']))
-	{
-	$checkbox_delete = $_POST['checkbox_delete'];
-	
-	for($i=0;$i<count($checkbox_delete);$i++){
-	
-	$del_id = $checkbox_delete[$i];
-	
-	// delete epg from channel
-	$sql = mysqli_query($dbmysqli, "SELECT channel_hash FROM channel_list WHERE id = '$del_id'");
-	$result = mysqli_fetch_assoc($sql);
-	$sql = mysqli_query($dbmysqli, "DELETE FROM epg_data WHERE channel_hash = '".$result['channel_hash']."' ");
-	
-	// delete channel
-	$sql = "DELETE FROM channel_list WHERE id = '$del_id'";
-	$result = mysqli_query($dbmysqli, $sql);
-	$sql = mysqli_query($dbmysqli, "OPTIMIZE TABLE `channel_list`");
-	}
-	if($result){
-	Header("Location: channel_list.php"); 
-	exit();
-	}
-	}
-	
-	// select crawl
-	if(isset($_POST['select_all_crawl']))
-	{
-	$sql = "UPDATE `channel_list` set crawl = 1";
-	$result = mysqli_query($dbmysqli, $sql);
-	Header("Location: channel_list.php"); 
-	exit();
-	}
-	
-	// unselect all crawl
-	if(isset($_POST['unselect_all_crawl']))
-	{
-	$sql = "UPDATE `channel_list` set crawl = 0";
-	$result = mysqli_query($dbmysqli, $sql);
-	Header("Location: channel_list.php"); 
-	exit();
-	}
-	
-	// select zap
-	if(isset($_POST['select_all_zap']))
-	{
-	$sql = "UPDATE `channel_list` set zap = 1";
-	$result = mysqli_query($dbmysqli, $sql);
-	Header("Location: channel_list.php"); 
-	exit();
-	}
-	
-	// unselect all zap
-	if(isset($_POST['unselect_all_zap']))
-	{
-	$sql = "UPDATE `channel_list` set zap = 0";
-	$result = mysqli_query($dbmysqli, $sql);
-	Header("Location: channel_list.php"); 
-	exit();
-	}
 
-	if ($result = mysqli_query($dbmysqli,$sql))
-	{
-	// Fetch one and one row
-	while ($obj = mysqli_fetch_object($result)) {
-	{
-	
-	if ($obj->crawl == "1")
-	{
-	$checked_crawl = "checked";
-	}
-	elseif ($obj->crawl == "0")
-	{
-	$checked_crawl = ""; }
-	
-	if ($obj->zap == "1")
-	{
-	$checked_zap = "checked";
-	}
-	elseif ($obj->zap == "0")
-	{
-	$checked_zap = ""; }
-	
-	if(!isset($channel_list) or $channel_list == "") { $channel_list = ""; } else { $channel_list = $channel_list; }
-	$channel_list = $channel_list."<div id=\"channel_list_content\">
-		<div id=\"row1\"><!--channel crawl-->
-		  <input id=\"set_crawl_channel_$obj->id\" name=\"checkbox_crawl[]\" type=\"checkbox\" onClick=\"set_crawl_channel(this.id)\" $checked_crawl>
-		</div>
-		<div id=\"row2\"><!--channel zap-->
-		  <input id=\"set_zap_channel_$obj->id\" name=\"checkbox_zap[]\" type=\"checkbox\" onClick=\"set_zap_channel(this.id)\" $checked_zap>
-		</div>
-		<div id=\"row3\"><!--channel delete-->
-		  <input id=\"checkbox_del\" name=\"checkbox_delete[]\" type=\"checkbox\" value=\"$obj->id\">
-		</div>
-		<div id=\"row4\">$obj->e2servicename <span id=\"edit_channel_$obj->id\"></span>
-		</div>
-		<div style=\"clear:both\">&nbsp;</div>
-		</div>";
-	}
-    }
-  // Free result set
-  mysqli_free_result($result);
-}
 //close db
 mysqli_close($dbmysqli);
 ?>
@@ -151,7 +46,7 @@ mysqli_close($dbmysqli);
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Uniwebif : Channel List</title>
+<title>Uniwebif : About</title>
 <!-- BOOTSTRAP STYLES-->
 <link href="assets/css/bootstrap.css" rel="stylesheet" />
 <!-- FONTAWESOME STYLES-->
@@ -203,7 +98,7 @@ animatedcollapse.init()
     <div class="adjust-nav">
       <div class="navbar-header">
         <button type="button" class="navbar-toggle" onclick="nav_icon_scroll()" data-toggle="collapse" data-target=".sidebar-collapse"> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button>
-        <a class="navbar-brand" href="channel_list.php"><i class="fa fa-square-o"></i>&nbsp;Channel list</a> </div>
+        <a class="navbar-brand" href="about.php"><i class="fa fa-square-o"></i>&nbsp;About</a> </div>
       <div class="navbar-collapse collapse">
         <ul class="nav navbar-nav navbar-right">
           <div class="row">
@@ -220,7 +115,7 @@ animatedcollapse.init()
   <nav class="navbar-default navbar-side" role="navigation">
     <div class="sidebar-collapse">
       <ul class="nav" id="main-menu">
-        <script language="JavaScript" type="text/javascript"> document.write(navbar_header_channel_list);</script>
+        <script language="JavaScript" type="text/javascript"> document.write(navbar_header_about);</script>
         <li> <a href="dashboard.php"><i class="fa fa-home"></i>HOME</a> </li>
         <li> <a href="search.php"><i class="fa fa-search"></i>Search</a> </li>
         <li> <a href="timer.php"><i class="fa fa-clock-o"></i>Timer</a> </li>
@@ -233,21 +128,21 @@ animatedcollapse.init()
             <li> <a href="#" onclick="animatedcollapse.toggle('div_send_timer');"><i class="fa fa-chevron-right"></i>Send timer from database to Receiver</a> </li>
           </ul>
         </li>
-        <li role="presentation" class="active"> <a href="#"><i class="fa fa-cog"></i>Settings<span class="fa arrow"></span></a>
+        <li role="presentation"> <a href="#"><i class="fa fa-cog"></i>Settings<span class="fa arrow"></span></a>
           <ul class="nav nav-second-level">
             <li> <a href="settings.php"><i class="fa fa-cog"></i>Main Settings</a> </li>
-            <li> <a href="channel_list.php"><i class="fa fa-list"></i><strong>Channel List</strong></a> </li>
+            <li> <a href="channel_list.php"><i class="fa fa-list"></i>Channel List</a> </li>
             <li> <a href="bouquet_list.php"><i class="fa fa-list"></i>Bouquet List</a> </li>
           </ul>
         </li>
         <li> <a href="records.php"><i class="glyphicon glyphicon-record"></i>Records</a> </li>
         <li> <a id="116" onclick="power_control(this.id)" style="cursor:pointer;"> <i class="glyphicon glyphicon-off"></i>Wake up / Standby <span id="pc116"></span></a> </li>
-        <li> <a href="#"><i class="glyphicon glyphicon-hand-right"></i>Extras<span class="fa arrow"></span></a>
+        <li role="presentation" class="active"> <a href="#"><i class="glyphicon glyphicon-hand-right"></i>Extras<span class="fa arrow"></span></a>
           <ul class="nav nav-second-level">
             <li> <a href="teletext.php"><i class="fa fa-globe"></i>Teletext Browser</a> </li>
             <li> <a href="#" onclick="animatedcollapse.toggle('div_start_channelzapper');"> <i class="fa fa-arrow-up"></i>Channel Zapper</a> </li>
             <li><a href="tv_services.php"><i class="fa fa-list"></i>TV Services</a> </li>
-            <li> <a href="about.php"><i class="glyphicon glyphicon-question-sign"></i>About</a> </li>
+            <li> <a href="about.php"><i class="glyphicon glyphicon-question-sign"></i><strong>About</strong></a> </li>
           </ul>
         </li>
       </ul>
@@ -265,7 +160,7 @@ animatedcollapse.init()
     <div id="page-inner">
       <div class="row">
         <div class="col-md-12">
-          <h2>Channel list</h2>
+          <h2>About</h2>
         </div>
       </div>
       <!--crawl channel id-->
@@ -311,61 +206,8 @@ animatedcollapse.init()
       <hr />
       <div class="row">
         <div class="col-md-12">
-          <form name="form1" method="post" action="">
-            <div id="channel-list-button-group">
-              <div id="row1"><input name="select_all_crawl" type="submit" class="btn btn-xs btn-success" value="select all">
-              </div>
-              <div id="row2"><input name="unselect_all_crawl" type="submit" class="btn btn-xs btn-success" value="unselect all">
-              </div>
-              <div id="row3">
-              Channel's to crawl
-              </div>
-              <div style="clear:both"></div>
-            </div>
-            <div class="spacer_10"></div>
-            <div id="channel-list-button-group">
-              <div id="row1"><input name="select_all_zap" type="submit" class="btn btn-xs btn-primary" value="select all">
-              </div>
-              <div id="row2"><input name="unselect_all_zap" type="submit" class="btn btn-xs btn-primary" value="unselect all">
-              </div>
-              <div id="row3">
-                Channel's for Zapper 
-              </div>
-              <div style="clear:both"></div>
-            </div>
-            <div class="spacer_10"></div>
-            <div id="channel-list-button-group">
-              <div id="row1"><input name="channel_delete" type="submit" class="btn btn-xs btn-danger" value="delete selected">
-              </div>
-              <div id="row2">
-              </div>
-              <div id="row3">Delete channel's from list
-              </div>
-              <div style="clear:both"></div>
-               <div class="spacer_10"></div>
-              <div class="row">
-              <div class="col-md-4">Channel Name:<input id="channel_name" type="text" class="form-control" size="10">
-              <div class="spacer_5"></div>
-              </div>
-              <div class="col-md-4">Service Reference:<input id="service_reference" type="text" class="form-control" size="50">
-              <div class="spacer_5"></div>
-              </div>
-              <div class="col-md-4"></div>
-              </div><!-- ROW -->
-              <div class="row">
-              <div class="col-md-2">
-              <div class="spacer_5"></div>
-              <a onclick="add_single_channel()" class="btn btn-default">Add channel</a>
-              <span id="add_single_channel_status"></span>
-              </div>
-              </div><!-- ROW -->
-            </div>
-            <hr>
-            <div id="channel_list">
-			<?php if(!isset($channel_list) or $channel_list == "") { $channel_list = ""; } else { echo utf8_encode($channel_list); } ?>
-            </div>
-            <!-- channel list -->
-          </form>
+        Uniwebif v1.1<div class="spacer_10"></div>
+        Download latest version at <a href="https://github.com/gempro/uniwebif" target="_blank">Github</a>
         </div>
       </div>
       <!-- /. ROW  -->

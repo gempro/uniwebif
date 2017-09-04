@@ -215,6 +215,12 @@ function getDatabaseByte($bytes) {
 <link href="assets/css/font-awesome.css" rel="stylesheet" />
 <!-- CUSTOM STYLES-->
 <link href="assets/css/custom.css" rel="stylesheet" />
+<link rel="apple-touch-icon" sizes="180x180" href="images/icon/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="images/icon/favicon-16x16.png">
+<link rel="manifest" href="images/icon/manifest.json">
+<link rel="mask-icon" href="images/icon/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="theme-color" content="#ffffff">
 <!-- GOOGLE FONTS-->
 <!--<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css' />-->
 <script type="text/javascript" src="js/jquery.min.js"></script>
@@ -258,6 +264,20 @@ animatedcollapse.init()
 );
 
 // reload progressbar
+//var file = "functions/progressbar1.php";
+//var seconds_load = 180;
+//
+//$(document).ready(function() {
+//       
+//    setInterval(function() {
+//        $('#progressbar1').load(file + '?ts=' + (new Date().getTime()));
+//    }, (seconds_load*1000));
+//});
+
+var reload_progressbar1 = '<? echo $reload_progressbar1; ?>';
+
+if (reload_progressbar1 == 1) {
+
 var file = "functions/progressbar1.php";
 var seconds_load = 180;
 
@@ -265,9 +285,11 @@ $(document).ready(function() {
        
     setInterval(function() {
         $('#progressbar1').load(file + '?ts=' + (new Date().getTime()));
-    }, (seconds_load*500));
+    }, (seconds_load*1000));
 });
+}
 
+// ticker
 document.addEventListener('DOMContentLoaded', checkWidth);
 document.addEventListener('resize', checkWidth);
 function checkWidth() {
@@ -300,7 +322,7 @@ $(document).ready(function() {
         <ul class="nav navbar-nav navbar-right">
           <div class="row">
             <div class="col-md-12">
-              <div id="navbar_info">oldest EPG: <span class="badge"><?php echo $date_first; echo " - "; echo utf8_encode($first_entry['e2eventservicename']); ?></span> latest EPG: <span class="badge-success"><?php echo $date_latest; echo " - "; echo utf8_encode($last_entry['e2eventservicename']); ?></span> </div>
+              <div id="navbar_info">oldest: <span class="badge"><?php echo $date_first; echo " - "; echo utf8_encode($first_entry['e2eventservicename']); ?></span> latest: <span class="badge-success"><?php echo $date_latest; echo " - "; echo utf8_encode($last_entry['e2eventservicename']); ?></span> </div>
               <!--navbar_info-->
             </div>
           </div>
@@ -312,8 +334,8 @@ $(document).ready(function() {
   <nav class="navbar-default navbar-side" role="navigation">
     <div class="sidebar-collapse">
       <ul class="nav" id="main-menu">
-          <script language="JavaScript" type="text/javascript"> document.write(navbar_header);</script>
-        <li> <a href="dashboard.php"><i class="fa fa-home"></i>HOME</a> </li>
+          <script language="JavaScript" type="text/javascript"> document.write(navbar_header_dashboard);</script>
+        <li> <a href="dashboard.php"><i class="fa fa-home"></i><strong>HOME</strong></a> </li>
         <li> <a href="search.php"><i class="fa fa-search"></i>Search</a> </li>
         <li> <a href="timer.php"><i class="fa fa-clock-o"></i>Timer</a> </li>
         <li> <a href="#"><i class="fa fa-wrench"></i>Crawler Tools<span class="fa arrow"></span></a>
@@ -333,13 +355,27 @@ $(document).ready(function() {
           </ul>
         </li>
         <li> <a href="records.php"><i class="glyphicon glyphicon-record"></i>Records</a> </li>
-        <li> <a href="#" onclick="animatedcollapse.toggle('div_start_channelzapper');"> <i class="fa fa-arrow-up"></i>Channel Zapper</a> </li>
         <li> <a id="116" onclick="power_control(this.id)" style="cursor:pointer;"> <i class="glyphicon glyphicon-off"></i>Wake up / Standby <span id="pc116"></span></a> </li>
+        <li> <a href="#"><i class="glyphicon glyphicon-hand-right"></i>Extras<span class="fa arrow"></span></a>
+          <ul class="nav nav-second-level">
+            <li> <a href="teletext.php"><i class="fa fa-globe"></i>Teletext Browser</a> </li>
+            <li> <a href="#" onclick="animatedcollapse.toggle('div_start_channelzapper');"> <i class="fa fa-arrow-up"></i>Channel Zapper</a> </li>
+            <li><a href="tv_services.php"><i class="fa fa-list"></i>TV Services</a> </li>
+            <li> <a href="about.php"><i class="glyphicon glyphicon-question-sign"></i>About</a> </li>
+          </ul>
+        </li>
       </ul>
     </div>
   </nav>
   <!-- /. NAV SIDE  -->
   <div id="page-wrapper">
+  <div class="row">
+  <div class="col-md-12">
+  <div id="statusbar_cnt_outter">
+  <div id="statusbar_cnt"></div>
+  </div>
+  </div>
+  </div><!-- /. ROW  -->
     <div id="page-inner">
       <div class="row">
         <div class="col-md-12">
@@ -474,12 +510,12 @@ $(document).ready(function() {
             <div class="tab-pane fade" id="display_time_forward">
               <h4>Broadcast</h4>
               <div id="broadcast_main_time_forward"> </div>
-              <!--broadcast_main_hour_forward-->
+              <!--broadcast_main_time_forward-->
             </div>
             <div class="tab-pane fade" id="display_time_backward">
               <h4>Broadcast</h4>
               <div id="broadcast_main_time_backward"> </div>
-              <!--broadcast_main_hour_backward-->
+              <!--broadcast_main_time_backward-->
             </div>
           </div>
         </div>
@@ -489,7 +525,7 @@ $(document).ready(function() {
       <hr />
       <div class="row">
         <div class="col-md-12">
-          <h5>PRIMETIME</h5>
+          <h5>Primetime</h5>
           <ul class="nav nav-tabs">
             <li class="active">
               <button id="primetime_today" href="#display_primetime_today" class="btn btn-default" onClick="primetime_main(this.id); animatedcollapse.show('primetime_main_today');" data-toggle="tab">Primetime today</button>
@@ -503,7 +539,7 @@ $(document).ready(function() {
           </ul>
           <div class="tab-content">
             <div class="tab-pane fade active in" id="display_primetime_today">
-              <h4>Primetime today</h4>
+              <h4>Primetime</h4>
               <div id="primetime_main_today">
                 <?php if(!isset($primetime_list_main_today) or $primetime_list_main_today == ""){ $primetime_list_main_today = ""; } else { echo $primetime_list_main_today; } ?>
               </div>
@@ -524,7 +560,7 @@ $(document).ready(function() {
         </div>
         <div class="col-md-12"> <a name="channelbrowser_list" id="channelbrowser_list"></a>
           <hr />
-          <h4>Channel Browser</h4>
+          <h5>Channel Browser</h5>
           <ul class="nav nav-tabs">
             <li>
               <select name="channel_id" id="channel_id" class="form-control">
@@ -564,7 +600,7 @@ $(document).ready(function() {
           </ul>
           <div class="tab-content">
             <div class="tab-pane fade active in" id="cb_display_now_today">
-              <h4>Broadcast today</h4>
+              <h4>Broadcast</h4>
               <div id="channelbrowser_main_cb_now_today"> </div>
               <!--channelbrowser_main_now_today-->
             </div>

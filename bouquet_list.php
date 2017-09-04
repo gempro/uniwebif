@@ -88,6 +88,12 @@ include("inc/dashboard_config.php");
 <link href="assets/css/font-awesome.css" rel="stylesheet" />
 <!-- CUSTOM STYLES-->
 <link href="assets/css/custom.css" rel="stylesheet" />
+<link rel="apple-touch-icon" sizes="180x180" href="images/icon/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="images/icon/favicon-16x16.png">
+<link rel="manifest" href="images/icon/manifest.json">
+<link rel="mask-icon" href="images/icon/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="theme-color" content="#ffffff">
 <!-- GOOGLE FONTS-->
 <!--<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css' />-->
 <script type="text/javascript" src="js/jquery.min.js"></script>
@@ -134,7 +140,7 @@ animatedcollapse.init()
         <ul class="nav navbar-nav navbar-right">
           <div class="row">
             <div class="col-md-12">
-              <div id="navbar_info">oldest EPG: <span class="badge"><?php echo $date_first; echo " - "; echo utf8_encode($first_entry['e2eventservicename']); ?></span> latest EPG: <span class="badge-success"><?php echo $date_latest; echo " - "; echo utf8_encode($last_entry['e2eventservicename']); ?></span> </div>
+              <div id="navbar_info">oldest: <span class="badge"><?php echo $date_first; echo " - "; echo utf8_encode($first_entry['e2eventservicename']); ?></span> latest: <span class="badge-success"><?php echo $date_latest; echo " - "; echo utf8_encode($last_entry['e2eventservicename']); ?></span> </div>
               <!--navbar_info-->
             </div>
           </div>
@@ -146,7 +152,7 @@ animatedcollapse.init()
   <nav class="navbar-default navbar-side" role="navigation">
     <div class="sidebar-collapse">
       <ul class="nav" id="main-menu">
-        <script language="JavaScript" type="text/javascript"> document.write(navbar_header);</script>
+        <script language="JavaScript" type="text/javascript"> document.write(navbar_header_bouquet_list);</script>
         <li> <a href="dashboard.php"><i class="fa fa-home"></i>HOME</a> </li>
         <li> <a href="search.php"><i class="fa fa-search"></i>Search</a> </li>
         <li> <a href="timer.php"><i class="fa fa-clock-o"></i>Timer</a> </li>
@@ -167,13 +173,27 @@ animatedcollapse.init()
           </ul>
         </li>
         <li> <a href="records.php"><i class="glyphicon glyphicon-record"></i>Records</a> </li>
-        <li> <a href="#" onclick="animatedcollapse.toggle('div_start_channelzapper');"> <i class="fa fa-arrow-up"></i>Channel Zapper</a> </li>
         <li> <a id="116" onclick="power_control(this.id)" style="cursor:pointer;"> <i class="glyphicon glyphicon-off"></i>Wake up / Standby <span id="pc116"></span></a> </li>
+        <li> <a href="#"><i class="glyphicon glyphicon-hand-right"></i>Extras<span class="fa arrow"></span></a>
+          <ul class="nav nav-second-level">
+            <li> <a href="teletext.php"><i class="fa fa-globe"></i>Teletext Browser</a> </li>
+            <li> <a href="#" onclick="animatedcollapse.toggle('div_start_channelzapper');"> <i class="fa fa-arrow-up"></i>Channel Zapper</a> </li>
+            <li><a href="tv_services.php"><i class="fa fa-list"></i>TV Services</a> </li>
+            <li> <a href="about.php"><i class="glyphicon glyphicon-question-sign"></i>About</a> </li>
+          </ul>
+        </li>
       </ul>
     </div>
   </nav>
   <!-- /. NAV SIDE  -->
   <div id="page-wrapper">
+  <div class="row">
+  <div class="col-md-12">
+  <div id="statusbar_cnt_outter">
+  <div id="statusbar_cnt"></div>
+  </div>
+  </div>
+  </div><!-- /. ROW  -->
     <div id="page-inner">
       <div class="row">
         <div class="col-md-12">
