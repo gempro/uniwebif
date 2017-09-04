@@ -1,0 +1,29 @@
+v1.1
+
++ Channel Info Statusbar
+
++ IMDb link for Broadcast's
+
++ Teletext Browser
+
++ Complete Service list from Receiver added, where all Channels could be zapped and streamed (under Extras)
+
++ Function to create a dummy timer which turn Receiver on from Deep Standby, before crawling process begins (under Settings)
+
++ Option to switch Receiver in Standby/Deep Standy after crawling (under Settings)
+
++ Option to activate/deactivate the continously updating from 'Broadcast today' Statusbar (under Settings)
+
++ Option to choose http or https for Connections to Receiver (under Settings)
+
++ Option to delete expired timer from Receiver (under Settings)
+
++ Option to add a single Channel to Database (under Channel list)
+
++ Function to crawl Record folders from Receiver by click (Under Records > Reload folders)
+
+-
+
+Fixed a bug where time overlapped broadcast's in list was not handled correct
+
+-

@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Erstellungszeit: 05. Jul 2017 um 18:26
+-- Erstellungszeit: 04. Sep 2017 um 18:23
 -- Server Version: 5.5.38
 -- PHP-Version: 5.4.45-0+deb7u6
 
@@ -115,7 +115,7 @@ CREATE TABLE IF NOT EXISTS `epg_data` (
   `e2eventcurrenttime` varchar(10) NOT NULL,
   `e2eventservicereference` text NOT NULL,
   `hd_channel` varchar(3) NOT NULL,
-  `crawler_time` text NOT NULL,
+  `crawler_time` varchar(10) NOT NULL,
   `hash` varchar(50) NOT NULL,
   `channel_hash` varchar(100) NOT NULL,
   `timer` int(1) NOT NULL,
@@ -142,14 +142,7 @@ CREATE TABLE IF NOT EXISTS `record_locations` (
   `e2location` text NOT NULL,
   `selected` int(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
-
---
--- Daten für Tabelle `record_locations`
---
-
-INSERT INTO `record_locations` (`id`, `e2location`, `selected`) VALUES
-(1, '/hdd/movie/', 0);
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -194,18 +187,26 @@ CREATE TABLE IF NOT EXISTS `settings` (
   `crawler_minute` varchar(2) NOT NULL,
   `crawler_am_pm` text NOT NULL,
   `last_epg_crawl` int(12) NOT NULL,
-  `start_epg_crawler` int(2) NOT NULL DEFAULT '30',
+  `start_epg_crawler` int(4) NOT NULL DEFAULT '30',
+  `after_crawl_action` int(1) NOT NULL DEFAULT '0',
   `search_crawler` int(1) NOT NULL DEFAULT '0',
   `last_search_crawl` int(12) NOT NULL,
   `display_old_epg` int(1) NOT NULL DEFAULT '0',
   `streaming_symbol` int(1) NOT NULL DEFAULT '1',
+  `imdb_symbol` int(1) NOT NULL,
   `timer_ticker` int(1) NOT NULL DEFAULT '1',
   `ticker_time` int(6) NOT NULL DEFAULT '86400',
   `mark_searchterm` int(1) NOT NULL DEFAULT '1',
   `send_timer` int(1) NOT NULL DEFAULT '0',
   `delete_old_timer` int(1) NOT NULL DEFAULT '0',
+  `delete_receiver_timer` int(1) NOT NULL DEFAULT '0',
+  `dummy_timer` int(1) NOT NULL DEFAULT '0',
+  `dummy_timer_time` int(12) NOT NULL,
+  `dummy_timer_current` int(12) NOT NULL,
   `delete_old_epg` int(1) NOT NULL DEFAULT '0',
+  `url_format` varchar(5) NOT NULL DEFAULT 'http',
   `del_time` int(5) NOT NULL DEFAULT '21600',
+  `reload_progressbar1` int(1) NOT NULL DEFAULT '1',
   `extra_rec_time` int(4) NOT NULL DEFAULT '0',
   `cz_activate` int(1) NOT NULL DEFAULT '0',
   `cz_wait_time` int(2) NOT NULL DEFAULT '30',
@@ -222,13 +223,6 @@ CREATE TABLE IF NOT EXISTS `settings` (
   `dur_up_primetime` int(5) NOT NULL DEFAULT '7200',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
---
--- Daten für Tabelle `settings`
---
-
-INSERT INTO `settings` (`id`, `box_ip`, `box_user`, `box_password`, `activate_cron`, `epg_entries_per_channel`, `channel_entries`, `time_format`, `epg_crawler`, `crawler_timestamp`, `crawler_hour`, `crawler_minute`, `crawler_am_pm`, `last_epg_crawl`, `start_epg_crawler`, `search_crawler`, `last_search_crawl`, `display_old_epg`, `streaming_symbol`, `timer_ticker`, `ticker_time`, `mark_searchterm`, `send_timer`, `delete_old_timer`, `delete_old_epg`, `del_time`, `extra_rec_time`, `cz_activate`, `cz_wait_time`, `cz_repeat`, `cz_hour`, `cz_minute`, `cz_am_pm`, `cz_start_channel`, `cz_timestamp`, `cz_worktime`, `dur_down_broadcast`, `dur_up_broadcast`, `dur_down_primetime`, `dur_up_primetime`) VALUES
-(0, '', '', '', 0, 100, 100, 2, 1, 0, '12', '00', 'PM', 0, 75, 0, 0, 0, 1, 1, 604800, 1, 0, 1, 1, 86400, 600, 0, 15, 'daily', '08', '00', 'AM', '1:0:19:132F:3EF:1:C00000:0:0:0:', '0', '0', 600, 1800, 300, 7200);
 
 -- --------------------------------------------------------
 
@@ -259,6 +253,22 @@ CREATE TABLE IF NOT EXISTS `timer` (
   `status` text NOT NULL,
   `record_status` text NOT NULL,
   `show_ticker` int(1) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Tabellenstruktur für Tabelle `tv_services`
+--
+
+DROP TABLE IF EXISTS `tv_services`;
+CREATE TABLE IF NOT EXISTS `tv_services` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `e2servicename` text NOT NULL,
+  `servicename_enc` text NOT NULL,
+  `e2servicereference` varchar(50) NOT NULL,
+  `channel_hash` varchar(100) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
