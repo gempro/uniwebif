@@ -5,7 +5,7 @@
 <title>_ticker_main</title>
 <?php 
 //
-	include("../inc/dashboard_config.php");
+include("../inc/dashboard_config.php");
 
 	if(!isset($_REQUEST["action"]) or $_REQUEST["action"] == "") { $action = ""; } else { $action = $_REQUEST["action"]; }
 	if(!isset($_REQUEST["hash"]) or $_REQUEST["hash"] == "") { $hash = ""; } else { $hash = $_REQUEST["hash"]; }

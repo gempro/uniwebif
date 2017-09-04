@@ -3,7 +3,7 @@
 include("../inc/dashboard_config.php");
 
 	// check power status
-	$xmlfile = 'http://'.$box_ip.'/web/powerstate';
+	$xmlfile = ''.$url_format.'://'.$box_ip.'/web/powerstate';
 
 	$power_command = file_get_contents($xmlfile, false, $webrequest);
 
@@ -18,7 +18,7 @@ include("../inc/dashboard_config.php");
 	if ($power_status == 'true')
 	{
 	// turn on Receiver
-	$turn_on_request = "http://$box_ip/web/powerstate?newstate=0";
+	$turn_on_request = "$url_format://$box_ip/web/powerstate?newstate=0";
 	$turn_on = file_get_contents($turn_on_request, false, $webrequest);
 	//
 	}
@@ -47,7 +47,7 @@ include("../inc/dashboard_config.php");
 	{
 	
 	// send zapp request
-	$zapp_request = "http://$box_ip/web/zap?sRef=$obj->e2servicereference";
+	$zapp_request = "$url_format://$box_ip/web/zap?sRef=$obj->e2servicereference";
 	$request = file_get_contents($zapp_request, false, $webrequest);
 	
 	$sql = mysqli_query($dbmysqli, "DELETE FROM epg_data WHERE channel_hash = '".$obj->channel_hash."'");
@@ -55,7 +55,7 @@ include("../inc/dashboard_config.php");
 	sleep($cz_sleeptime);
 	
 	// crawl channel
-	$start_crawl_request = "http://$script_location/uniwebif/functions/channel_crawler_complete.php?channel_id=$obj->e2servicereference";
+	$start_crawl_request = "$url_format://$script_location/uniwebif/functions/channel_crawler_complete.php?channel_id=$obj->e2servicereference";
 	$start_crawl = file_get_contents($start_crawl_request); }
 	}
 	}
@@ -65,35 +65,39 @@ include("../inc/dashboard_config.php");
 	$result2 = mysqli_fetch_assoc($sql2);
 	$start_channel = $result2['e2servicereference'];
 	
-	$zap_request = "http://$box_ip/web/zap?sRef=$start_channel";
+	$zap_request = "$url_format://$box_ip/web/zap?sRef=$start_channel";
 	$zap_start_channel = file_get_contents($zap_request, false, $webrequest);
 	
 	sleep(10);
 	
-	// turn off Receiver
-	//$turn_off = file_get_contents($turn_on_request, false, $webrequest);
-	
-	// check power status
-	$xmlfile = 'http://'.$box_ip.'/web/powerstate';
-
-	$power_command = file_get_contents($xmlfile, false, $webrequest);
-
-	$xml = simplexml_load_string($power_command);
-
-	if(!isset($xml->e2instandby) or $xml->e2instandby == ""){ $xml->e2instandby = ""; }
-	
-	$power_status = $xml->e2instandby;
-	
-	$power_status = preg_replace('/\s+/', '', $power_status);
-	
-	if ($power_status == 'false')
+	// delete dummy timer
+	if ($dummy_timer == '1')
 	{
-	// turn off Receiver
-	$turn_off_request = "http://$box_ip/web/powerstate?newstate=0";
-	$turn_off = file_get_contents($turn_off_request, false, $webrequest);
-	//
+	$dummy_timer_start = $dummy_timer_current;
+	$dummy_timer_time_end = $dummy_timer_start + 1;
+	
+	$dummy_timer_request = ''.$url_format.'://'.$box_ip.'/web/timerdelete?sRef='.$cz_start_channel.'&begin='.$dummy_timer_start.'&end='.$dummy_timer_time_end.'';
+	$delete_dummy_timer = file_get_contents($dummy_timer_request, false, $webrequest);
+	
+	sleep(3);
+	
+	// send dummy timer
+	$next_dummy_timer_start = $dummy_timer_start + 86400;
+	$next_dummy_timer_end = $next_dummy_timer_start + 1;
+	
+	$dummy_timer_request = ''.$url_format.'://'.$box_ip.'/web/timeradd?sRef='.$cz_start_channel.'&begin='.$next_dummy_timer_start.'&end='.$next_dummy_timer_end.'&name=Dummy%20Timer&description=Turn%20on%20Receiver%20from%20Deep%20Standby&tags=&afterevent=0&eit=0&disabled=0&justplay=1&repeated=0';
+	$send_dummy_timer = file_get_contents($dummy_timer_request, false, $webrequest);
 	}
 	
-	$sql = mysqli_query($dbmysqli, "OPTIMIZE TABLE `epg_data`");
+	sleep(3);
 	
+	// powerstate after crawling
+	if ($after_crawl_action == '9'){$powerstate = ''; } else { $powerstate = $after_crawl_action; }
+	
+	$powerstate_request = "$url_format://$box_ip/web/powerstate?newstate=$powerstate";
+	$send_powerstate = file_get_contents($powerstate_request, false, $webrequest);
+	
+	$sql = mysqli_query($dbmysqli, "UPDATE `settings` SET dummy_timer_time = '".$next_dummy_timer_start."' ");
+	$sql = mysqli_query($dbmysqli, "REPAIR TABLE `epg_data`");
+
 ?>

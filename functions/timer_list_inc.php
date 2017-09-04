@@ -29,7 +29,7 @@
 	// delete timer from receiver
 	if ($delete_from_box == '1')
 	{
-	$deleteTimer = "http://$box_ip/web/timerdelete?sRef=".$e2eventservicereference."&begin=".$e2eventstart."&end=".$e2eventend."";
+	$deleteTimer = "$url_format://$box_ip/web/timerdelete?sRef=".$e2eventservicereference."&begin=".$e2eventstart."&end=".$e2eventend."";
 	$deleteTimer_request = file_get_contents($deleteTimer, false, $webrequest);
 	}
 	

@@ -37,6 +37,25 @@ body {
 	padding-bottom: 15px;
 	padding-right: 30px;
 }
+#statusbar_cnt_outter {
+display:none;
+}
+#statusbar1 {
+	width: 100%;
+	height: auto;
+}
+#statusbar1 #row1 {
+	width: 90%;
+	min-width: 90%;
+	height: auto;
+	float: left;
+}
+#statusbar1 #row2 {
+	min-width: 10%;
+	max-width: 10%
+	height: auto;
+	float: left;
+}
 #div_crawl_complete {
 	background-color: #EFEFEF;
 	height: auto;
@@ -301,21 +320,23 @@ body {
 }
 #channel-list-button-group #row1 {
 	width: auto;
-	font-size: 14px;
-	font-weight: 900;
-	text-transform: uppercase;
 	float: left;
-	padding-top: 2px;
 	padding-right: 5px;
+	padding-top: 3px;
 }
 #channel-list-button-group #row2 {
 	width: auto;
 	float: left;
 	padding-right: 5px;
+	padding-top: 3px;
 }
 #channel-list-button-group #row3 {
 	width: auto;
 	float: left;
+	font-size: 18px;
+	font-weight: bold;
+	
+}
 }
 @media (max-width: 399px) {
 #channel-list-button-group #row1 {
@@ -578,7 +599,6 @@ display:none;
 /* For small screen */    
 @media (max-width: 768px) {
 #record_list_main #cnt_title {
-	font-weight: bold;
     width: 100%;
 	min-width:100%;
 	height: auto;
@@ -614,7 +634,7 @@ color:#000;
 width:100%;
 }
 #saved_search_list .search_list_mg {
-color:#000;
+color:#DFDFDF;
 }
 /* For small screen */    
 @media (max-width: 768px) {
@@ -715,6 +735,14 @@ text-decoration:underline;
 }
 .rec_location_dropdown {
 max-width:90%;
+}
+@media (max-width: 991px) {
+.rec_location_btn {
+margin-top: 5px;
+}
+.rec_location_dd {
+max-width:50%;
+}
 }
 #scroll_top {
 	width:45px; 

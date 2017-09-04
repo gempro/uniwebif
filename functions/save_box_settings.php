@@ -23,7 +23,7 @@ include("../inc/dashboard_config.php");
 	));
 
 	// check xml
-	$xmlfile = 'http://'.$set_box_ip.'/web/about';
+	$xmlfile = ''.$url_format.'://'.$set_box_ip.'/web/about';
 	
 	$check_conn = file_get_contents($xmlfile, false, $check_webrequest);
 	

@@ -76,7 +76,7 @@ include("../inc/dashboard_config.php");
 	// additional record time
 	$e2eventend = $e2eventend + $extra_rec_time;
 	
-	$timer_request = "http://$box_ip/web/timeradd?sRef=".$e2eventservicereference."&begin=".$e2eventstart."&end=".$e2eventend."&name=".$title_enc."&description=".$description_enc."&dirname=".$e2location."&afterevent=3&channelOld=".$e2eventservicereference."&endOld=".$e2eventend."&deleteOldOnSave=0";
+	$timer_request = "$url_format://$box_ip/web/timeradd?sRef=".$e2eventservicereference."&begin=".$e2eventstart."&end=".$e2eventend."&name=".$title_enc."&description=".$description_enc."&dirname=".$e2location."&afterevent=3";
 	
 	// request with eventid
 	//$timer_request = "http://$box_ip/web/timeraddbyeventid?sRef=".$e2eventservicereference."&eventid=".$e2eventid."&dirname=".$e2location."";

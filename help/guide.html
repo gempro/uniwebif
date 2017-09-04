@@ -41,7 +41,7 @@ a:active {
 <a href="#crawler_tools">Crawler Tools</a> <br />
 <a href="#settings">Settings</a> <br />
 <a href="#records">Records</a> <br />
-<a href="#channelzapper">Channel Zapper</a> <br />
+<a href="#extras">Extras</a> <br />
 <br />
 <hr>
 <br />
@@ -51,7 +51,7 @@ a:active {
 <p>2. Select the checkbox to search only in choosen channel</p>
 <p>3. Define the area to search</p>
 <p>4. Select the channel to search</p>
-<p>5. Choose location where broadcast's should save when sending a timer</p>
+<p>5. Choose location where broadcast's should saved when sending a timer</p>
 <p>6. Save the term and options for automatic search</p>
 <a href="#top">top</a><br />
 <hr>
@@ -83,15 +83,24 @@ a:active {
 <p><u>Crawler</u></p>
 <p>How many <strong>EPG entries</strong> per channel should be write in database | <em>Set here how many broadcasts per channel should be saved in database.</em></p>
 <p>How many <strong>Channels/Services</strong> per Bouquet should be write in database | <em>Only relevant when not all channels from a bouquet should be saved in database.</em></p>
-<p><strong>Activate</strong> automatic Search Crawler | <em>If this option is activated, the script will search the saved searchterms within EPG.</em></p>
+<p><strong>Activate</strong> automatic Search Crawler | <em>If this option is activated, the script will search the saved searchterms within EPG and create a Timer if the term was found.</em></p>
 <p><strong>Activate</strong> automatic EPG Crawler | <em>If this option is activated, the script crawl the channel when the sunnmary of broadcasts is under the summary which are set.</em><br>
 </p>
-<p>Crawler should start at remaining EPG entries | <em>Set here the minimum  of broadcasts before the automatic Crawler  starts.</em></p>
+<p>Send <strong>dummy timer</strong> | <em>If this option is activated a dummy timer will send to Receiver every day, to switch it on from <strong>Deep Standby</strong> before crawling process begins.</em></p>
+<p>Start Crawler at remaining EPG entries | <em>Set here the minimum  of broadcasts before the automatic Crawler starts.</em></p>
 <p>Set time when EPG Crawler should start | <em>Set here the time in 24 format when  crawling should start.</em></p>
-<p>When crawling finished, change to this channel | <em>Set here the channel to zapp, before Receiver turned off.<br>
-  <br>
-  </em></p>
-<p><u>Settings</u></p>
+<p>When crawling finished, change to this channel | <em>Set here the channel to zapp when crawling was finished.</em></p>
+<p>Switch Receiver after crawling | <em>Option to switch to Standby or turn off the Receiver.</em></p>
+<br>
+  <p><u>Channel Zapper</u></p>
+<p><strong>Activate</strong> automatic Channel Zapper | <em>If this option is activated the Channel Zapper will begin zapping at the set time.</em><br>
+    <em>This function stands alone and ensures  that the EPG on Receiver is up to date.</em><br>
+</p>
+<p>Wait on channel (in seconds) | <em>Time to remain on a channel to read the EPG.</em> <em>The time is valid for the zapping while crawling and stand alone Channel Zapper.</em></p>
+<p>Set time when Channel Zapper should start | <em>Set here the time in 24h format when  Channel Zapper should start. Take care that crawling process and zapping from Channel Zapper has no time conflict.</em></p>
+<p>Repeat zapping | <em>Set here the repeat time for the zapping.</em></p>
+<p><u><br>
+Settings</u></p>
 <p>Activate Cron | <em>If this option is selected, the cron.php will do nothing.</em> <em>All automatic processes are stopped.</em></p>
 <p>Displayed  time format | <em>Select here the displayed time format</em>.</p>
 <p>Period of time from <strong>start</strong>, at Broadcast list | <em>Set here the  time for start at 'Broadcast now'</em><br>
@@ -101,37 +110,48 @@ a:active {
   As example: Now it's 12h AM. When clicking 'Broadcast now' all broadcasts  displayed that are between 12:00 AM and  12:05 AM.(5 minutes was the lowest time value)<br>
   If period of time is set 10 Minutes, broadcasts with end between 12:05 AM and 12:15 AM are displayed.<br>
 The time which was set here, was also the <strong>browse time</strong> for Broadcast list.</p>
-<p>Period of time from <strong>start</strong>, at Primetime list | <em>Same as for 'Broadcast now' list</em></p>
-<p>Period of time from <strong>end</strong>, at Primetime list | <em>Same as for 'Broadcast now' list</em></p>
+<p>Period of time from <strong>start</strong>, at Primetime list | <em>Same as for 'Broadcast now' list.</em></p>
+<p>Period of time from <strong>end</strong>, at Primetime list | <em>Same as for 'Broadcast now' list.</em></p>
 <p> Display EPG at search  from broadcasts who already expired | <em>Usually only broadcast  are displayed who are not expired. Click here to show also expired broadcasts.</em></p>
-<p>Display <strong>Ticker</strong> on startpage | <em>This option display a ticker with incoming timer on startpage.  The ticker are displayed only on devices with wide screen.</em></p>
+<p>Display Streaming symbol | <em>Display a streaming symbol at Broadcast, Primetime and Channel Browser list.</em></p>
+<p>Display IMDb symbol | <em>Display a symbol with link to IMDb, to get Informations about the broadcast.</em>
+<p>Display <strong>Ticker</strong> on startpage | <em>This option display a Ticker with incoming Timer's on startpage.  The Ticker are displayed only on devices with wide screen.</em></p>
 <p>Period of time from Ticker | <em>All timer within the time period are shown.</em></p>
-<p>Mark searchterm at search results | <em>Mark's searchterms within the results. It  work when  case sensitiv terms was found.</em></p>
+<p>Mark searchterm at search results | <em>Mark's searchterms within the results.</em></p>
+<p>Reload 'Broadcast today' Progressbar on Startpage continously | <em>If this option is activated the green Progressbar will updated continously</em></p>
+
 <p>Delete EPG which is older than ... hours | <em>Expired broadcasts will deleted from database.</em></p>
-<p>Send timer automatic to Receiver | <em>Send timer automatic from Timerlist to Receiver.</em></p>
+<p>Connection to Receiver | <em>Option to connect Receiver with http or https</em></p>
+
+<p><u><br>
+Timer Settings</u></p>
+<p>Send timer automatic to Receiver | <em>Send timer which are created by automatic Search Crawler to Receiver.</em></p>
 <p>Delete expired timer from Timerlist | <em>Expired timers will deleted from database.</em></p>
-<p>Additional record time at end from broadcast | <em>Add some time to the end from broadcast.</em></p>
-<p>&nbsp;</p>
-<p><u>Channel Zapper</u><br>
-</p>
-<p><strong>Activate</strong> automatic Channel Zapper | <em>If this option is activated the Channel Zapper will begin zapping at the set time.</em><br>
-    <em>This function stands alone and ensures  that the EPG on Receiver is up to date.</em><br>
-</p>
-<p>Wait on channel (in seconds) | <em>Time to remain on a channel to read the EPG.</em> <em>The time is valid for the zapping while crawling and stand alone Channel Zapper.</em></p>
-<p>Set time when Channel Zapper should start | <em>Set here the time in 24h format when  Channel Zapper should start. Take care that crawling process and zapping from Channel Zapper has no time conflict.</em></p>
-<p>Repeat zapping | <em>Set here the repeat time for the zapping.</em></p>
-<p>When zapping finished, change to this channel | <em>The  channel which was zapped before Receiver turned off. The choosen channel is the same like for the Crawler.</em></p>
-<p>&nbsp;</p>
+<p>Delete expired timer from Receiver | <em>Expired timers will deleted from Receiver.</em></p>
+<p>Additional record time at end from broadcast | <em>Add some time to the end from broadcast.<br>
+  <br>
+</em></p>
 <p><strong>Channel List</strong> - Display the channels which are in database.  </p>
 <p><strong>Bouquet List</strong> - Display the bouquets which are in database. </p>
 <p><a href="#top">top</a></p>
 <hr>
-<p><a name="records"></a>Records</p>
-<p>Recorded files on Receiver could be streamed, downloaded and deleted.</p>
+<p><a name="records"></a><strong>Records</strong></p>
+<p>Recorded files on Receiver could be streamed, downloaded and deleted.<br>
+If a new folder on Receiver was added, a click on 'Reload folders' is required to add it also to database.</p>
 <p><a href="#top">top</a></p>
 <hr>
-<p><a name="channelzapper"></a>Channel Zapper</p>
-<p>Start's the Channel Zapper manually. All channels which are selected in Channel list will zapped.</p>
+<p><a name="powerstate"></a><strong>Wake up / Standby</strong> </p>
+<p>Switch Receiver to Standby/No Standby</p>
+<p><a href="#top">top</a></p>
+<hr>
+<h2><a name="extras"></a>Extras</h2>
+<p>Teletext Browser<br>
+Display the Teletext from Receiver as Image in Browser. For this function the Receiver must be switched on.</p>
+<p></a>Channel Zapper<br>
+Start's the Channel Zapper manually. All channels which are selected in Channel list will zapped.</p>
+<p>TV Services<br>
+Displayed all TV Channels from Receiver. Option to stream and zapp every Service.<br>
+If a new channel scan on Receiver was made, a click on 'Copy Services from receiver' is required to add the new channels to database.</p>
 <p><a href="#top">top</a></p>
 <hr>
 <div class="spacer"></div>

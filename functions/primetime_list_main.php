@@ -89,7 +89,8 @@ include("../inc/dashboard_config.php");
 	}
 	}
 		
-	if ($time == 'today' ){ $time_start = $primetime_start; $time_end = $primetime_end; session_destroy(); }
+	if ($time == 'today' ){ $time_start = $primetime_start; $time_end = $primetime_end; unset($_SESSION['sum_primetime_days']); // session_destroy(); 
+	}
 	
 	$sql = "SELECT * FROM `epg_data` WHERE e2eventstart BETWEEN '$time_start' and '$time_end' ORDER BY e2eventstart ASC";
 	
@@ -156,9 +157,13 @@ include("../inc/dashboard_config.php");
 	$primetime_time = "$date_start_hour:$date_start_minute $date_start_ampm - $date_end_hour:$date_end_minute $date_end_ampm";
 	}
 	
-	if ($streaming_symbol == '1' ){ $stream_broadcast = '<a href="http://'.$box_user.':'.$box_password.'@'.$box_ip.'/web/stream.m3u?ref='.$obj->e2eventservicereference.'" title="Stream"><i class="fa fa-desktop fa-1x"></i></a>'; 
+	if ($streaming_symbol == '1' ){ $stream_broadcast = '<a href="'.$url_format.'://'.$box_user.':'.$box_password.'@'.$box_ip.'/web/stream.m3u?ref='.$obj->e2eventservicereference.'" title="Stream"><i class="fa fa-desktop fa-1x"></i></a>'; 
 	} else { 
 	$stream_broadcast = ''; }
+	
+	if ($imdb_symbol == '1' ){ $imdb_broadcast = '<a href="https://www.imdb.com/find?ref_=nv_sr_fn&q='.$title_enc.'" target="_blank" title="Info on IMDb"><i class="fa fa-info-circle fa-1x"></i></a>'; 
+	} else { 
+	$imdb_broadcast = ''; }
 	
 	// mark existing timer
 	if ($obj->timer == '1'){ $timer = "timer"; } else { $timer = ""; }
@@ -182,7 +187,7 @@ include("../inc/dashboard_config.php");
 		  $descriptionextended_enc
 		  <div class=\"spacer_5\"></div>
 		</div>
-		$stream_broadcast <a href=\"search.php?searchterm=$obj->title_enc&option=title\" target=\"_blank\" title=\"Search this broadcast on all channels\">More from this broadcast</a>
+		$imdb_broadcast $stream_broadcast <a href=\"search.php?searchterm=$obj->title_enc&option=title\" target=\"_blank\" title=\"Search this broadcast on all channels\">More from this broadcast</a>
 		<div class=\"spacer_5\"></div>
 		<div id=\"broadcast-tab-button-group\">
   <div id=\"row1\">

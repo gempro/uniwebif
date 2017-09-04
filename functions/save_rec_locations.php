@@ -2,9 +2,6 @@
 //
 include("../inc/dashboard_config.php");
 
-// maximum of record locations
-$sum_rec_locations = 100;
-
 // ajax header
 header('Content-Type: text/event-stream');
 header('Cache-Control: no-cache');
@@ -13,14 +10,14 @@ header('Cache-Control: no-cache');
 $sql = mysqli_query($dbmysqli, "TRUNCATE `record_locations`");
 
 // get locations
-$xmlfile = 'http://'.$box_ip.'/web/getlocations';
+$xmlfile = ''.$url_format.'://'.$box_ip.'/web/getlocations';
 
-$setTimer_request = file_get_contents($xmlfile, false, $webrequest);
+$getlocations_request = file_get_contents($xmlfile, false, $webrequest);
 
-$xml = simplexml_load_string($setTimer_request);
+$xml = simplexml_load_string($getlocations_request);
 
 if ($xml) {
-    for ($i = 0; $i <= $sum_rec_locations; $i++) {
+    for ($i = 0; $i <= $i; $i++) {
 
 	///////////////////////////////////////////////
 	if(!isset($xml->e2location[$i]) or $xml->e2location[$i] == ""){ $xml->e2location[$i] = ""; } else { $xml->e2location[$i] = $xml->e2location[$i]; }

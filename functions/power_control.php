@@ -13,16 +13,20 @@ include("../inc/dashboard_config.php");
 	
 	} else {
 	
-	$remote_request = 'http://'.$box_ip.'/web/remotecontrol?command='.$command.'';
+	$remote_request = ''.$url_format.'://'.$box_ip.'/web/remotecontrol?command='.$command.'';
 	$switch_power = file_get_contents($remote_request, false, $webrequest);
 	
-	$xmlfile = 'http://'.$box_ip.'/web/powerstate';
+	$xmlfile = ''.$url_format.'://'.$box_ip.'/web/powerstate';
 	
 	$power_status = file_get_contents($xmlfile, false, $webrequest);
 
 	$xml = simplexml_load_string($power_status);
 
 	if(!isset($xml->e2instandby) or $xml->e2instandby == ""){ $xml->e2instandby = "";
+	// error
+ 	header('Content-Type: text/event-stream');
+	header('Cache-Control: no-cache');
+	echo "data: error\n\n";
 	
 	} else { 
 	

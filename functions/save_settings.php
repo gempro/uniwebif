@@ -23,13 +23,19 @@ include("../inc/dashboard_config.php");
 	$start_epg_crawler = $_REQUEST['start_epg_crawler'];
 	$display_old_epg = $_REQUEST['display_old_epg'];
 	$streaming_symbol = $_REQUEST['streaming_symbol'];
+	$imdb_symbol = $_REQUEST['imdb_symbol'];
 	$timer_ticker = $_REQUEST['timer_ticker'];
 	$ticker_time = $_REQUEST['ticker_time'];
 	$mark_searchterm = $_REQUEST['mark_searchterm'];
 	$send_timer = $_REQUEST['send_timer'];
 	$delete_old_timer = $_REQUEST['delete_old_timer'];
+	$delete_receiver_timer = $_REQUEST['delete_receiver_timer'];
+	$dummy_timer = $_REQUEST['dummy_timer'];
+	$after_crawl_action = $_REQUEST['after_crawl_action'];
 	$delete_old_epg = $_REQUEST['delete_old_epg'];
+	$url_format = $_REQUEST['url_format'];
 	$del_time = $_REQUEST['del_time'];
+	$reload_progressbar1 = $_REQUEST['reload_progressbar1'];
 	$extra_rec_time = $_REQUEST['extra_rec_time'];
 	$cz_activate = $_REQUEST['cz_activate'];
 	$cz_wait_time = $_REQUEST['cz_wait_time'];
@@ -75,7 +81,7 @@ include("../inc/dashboard_config.php");
 	
 	} else { $epg_entries_per_channel = $epg_entries_per_channel; $channel_entries = $channel_entries;
 	
-	$sql = mysqli_query($dbmysqli, "UPDATE settings SET activate_cron = '$activate_cron', epg_entries_per_channel = '$epg_entries_per_channel', channel_entries = '$channel_entries', dur_down_broadcast = '$dur_down_broadcast', dur_up_broadcast = '$dur_up_broadcast', dur_down_primetime = '$dur_down_primetime', dur_up_primetime = '$dur_up_primetime', time_format = '$time_format', epg_crawler = '$epg_crawler', crawler_timestamp = '$crawler_timestamp', crawler_hour = '$crawler_hour', crawler_minute = '$crawler_minute', crawler_am_pm = '$crawler_am_pm', search_crawler = '$search_crawler', start_epg_crawler = '$start_epg_crawler', display_old_epg = '$display_old_epg', streaming_symbol = '$streaming_symbol', timer_ticker = '$timer_ticker', ticker_time= '$ticker_time', mark_searchterm = '$mark_searchterm', send_timer = '$send_timer', delete_old_timer = '$delete_old_timer', delete_old_epg = '$delete_old_epg', del_time = '$del_time', extra_rec_time = '$extra_rec_time', cz_activate = '$cz_activate', cz_wait_time = '$cz_wait_time', cz_repeat = '$cz_repeat', cz_hour = '$cz_hour', cz_minute = '$cz_minute', cz_am_pm = '$cz_am_pm', cz_start_channel = '$cz_start_channel', cz_timestamp = '$cz_timestamp' WHERE id = 0");
+	$sql = mysqli_query($dbmysqli, "UPDATE settings SET activate_cron = '$activate_cron', epg_entries_per_channel = '$epg_entries_per_channel', channel_entries = '$channel_entries', dur_down_broadcast = '$dur_down_broadcast', dur_up_broadcast = '$dur_up_broadcast', dur_down_primetime = '$dur_down_primetime', dur_up_primetime = '$dur_up_primetime', time_format = '$time_format', epg_crawler = '$epg_crawler', crawler_timestamp = '$crawler_timestamp', crawler_hour = '$crawler_hour', crawler_minute = '$crawler_minute', crawler_am_pm = '$crawler_am_pm', search_crawler = '$search_crawler', start_epg_crawler = '$start_epg_crawler', display_old_epg = '$display_old_epg', streaming_symbol = '$streaming_symbol', imdb_symbol = '$imdb_symbol', timer_ticker = '$timer_ticker', ticker_time= '$ticker_time', mark_searchterm = '$mark_searchterm', send_timer = '$send_timer', delete_old_timer = '$delete_old_timer', delete_receiver_timer = '$delete_receiver_timer', dummy_timer = '$dummy_timer', after_crawl_action = '$after_crawl_action', delete_old_epg = '$delete_old_epg', url_format = '$url_format', del_time = '$del_time', reload_progressbar1 = '$reload_progressbar1', extra_rec_time = '$extra_rec_time', cz_activate = '$cz_activate', cz_wait_time = '$cz_wait_time', cz_repeat = '$cz_repeat', cz_hour = '$cz_hour', cz_minute = '$cz_minute', cz_am_pm = '$cz_am_pm', cz_start_channel = '$cz_start_channel', cz_timestamp = '$cz_timestamp' WHERE id = 0");
 	
 	$sql = mysqli_query($dbmysqli, "UPDATE channel_list SET zap_start = '0'");
 	$sql = mysqli_query($dbmysqli, "UPDATE channel_list SET zap_start = '1' WHERE e2servicereference = '$cz_start_channel'");

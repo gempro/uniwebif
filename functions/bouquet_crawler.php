@@ -7,7 +7,7 @@ header('Cache-Control: no-cache');
 
 $sql = mysqli_query($dbmysqli, "TRUNCATE bouquet_list");
 	
-$xmlfile = 'http://'.$box_ip.'/web/getservices';
+$xmlfile = ''.$url_format.'://'.$box_ip.'/web/getservices';
 
 $get_bouquet_request = file_get_contents($xmlfile, false, $webrequest);
 
@@ -16,7 +16,7 @@ $get_bouquet_request = file_get_contents($xmlfile, false, $webrequest);
 $xml = simplexml_load_string(preg_replace('/[^\x{0009}\x{000a}\x{000d}\x{0020}-\x{D7FF}\x{E000}-\x{FFFD}]+/u', ' ', $get_bouquet_request));
 	
 if ($xml) {
-	for ($i = 0; $i <= 1000; $i++) {
+	for ($i = 0; $i <= $i; $i++) {
 
 	///////////////////////////////////////////////
 	if(!isset($xml->e2service[$i]->e2servicereference) or $xml->e2service[$i]->e2servicereference == "") 

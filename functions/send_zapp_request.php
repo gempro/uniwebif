@@ -21,7 +21,7 @@ include("../inc/dashboard_config.php");
 	$result = mysqli_fetch_assoc($sql);
 	$e2eventservicereference = $result['e2eventservicereference'];
 	
-	$zapp_request = "http://$box_ip/web/zap?sRef=$e2eventservicereference";
+	$zapp_request = "$url_format://$box_ip/web/zap?sRef=$e2eventservicereference";
 	$request = file_get_contents($zapp_request, false, $webrequest);
 	
 	// close db

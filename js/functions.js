@@ -127,14 +127,63 @@ if (document.querySelector('html').clientWidth < 400)
 	var scrolltop_btn_size = '3';
 }
 
-// hide navbar_header
+// navbar_header
 if (document.querySelector('html').clientWidth < 830)
 {
-	var navbar_header = '';
+	var navbar_header_dashboard = '';
+	var navbar_header_search = '';
+	var navbar_header_timer = '';
+	var navbar_header_crawl_separate = '';
+	var navbar_header_settings = '';
+	var navbar_header_channel_list = '';
+	var navbar_header_bouquet_list = '';
+	var navbar_header_records = '';
+	var navbar_header_about = '';
+	var navbar_header_teletext = '';
+	var navbar_header_tv_services = '';
 	
 	} else { 
 	
-	var navbar_header = '<li class="nav-header"><div id="nav-header"><i class="fa fa-home fa-4x"></i></div></li>';
+	var navbar_header_dashboard = '<li class="nav-header"><div id="nav-header"><i class="fa fa-home fa-3-5x"></i></div></li>';
+	var navbar_header_search = '<li class="nav-header"><div id="nav-header"><i class="fa fa-search fa-3-5x"></i></div></li>';
+	var navbar_header_timer = '<li class="nav-header"><div id="nav-header"><i class="fa fa-clock-o fa-3-5x"></i></div></li>';
+	var navbar_header_crawl_separate = '<li class="nav-header"><div id="nav-header"><i class="fa fa-chevron-right fa-3-5x"></i></div></li>';
+	var navbar_header_settings = '<li class="nav-header"><div id="nav-header"><i class="fa fa-cog fa-3-5x"></i></div></li>';
+	var navbar_header_channel_list = '<li class="nav-header"><div id="nav-header"><i class="fa fa-list fa-3-5x"></i></div></li>';
+	var navbar_header_bouquet_list = '<li class="nav-header"><div id="nav-header"><i class="fa fa-list fa-3-5x"></i></div></li>';
+	var navbar_header_records = '<li class="nav-header"><div id="nav-header"><i class="glyphicon glyphicon-record fa-3-5x"></i></div></li>';
+	var navbar_header_about = '<li class="nav-header"><div id="nav-header"><i class="glyphicon glyphicon-question-sign fa-3-5x"></i></div></li>';
+	var navbar_header_teletext = '<li class="nav-header"><div id="nav-header"><i class="fa fa-globe fa-3-5x"></i></div></li>';
+	var navbar_header_tv_services = '<li class="nav-header"><div id="nav-header"><i class="fa fa-list fa-3-5x"></i></div></li>';
+}
+
+document.addEventListener('DOMContentLoaded', checkWidth);
+document.addEventListener('resize', checkWidth);
+function checkWidth() {
+if (document.querySelector('html').clientWidth > 1200) {
+// statusbar
+$(window).load(function() {
+	$.post("functions/statusbar1.php",
+	function(data){		
+	// write data in container
+	$("#statusbar_cnt").html(data);
+	animatedcollapse.addDiv('statusbar_cnt_outter', 'fade=1,height=auto');
+	animatedcollapse.init()
+	animatedcollapse.show('statusbar_cnt_outter');
+	}
+	);
+});
+
+// reload statusbar
+var status_bar = "functions/statusbar1.php";
+var status_bar_load = 60;
+
+	$(document).ready(function() {	   
+	setInterval(function() {
+	$('#statusbar_cnt').load(status_bar + '?sb=' + (new Date().getTime()));
+	}, (status_bar_load*1000));
+	});
+}
 }
 
 <!--
@@ -142,22 +191,23 @@ if (document.querySelector('html').clientWidth < 830)
 function broadcast_zap(id) {
 	
 	var this_id = id.replace(/broadcast_zap_btn_/g, "");
+	var res = this_id.substr(3);
 	
 	document.getElementById("broadcast_status_zap_"+this_id+"").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
 	
 if(typeof(EventSource) !== "undefined") {
 	
-    var source = new EventSource("functions/send_zapp_request.php?hash="+this_id+"");
+    var source = new EventSource("functions/send_zapp_request.php?hash="+res+"");
     source.onmessage = function(event) {
 		
-		document.getElementById("broadcast_status_zap_"+this_id+"").innerHTML = "";
+	document.getElementById("broadcast_status_zap_"+this_id+"").innerHTML = "";
 		
-		document.getElementById("broadcast_zap_btn_"+this_id+"").value = "CHANNEL ZAPP OK";
+	document.getElementById("broadcast_zap_btn_"+this_id+"").value = "CHANNEL ZAPP OK";
 		
-		this.close();
-		};
-		} else {
-    	document.getElementById("broadcast_status_zap_"+this_id+"").value = "Sorry, your browser does not support server-sent events...";
+	this.close();
+	};
+	} else {
+    document.getElementById("broadcast_status_zap_"+this_id+"").value = "Sorry, your browser does not support server-sent events...";
 	}
 }
 
@@ -167,14 +217,15 @@ function broadcast_timer(id) {
 if(typeof(EventSource) !== "undefined") {
 	
 	var this_id = id.replace(/broadcast_timer_btn_/g, "");
+	var res = this_id.substr(3);
 	
 	var record_location = document.getElementById("rec_location_broadcast_"+this_id+"").value;
 	
 	document.getElementById("broadcast_status_timer_"+this_id+"").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
 	
-    var source = new EventSource("functions/send_timer_instant.php?hash="+this_id+"&record_location="+record_location+"");
+    var source = new EventSource("functions/send_timer_instant.php?hash="+res+"&record_location="+record_location+"");
     source.onmessage = function(event) {
-		
+	
 	document.getElementById("broadcast_status_timer_"+this_id+"").innerHTML = "<i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i> Timer sent";
 		
 	this.close();
@@ -197,14 +248,14 @@ if(typeof(EventSource) !== "undefined") {
     var source = new EventSource("functions/send_zapp_request.php?hash="+this_id+"");
     source.onmessage = function(event) {
 		
-		document.getElementById("searchlist_status_zap_"+this_id+"").innerHTML = "<i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i>";
-		
-		document.getElementById("searchlist_zap_btn_"+this_id+"").value = "CHANNEL ZAPP OK";
-		
-		this.close();
-		};
-		} else {
-    	document.getElementById("searchlist_status_zap_"+this_id+"").value = "Sorry, your browser does not support server-sent events...";
+	document.getElementById("searchlist_status_zap_"+this_id+"").innerHTML = "<i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i>";
+	
+	document.getElementById("searchlist_zap_btn_"+this_id+"").value = "CHANNEL ZAPP OK";
+	
+	this.close();
+	};
+	} else {
+	document.getElementById("searchlist_status_zap_"+this_id+"").value = "Sorry, your browser does not support server-sent events...";
 	}
 }
 
@@ -244,12 +295,12 @@ if(typeof(EventSource) !== "undefined") {
     var source = new EventSource("functions/channel_crawler_zapp_request.php?channel_hash="+this_id+"");
     source.onmessage = function(event) {
 		
-		document.getElementById("channel_crawler_status_zap_"+this_id+"").innerHTML = "";
-		
-		this.close();
-		};
-		} else {
-    	document.getElementById("channel_crawler_status_zap_"+this_id+"").value = "Sorry, your browser does not support server-sent events...";
+	document.getElementById("channel_crawler_status_zap_"+this_id+"").innerHTML = "";
+	
+	this.close();
+	};
+	} else {
+	document.getElementById("channel_crawler_status_zap_"+this_id+"").value = "Sorry, your browser does not support server-sent events...";
 	}
 }
 
@@ -323,14 +374,14 @@ if(typeof(EventSource) !== "undefined") {
     var source = new EventSource("functions/send_zapp_request.php?hash="+this_id+"");
     source.onmessage = function(event) {
 		
-		document.getElementById("primetime_status_zap_"+this_id+"").innerHTML = "";
-		
-		document.getElementById("primetime_zap_btn_"+this_id+"").value = "CHANNEL ZAPP OK";
-		
-		this.close();
-		};
-		} else {
-    	document.getElementById("primetime_status_zap_"+this_id+"").value = "Sorry, your browser does not support server-sent events...";
+	document.getElementById("primetime_status_zap_"+this_id+"").innerHTML = "";
+	
+	document.getElementById("primetime_zap_btn_"+this_id+"").value = "CHANNEL ZAPP OK";
+	
+	this.close();
+	};
+	} else {
+	document.getElementById("primetime_status_zap_"+this_id+"").value = "Sorry, your browser does not support server-sent events...";
 	}
 }
 
@@ -426,14 +477,14 @@ if(typeof(EventSource) !== "undefined") {
     var source = new EventSource("functions/send_zapp_request.php?hash="+this_id+"");
     source.onmessage = function(event) {
 		
-		document.getElementById("channelbrowser_status_zap_"+this_id+"").innerHTML = "";
-		
-		document.getElementById("channelbrowser_zap_btn_"+this_id+"").value = "CHANNEL ZAPP OK";
-		
-		this.close();
-		};
-		} else {
-    	document.getElementById("channelbrowser_status_zap_"+this_id+"").value = "Sorry, your browser does not support server-sent events...";
+	document.getElementById("channelbrowser_status_zap_"+this_id+"").innerHTML = "";
+	
+	document.getElementById("channelbrowser_zap_btn_"+this_id+"").value = "CHANNEL ZAPP OK";
+	
+	this.close();
+	};
+	} else {
+	document.getElementById("channelbrowser_status_zap_"+this_id+"").value = "Sorry, your browser does not support server-sent events...";
 	}
 }
 
@@ -520,14 +571,12 @@ if(typeof(EventSource) !== "undefined") {
     
 	source.onmessage = function(event) {
 		
-		document.getElementById("timerlist_send_timer_status_"+this_id+"").innerHTML = "<i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i> Timer sent";
-		
-		//document.getElementById("timerlist_send_timer_btn_"+this_id+"").value = "TIMER SEND";
-		
-		this.close();
-		};
-		} else {
-    	document.getElementById("timerlist_send_timer_status_"+this_id+"").value = "Sorry, your browser does not support server-sent events...";
+	document.getElementById("timerlist_send_timer_status_"+this_id+"").innerHTML = "<i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i> Timer sent";
+	
+	this.close();
+	};
+	} else {
+	document.getElementById("timerlist_send_timer_status_"+this_id+"").value = "Sorry, your browser does not support server-sent events...";
 	}
 }
 
@@ -580,6 +629,33 @@ function record_list_desc(id) {
 	animatedcollapse.toggle('record_btn_'+this_id);
 }
 
+function reload_rec_location() {
+
+if(typeof(EventSource) !== "undefined") {
+	
+    var source = new EventSource("functions/save_rec_locations.php");
+    source.onmessage = function(event) {
+		
+	function refresh_page () { 
+	<!--
+	s1 = 'loca';
+	s2 = 'tion.r';
+	s3 = 'eplace("';
+	s4 = 'records.php");';
+	if (document.all || document.getElementById || document.layers)
+	eval(s1+s2+s3+s4);
+	}
+	window.setTimeout(refresh_page, 1000);
+	
+	document.getElementById("reload_rec_btn").value = "Reload done!";
+	
+	this.close();
+	};
+	} else {
+	document.getElementById("record_list").value = "Sorry, your browser does not support server-sent events...";
+	}
+}
+
 // create m3u
 function create_m3u(id){
 	if(typeof(EventSource) !== "undefined") {
@@ -604,6 +680,7 @@ function create_m3u(id){
 	}
 }
 
+// delete record
 function delete_record(id){
 if (confirm('Are you sure?')) {
 	
@@ -662,12 +739,12 @@ if(typeof(EventSource) !== "undefined") {
     
 	source.onmessage = function(event) {
 		
-		document.getElementById("saved_search_list_status_"+this_id+"").innerHTML = "<i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i>";
-		
-		this.close();
-		};
-		} else {
-    	document.getElementById("saved_search_list_status_"+this_id+"").value = "Sorry, your browser does not support server-sent events...";
+	document.getElementById("saved_search_list_status_"+this_id+"").innerHTML = "<i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i>";
+	
+	this.close();
+	};
+	} else {
+	document.getElementById("saved_search_list_status_"+this_id+"").value = "Sorry, your browser does not support server-sent events...";
 	}
 }
 
@@ -708,28 +785,28 @@ if(typeof(EventSource) !== "undefined") {
 	
     var source = new EventSource("functions/start_channel_crawler_complete.php");
     source.onmessage = function(event) {
-        document.getElementById("crawl_complete_status").innerHTML = event.data;
+	document.getElementById("crawl_complete_status").innerHTML = event.data;
 
-		if (event.data == 'Channel EPG crawling - done!') {
-		
-		function hide_status () { animatedcollapse.hide('crawl_complete_status');
-		}
-		window.setTimeout(hide_status, 2000);
-		
-		function reset_status () { document.getElementById("crawl_complete_status").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
-		}
-		window.setTimeout(reset_status, 2500);
-		
-		function hide_div_crawl_complete () { animatedcollapse.hide('div_crawl_complete');
-		}
-		window.setTimeout(hide_div_crawl_complete, 3000);
-		
-		function reset_crawl_complete_btn () { document.getElementById("crawl_complete_btn").disabled = false;
-		}
-		window.setTimeout(reset_crawl_complete_btn, 3500);
-		
-    	this.close();	
-		}
+	if (event.data == 'Channel EPG crawling - done!') {
+	
+	function hide_status () { animatedcollapse.hide('crawl_complete_status');
+	}
+	window.setTimeout(hide_status, 2000);
+	
+	function reset_status () { document.getElementById("crawl_complete_status").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
+	}
+	window.setTimeout(reset_status, 2500);
+	
+	function hide_div_crawl_complete () { animatedcollapse.hide('div_crawl_complete');
+	}
+	window.setTimeout(hide_div_crawl_complete, 3000);
+	
+	function reset_crawl_complete_btn () { document.getElementById("crawl_complete_btn").disabled = false;
+	}
+	window.setTimeout(reset_crawl_complete_btn, 3500);
+	
+	this.close();	
+	}
     };
 	} else {
     document.getElementById("crawl_complete_status").innerHTML = "Sorry, your browser does not support server-sent events...";
@@ -749,14 +826,14 @@ if(typeof(EventSource) !== "undefined") {
     var source = new EventSource("functions/channel_crawler_separate.php?channel_hash="+this_id+"");
 	source.onmessage = function(event) {
 
-		if (event.data == 'channel crawl - done!') {
-			
-		document.getElementById("channel_crawler_status_"+this_id+"").innerHTML = "<i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i>";
-			
-		document.getElementById("channel_crawler_"+this_id+"").disabled = false;
-        
-    	this.close();	
-		}
+	if (event.data == 'channel crawl - done!') {
+		
+	document.getElementById("channel_crawler_status_"+this_id+"").innerHTML = "<i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i>";
+		
+	document.getElementById("channel_crawler_"+this_id+"").disabled = false;
+	
+	this.close();	
+	}
     };
 	} else {
     document.getElementById("channel_crawler_"+this_id+"").innerHTML = "Sorry, your browser does not support server-sent events...";
@@ -773,35 +850,35 @@ if(typeof(EventSource) !== "undefined") {
     source.onmessage = function(event) {
 	document.getElementById("crawl_channel_id_status").innerHTML = event.data;
 		
-		<!--if error-->
-		if (event.data == 'error') {
-		document.getElementById("crawl_channel_id_status").innerHTML = "<span class=\"error\">An error occured. No Service was found. Please check settings!</span>";
-		this.close(); }
-		<!---->
-		
-		if (event.data == 'Channel ID crawling - done!') {
-		
-		function hide_status () { animatedcollapse.hide('crawl_channel_id_status');
-		}
-		window.setTimeout(hide_status, 2000);
-		
-		function reset_status () { document.getElementById("crawl_channel_id_status").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
-		}
-		window.setTimeout(reset_status, 2500);
-		
-		function hide_div_crawl_channel_id () { animatedcollapse.hide('div_crawl_channel_id');
-		}
-		window.setTimeout(hide_div_crawl_channel_id, 3000);
+	<!--if error-->
+	if (event.data == 'error') {
+	document.getElementById("crawl_channel_id_status").innerHTML = "There was no bouquet selected to crawl. Please check <a href=\"bouquet_list.php\">bouquet list</a>.";
+	this.close(); }
+	<!---->
+	
+	if (event.data == 'Channel ID crawling - done!') {
+	
+	function hide_status () { animatedcollapse.hide('crawl_channel_id_status');
+	}
+	window.setTimeout(hide_status, 2000);
+	
+	function reset_status () { document.getElementById("crawl_channel_id_status").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
+	}
+	window.setTimeout(reset_status, 2500);
+	
+	function hide_div_crawl_channel_id () { animatedcollapse.hide('div_crawl_channel_id');
+	}
+	window.setTimeout(hide_div_crawl_channel_id, 3000);
 
-		function reset_crawl_channel_id_btn () { document.getElementById("crawl_channel_id_btn").disabled = false;
-		}
-		window.setTimeout(reset_crawl_channel_id_btn, 3500);
-		
-    	this.close();
-		}
-   		};
-		} else {
-		document.getElementById("crawl_channel_id_status").innerHTML = "Sorry, your browser does not support server-sent events...";
+	function reset_crawl_channel_id_btn () { document.getElementById("crawl_channel_id_btn").disabled = false;
+	}
+	window.setTimeout(reset_crawl_channel_id_btn, 3500);
+	
+	this.close();
+	}
+	};
+	} else {
+	document.getElementById("crawl_channel_id_status").innerHTML = "Sorry, your browser does not support server-sent events...";
 	}
 }
 
@@ -813,31 +890,31 @@ if(typeof(EventSource) !== "undefined") {
 
     var source = new EventSource("functions/save_timer_in_db.php");
     source.onmessage = function(event) {
-        document.getElementById("crawl_search_status").innerHTML = event.data;
+	document.getElementById("crawl_search_status").innerHTML = event.data;
 
-		if (event.data == 'Timer from saved search, written in database!') {
-		
-		function hide_status () { animatedcollapse.hide('crawl_search_status');
-		}
-		window.setTimeout(hide_status, 2000);
-		
-		function reset_status () { document.getElementById("crawl_search_status").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
-		}
-		window.setTimeout(reset_status, 2500);
-		
-		function hide_div_crawl_savedsearch () { animatedcollapse.hide('div_crawl_search');
-		}
-		window.setTimeout(hide_div_crawl_savedsearch, 3000);
-		
-		function reset_crawl_search_btn () { document.getElementById("crawl_search_btn").disabled = false;
-		}
-		window.setTimeout(reset_crawl_search_btn, 3500);
-		
-    	this.close();
-		}
-		};
-		} else {
-    	document.getElementById("crawl_search_status").innerHTML = "Sorry, your browser does not support server-sent events...";
+	if (event.data == 'Timer from saved search, written in database!') {
+	
+	function hide_status () { animatedcollapse.hide('crawl_search_status');
+	}
+	window.setTimeout(hide_status, 2000);
+	
+	function reset_status () { document.getElementById("crawl_search_status").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
+	}
+	window.setTimeout(reset_status, 2500);
+	
+	function hide_div_crawl_savedsearch () { animatedcollapse.hide('div_crawl_search');
+	}
+	window.setTimeout(hide_div_crawl_savedsearch, 3000);
+	
+	function reset_crawl_search_btn () { document.getElementById("crawl_search_btn").disabled = false;
+	}
+	window.setTimeout(reset_crawl_search_btn, 3500);
+	
+	this.close();
+	}
+	};
+	} else {
+	document.getElementById("crawl_search_status").innerHTML = "Sorry, your browser does not support server-sent events...";
 	}
 }
 
@@ -849,31 +926,31 @@ if(typeof(EventSource) !== "undefined") {
 	
     var source = new EventSource("functions/send_timer_to_box.php");
     source.onmessage = function(event) {
-        document.getElementById("send_timer_status").innerHTML = event.data;
-		<!---->
-		if (event.data == 'Timer was sent from database to Receiver!') {
-		
-		function hide_status () { animatedcollapse.hide('send_timer_status');
-		}
-		window.setTimeout(hide_status, 2000);
-		
-		function reset_status () { document.getElementById("send_timer_status").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
-		}
-		window.setTimeout(reset_status, 2500);
-		
-		function hide_div_send_timer () { animatedcollapse.hide('div_send_timer');
-		}
-		window.setTimeout(hide_div_send_timer, 3000);
-		
-		function reset_send_timer_btn () { document.getElementById("send_timer_btn").disabled = false;
-		}
-		window.setTimeout(reset_send_timer_btn, 3500);
-		
-    	this.close();
-		}
-    	};
-		} else {
-    	document.getElementById("send_timer_status").innerHTML = "Sorry, your browser does not support server-sent events...";
+	document.getElementById("send_timer_status").innerHTML = event.data;
+	<!---->
+	if (event.data == 'Timer was sent from database to Receiver!') {
+	
+	function hide_status () { animatedcollapse.hide('send_timer_status');
+	}
+	window.setTimeout(hide_status, 2000);
+	
+	function reset_status () { document.getElementById("send_timer_status").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
+	}
+	window.setTimeout(reset_status, 2500);
+	
+	function hide_div_send_timer () { animatedcollapse.hide('div_send_timer');
+	}
+	window.setTimeout(hide_div_send_timer, 3000);
+	
+	function reset_send_timer_btn () { document.getElementById("send_timer_btn").disabled = false;
+	}
+	window.setTimeout(reset_send_timer_btn, 3500);
+	
+	this.close();
+	}
+	};
+	} else {
+	document.getElementById("send_timer_status").innerHTML = "Sorry, your browser does not support server-sent events...";
 	}
 }
 
@@ -885,28 +962,28 @@ if(typeof(EventSource) !== "undefined") {
 	
     var source = new EventSource("functions/channelzapper.php?manual=yes");
     source.onmessage = function(event) {
-        document.getElementById("channelzapper_status").innerHTML = event.data;
+	document.getElementById("channelzapper_status").innerHTML = event.data;
 
-		if (event.data == 'all channels zapped - done!') {
-		
-		function hide_status () { animatedcollapse.hide('channelzapper_status');
-		}
-		window.setTimeout(hide_status, 2000);
-		
-		function reset_status () { document.getElementById("channelzapper_status").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
-		}
-		window.setTimeout(reset_status, 2500);
-		
-		function hide_div_start_channelzapper () { animatedcollapse.hide('div_start_channelzapper');
-		}
-		window.setTimeout(hide_div_start_channelzapper, 3000);
-		
-		function reset_start_channelzapper_btn () { document.getElementById("start_channelzapper_btn").disabled = false;
-		}
-		window.setTimeout(reset_start_channelzapper_btn, 3500);
-		
-    	this.close();	
-		}
+	if (event.data == 'all channels zapped - done!') {
+	
+	function hide_status () { animatedcollapse.hide('channelzapper_status');
+	}
+	window.setTimeout(hide_status, 2000);
+	
+	function reset_status () { document.getElementById("channelzapper_status").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
+	}
+	window.setTimeout(reset_status, 2500);
+	
+	function hide_div_start_channelzapper () { animatedcollapse.hide('div_start_channelzapper');
+	}
+	window.setTimeout(hide_div_start_channelzapper, 3000);
+	
+	function reset_start_channelzapper_btn () { document.getElementById("start_channelzapper_btn").disabled = false;
+	}
+	window.setTimeout(reset_start_channelzapper_btn, 3500);
+	
+	this.close();	
+	}
     };
 	} else {
     document.getElementById("channelzapper_status").innerHTML = "Sorry, your browser does not support server-sent events...";
@@ -926,25 +1003,25 @@ if(typeof(EventSource) !== "undefined") {
     var source = new EventSource("functions/save_box_settings.php?box_ip="+box_ip+"&box_user="+box_user+"&box_password="+box_password);
     source.onmessage = function(event) {
 
-		<!---if error--->
-		if (event.data == 'data missed') {		
-		document.getElementById("save_box_settings_status").innerHTML = "Data missed!";
-    	this.close();
-		}
-		
-		if (event.data == 'settings ok connection ok') {
-		document.getElementById("save_box_settings_status").innerHTML = "Settings saved. Data connection to Receiver ok.";
-		animatedcollapse.show('save_box_info');
-    	this.close();
-		}
-		
-		if (event.data == 'settings ok connection error') {
-		document.getElementById("save_box_settings_status").innerHTML = "Settings saved, but data connection to Receiver failed. Check settings or <a href=\"help/help.html\">visit help!</a>";
-    	this.close();
-		}
-		};
-		} else {
-    	document.getElementById("save_box_settings_status").innerHTML = "Sorry, your browser does not support server-sent events...";
+	<!---if error--->
+	if (event.data == 'data missed') {		
+	document.getElementById("save_box_settings_status").innerHTML = "Data missed!";
+	this.close();
+	}
+	
+	if (event.data == 'settings ok connection ok') {
+	document.getElementById("save_box_settings_status").innerHTML = "Settings saved. Data connection to Receiver ok.";
+	animatedcollapse.show('save_box_info');
+	this.close();
+	}
+	
+	if (event.data == 'settings ok connection error') {
+	document.getElementById("save_box_settings_status").innerHTML = "Settings saved, but data connection to Receiver failed. Check settings or <a href=\"help/help.html\">visit help!</a>";
+	this.close();
+	}
+	};
+	} else {
+	document.getElementById("save_box_settings_status").innerHTML = "Sorry, your browser does not support server-sent events...";
 	}
 }
 
@@ -980,6 +1057,9 @@ function save_settings() {
 	if (document.getElementById("streaming_symbol").checked == true) { var streaming_symbol = '1'; }
 	if (document.getElementById("streaming_symbol").checked == false) { var streaming_symbol = '0'; }
 	
+	if (document.getElementById("imdb_symbol").checked == true) { var imdb_symbol = '1'; }
+	if (document.getElementById("imdb_symbol").checked == false) { var imdb_symbol = '0'; }
+	
 	if (document.getElementById("timer_ticker").checked == true) { var timer_ticker = '1'; }
 	if (document.getElementById("timer_ticker").checked == false) { var timer_ticker = '0'; }
 	
@@ -991,11 +1071,24 @@ function save_settings() {
 	if (document.getElementById("delete_old_timer").checked == true) { var delete_old_timer = '1'; }
 	if (document.getElementById("delete_old_timer").checked == false) { var delete_old_timer = '0'; }
 	
+	if (document.getElementById("delete_receiver_timer").checked == true) { var delete_receiver_timer = '1'; }
+	if (document.getElementById("delete_receiver_timer").checked == false) { var delete_receiver_timer = '0'; }
+	
+	if (document.getElementById("dummy_timer").checked == true) { var dummy_timer = '1'; }
+	if (document.getElementById("dummy_timer").checked == false) { var dummy_timer = '0'; }
+	
+	var after_crawl_action = document.getElementById("after_crawl_action").value;
+	
 	if (document.getElementById("delete_old_epg").checked == true) { var delete_old_epg = '1'; }
 	if (document.getElementById("delete_old_epg").checked == false) { var delete_old_epg = '0'; }
 	
+	var url_format = document.getElementById("url_format").value;
+	
 	var del_time = document.getElementById("del_time").value;
 	var extra_rec_time = document.getElementById("extra_rec_time").value;
+	
+	if (document.getElementById("reload_progressbar1").checked == true) { var reload_progressbar1 = '1'; }
+	if (document.getElementById("reload_progressbar1").checked == false) { var reload_progressbar1 = '0'; }
 	
 	if (document.getElementById("mark_searchterm").checked == true) { var mark_searchterm = '1'; }
 	if (document.getElementById("mark_searchterm").checked == false) { var mark_searchterm = '0'; }
@@ -1015,23 +1108,23 @@ function save_settings() {
 	document.getElementById("save_settings_status").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
 
 if(typeof(EventSource) !== "undefined") {
-    var source = new EventSource("functions/save_settings.php?activate_cron="+activate_cron+"&epg_entries_per_channel="+epg_entries_per_channel+"&channel_entries="+channel_entries+"&time_format="+time_format+"&dur_down_broadcast="+dur_down_broadcast+"&dur_up_broadcast="+dur_up_broadcast+"&dur_down_primetime="+dur_down_primetime+"&dur_up_primetime="+dur_up_primetime+"&epg_crawler="+epg_crawler+"&crawler_hour="+crawler_hour+"&crawler_minute="+crawler_minute+"&crawler_am_pm="+crawler_am_pm+"&start_epg_crawler="+start_epg_crawler+"&search_crawler="+search_crawler+"&timer_ticker="+timer_ticker+"&ticker_time="+ticker_time+"&streaming_symbol="+streaming_symbol+"&display_old_epg="+display_old_epg+"&send_timer="+send_timer+"&delete_old_timer="+delete_old_timer+"&delete_old_epg="+delete_old_epg+"&del_time="+del_time+"&extra_rec_time="+extra_rec_time+"&mark_searchterm="+mark_searchterm+"&cz_activate="+cz_activate+"&cz_wait_time="+cz_wait_time+"&cz_hour="+cz_hour+"&cz_minute="+cz_minute+"&cz_repeat="+cz_repeat+"&cz_am_pm="+cz_am_pm+"&cz_start_channel="+cz_start_channel);
+    var source = new EventSource("functions/save_settings.php?activate_cron="+activate_cron+"&epg_entries_per_channel="+epg_entries_per_channel+"&channel_entries="+channel_entries+"&time_format="+time_format+"&dur_down_broadcast="+dur_down_broadcast+"&dur_up_broadcast="+dur_up_broadcast+"&dur_down_primetime="+dur_down_primetime+"&dur_up_primetime="+dur_up_primetime+"&epg_crawler="+epg_crawler+"&crawler_hour="+crawler_hour+"&crawler_minute="+crawler_minute+"&crawler_am_pm="+crawler_am_pm+"&start_epg_crawler="+start_epg_crawler+"&search_crawler="+search_crawler+"&timer_ticker="+timer_ticker+"&ticker_time="+ticker_time+"&streaming_symbol="+streaming_symbol+"&imdb_symbol="+imdb_symbol+"&display_old_epg="+display_old_epg+"&send_timer="+send_timer+"&delete_old_timer="+delete_old_timer+"&delete_receiver_timer="+delete_receiver_timer+"&dummy_timer="+dummy_timer+"&after_crawl_action="+after_crawl_action+"&delete_old_epg="+delete_old_epg+"&url_format="+url_format+"&del_time="+del_time+"&reload_progressbar1="+reload_progressbar1+"&extra_rec_time="+extra_rec_time+"&mark_searchterm="+mark_searchterm+"&cz_activate="+cz_activate+"&cz_wait_time="+cz_wait_time+"&cz_hour="+cz_hour+"&cz_minute="+cz_minute+"&cz_repeat="+cz_repeat+"&cz_am_pm="+cz_am_pm+"&cz_start_channel="+cz_start_channel);
     source.onmessage = function(event) {
 
-		<!---if error--->
-		if (event.data == 'data missed') {		
-		document.getElementById("save_settings_status").innerHTML = "Data missed!";
-    	this.close();
-		}
-		
-		if (event.data == 'ok') {
-		document.getElementById("save_settings_status").innerHTML = "Settings saved";
+	<!---if error--->
+	if (event.data == 'data missed') {		
+	document.getElementById("save_settings_status").innerHTML = "Data missed!";
+	this.close();
+	}
+	
+	if (event.data == 'ok') {
+	document.getElementById("save_settings_status").innerHTML = "<i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i> Settings saved";
 
-    	this.close();
-		}
-		};
-		} else {
-    	document.getElementById("save_settings_status").innerHTML = "Sorry, your browser does not support server-sent events...";
+	this.close();
+	}
+	};
+	} else {
+	document.getElementById("save_settings_status").innerHTML = "Sorry, your browser does not support server-sent events...";
 	}
 }
 
@@ -1044,31 +1137,31 @@ if(typeof(EventSource) !== "undefined") {
 	
     var source = new EventSource("functions/save_rec_locations.php");
     source.onmessage = function(event) {
-        document.getElementById("save_box_info_status").innerHTML = event.data;
-		<!---->
-		if (event.data == 'ok') {
+	document.getElementById("save_box_info_status").innerHTML = event.data;
+	<!---->
+	if (event.data == 'ok') {
+	
+	document.getElementById("save_box_info_status").innerHTML = "Record locations and bouquets has been copied!";
+	
+	function hide_div_save_box_info_status () { animatedcollapse.hide('save_box_info_status');
+	}
+	window.setTimeout(hide_div_save_box_info_status, 3000);
+	
+	function hide_div_save_box_info () { animatedcollapse.hide('save_box_info');
+	}
+	window.setTimeout(hide_div_save_box_info, 3000);
 		
-		document.getElementById("save_box_info_status").innerHTML = "Record locations and bouquets has been copied!";
-		
-		function hide_div_save_box_info_status () { animatedcollapse.hide('save_box_info_status');
-		}
-		window.setTimeout(hide_div_save_box_info_status, 3000);
-		
-		function hide_div_save_box_info () { animatedcollapse.hide('save_box_info');
-		}
-		window.setTimeout(hide_div_save_box_info, 3000);
-			
-		function hide_save_box_settings_status () { animatedcollapse.hide('save_box_settings_status');
-		}
-		window.setTimeout(hide_save_box_settings_status, 3000);
-		
-		save_bouquet_data();
-		
-    	this.close();
-		}
-    	};
-		} else {
-    	document.getElementById("save_rec_locations_status").innerHTML = "Sorry, your browser does not support server-sent events...";
+	function hide_save_box_settings_status () { animatedcollapse.hide('save_box_settings_status');
+	}
+	window.setTimeout(hide_save_box_settings_status, 3000);
+	
+	save_bouquet_data();
+	
+	this.close();
+	}
+	};
+	} else {
+	document.getElementById("save_rec_locations_status").innerHTML = "Sorry, your browser does not support server-sent events...";
 	}
 }
 
@@ -1080,22 +1173,22 @@ if(typeof(EventSource) !== "undefined") {
     var source = new EventSource("functions/bouquet_crawler.php");
     source.onmessage = function(event) {
 		
-		this.close();
-		
-		function refresh_page () { 
-		<!--
-		s1 = 'loca';
-		s2 = 'tion.r';
-		s3 = 'eplace("';
-		s4 = 'settings.php");';
-		if (document.all || document.getElementById || document.layers)
-		eval(s1+s2+s3+s4);
-		}
-		window.setTimeout(refresh_page, 3000);
-		
-		};
-		} else {
-    	document.getElementById("save_bouquet_data_status").innerHTML = "Sorry, your browser does not support server-sent events...";
+	this.close();
+	
+	function refresh_page () { 
+	<!--
+	s1 = 'loca';
+	s2 = 'tion.r';
+	s3 = 'eplace("';
+	s4 = 'settings.php");';
+	if (document.all || document.getElementById || document.layers)
+	eval(s1+s2+s3+s4);
+	}
+	window.setTimeout(refresh_page, 3000);
+	
+	};
+	} else {
+	document.getElementById("save_bouquet_data_status").innerHTML = "Sorry, your browser does not support server-sent events...";
 	}
 }
 
@@ -1112,7 +1205,7 @@ if(typeof(EventSource) !== "undefined") {
 	if (document.getElementById(id).checked == true) { var set_crawler = '1'; }
 	if (document.getElementById(id).checked == false) { var set_crawler = '0'; }
 
-    var source = new EventSource("functions/channel_list_settings.php?set_crawl="+set_crawler+"&channel_id="+this_id+"");
+    var source = new EventSource("functions/channel_list_inc.php?set_crawl="+set_crawler+"&channel_id="+this_id+"");
 	
     source.onmessage = function(event) {
     document.getElementById("edit_channel_"+this_id+"").innerHTML = event.data;
@@ -1138,7 +1231,7 @@ if(typeof(EventSource) !== "undefined") {
 	if (document.getElementById(id).checked == true) { var set_zap = '1'; }
 	if (document.getElementById(id).checked == false) { var set_zap = '0'; }
 
-    var source = new EventSource("functions/channel_list_settings.php?set_zap="+set_zap+"&channel_id="+this_id+"");
+    var source = new EventSource("functions/channel_list_inc.php?set_zap="+set_zap+"&channel_id="+this_id+"");
 	
     source.onmessage = function(event) {
     document.getElementById("edit_channel_"+this_id+"").innerHTML = event.data;
@@ -1147,6 +1240,51 @@ if(typeof(EventSource) !== "undefined") {
 	};
 	} else {
 	document.getElementById("edit_channel_"+this_id+"").innerHTML = "Sorry, your browser does not support server-sent events...";
+	}
+
+}
+
+// add channel
+function add_single_channel()
+	{
+if(typeof(EventSource) !== "undefined") {
+	
+	document.getElementById("add_single_channel_status").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
+	
+	var channel_name = document.getElementById("channel_name").value;
+	var service_reference = document.getElementById("service_reference").value;
+
+    var source = new EventSource("functions/channel_list_inc.php?action=add&channel_name="+channel_name+"&service_reference="+service_reference+"");
+	
+    source.onmessage = function(event) {
+	
+	if (event.data == 'ok') {
+	document.getElementById("add_single_channel_status").innerHTML = "<i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i>";
+	this.close(); 
+	
+	function refresh_page () { 
+	<!--
+	s1 = 'loca';
+	s2 = 'tion.r';
+	s3 = 'eplace("';
+	s4 = 'channel_list.php");';
+	if (document.all || document.getElementById || document.layers)
+	eval(s1+s2+s3+s4);
+	}
+	window.setTimeout(refresh_page, 1000);	
+	}
+	
+	<!--if error-->
+	if (event.data == 'error') {
+	document.getElementById("add_single_channel_status").innerHTML = "<i class=\"glyphicon glyphicon-remove fa-1x\" style=\"color:#D9534F\"></i>";
+	this.close(); }
+	<!---->
+	
+	this.close();
+	
+	};
+	} else {
+	document.getElementById("add_single_channel_status").innerHTML = "Sorry, your browser does not support server-sent events...";
 	}
 
 }
@@ -1187,17 +1325,17 @@ if(typeof(EventSource) !== "undefined") {
     var source = new EventSource("functions/add_custom_bouquet.php?custom_bouquet_url="+custom_bouquet_url+"&custom_bouquet_title="+custom_bouquet_title);
     source.onmessage = function(event) {
 		
-		document.getElementById("add_custom_bouquet_status").innerHTML = event.data;
-		
-		this.close();
-		
-		};
-		} else {
-    	document.getElementById("add_custom_bouquet_status").innerHTML = "Sorry, your browser does not support server-sent events...";
+	document.getElementById("add_custom_bouquet_status").innerHTML = event.data;
+	
+	this.close();
+	
+	};
+	} else {
+	document.getElementById("add_custom_bouquet_status").innerHTML = "Sorry, your browser does not support server-sent events...";
 	}
 }
 
-// Power Control
+// power control
 function power_control(id){
 if(typeof(EventSource) !== "undefined") {
 	
@@ -1207,11 +1345,15 @@ if(typeof(EventSource) !== "undefined") {
     source.onmessage = function(event) {
 	
 	if (event.data == 'true') {
-	document.getElementById("pc"+id+"").innerHTML = "<i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#D9534F\"></i>";
+	document.getElementById("pc"+id+"").innerHTML = "<i class=\"glyphicon glyphicon-arrow-down fa-1x\" style=\"color:#D9534F\"></i>";
+	this.close(); }
+	
+	if (event.data == 'error') {
+	document.getElementById("pc"+id+"").innerHTML = "<i class=\"glyphicon glyphicon-remove fa-1x\" style=\"color:#D9534F\"></i>";
 	this.close(); }
 	
 	if (event.data == 'false') {
-	document.getElementById("pc"+id+"").innerHTML = "<i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i>";
+	document.getElementById("pc"+id+"").innerHTML = "<i class=\"glyphicon glyphicon-arrow-up fa-1x\" style=\"color:#5CB85C\"></i>";
 	this.close(); }
 	
 	};
@@ -1219,3 +1361,63 @@ if(typeof(EventSource) !== "undefined") {
 	alert("Sorry, your browser does not support server-sent events...");
 	}
 }
+
+// teletext
+// page number
+function teletext_page() {
+
+	document.getElementById("teletext_img").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
+	
+	var number = document.getElementById("page").value;
+	var size = document.getElementById("size").value;
+	
+	$.post("functions/teletext_inc.php",
+	{
+	page: number,
+	resolution: size
+	},
+	function(data){
+	// write data in container
+	$("#teletext_img").html(data);
+	}
+	);
+};
+
+// browse page
+function teletext_browse(id) {
+
+	document.getElementById("teletext_img").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
+	
+	var number = document.getElementById("page").value;
+	var size = document.getElementById("size").value;
+	
+	$.post("functions/teletext_inc.php",
+	{
+	browse: id,
+	resolution: size
+	},
+	function(data){
+	// write data in container
+	$("#teletext_img").html(data);
+	}
+	);
+};
+
+// control
+function teletext_control(id) {
+	
+	document.getElementById("teletext_img").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
+	
+	var size = document.getElementById("size").value;
+	
+	$.post("functions/teletext_inc.php",
+	{
+	control: id,
+	resolution: size
+	},
+	function(data){
+	// write data in container
+	$("#teletext_img").html(data);
+	}
+	);
+};

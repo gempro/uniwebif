@@ -100,7 +100,8 @@ include("../inc/dashboard_config.php");
 	}
 	}
 	//
-	if ($time == 'cb_now_today' ){ $time_start = $today_start; $time_end = $today_end; session_destroy(); }
+	if ($time == 'cb_now_today' ){ $time_start = $today_start; $time_end = $today_end; unset($_SESSION['sum_channelbrowser_days']);  //session_destroy(); 
+	}
 	
 	if(!isset($time_start) or $time_start == "") { $time_start = $cb_time_start; }
 	if(!isset($time_end) or $time_end == "") { $time_end = $cb_time_end; }
@@ -170,9 +171,13 @@ include("../inc/dashboard_config.php");
 	$broadcast_time = "$date_start_hour:$date_start_minute $date_start_ampm - $date_end_hour:$date_end_minute $date_end_ampm";
 	}
 	
-	if ($streaming_symbol == '1' ){ $stream_broadcast = '<a href="http://'.$box_user.':'.$box_password.'@'.$box_ip.'/web/stream.m3u?ref='.$obj->e2eventservicereference.'" title="Stream"><i class="fa fa-desktop fa-1x"></i></a>'; 
+	if ($streaming_symbol == '1' ){ $stream_broadcast = '<a href="'.$url_format.'://'.$box_user.':'.$box_password.'@'.$box_ip.'/web/stream.m3u?ref='.$obj->e2eventservicereference.'" title="Stream"><i class="fa fa-desktop fa-1x"></i></a>'; 
 	} else { 
 	$stream_broadcast = ''; }
+	
+	if ($imdb_symbol == '1' ){ $imdb_broadcast = '<a href="https://www.imdb.com/find?ref_=nv_sr_fn&q='.$title_enc.'" target="_blank" title="Info on IMDb"><i class="fa fa-info-circle fa-1x"></i></a>'; 
+	} else { 
+	$imdb_broadcast = ''; }
 	
 	// mark existing timer
 	if ($obj->timer == '1'){ $timer = "timer"; } else { $timer = ""; }
@@ -196,7 +201,7 @@ $channelbrowser_list = $channelbrowser_list."
 		  $descriptionextended_enc
 		  <div class=\"spacer_5\"></div>
 		</div>
-		$stream_broadcast <a href=\"search.php?searchterm=$obj->title_enc&option=title&search_channel=on&channel_id=$obj->e2eventservicereference\" target=\"_blank\" title=\"Search this broadcast only on this channel\">More broadcast on this channel</a>
+		$imdb_broadcast $stream_broadcast <a href=\"search.php?searchterm=$obj->title_enc&option=title&search_channel=on&channel_id=$obj->e2eventservicereference\" target=\"_blank\" title=\"Search this broadcast only on this channel\">More broadcast on this channel</a>
 		<div class=\"spacer_5\"></div>
 <div id=\"broadcast-tab-button-group\">
   <div id=\"row1\">

@@ -16,7 +16,7 @@ include("utc.php");
 	// delete before crawling
 	$sql = mysqli_query($dbmysqli, "DELETE FROM epg_data WHERE channel_hash = '".$channel_hash."'");
 	
-	$xmlfile = 'http://'.$box_ip.'/web/epgservice?sRef='.$e2servicereference.'';
+	$xmlfile = ''.$url_format.'://'.$box_ip.'/web/epgservice?sRef='.$e2servicereference.'';
 	
 	$getEPG_request = file_get_contents($xmlfile, false, $webrequest);
 	

@@ -31,7 +31,7 @@ $(document).ready(function(){
 	
 	if ($action == 'delete')
 	{
-	$delete_request = 'http://'.$box_ip.'/web/moviedelete?sRef='.$del_id.'';
+	$delete_request = ''.$url_format.'://'.$box_ip.'/web/moviedelete?sRef='.$del_id.'';
 	$delete_record = file_get_contents($delete_request, false, $webrequest);
 	}
 	
@@ -45,13 +45,13 @@ $(document).ready(function(){
 	}
 
 	// get recorded data
-	$xmlfile = 'http://'.$box_ip.'/web/movielist?dirname='.$record_location.'&tag=';
+	$xmlfile = ''.$url_format.'://'.$box_ip.'/web/movielist?dirname='.$record_location.'&tag=';
 	
 	$getRecords_request = file_get_contents($xmlfile, false, $webrequest);
 	
 	$xml = simplexml_load_string($getRecords_request);
 	
-	$sum_rec_locations = 1000;
+	$sum_rec_locations = 250;
 	
 	if ($xml) {
 	for ($i = 0; $i <= $sum_rec_locations; $i++) {
@@ -120,7 +120,7 @@ $(document).ready(function(){
 		<a id=\"$e2filename\" onClick=\"create_m3u(this.id)\" title=\"Stream\" style=\"cursor:pointer;\"><i class=\"fa fa-desktop fa-1x\"></i></a>
 		<span id=\"record_id_$e2filename\" style=\"display:none\">$record_hash</span>
 		<span id=\"record_no_$e2servicereference\" style=\"display:none;\">$i</span>
-		<a href=\"http://$box_user:$box_password@$box_ip/file?file=$e2filename\" title=\"Download\"><i class=\"glyphicon glyphicon-download-alt fa-1x\"></i></a>
+		<a href=\"$url_format://$box_user:$box_password@$box_ip/file?file=$e2filename\" title=\"Download\"><i class=\"glyphicon glyphicon-download-alt fa-1x\"></i></a>
 		<span id=\"m3u_$e2filename\"></span>
 		<span id=\"del_status_$i\"></span>
 		</div>

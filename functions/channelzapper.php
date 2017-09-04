@@ -56,14 +56,12 @@ include("../inc/dashboard_config.php");
 	
 	$sql = mysqli_query($dbmysqli, "UPDATE settings SET cz_worktime = '".$cz_worktime."' WHERE id = 0");
 
-	$sql="SELECT e2servicereference FROM channel_list where zap = 1 ORDER BY e2servicename ASC";
+	$sql = "SELECT e2servicereference FROM channel_list where zap = 1 ORDER BY e2servicename ASC";
 	
-	$res = mysqli_query($dbmysqli, "SELECT * FROM settings WHERE id = 0");
-	$result = mysqli_fetch_assoc($res);
 	$sleeptime = $result['cz_wait_time'];
 	
 	// check power status
-	$xmlfile = 'http://'.$box_ip.'/web/powerstate';
+	$xmlfile = ''.$url_format.'://'.$box_ip.'/web/powerstate';
 
 	$power_command = file_get_contents($xmlfile, false, $webrequest);
 
@@ -78,7 +76,7 @@ include("../inc/dashboard_config.php");
 	if ($power_status == 'true')
 	{
 	// turn on Receiver
-	$turn_on_request = "http://$box_ip/web/powerstate?newstate=0";
+	$turn_on_request = "$url_format://$box_ip/web/powerstate?newstate=0";
 	$turn_on = file_get_contents($turn_on_request, false, $webrequest);
 	//
 	}	
@@ -92,7 +90,7 @@ include("../inc/dashboard_config.php");
 	{
 	$e2servicereference = $obj->e2servicereference;
 	
-	$zap_request = "http://$box_ip/web/zap?sRef=$e2servicereference";
+	$zap_request = "$url_format://$box_ip/web/zap?sRef=$e2servicereference";
 	$zap_channel = file_get_contents($zap_request, false, $webrequest);
 	sleep($sleeptime);
 	}
@@ -103,13 +101,13 @@ include("../inc/dashboard_config.php");
 	$result = mysqli_fetch_assoc($res);
 	$start_channel = $result['e2servicereference'];
 	
-	$zap_request = "http://$box_ip/web/zap?sRef=$start_channel";
+	$zap_request = "$url_format://$box_ip/web/zap?sRef=$start_channel";
 	$zap_start_channel = file_get_contents($zap_request, false, $webrequest);
 	
 	sleep(10);
 	
 	// turn off Receiver
-	$turn_off_request = "http://$box_ip/web/powerstate?newstate=0";
+	$turn_off_request = "$url_format://$box_ip/web/powerstate?newstate=0";
 	$turn_off = file_get_contents($turn_off_request, false, $webrequest);
 
 	//close db

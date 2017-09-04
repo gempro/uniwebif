@@ -6,7 +6,7 @@ $record_file = $_REQUEST['record_file'];
 $record_id = $_REQUEST['record_id'];
 $raw_file = rawurlencode($record_file);
 
-$stream_adress = 'http://'.$box_user.':'.$box_password.'@'.$box_ip.'/file?file='.$raw_file.'';
+$stream_adress = ''.$url_format.'://'.$box_user.':'.$box_password.'@'.$box_ip.'/file?file='.$raw_file.'';
 	
 $content = '#EXTM3U
 '.$stream_adress;

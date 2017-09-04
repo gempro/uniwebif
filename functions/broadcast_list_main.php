@@ -1,7 +1,5 @@
 <?php 
 session_start();
-// delete single session
-// unset($_SESSION['name']);
 ?>
 <!DOCTYPE html>
 <html>
@@ -112,7 +110,7 @@ include("../inc/dashboard_config.php");
 	$timestamp_forward_start = $timestamp_dup + $timestamp;
 	$timestamp_forward_end = $timestamp_forward_start;
 	
-	$time_start = $timestamp_forward_start;
+	$time_start = $timestamp_forward_start - $dur_down_broadcast;
 	$time_end = $timestamp_forward_end + $dur_up_broadcast;
 	
 	if ($time_format == '1')
@@ -141,11 +139,8 @@ include("../inc/dashboard_config.php");
 	}
 	}
 	
-	if ($time == 'now_today' ){ $time_start = $today_start; $time_end = $today_end; session_destroy(); }
-	
-//	if ($time == 'tomorrow' ){  $time_start = $tomorrow_start; $time_end = $tomorrow_end; session_destroy(); }
-//	
-//	if ($time == 'after_tomorrow' ){  $time_start = $after_tomorrow_start; $time_end = $after_tomorrow_end; session_destroy(); }
+	if ($time == 'now_today' ){ $time_start = $today_start; $time_end = $today_end; unset($_SESSION['time_start_last']); unset($_SESSION['sum_broadcast_days']); unset($_SESSION['sum_broadcast_time']);
+	}
 	
 	$sql = "SELECT * FROM `epg_data` WHERE e2eventstart BETWEEN '$time_start' and '$time_end' ORDER BY e2eventstart ASC";
 
@@ -211,16 +206,23 @@ include("../inc/dashboard_config.php");
 	$broadcast_time = "$date_start_hour:$date_start_minute $date_start_ampm - $date_end_hour:$date_end_minute $date_end_ampm";
 	}
 	
-	if ($streaming_symbol == '1' ){ $stream_broadcast = '<a href="http://'.$box_user.':'.$box_password.'@'.$box_ip.'/web/stream.m3u?ref='.$obj->e2eventservicereference.'" title="Stream"><i class="fa fa-desktop fa-1x"></i></a>'; 
+	if ($streaming_symbol == '1' ){ $stream_broadcast = '<a href="'.$url_format.'://'.$box_user.':'.$box_password.'@'.$box_ip.'/web/stream.m3u?ref='.$obj->e2eventservicereference.'" title="Stream"><i class="fa fa-desktop fa-1x"></i></a>'; 
 	} else { 
 	$stream_broadcast = ''; }
 	
+	if ($imdb_symbol == '1' ){ $imdb_broadcast = '<a href="https://www.imdb.com/find?ref_=nv_sr_fn&q='.$title_enc.'" target="_blank" title="Info on IMDb"><i class="fa fa-info-circle fa-1x"></i></a>'; 
+	} else { 
+	$imdb_broadcast = ''; }
+	
 	// mark existing timer
 	if ($obj->timer == '1'){ $timer = "timer"; } else { $timer = ""; }
+	
+	//
+	$rand = substr(str_shuffle(str_repeat('0123456789',3)),0,3);
 
 	$broadcast_list = $broadcast_list."
 		<div id=\"broadcast_main\">
-	  <div id=\"broadcast_$obj->hash\" style=\"cursor: pointer;\" onclick=\"broadcast_list_desc(this.id);\">
+	  <div id=\"broadcast_$rand$obj->hash\" style=\"cursor: pointer;\" onclick=\"broadcast_list_desc(this.id);\">
 		<div id=\"cnt_time\"> <span class=\"$timer\">$broadcast_time</span> </div>
 		<div id=\"cnt_title\"> <span class=\"$timer\">$title_enc</span>
 		  <div id=\"broadcast_desc_inner\"> </div>
@@ -228,28 +230,28 @@ include("../inc/dashboard_config.php");
 		<div id=\"cnt_channel\"> <span class=\"$timer\">$servicename_enc</span> </div>
 		<div style=\"clear:both\"></div>
 	  </div>
-	  <div id=\"broadcast_btn_$obj->hash\" style=\"display:none;\"><div class=\"spacer_5\"></div>
+	  <div id=\"broadcast_btn_$rand$obj->hash\" style=\"display:none;\"><div class=\"spacer_5\"></div>
 	  <strong>$date_start</strong><br />
-	  <div id=\"broadcast_div_$obj->hash\">
+	  <div id=\"broadcast_div_$rand$obj->hash\">
 		  <div class=\"spacer_5\"></div>
 		  $description_enc
 		  <div class=\"spacer_5\"></div>
 		  $descriptionextended_enc
 		  <div class=\"spacer_5\"></div>
 		</div>
-		$stream_broadcast <a href=\"search.php?searchterm=$obj->title_enc&option=title\" target=\"_blank\" title=\"Search this broadcast on all channels\">More from this broadcast</a>
+		$imdb_broadcast $stream_broadcast <a href=\"search.php?searchterm=$obj->title_enc&option=title\" target=\"_blank\" title=\"Search this broadcast on all channels\">More from this broadcast</a>
 		<div class=\"spacer_5\"></div>
 		<div id=\"broadcast-tab-button-group\">
   <div id=\"row1\">
-    <input id=\"broadcast_timer_btn_$obj->hash\" type=\"submit\" onClick=\"broadcast_timer(this.id)\" value=\"SET TIMER\" class=\"btn btn-success\" title=\"send timer instantly\"/> </div>
+    <input id=\"broadcast_timer_btn_$rand$obj->hash\" type=\"submit\" onClick=\"broadcast_timer(this.id)\" value=\"SET TIMER\" class=\"btn btn-success\" title=\"send timer instantly\"/> </div>
   <div id=\"row2\">
-    <input id=\"broadcast_zap_btn_$obj->hash\" type=\"submit\" onClick=\"broadcast_zap(this.id)\" value=\"ZAPP TO CHANNEL\" class=\"btn btn-default\"/> </div>
+    <input id=\"broadcast_zap_btn_$rand$obj->hash\" type=\"submit\" onClick=\"broadcast_zap(this.id)\" value=\"ZAPP TO CHANNEL\" class=\"btn btn-default\"/> </div>
   <div id=\"row3\">
-	<span id=\"broadcast_status_zap_$obj->hash\"></span> <span id=\"broadcast_status_timer_$obj->hash\"></span> </div>
+	<span id=\"broadcast_status_zap_$rand$obj->hash\"></span> <span id=\"broadcast_status_timer_$rand$obj->hash\"></span> </div>
 	<div style=\"clear:both\"></div>
 	</div>
 	<div class=\"spacer_5\"></div>
-	<span>Record location: </span><select id=\"rec_location_broadcast_$obj->hash\" class=\"rec_location_dropdown\">$rec_dropdown_broadcast</select>
+	<span>Record location: </span><select id=\"rec_location_broadcast_$rand$obj->hash\" class=\"rec_location_dropdown\">$rec_dropdown_broadcast</select>
 	<div class=\"spacer_5\"></div>
 	</div>
 	</div>

@@ -5,7 +5,7 @@ include("utc.php");
 
 	$channel_id = $_REQUEST["channel_id"];
 	
-	$xmlfile = 'http://'.$box_ip.'/web/epgservice?sRef='.$channel_id.'';
+	$xmlfile = ''.$url_format.'://'.$box_ip.'/web/epgservice?sRef='.$channel_id.'';
 	
 	$getEPG_request = file_get_contents($xmlfile, false, $webrequest);
 	

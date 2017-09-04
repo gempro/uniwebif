@@ -6,18 +6,18 @@ include("../inc/dashboard_config.php");
  	header('Content-Type: text/event-stream');
 	header('Cache-Control: no-cache');
 	
-	if(!isset($_REQUEST['channel_hash']) or $_REQUEST['channel_hash'] == "") { $_REQUEST['channel_hash'] = ""; } else { $_REQUEST['channel_hash'] = $_REQUEST['channel_hash']; }
+	if(!isset($_REQUEST['e2servicereference']) or $_REQUEST['e2servicereference'] == "") { $_REQUEST['e2servicereference'] = ""; } else { $_REQUEST['e2servicereference'] = $_REQUEST['e2servicereference']; }
 	
 	//recieve data	
-	$channel_hash = $_REQUEST['channel_hash'];
+	$e2servicereference = $_REQUEST['e2servicereference'];
 	
-	if(!isset($channel_hash) or $channel_hash == "") 
+	if(!isset($e2servicereference) or $e2servicereference == "") 
 	{ 
 	echo "data: data missed\n\n"; 
 	
 	} else {
 	
-	$sql = mysqli_query($dbmysqli, "SELECT e2servicereference FROM channel_list WHERE channel_hash = '".$channel_hash."'");
+	$sql = mysqli_query($dbmysqli, "SELECT e2servicereference FROM tv_services WHERE e2servicereference = '".$e2servicereference."'");
 	$result = mysqli_fetch_assoc($sql);
 	$e2servicereference = $result['e2servicereference'];
 	
