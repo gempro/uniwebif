@@ -23,3 +23,9 @@ Uniwebif was compatible with Enigma2 Receivers, but with some little changes it 
 Watch Tutorial for more Information: https://www.youtube.com/watch?v=lj4EOlJzquk
 
 Website: http://uniwebif.techweb.at
+
+---
+
+UPDATE INFO
+
+When changing from 1.0 to 1.1 it's required to reinstall the whole SQL Database cause some tables was added.
