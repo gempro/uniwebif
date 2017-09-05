@@ -11,7 +11,7 @@ include("../inc/dashboard_config.php");
 	
 	$sql = mysqli_query($dbmysqli, "TRUNCATE tv_services");
 	
-	$xmlfile = ''.$url_format.'://'.$box_ip.'/web/getservices?sRef=1:7:1:0:0:0:0:0:0:0:(type%20==%201)%20||%20(type%20==%2017)%20||%20(type%20==%20195)%20||%20(type%20==%2025)%20ORDER%20BY%20name';
+	$xmlfile = ''.$url_format.'://'.$box_ip.'/web/getservices?sRef=1:7:1:0:0:0:0:0:0:0:%20ORDER%20BY%20name';
 	
 	$get_services_request = file_get_contents($xmlfile, false, $webrequest);
 	
