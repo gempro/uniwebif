@@ -128,6 +128,30 @@ if(typeof(EventSource) !== "undefined") {
 	document.getElementById("tv_services_status_zapp_"+this_id+"").value = "Sorry, your browser does not support server-sent events...";
 	}
 }
+
+// crawl tv services
+function tv_services_crawl() {
+
+	$("#tv_services_list").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\"> Copying TV Services from Receiver..");
+	
+if(typeof(EventSource) !== "undefined") {
+	
+    var source = new EventSource("functions/tv_services_inc.php?action=crawl");
+    source.onmessage = function(event) {
+	
+	$.post("functions/tv_services_inc.php",
+	function(data){
+	// write data in container
+	$("#tv_services_list").html(data);
+	}
+	);
+	
+	this.close();
+	};
+	} else {
+	document.getElementById("tv_services_list").value = "Sorry, your browser does not support server-sent events...";
+	}
+}
 </script>
 </head>
 <body>
@@ -201,7 +225,7 @@ if(typeof(EventSource) !== "undefined") {
       <div class="row">
         <div class="col-md-12">
           <h2>TV Services</h2>
-          <input id="tv_services_crawl" type="submit" onClick="tv_services_crawl(this.id)" value="Get Services from Receiver" class="btn btn-default"/>
+          <input type="submit" onClick="tv_services_crawl()" value="Get Services from Receiver" class="btn btn-default"/>
           <span id="tv_services_status_crawl"></span>
         </div>
       </div>
