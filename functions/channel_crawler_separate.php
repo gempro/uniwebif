@@ -108,61 +108,15 @@ if ($xml) {
 		
 	// timeformat
 	// us start time
-	$starthour = date("H",$starttime);
-	if ($starthour == '00'){ $us_starthour = '12' and $ampm = 'AM';}
-	if ($starthour == '01'){ $us_starthour = '1' and $ampm = 'AM';}
-	if ($starthour == '02'){ $us_starthour = '2' and $ampm = 'AM';}
-	if ($starthour == '03'){ $us_starthour = '3' and $ampm = 'AM';}
-	if ($starthour == '04'){ $us_starthour = '4' and $ampm = 'AM';}
-	if ($starthour == '05'){ $us_starthour = '5' and $ampm = 'AM';}
-	if ($starthour == '06'){ $us_starthour = '6' and $ampm = 'AM';}
-	if ($starthour == '07'){ $us_starthour = '7' and $ampm = 'AM';}
-	if ($starthour == '08'){ $us_starthour = '8' and $ampm = 'AM';}
-	if ($starthour == '09'){ $us_starthour = '9' and $ampm = 'AM';}
-	if ($starthour == '10'){ $us_starthour = '10' and $ampm = 'AM';}
-	if ($starthour == '11'){ $us_starthour = '11' and $ampm = 'AM';}
-	if ($starthour == '12'){ $us_starthour = '12' and $ampm = 'PM';}
-	if ($starthour == '13'){ $us_starthour = '1' and $ampm = 'PM';}
-	if ($starthour == '14'){ $us_starthour = '2' and $ampm = 'PM';}
-	if ($starthour == '15'){ $us_starthour = '3' and $ampm = 'PM';}
-	if ($starthour == '16'){ $us_starthour = '4' and $ampm = 'PM';}
-	if ($starthour == '17'){ $us_starthour = '5' and $ampm = 'PM';}
-	if ($starthour == '18'){ $us_starthour = '6' and $ampm = 'PM';}
-	if ($starthour == '19'){ $us_starthour = '7' and $ampm = 'PM';}
-	if ($starthour == '20'){ $us_starthour = '8' and $ampm = 'PM';}
-	if ($starthour == '21'){ $us_starthour = '9' and $ampm = 'PM';}
-	if ($starthour == '22'){ $us_starthour = '10' and $ampm = 'PM';}
-	if ($starthour == '23'){ $us_starthour = '11' and $ampm = 'PM';}
-	
+	$us_starthour = date("g",$starttime);
+	$start_minute = date("i",$starttime);
+	$ampm = date("A",$starttime);
 	$us_start_date = $start_month. "/" .$start_day. "/" .$start_year. " " .$us_starthour. ":" .$start_minute. " " .$ampm;
 	
 	// us end time
-	$endhour = date("H",$e2eventend);
-	if ($endhour == '00'){ $us_endhour = '12' and $ampm = 'AM';}
-	if ($endhour == '01'){ $us_endhour = '1' and $ampm = 'AM';}
-	if ($endhour == '02'){ $us_endhour = '2' and $ampm = 'AM';}
-	if ($endhour == '03'){ $us_endhour = '3' and $ampm = 'AM';}
-	if ($endhour == '04'){ $us_endhour = '4' and $ampm = 'AM';}
-	if ($endhour == '05'){ $us_endhour = '5' and $ampm = 'AM';}
-	if ($endhour == '06'){ $us_endhour = '6' and $ampm = 'AM';}
-	if ($endhour == '07'){ $us_endhour = '7' and $ampm = 'AM';}
-	if ($endhour == '08'){ $us_endhour = '8' and $ampm = 'AM';}
-	if ($endhour == '09'){ $us_endhour = '9' and $ampm = 'AM';}
-	if ($endhour == '10'){ $us_endhour = '10' and $ampm = 'AM';}
-	if ($endhour == '11'){ $us_endhour = '11' and $ampm = 'AM';}
-	if ($endhour == '12'){ $us_endhour = '12' and $ampm = 'PM';}
-	if ($endhour == '13'){ $us_endhour = '1' and $ampm = 'PM';}
-	if ($endhour == '14'){ $us_endhour = '2' and $ampm = 'PM';}
-	if ($endhour == '15'){ $us_endhour = '3' and $ampm = 'PM';}
-	if ($endhour == '16'){ $us_endhour = '4' and $ampm = 'PM';}
-	if ($endhour == '17'){ $us_endhour = '5' and $ampm = 'PM';}
-	if ($endhour == '18'){ $us_endhour = '6' and $ampm = 'PM';}
-	if ($endhour == '19'){ $us_endhour = '7' and $ampm = 'PM';}
-	if ($endhour == '20'){ $us_endhour = '8' and $ampm = 'PM';}
-	if ($endhour == '21'){ $us_endhour = '9' and $ampm = 'PM';}
-	if ($endhour == '22'){ $us_endhour = '10' and $ampm = 'PM';}
-	if ($endhour == '23'){ $us_endhour = '11' and $ampm = 'PM';}
-	
+	$us_endhour = date("g",$e2eventend);
+	$end_minute = date("i",$e2eventend);
+	$ampm = date("A",$e2eventend);
 	$us_end_date = $end_month. "/" .$end_day. "/" .$end_year. " " .$us_endhour. ":" .$end_minute. " " .$ampm;
 	
 	// mark hd channels
