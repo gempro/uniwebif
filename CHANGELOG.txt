@@ -23,8 +23,7 @@ v1.1
 + Function to crawl Record folders from Receiver by click (Under Records > Reload folders)
 
 -
-
-Fixed a bug where time overlapped broadcast's in 'Broadcast now' list was not handled correct
-Fixed a bug where time overlapped broadcast's in 'Channelbrowser list' was not handled correct
+Fixed a bug where time overlapped Broadcast's in 'Broadcast now' list was not handled correct
+Fixed a bug where Broadcast's in 'Channelbrowser list' was not handled correct after browsing
 File broadcast_list_inc.php in functions/ removed, cause not longer used
 -
