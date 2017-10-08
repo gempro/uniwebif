@@ -24,6 +24,7 @@ v1.1
 
 -
 
-Fixed a bug where time overlapped broadcast's in list was not handled correct
-
+Fixed a bug where time overlapped broadcast's in 'Broadcast now' list was not handled correct
+Fixed a bug where time overlapped broadcast's in 'Channelbrowser list' was not handled correct
+File broadcast_list_inc.php in functions/ removed, cause not longer used
 -
