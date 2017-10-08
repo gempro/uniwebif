@@ -2,7 +2,7 @@
 session_start();
 //
 include("inc/dashboard_config.php");
-include_once("functions/broadcast_list_inc.php");
+//include_once("functions/broadcast_list_inc.php");
 include_once("functions/primetime_list_inc.php");
 
 	// check connection
@@ -262,22 +262,9 @@ animatedcollapse.init()
 	$("#progressbar1").html(data);
 	}
 );
-
-// reload progressbar
-//var file = "functions/progressbar1.php";
-//var seconds_load = 180;
-//
-//$(document).ready(function() {
-//       
-//    setInterval(function() {
-//        $('#progressbar1').load(file + '?ts=' + (new Date().getTime()));
-//    }, (seconds_load*1000));
-//});
-
+// remaining broadcast progressbar
 var reload_progressbar1 = '<? echo $reload_progressbar1; ?>';
-
 if (reload_progressbar1 == 1) {
-
 var file = "functions/progressbar1.php";
 var seconds_load = 180;
 
@@ -288,7 +275,6 @@ $(document).ready(function() {
     }, (seconds_load*1000));
 });
 }
-
 // ticker
 document.addEventListener('DOMContentLoaded', checkWidth);
 document.addEventListener('resize', checkWidth);
@@ -304,6 +290,19 @@ $(document).ready(function() {
 });
 }
 };
+// broadcast list main
+$(document).ready(function(){
+$("#broadcast_main_now_today").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
+	$.post("functions/broadcast_list_main.php",
+	{
+	time: 'now'
+	},
+	function(data){
+	// write data in container
+	
+	$("#broadcast_main_now_today").html(data);
+	});
+});
 </script>
 </head>
 <body>
