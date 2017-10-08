@@ -56,6 +56,7 @@ function broadcast_list_desc(id) {
 
 // display broadcast list main
 function broadcast_main(id) {
+	$("#broadcast_main_"+id+"").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
 	$.post("functions/broadcast_list_main.php",
 	{
 	time: id
@@ -349,6 +350,7 @@ $(document).ready(function(){
 // display primetime list main
 function primetime_main(id) {
 	var this_id = id.replace(/primetime_/g, "");
+	$("#primetime_main_"+this_id+"").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
 	$.post("functions/primetime_list_main.php",
 	{
 	time: this_id
@@ -411,6 +413,7 @@ if(typeof(EventSource) !== "undefined") {
 // display channelbrowser list main
 function channelbrowser_main(id) {
 	var channel_id = document.getElementById("channel_id").value;
+	$("#channelbrowser_main_"+id+"").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
 	$.post("functions/channelbrowser_list_main.php",
 	{
 	time: id,
@@ -469,12 +472,13 @@ $(document).ready(function(){
 function channelbrowser_zap(id) {
 	
 	var this_id = id.replace(/channelbrowser_zap_btn_/g, "");
+	var res = this_id.substr(3);
 	
 	document.getElementById("channelbrowser_status_zap_"+this_id+"").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
 	
 if(typeof(EventSource) !== "undefined") {
 	
-    var source = new EventSource("functions/send_zapp_request.php?hash="+this_id+"");
+    var source = new EventSource("functions/send_zapp_request.php?hash="+res+"");
     source.onmessage = function(event) {
 		
 	document.getElementById("channelbrowser_status_zap_"+this_id+"").innerHTML = "";
@@ -493,12 +497,13 @@ function channelbrowser_timer(id) {
 if(typeof(EventSource) !== "undefined") {
 	
 	var this_id = id.replace(/channelbrowser_timer_btn_/g, "");
+	var res = this_id.substr(3);
 	
 	var record_location = document.getElementById("rec_location_channelbrowser_"+this_id+"").value;
 	
 	document.getElementById("channelbrowser_status_timer_"+this_id+"").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
 	
-    var source = new EventSource("functions/send_timer_instant.php?hash="+this_id+"&record_location="+record_location+"");
+    var source = new EventSource("functions/send_timer_instant.php?hash="+res+"&record_location="+record_location+"");
     source.onmessage = function(event) {
 		
 	document.getElementById("channelbrowser_status_timer_"+this_id+"").innerHTML = "<i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i> Timer sent";
