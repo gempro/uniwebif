@@ -181,10 +181,13 @@ include("../inc/dashboard_config.php");
 	
 	// mark existing timer
 	if ($obj->timer == '1'){ $timer = "timer"; } else { $timer = ""; }
+	
+	//
+	$rand = substr(str_shuffle(str_repeat('0123456789',3)),0,3);
 
 $channelbrowser_list = $channelbrowser_list."
 		<div id=\"channelbrowser_main\">
-	  <div id=\"channelbrowser_$obj->hash\" style=\"cursor: pointer;\" onclick=\"channelbrowser_list_desc(this.id);\">
+	  <div id=\"channelbrowser_$rand$obj->hash\" style=\"cursor: pointer;\" onclick=\"channelbrowser_list_desc(this.id);\">
 		<div id=\"cnt_time\"> <span class=\"$timer\">$broadcast_time</span> </div>
 		<div id=\"cnt_title\"> <span class=\"$timer\">$title_enc</span>
 		  <div id=\"channelbrowser_desc_inner\"> </div>
@@ -192,9 +195,9 @@ $channelbrowser_list = $channelbrowser_list."
 		<div id=\"cnt_channel\"> <span class=\"$timer\">$servicename_enc</span> </div>
 		<div style=\"clear:both\"></div>
 	  </div>
-	  <div id=\"channelbrowser_btn_$obj->hash\" style=\"display:none;\"><div class=\"spacer_5\"></div>
+	  <div id=\"channelbrowser_btn_$rand$obj->hash\" style=\"display:none;\"><div class=\"spacer_5\"></div>
 	  <strong>$date_start</strong><br />
-	  <div id=\"channelbrowser_div_$obj->hash\">
+	  <div id=\"channelbrowser_div_$rand$obj->hash\">
 		  <div class=\"spacer_5\"></div>
 		  $description_enc
 		  <div class=\"spacer_5\"></div>
@@ -205,17 +208,17 @@ $channelbrowser_list = $channelbrowser_list."
 		<div class=\"spacer_5\"></div>
 <div id=\"broadcast-tab-button-group\">
   <div id=\"row1\">
-    <input id=\"channelbrowser_timer_btn_$obj->hash\" type=\"submit\" onClick=\"channelbrowser_timer(this.id)\" value=\"SET TIMER\" class=\"btn btn-success\" title=\"send timer instantly\"/> </div>
+    <input id=\"channelbrowser_timer_btn_$rand$obj->hash\" type=\"submit\" onClick=\"channelbrowser_timer(this.id)\" value=\"SET TIMER\" class=\"btn btn-success\" title=\"send timer instantly\"/> </div>
   <div id=\"row2\">
-    <input id=\"channelbrowser_zap_btn_$obj->hash\" type=\"submit\" onClick=\"channelbrowser_zap(this.id)\" value=\"ZAPP TO CHANNEL\" class=\"btn btn-default\"/> </div>
+    <input id=\"channelbrowser_zap_btn_$rand$obj->hash\" type=\"submit\" onClick=\"channelbrowser_zap(this.id)\" value=\"ZAPP TO CHANNEL\" class=\"btn btn-default\"/> </div>
   <div id=\"row3\">
-  <span id=\"channelbrowser_status_zap_$obj->hash\"></span>
-  <span id=\"channelbrowser_status_timer_$obj->hash\"></span>
+  <span id=\"channelbrowser_status_zap_$rand$obj->hash\"></span>
+  <span id=\"channelbrowser_status_timer_$rand$obj->hash\"></span>
   </div>
   <div style=\"clear:both\"></div>
   </div>
   <div class=\"spacer_5\"></div>
-  <span>Record location: </span><select id=\"rec_location_channelbrowser_$obj->hash\" class=\"rec_location_dropdown\">$rec_dropdown_channelbrowser</select>
+  <span>Record location: </span><select id=\"rec_location_channelbrowser_$rand$obj->hash\" class=\"rec_location_dropdown\">$rec_dropdown_channelbrowser</select>
   <div class=\"spacer_5\"></div>
   </div>
   </div>
