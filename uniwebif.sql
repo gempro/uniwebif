@@ -1,14 +1,13 @@
 -- phpMyAdmin SQL Dump
--- version 3.4.11.1deb2+deb7u1
+-- version 3.3.2deb1ubuntu1
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Erstellungszeit: 04. Sep 2017 um 18:23
--- Server Version: 5.5.38
--- PHP-Version: 5.4.45-0+deb7u6
+-- Erstellungszeit: 12. Oktober 2017 um 18:55
+-- Server Version: 5.5.54
+-- PHP-Version: 5.3.10-1ubuntu3.26
 
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
-SET time_zone = "+00:00";
 
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -17,7 +16,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8 */;
 
 --
--- Datenbank: `uniwebif`
+-- Datenbank: `uniwebif_demo`
 --
 
 -- --------------------------------------------------------
@@ -36,6 +35,11 @@ CREATE TABLE IF NOT EXISTS `bouquet_list` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
+--
+-- Daten für Tabelle `bouquet_list`
+--
+
+
 -- --------------------------------------------------------
 
 --
@@ -51,6 +55,11 @@ CREATE TABLE IF NOT EXISTS `box_info` (
   `e2model` varchar(100) NOT NULL,
   KEY `id` (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+--
+-- Daten für Tabelle `box_info`
+--
+
 
 -- --------------------------------------------------------
 
@@ -73,6 +82,11 @@ CREATE TABLE IF NOT EXISTS `channel_list` (
   `last_crawl` int(12) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+--
+-- Daten für Tabelle `channel_list`
+--
+
 
 -- --------------------------------------------------------
 
@@ -130,6 +144,11 @@ CREATE TABLE IF NOT EXISTS `epg_data` (
   FULLTEXT KEY `epgsearch_enc` (`title_enc`,`e2eventservicename`,`description_enc`,`descriptionextended_enc`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
+--
+-- Daten für Tabelle `epg_data`
+--
+
+
 -- --------------------------------------------------------
 
 --
@@ -143,6 +162,11 @@ CREATE TABLE IF NOT EXISTS `record_locations` (
   `selected` int(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+--
+-- Daten für Tabelle `record_locations`
+--
+
 
 -- --------------------------------------------------------
 
@@ -164,6 +188,11 @@ CREATE TABLE IF NOT EXISTS `saved_search` (
   `action` text NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+--
+-- Daten für Tabelle `saved_search`
+--
+
 
 -- --------------------------------------------------------
 
@@ -224,6 +253,13 @@ CREATE TABLE IF NOT EXISTS `settings` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
+--
+-- Daten für Tabelle `settings`
+--
+
+INSERT INTO `settings` (`id`, `box_ip`, `box_user`, `box_password`, `activate_cron`, `epg_entries_per_channel`, `channel_entries`, `time_format`, `epg_crawler`, `crawler_timestamp`, `crawler_hour`, `crawler_minute`, `crawler_am_pm`, `last_epg_crawl`, `start_epg_crawler`, `after_crawl_action`, `search_crawler`, `last_search_crawl`, `display_old_epg`, `streaming_symbol`, `imdb_symbol`, `timer_ticker`, `ticker_time`, `mark_searchterm`, `send_timer`, `delete_old_timer`, `delete_receiver_timer`, `dummy_timer`, `dummy_timer_time`, `dummy_timer_current`, `delete_old_epg`, `url_format`, `del_time`, `reload_progressbar1`, `extra_rec_time`, `cz_activate`, `cz_wait_time`, `cz_repeat`, `cz_hour`, `cz_minute`, `cz_am_pm`, `cz_start_channel`, `cz_timestamp`, `cz_worktime`, `dur_down_broadcast`, `dur_up_broadcast`, `dur_down_primetime`, `dur_up_primetime`) VALUES
+(0, 'localhost', 'root', '', 0, 500, 100, 2, 0, 0, '', '', '', 0, 30, 0, 0, 0, 0, 1, 0, 1, 86400, 1, 0, 0, 0, 0, 0, 0, 0, 'http', 21600, 1, 0, 0, 30, '', '', '', '', '', '0', '', 600, 600, 600, 7200);
+
 -- --------------------------------------------------------
 
 --
@@ -256,6 +292,11 @@ CREATE TABLE IF NOT EXISTS `timer` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
+--
+-- Daten für Tabelle `timer`
+--
+
+
 -- --------------------------------------------------------
 
 --
@@ -272,6 +313,7 @@ CREATE TABLE IF NOT EXISTS `tv_services` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+--
+-- Daten für Tabelle `tv_services`
+--
+
