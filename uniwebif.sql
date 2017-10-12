@@ -1,11 +1,4 @@
 -- phpMyAdmin SQL Dump
--- version 3.3.2deb1ubuntu1
--- http://www.phpmyadmin.net
---
--- Host: localhost
--- Erstellungszeit: 12. Oktober 2017 um 18:55
--- Server Version: 5.5.54
--- PHP-Version: 5.3.10-1ubuntu3.26
 
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 
@@ -16,13 +9,13 @@ SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 /*!40101 SET NAMES utf8 */;
 
 --
--- Datenbank: `uniwebif_demo`
+-- Database: `uniwebif`
 --
 
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `bouquet_list`
+-- Table `bouquet_list`
 --
 
 DROP TABLE IF EXISTS `bouquet_list`;
@@ -36,14 +29,14 @@ CREATE TABLE IF NOT EXISTS `bouquet_list` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 --
--- Daten für Tabelle `bouquet_list`
+-- Data Table `bouquet_list`
 --
 
 
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `box_info`
+-- Table `box_info`
 --
 
 DROP TABLE IF EXISTS `box_info`;
@@ -57,14 +50,14 @@ CREATE TABLE IF NOT EXISTS `box_info` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 --
--- Daten für Tabelle `box_info`
+-- Data Table `box_info`
 --
 
 
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `channel_list`
+-- Table `channel_list`
 --
 
 DROP TABLE IF EXISTS `channel_list`;
@@ -84,14 +77,14 @@ CREATE TABLE IF NOT EXISTS `channel_list` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 --
--- Daten für Tabelle `channel_list`
+-- Data Table `channel_list`
 --
 
 
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `epg_data`
+-- Table `epg_data`
 --
 
 DROP TABLE IF EXISTS `epg_data`;
@@ -145,14 +138,14 @@ CREATE TABLE IF NOT EXISTS `epg_data` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 --
--- Daten für Tabelle `epg_data`
+-- Data Table `epg_data`
 --
 
 
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `record_locations`
+-- Table `record_locations`
 --
 
 DROP TABLE IF EXISTS `record_locations`;
@@ -164,14 +157,14 @@ CREATE TABLE IF NOT EXISTS `record_locations` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 --
--- Daten für Tabelle `record_locations`
+-- Data Table `record_locations`
 --
 
 
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `saved_search`
+-- Table `saved_search`
 --
 
 DROP TABLE IF EXISTS `saved_search`;
@@ -190,14 +183,14 @@ CREATE TABLE IF NOT EXISTS `saved_search` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 --
--- Daten für Tabelle `saved_search`
+-- Data Table `saved_search`
 --
 
 
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `settings`
+-- Table `settings`
 --
 
 DROP TABLE IF EXISTS `settings`;
@@ -254,7 +247,7 @@ CREATE TABLE IF NOT EXISTS `settings` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
--- Daten für Tabelle `settings`
+-- Data Table `settings`
 --
 
 INSERT INTO `settings` (`id`, `box_ip`, `box_user`, `box_password`, `activate_cron`, `epg_entries_per_channel`, `channel_entries`, `time_format`, `epg_crawler`, `crawler_timestamp`, `crawler_hour`, `crawler_minute`, `crawler_am_pm`, `last_epg_crawl`, `start_epg_crawler`, `after_crawl_action`, `search_crawler`, `last_search_crawl`, `display_old_epg`, `streaming_symbol`, `imdb_symbol`, `timer_ticker`, `ticker_time`, `mark_searchterm`, `send_timer`, `delete_old_timer`, `delete_receiver_timer`, `dummy_timer`, `dummy_timer_time`, `dummy_timer_current`, `delete_old_epg`, `url_format`, `del_time`, `reload_progressbar1`, `extra_rec_time`, `cz_activate`, `cz_wait_time`, `cz_repeat`, `cz_hour`, `cz_minute`, `cz_am_pm`, `cz_start_channel`, `cz_timestamp`, `cz_worktime`, `dur_down_broadcast`, `dur_up_broadcast`, `dur_down_primetime`, `dur_up_primetime`) VALUES
@@ -263,7 +256,7 @@ INSERT INTO `settings` (`id`, `box_ip`, `box_user`, `box_password`, `activate_cr
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `timer`
+-- Table `timer`
 --
 
 DROP TABLE IF EXISTS `timer`;
@@ -293,14 +286,14 @@ CREATE TABLE IF NOT EXISTS `timer` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 --
--- Daten für Tabelle `timer`
+-- Data Table `timer`
 --
 
 
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `tv_services`
+-- Table `tv_services`
 --
 
 DROP TABLE IF EXISTS `tv_services`;
@@ -314,6 +307,6 @@ CREATE TABLE IF NOT EXISTS `tv_services` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 --
--- Daten für Tabelle `tv_services`
+-- Data Table `tv_services`
 --
 
