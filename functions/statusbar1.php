@@ -2,6 +2,8 @@
 //
 include("../inc/dashboard_config.php");
 
+if(!isset($box_ip) or $box_ip == "" or !isset($box_user) or $box_user == "" or !isset($box_password) or $box_password == "") { exit; }
+
 // get info
 $xmlfile = ''.$url_format.'://'.$box_ip.'/web/getcurrent';
 
