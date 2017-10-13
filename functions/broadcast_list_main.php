@@ -40,8 +40,16 @@ include("../inc/dashboard_config.php");
 	else { $_SESSION["sum_broadcast_time"] = $_SESSION["sum_broadcast_time"]; }
 	
 	$timestamp = time();
-	$today_start = $timestamp - $dur_down_broadcast;
-	$today_end = $timestamp + $dur_up_broadcast;
+	
+	if ($time == 'now_today' ){ unset($_SESSION['time_stamp']); }
+	if(!isset($_SESSION["time_stamp"]) or $_SESSION["time_stamp"] == "") { $_SESSION["time_stamp"] = $timestamp; } else { $_SESSION["time_stamp"] = $_SESSION["time_stamp"]; }
+	
+	$time_stamp = $_SESSION["time_stamp"];
+	$today_start = $time_stamp - $dur_down_broadcast;
+	$today_end = $time_stamp + $dur_up_broadcast;
+	
+	//$today_start = $timestamp - $dur_down_broadcast;
+	//$today_end = $timestamp + $dur_up_broadcast;
 	
 //	$tomorrow_start = $timestamp + 86400;
 //	$tomorrow_end = $timestamp + 87300;
@@ -65,7 +73,7 @@ include("../inc/dashboard_config.php");
 	
 	$timestamp_dup = $summary * 86400;
 	
-	$timestamp_forward_start = $timestamp_dup + $timestamp;
+	$timestamp_forward_start = $timestamp_dup + $time_stamp;
 	$timestamp_forward_end = $timestamp_forward_start;
 	
 	$time_start = $timestamp_forward_start - $dur_down_broadcast;
@@ -105,9 +113,9 @@ include("../inc/dashboard_config.php");
 	
 	$timestamp_dup = $summary * $dur_up_broadcast;
 	
-	if(!isset($_SESSION["time_start_last"]) or $_SESSION["time_start_last"] == "") { $timestamp = $timestamp; } else { $timestamp = $_SESSION["time_start_last"]; }
+	if(!isset($_SESSION["time_start_last"]) or $_SESSION["time_start_last"] == "") { $time_stamp = $time_stamp; } else { $time_stamp = $_SESSION["time_start_last"]; }
 	
-	$timestamp_forward_start = $timestamp_dup + $timestamp;
+	$timestamp_forward_start = $timestamp_dup + $time_stamp;
 	$timestamp_forward_end = $timestamp_forward_start;
 	
 	$time_start = $timestamp_forward_start - $dur_down_broadcast;
@@ -141,6 +149,8 @@ include("../inc/dashboard_config.php");
 	
 	if ($time == 'now_today' ){ $time_start = $today_start; $time_end = $today_end; unset($_SESSION['time_start_last']); unset($_SESSION['sum_broadcast_days']); unset($_SESSION['sum_broadcast_time']);
 	}
+	
+	if ($time == 'now' ){ $time_start = $today_start; $time_end = $today_end; }
 	
 	$sql = "SELECT * FROM `epg_data` WHERE e2eventstart BETWEEN '$time_start' and '$time_end' ORDER BY e2eventstart ASC";
 
