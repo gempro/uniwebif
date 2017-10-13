@@ -22,7 +22,7 @@ Uniwebif was compatible with Enigma2 Receivers, but with some little changes it 
 
 Watch Tutorial for more Information: https://www.youtube.com/watch?v=lj4EOlJzquk
 
-Website: http://uniwebif.techweb.at
+Online Demo: http://uniwebif-demo.techweb.at
 
 ---
 
