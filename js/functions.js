@@ -23,19 +23,14 @@ $('#scroll_top').click(function(){
 // scroll top nav
 $(document).ready(function(){
   $("a").on('click', function(event) {
-
     if (this.hash !== "") {
-
       event.preventDefault();
-
       // Store hash
       var hash = this.hash;
-
       $('html, body').animate({
         scrollTop: $(hash).offset().top
       }, 800, function(){
-		  
-        //window.location.hash = hash;
+      //window.location.hash = hash;
       });
     } // End if
   });
@@ -70,7 +65,7 @@ function broadcast_main(id) {
 	);
 };
 
-// broadcast list show time
+// broadcast list browse time
 function broadcast_show_time(id) {
 	var time_format = $("#time_format").val();
 	var hh = $("#broadcast_hh").val();
@@ -138,11 +133,10 @@ $(window).scroll(function(){
 		$('#scroll_top_broadcast_list').fadeOut();
 	}
 });
-
-	$('#scroll_top_broadcast_list').click(function(){
-		$('html, body').animate({ scrollTop: ($(broadcast_list).offset().top)}, 'slow');
-		return false;
-	});
+$('#scroll_top_broadcast_list').click(function(){
+	$('html, body').animate({ scrollTop: ($(broadcast_list).offset().top)}, 'slow');
+	return false;
+});
 });
 
 // scroll button size
@@ -162,8 +156,7 @@ if (document.querySelector('html').clientWidth < 400)
 }
 
 // navbar_header
-if (document.querySelector('html').clientWidth < 830)
-{
+if (document.querySelector('html').clientWidth < 830){
 	var navbar_header_dashboard = '';
 	var navbar_header_search = '';
 	var navbar_header_timer = '';
@@ -218,7 +211,6 @@ $(window).load(function() {
 	}
 }
 
-<!--
 // zapp request broadcast list main
 function broadcast_zap(id) {
 	
@@ -243,7 +235,6 @@ if(typeof(EventSource) !== "undefined") {
 	}
 }
 
-<!--
 // send timer instant broadcast list main
 function broadcast_timer(id) {
 if(typeof(EventSource) !== "undefined") {
@@ -265,7 +256,6 @@ if(typeof(EventSource) !== "undefined") {
 	}
 }
 
-<!--
 // zapp request searchlist
 function searchlist_zap(id) {
 	
@@ -289,7 +279,6 @@ if(typeof(EventSource) !== "undefined") {
 	}
 }
 
-<!--
 // send timer searchlist
 function searchlist_timer(id) {
 if(typeof(EventSource) !== "undefined") {
@@ -312,7 +301,6 @@ if(typeof(EventSource) !== "undefined") {
 	}
 }
 
-<!--
 // zapp request separate channel crawler
 function channel_crawler_zap(id) {
 	
@@ -334,7 +322,6 @@ if(typeof(EventSource) !== "undefined") {
 	}
 }
 
-<!--
 // primetime banner link
 $(document).ready(function() {
     $('#primetime_banner').click(function(e) {
@@ -471,7 +458,6 @@ function set_primetime(){
 	);
 }
 
-<!--
 // display channelbrowser list main
 function channelbrowser_main(id) {
 	var channel_id = document.getElementById("channel_id").value;
@@ -517,10 +503,10 @@ $(document).ready(function() {
 $(document).ready(function(){
 $(window).scroll(function(){
 	if ($(this).scrollTop() > 5500) {
-		$('#scroll_top_channelbrowser_list').fadeIn();
+	$('#scroll_top_channelbrowser_list').fadeIn();
 	} else {
-		$('#scroll_top_channelbrowser_list').fadeOut();
-	}
+	$('#scroll_top_channelbrowser_list').fadeOut();
+}
 });
 
 $('#scroll_top_channelbrowser_list').click(function(){
@@ -558,11 +544,9 @@ if(typeof(EventSource) !== "undefined") {
 	
 	var this_id = id.replace(/channelbrowser_timer_btn_/g, "");
 	var res = this_id.substr(3);
-	
 	var record_location = document.getElementById("rec_location_channelbrowser_"+this_id+"").value;
 	
 	document.getElementById("channelbrowser_status_timer_"+this_id+"").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
-	
     var source = new EventSource("functions/send_timer_instant.php?hash="+res+"&record_location="+record_location+"");
     source.onmessage = function(event) {
 		
@@ -583,6 +567,16 @@ $(document).ready(function(){
 	$("#timerlist_inc").html(data);
 	});
 });
+
+// reload timerlist
+function reload_timerlist(){
+	$.post("functions/timer_list_inc.php",
+	function(data){
+	$("#unhide").addClass("hidden");
+	$("#show_unhide").attr("onclick", "timerlist_panel(this.id)");
+	$("#timerlist_inc").html(data);
+});
+}
 
 // open timerlist
 function timerlist_desc(id) {
@@ -692,12 +686,24 @@ function timerlist_panel(id){
 	if (checked == 0){ return; }
 	}
 	if (id == 'show_unhide'){
-	$("[id^=timerlist_div_outer_]").removeClass("hidden");
+	//$("[id^=timerlist_div_outer_]").removeClass("hidden");
+	
+	
+	$("#selected_box_sum").html("");
+	$(function(){
+	$.post("functions/timer_list_inc.php",
+	{
+	action: 'unhide'
+	},
+	function(data){
 	$("#unhide").removeClass("hidden");
+	$("#select_all").prop("checked", false);
+	$("#show_unhide").attr("onclick", "reload_timerlist()");
+	$("#timerlist_inc").html(data);
+	});
+	});
 	return;
 	}
-	
-	//if ($('#timerlist_div_outer_'+checked.join()+'.opac_70')){ console.log("yes"); } else { console.log("no"); }
 	
 	$("#panel_action_status").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
 
@@ -738,7 +744,6 @@ function unselect_boxes(){
 	});
 }
 
-<!--
 // display record list
 function browse_records() {
 	
@@ -842,10 +847,10 @@ if (confirm('Are you sure?')) {
 // saved search list list hover
 $(document).ready(function(){
     $("#saved_search_list*").hover(function(){
-        $(this).css("background-color", "#FAFAFA");
-        }, function(){
-        $(this).css("background-color", "white");
-    });
+	$(this).css("background-color", "#FAFAFA");
+    }, function(){
+    $(this).css("background-color", "white");
+  });
 });
 
 // open saved search list
@@ -859,7 +864,6 @@ function saved_search_list_edit(id) {
 // edit saved search list
 function saved_search_list_save(id) {
 if(typeof(EventSource) !== "undefined") {
-	
 	var this_id = id.replace(/saved_search_list_save_btn_/g, "");
 	var searchterm = document.getElementById("searchterm_"+this_id+"").value;
 	var searcharea = document.getElementById("searcharea_"+this_id+"").value;
@@ -949,7 +953,6 @@ if(typeof(EventSource) !== "undefined") {
 	}
 }
 
-<!--
 // crawl channel separate
 function channel_crawler(id) {
 	
@@ -1205,6 +1208,9 @@ function save_settings() {
 	if (document.getElementById("send_timer").checked == true) { var send_timer = '1'; }
 	if (document.getElementById("send_timer").checked == false) { var send_timer = '0'; }
 	
+	if (document.getElementById("hide_old_timer").checked == true) { var hide_old_timer = '1'; }
+	if (document.getElementById("hide_old_timer").checked == false) { var hide_old_timer = '0'; }
+	
 	if (document.getElementById("delete_old_timer").checked == true) { var delete_old_timer = '1'; }
 	if (document.getElementById("delete_old_timer").checked == false) { var delete_old_timer = '0'; }
 	
@@ -1246,7 +1252,7 @@ function save_settings() {
 	document.getElementById("save_settings_status").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
 
 if(typeof(EventSource) !== "undefined") {
-    var source = new EventSource("functions/save_settings.php?activate_cron="+activate_cron+"&epg_entries_per_channel="+epg_entries_per_channel+"&channel_entries="+channel_entries+"&time_format="+time_format+"&dur_down_broadcast="+dur_down_broadcast+"&dur_up_broadcast="+dur_up_broadcast+"&dur_down_primetime="+dur_down_primetime+"&dur_up_primetime="+dur_up_primetime+"&epg_crawler="+epg_crawler+"&crawler_hour="+crawler_hour+"&crawler_minute="+crawler_minute+"&crawler_am_pm="+crawler_am_pm+"&start_epg_crawler="+start_epg_crawler+"&search_crawler="+search_crawler+"&timer_ticker="+timer_ticker+"&ticker_time="+ticker_time+"&streaming_symbol="+streaming_symbol+"&imdb_symbol="+imdb_symbol+"&display_old_epg="+display_old_epg+"&send_timer="+send_timer+"&delete_old_timer="+delete_old_timer+"&delete_receiver_timer="+delete_receiver_timer+"&dummy_timer="+dummy_timer+"&after_crawl_action="+after_crawl_action+"&delete_old_epg="+delete_old_epg+"&url_format="+url_format+"&del_time="+del_time+"&reload_progressbar1="+reload_progressbar1+"&extra_rec_time="+extra_rec_time+"&mark_searchterm="+mark_searchterm+"&cz_activate="+cz_activate+"&cz_wait_time="+cz_wait_time+"&cz_hour="+cz_hour+"&cz_minute="+cz_minute+"&cz_repeat="+cz_repeat+"&cz_am_pm="+cz_am_pm+"&cz_start_channel="+cz_start_channel);
+    var source = new EventSource("functions/save_settings.php?activate_cron="+activate_cron+"&epg_entries_per_channel="+epg_entries_per_channel+"&channel_entries="+channel_entries+"&time_format="+time_format+"&dur_down_broadcast="+dur_down_broadcast+"&dur_up_broadcast="+dur_up_broadcast+"&dur_down_primetime="+dur_down_primetime+"&dur_up_primetime="+dur_up_primetime+"&epg_crawler="+epg_crawler+"&crawler_hour="+crawler_hour+"&crawler_minute="+crawler_minute+"&crawler_am_pm="+crawler_am_pm+"&start_epg_crawler="+start_epg_crawler+"&search_crawler="+search_crawler+"&timer_ticker="+timer_ticker+"&ticker_time="+ticker_time+"&streaming_symbol="+streaming_symbol+"&imdb_symbol="+imdb_symbol+"&display_old_epg="+display_old_epg+"&send_timer="+send_timer+"&hide_old_timer="+hide_old_timer+"&delete_old_timer="+delete_old_timer+"&delete_receiver_timer="+delete_receiver_timer+"&dummy_timer="+dummy_timer+"&after_crawl_action="+after_crawl_action+"&delete_old_epg="+delete_old_epg+"&url_format="+url_format+"&del_time="+del_time+"&reload_progressbar1="+reload_progressbar1+"&extra_rec_time="+extra_rec_time+"&mark_searchterm="+mark_searchterm+"&cz_activate="+cz_activate+"&cz_wait_time="+cz_wait_time+"&cz_hour="+cz_hour+"&cz_minute="+cz_minute+"&cz_repeat="+cz_repeat+"&cz_am_pm="+cz_am_pm+"&cz_start_channel="+cz_start_channel);
     source.onmessage = function(event) {
 
 	<!---if error--->
@@ -1266,7 +1272,6 @@ if(typeof(EventSource) !== "undefined") {
 	}
 }
 
-<!--
 // copy record locations from receiver
 function save_rec_locations() {
 document.getElementById("save_box_info_status").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
@@ -1302,7 +1307,6 @@ if(typeof(EventSource) !== "undefined") {
 	}
 }
 
-<!--
 // copy bouquet urls from receiver
 function save_bouquet_data() {
 if(typeof(EventSource) !== "undefined") {
@@ -1329,7 +1333,6 @@ if(typeof(EventSource) !== "undefined") {
 	}
 }
 
-<!--
 // set channel to crawl
 function set_crawl_channel(id)
 	{
@@ -1355,7 +1358,6 @@ if(typeof(EventSource) !== "undefined") {
 
 }
 
-<!--
 // set channel for channelzapper
 function set_zap_channel(id)
 	{
@@ -1426,7 +1428,6 @@ if(typeof(EventSource) !== "undefined") {
 
 }
 
-<!--
 // edit bouquet list
 function save_bouquet_settings(id)
 	{
@@ -1500,7 +1501,6 @@ if(typeof(EventSource) !== "undefined") {
 }
 
 // teletext
-// page number
 function teletext_page() {
 
 	document.getElementById("teletext_img").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
