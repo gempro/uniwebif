@@ -1,3 +1,17 @@
+v1.2
+
++ Option to exclude multiple terms from search
+
++ Option to browse broadcast list with time indication
+
++ Option to set own Prime Time
+
++ Function to send, hide/unhide and delete multiple timers from Timerlist
+
++ Function to include/exclude timer for ident repeated broadcasts
+
+-------------------------------------------------------------------------------------------------------------
+
 v1.1
 
 + Channel Info Statusbar
