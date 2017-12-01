@@ -2,7 +2,6 @@
 <html>
 <head>
 <meta charset="utf-8" />
-<title>_ticker_main</title>
 <?php 
 //
 include("../inc/dashboard_config.php");
@@ -10,7 +9,8 @@ include("../inc/dashboard_config.php");
 	if(!isset($_REQUEST["action"]) or $_REQUEST["action"] == "") { $action = ""; } else { $action = $_REQUEST["action"]; }
 	if(!isset($_REQUEST["hash"]) or $_REQUEST["hash"] == "") { $hash = ""; } else { $hash = $_REQUEST["hash"]; }
 	
-	if ($action == 'hide'){ $sql = mysqli_query($dbmysqli, "UPDATE timer set show_ticker = '0' WHERE hash = '".$hash."' ");
+	if ($action == 'hide'){ 
+	$sql = mysqli_query($dbmysqli, "UPDATE timer set show_ticker = '0' WHERE hash = '".$hash."' ");
 	exit;
 	}
 
@@ -48,7 +48,8 @@ include("../inc/dashboard_config.php");
 	
 	} else { 
 	
-	$show_timer_btn = ''; $timer_status = '';}
+	$show_timer_btn = ''; 
+	$timer_status = '';}
 	
 	$title_enc = rawurldecode($obj->title_enc);
 	$servicename_enc = rawurldecode($obj->servicename_enc);
@@ -60,8 +61,6 @@ include("../inc/dashboard_config.php");
 	$e2eventtitle = substr($obj->e2eventtitle, 0, 80);
 	$e2eventtitle = $e2eventtitle . '...';
 	$title_enc = utf8_encode($e2eventtitle);
-	} else {
-	$title_enc = $title_enc;
 	}
 	
 	// remove special chars
@@ -112,7 +111,7 @@ if ($time_format == '1')
 		  <div id=\"timer_banner\">
 		<div id=\"row1\">
 		<div id=\"ticker_btn\">
-		<p><a href=\"#more_info\" title=\"$title_enc\" class=\"btn btn-default btn-xs btn-block\" data-toggle=\"popover\" data-trigger=\"focus\" data-html=\"true\" data-content=\"<p>$description_enc</p> $descriptionextended_enc\">more Info</a></p>
+		<p><a href=\"#timer_info\" title=\"$title_enc\" class=\"btn btn-default btn-xs btn-block\" data-toggle=\"popover\" data-trigger=\"focus\" data-html=\"true\" data-content=\"<p>$description_enc</p> $descriptionextended_enc\">more Info</a></p>
 		</div>
 		  <center><span id=\"tickerlist_send_timer_status_$hash\"><p>
 			<input type=\"submit\" id=\"tickerlist_send_timer_btn_$hash\" onclick=\"tickerlist_send_timer(this.id)\" class=\"btn btn-xs btn-success\" title=\"send timer instantly\" value=\"set Timer\" style=\"$show_timer_btn\">$timer_status
@@ -130,10 +129,10 @@ if ($time_format == '1')
 		<div style=\"clear:both\">&nbsp;</div>
 	  </div></div>
 	</li>";
-		}
-    }
-  // Free result set
-  mysqli_free_result($result);
+	}
+  }
+// Free result set
+mysqli_free_result($result);
 }
 //close db
 mysqli_close($dbmysqli);
