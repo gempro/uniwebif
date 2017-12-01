@@ -38,7 +38,7 @@ body {
 	padding-right: 30px;
 }
 #statusbar_cnt_outter {
-display:none;
+	display:none;
 }
 #statusbar1 {
 	width: 100%;
@@ -392,7 +392,7 @@ display:none;
 	float: left;
 }
 #primetime_main_today {
-display:none;
+	display:none;
 }
 #primetime_main {
 	width: 100%;
@@ -531,9 +531,19 @@ display:none;
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 }
+#timerlist #cnt_checkbox {
+	float: left;
+	padding-right: 5px;
+}
 #timerlist #cnt_time {
-	min-width:26%;
-	max-width:26%;
+	min-width:23%;
+	max-width:23%;
+	height: auto;
+	float: left;
+}
+#timerlist #cnt_time_2 {
+	min-width:27%;
+	max-width:27%;
 	height: auto;
 	float: left;
 }
@@ -542,6 +552,11 @@ display:none;
 	height: auto;
 	min-width:50%;
 	max-width:50%;
+	float: left;
+}
+#timerlist #cnt_channel {
+	width: auto;
+	height: auto;
 	float: left;
 }
 /* For small screen */    
@@ -565,13 +580,13 @@ display:none;
 	float: left;
 }
 }
-#timerlist #cnt_channel {
-	width: auto;
-	height: auto;
-	float: left;
+.timerlist_hide {
+	/*background-color: rgba(255,211,80,.7);*/
+	opacity: 0.7;
 }
-
-#record_list {
+.timer_panel {
+	padding-bottom: 9px;
+	padding-left: 5px;
 }
 #record_list_main {
 	width: 100%;
@@ -716,6 +731,15 @@ max-width:90%;
 .error {
 	color:#FF0000;
 }
+.green {
+	color:#5CB85C;
+}
+.basic-input {
+	border: thin solid #ccc;
+}
+.error-input {
+	border: 1px solid #FF0000;
+}
 .timer {
 	font-weight: bold;
 }
@@ -725,23 +749,30 @@ max-width:90%;
 	cursor:pointer;
 }
 .sr_channel :hover {
-text-decoration:underline;
+	text-decoration:underline;
 }
 .sr_title {
-cursor:pointer;
+	cursor:pointer;
 }
 .sr_title :hover {
-text-decoration:underline;
+	text-decoration:underline;
 }
 .rec_location_dropdown {
-max-width:90%;
+	max-width:90%;
+}
+.hidden {
+	display:none;
+}
+.opac_70 {
+	opacity:.7;
+	color: #428BCA;
 }
 @media (max-width: 991px) {
 .rec_location_btn {
-margin-top: 5px;
+	margin-top: 5px;
 }
 .rec_location_dd {
-max-width:50%;
+	max-width:50%;
 }
 }
 #scroll_top {
@@ -871,6 +902,26 @@ h5, .h5 {
 	clear: both;
 	width:100%;
 	height: 5px;
+}
+.spacer_6 {
+	clear: both;
+	width:100%;
+	height: 6px;
+}
+.spacer_7 {
+	clear: both;
+	width:100%;
+	height: 7px;
+}
+.spacer_8 {
+	clear: both;
+	width:100%;
+	height: 8px;
+}
+.spacer_9 {
+	clear: both;
+	width:100%;
+	height: 9px;
 }
 .spacer_10 {
 	clear: both;
@@ -1133,3 +1184,4 @@ width: 260px;
 border-radius: 0px;
 }
 }
+
