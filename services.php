@@ -3,6 +3,12 @@ session_start();
 //
 include("inc/dashboard_config.php");
 
+	// check connection
+	if (mysqli_connect_errno()) {
+	printf("Connection failed: %s\n", mysqli_connect_error());
+	exit(); 
+	}
+	
 	// select oldest entry
 	$query = mysqli_query($dbmysqli, "SELECT e2eventservicename, e2eventstart FROM `epg_data` ORDER BY e2eventstart ASC LIMIT 0 , 1");
 	$first_entry = mysqli_fetch_assoc($query);
@@ -46,7 +52,7 @@ mysqli_close($dbmysqli);
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Uniwebif : About</title>
+<title>Uniwebif : All Services</title>
 <!-- BOOTSTRAP STYLES-->
 <link href="assets/css/bootstrap.css" rel="stylesheet" />
 <!-- FONTAWESOME STYLES-->
@@ -88,6 +94,64 @@ animatedcollapse.ontoggle=function($, divobj, state){ //fires each time a DIV is
 //state: "block" or "none", depending on state
 }
 animatedcollapse.init()
+
+<!--
+// tv services list
+$(window).load(function() {
+	$("#tv_services_list").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
+	$.post("functions/services_inc.php",
+	function(data){
+	// write data in container
+	$("#tv_services_list").html(data);
+	}
+	);
+});
+
+// zapp request
+function tv_services_zapp(id) {
+	
+	var this_id = id.replace(/tv_services_zapp_btn_/g, "");
+	
+	document.getElementById("tv_services_status_zapp_"+this_id+"").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
+	
+if(typeof(EventSource) !== "undefined") {
+	
+    var source = new EventSource("functions/services_zapp_request.php?e2servicereference="+this_id+"");
+    source.onmessage = function(event) {
+		
+	document.getElementById("tv_services_status_zapp_"+this_id+"").innerHTML = "";
+	document.getElementById("tv_services_zapp_btn_"+this_id+"").value = "CHANNEL ZAPP OK";
+	
+	this.close();
+	};
+	} else {
+	document.getElementById("tv_services_status_zapp_"+this_id+"").value = "Sorry, your browser does not support server-sent events...";
+	}
+}
+
+// crawl tv services
+function tv_services_crawl() {
+
+	$("#tv_services_list").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\"> Copying TV Services from Receiver..");
+	
+if(typeof(EventSource) !== "undefined") {
+	
+    var source = new EventSource("functions/services_inc.php?action=crawl");
+    source.onmessage = function(event) {
+	
+	$.post("functions/services_inc.php",
+	function(data){
+	// write data in container
+	$("#tv_services_list").html(data);
+	}
+	);
+	
+	this.close();
+	};
+	} else {
+	document.getElementById("tv_services_list").value = "Sorry, your browser does not support server-sent events...";
+	}
+}
 </script>
 </head>
 <body>
@@ -98,7 +162,7 @@ animatedcollapse.init()
     <div class="adjust-nav">
       <div class="navbar-header">
         <button type="button" class="navbar-toggle" onclick="nav_icon_scroll()" data-toggle="collapse" data-target=".sidebar-collapse"> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button>
-        <a class="navbar-brand" href="about.php"><i class="fa fa-square-o"></i>&nbsp;About</a> </div>
+        <a class="navbar-brand" href="services.php"><i class="fa fa-square-o"></i>&nbsp;Services</a> </div>
       <div class="navbar-collapse collapse">
         <ul class="nav navbar-nav navbar-right">
           <div class="row">
@@ -115,11 +179,11 @@ animatedcollapse.init()
   <nav class="navbar-default navbar-side" role="navigation">
     <div class="sidebar-collapse">
       <ul class="nav" id="main-menu">
-        <script>document.write(navbar_header_about)</script>
+        <script>document.write(navbar_header_tv_services)</script>
         <li> <a href="dashboard.php"><i class="fa fa-home"></i>HOME</a> </li>
         <li> <a href="search.php"><i class="fa fa-search"></i>Search</a> </li>
         <li> <a href="timer.php"><i class="fa fa-clock-o"></i>Timer & Saved Search</a> </li>
-        <li> <a href="#"><i class="fa fa-wrench"></i>Crawler Tools<span class="fa arrow"></span></a>
+        <li class=""> <a href="#"><i class="fa fa-wrench"></i>Crawler Tools<span class="fa arrow"></span></a>
           <ul class="nav nav-second-level">
             <li> <a href="#" onclick="animatedcollapse.toggle('div_crawl_channel_id');"><i class="fa fa-chevron-right"></i>Crawl Channel ID's</a> </li>
             <li> <a href="#" onclick="animatedcollapse.toggle('div_crawl_complete');"><i class="fa fa-chevron-right"></i>Crawl EPG from Channels</a> </li>
@@ -141,8 +205,8 @@ animatedcollapse.init()
           <ul class="nav nav-second-level">
             <li> <a href="teletext.php"><i class="fa fa-globe"></i>Teletext Browser</a> </li>
             <li> <a href="#" onclick="animatedcollapse.toggle('div_start_channelzapper');"> <i class="fa fa-arrow-up"></i>Channel Zapper</a> </li>
-            <li><a href="services.php"><i class="fa fa-list"></i>All Services</a> </li>
-            <li> <a href="about.php"><i class="glyphicon glyphicon-question-sign"></i><strong>About</strong></a> </li>
+            <li><a href="services.php"><i class="fa fa-list"></i><strong>All Services</strong></a> </li>
+            <li> <a href="about.php"><i class="glyphicon glyphicon-question-sign"></i>About</a> </li>
           </ul>
         </li>
       </ul>
@@ -160,7 +224,9 @@ animatedcollapse.init()
     <div id="page-inner">
       <div class="row">
         <div class="col-md-12">
-          <h2>About</h2>
+          <h2>Services</h2>
+          <input type="submit" onClick="tv_services_crawl()" value="Get Services from Receiver" class="btn btn-default"/>
+          <span id="tv_services_status_crawl"></span>
         </div>
       </div>
       <!--crawl channel id-->
@@ -206,13 +272,19 @@ animatedcollapse.init()
       <hr />
       <div class="row">
         <div class="col-md-12">
-        Uniwebif v1.2
-          <div class="spacer_10"></div>
-        Download latest version at <a href="https://github.com/gempro/uniwebif" target="_blank">Github</a>
+          <div id="channel_list">
+            <div id="tv_services_list"></div>
+          </div>
+          <!-- channel list -->
         </div>
       </div>
       <!-- /. ROW  -->
       <hr />
+      <!-- /. ROW  -->
+      <div class="row">
+        <div class="col-md-12"></div>
+      </div>
+      <!-- /. ROW  -->
     </div>
     <!-- /. PAGE INNER  -->
   </div>

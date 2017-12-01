@@ -2,8 +2,6 @@
 session_start();
 //
 include("inc/dashboard_config.php");
-//include_once("functions/broadcast_list_inc.php");
-include_once("functions/primetime_list_inc.php");
 
 	// check connection
 	if (mysqli_connect_errno()) {
@@ -44,6 +42,16 @@ include_once("functions/primetime_list_inc.php");
 	if ($date_latest == '01.01.1970 01:00' or $date_latest == '1/01/1970 1:00 AM'){ $date_latest = 'no data'; }
 	if ($first_entry['e2eventservicename'] == ''){ $first_entry['e2eventservicename'] = 'no data'; }	
 	if ($last_entry['e2eventservicename'] == ''){ $last_entry['e2eventservicename'] = 'no data'; }
+	
+	// primetime
+	if ($time_format == '1'){
+	$primetime_hh = date("H",$primetime);
+	$primetime_mm = date("i",$primetime);
+	}
+	if ($time_format == '2'){
+	$primetime_hh = date("g",$primetime);
+	$primetime_mm = date("i",$primetime);
+	}
 	
 	// count timer for display ticker
 	$ticker_time_end = $time + $ticker_time;
@@ -295,22 +303,77 @@ $(document).ready(function(){
 $("#broadcast_main_now_today").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
 	$.post("functions/broadcast_list_main.php",
 	{
-	time: 'now'
+	time: 'now_today'
 	},
 	function(data){
 	// write data in container
-	
 	$("#broadcast_main_now_today").html(data);
 	});
+});
+// time input broadcast list
+$(function(){
+	var time_format = '<? echo $time_format; ?>';
+$("#broadcast_hh").on({
+    change: function () {
+	var hh = $('#broadcast_hh').val();
+	if (time_format == '1') {
+	if(isFinite(String(hh)) == false || hh > 23 || hh < 1){ $("#broadcast_hh").addClass("error-input");
+	} else { $("#broadcast_hh").removeClass("error-input"); };
+	}
+	if (time_format == '2') {
+	if(isFinite(String(hh)) == false || hh > 12 || hh < 1){ $("#broadcast_hh").addClass("error-input");
+	} else { $("#broadcast_hh").removeClass("error-input"); };
+	}
+   }
+});
+});
+$(function(){
+$("#broadcast_mm").on({
+    change: function () {
+	var mm = $('#broadcast_mm').val();
+	if(isFinite(String(mm)) == false || mm > 59 || mm < 1){ $("#broadcast_mm").addClass("error-input");
+	} else { $("#broadcast_mm").removeClass("error-input"); };
+    }
+});
+});
+// time input broadcast list
+$(function(){
+	var time_format = '<? echo $time_format; ?>';
+$("#primetime_hh").on({
+    change: function () {
+	var hh = $('#primetime_hh').val();
+	if (time_format == '1') {
+	if(isFinite(String(hh)) == false || hh > 23 || hh < 1){ $("#primetime_hh").addClass("error-input");
+	} else { $("#primetime_hh").removeClass("error-input"); };
+	}
+	if (time_format == '2') {
+	if(isFinite(String(hh)) == false || hh > 12 || hh < 1){ $("#primetime_hh").addClass("error-input");
+	} else { $("#primetime_hh").removeClass("error-input"); };
+	}
+   }
+});
+});
+$(function(){
+$("#primetime_mm").on({
+    change: function () {
+	var mm = $('#primetime_mm').val();
+	if(isFinite(String(mm)) == false || mm > 59 || mm < 1){ $("#primetime_mm").addClass("error-input");
+	} else { $("#primetime_mm").removeClass("error-input"); };
+    }
+});
+});
+//
+$(function(){
+   $("#time_format").val("<?php if (!isset($time_format) or $time_format == ""){ $time_format = '2'; } echo $time_format; ?>");
 });
 </script>
 </head>
 <body>
 <a id="top"></a>
-<div id="scroll_top_channelbrowser_list" class="scroll_top_channelbrowser_list"><a href="#" title="to Channelbrowser"><script language="JavaScript" type="text/javascript"> document.write ("<i class=\"glyphicon glyphicon-circle-arrow-up fa-"+channelbrowser_btn_size+"x\"></i>");</script></a></div>
-<div id="scroll_top_primetime_list" class="scroll_top_primetime_list"><a href="#" title="to Primetime"><script language="JavaScript" type="text/javascript"> document.write ("<i class=\"glyphicon glyphicon-circle-arrow-up fa-"+primetime_btn_size+"x\"></i>");</script></a></div>
-<div id="scroll_top_broadcast_list" class="scroll_top_broadcast_list"><a href="#" title="to Broadcast"><script language="JavaScript" type="text/javascript"> document.write ("<i class=\"glyphicon glyphicon-circle-arrow-up fa-"+broadcast_btn_size+"x\"></i>");</script></a></div>
-<div id="scroll_top" class="scroll_top"><a href="#" title="to top"><script language="JavaScript" type="text/javascript"> document.write ("<i class=\"glyphicon glyphicon-circle-arrow-up fa-"+scrolltop_btn_size+"x\"></i>");</script></a></div>
+<div id="scroll_top_channelbrowser_list" class="scroll_top_channelbrowser_list"><a href="#" title="to Channelbrowser"><script>document.write ("<i class=\"glyphicon glyphicon-circle-arrow-up fa-"+channelbrowser_btn_size+"x\"></i>");</script></a></div>
+<div id="scroll_top_primetime_list" class="scroll_top_primetime_list"><a href="#" title="to Primetime"><script>document.write ("<i class=\"glyphicon glyphicon-circle-arrow-up fa-"+primetime_btn_size+"x\"></i>");</script></a></div>
+<div id="scroll_top_broadcast_list" class="scroll_top_broadcast_list"><a href="#" title="to Broadcast"><script>document.write ("<i class=\"glyphicon glyphicon-circle-arrow-up fa-"+broadcast_btn_size+"x\"></i>");</script></a></div>
+<div id="scroll_top" class="scroll_top"><a href="#" title="to top"><script>document.write("<i class=\"glyphicon glyphicon-circle-arrow-up fa-"+scrolltop_btn_size+"x\"></i>");</script></a></div>
 <div id="wrapper">
   <div class="navbar navbar-inverse navbar-fixed-top">
     <div class="adjust-nav">
@@ -333,17 +396,17 @@ $("#broadcast_main_now_today").html("<img src=\"images/loading.gif\" width=\"16\
   <nav class="navbar-default navbar-side" role="navigation">
     <div class="sidebar-collapse">
       <ul class="nav" id="main-menu">
-          <script language="JavaScript" type="text/javascript"> document.write(navbar_header_dashboard);</script>
+	  <script>document.write(navbar_header_dashboard)</script>
         <li> <a href="dashboard.php"><i class="fa fa-home"></i><strong>HOME</strong></a> </li>
         <li> <a href="search.php"><i class="fa fa-search"></i>Search</a> </li>
-        <li> <a href="timer.php"><i class="fa fa-clock-o"></i>Timer</a> </li>
+        <li> <a href="timer.php"><i class="fa fa-clock-o"></i>Timer & Saved Search</a> </li>
         <li> <a href="#"><i class="fa fa-wrench"></i>Crawler Tools<span class="fa arrow"></span></a>
           <ul class="nav nav-second-level">
-            <li> <a href="#" onclick="animatedcollapse.toggle('div_crawl_channel_id');"><i class="fa fa-chevron-right"></i>Crawl channel ID's</a> </li>
-            <li> <a href="#" onclick="animatedcollapse.toggle('div_crawl_complete');"><i class="fa fa-chevron-right"></i>Crawl EPG from channels</a> </li>
-            <li> <a href="crawl_channel_separate.php"><i class="fa fa-chevron-right"></i>Crawl channel separate</a> </li>
-            <li> <a href="#" onclick="animatedcollapse.toggle('div_crawl_search');"><i class="fa fa-chevron-right"></i>Crawl search - Write timer in database</a></li>
-            <li> <a href="#" onclick="animatedcollapse.toggle('div_send_timer');"><i class="fa fa-chevron-right"></i>Send timer from database to Receiver</a> </li>
+            <li> <a href="#" onclick="animatedcollapse.toggle('div_crawl_channel_id');"><i class="fa fa-chevron-right"></i>Crawl Channel ID's</a> </li>
+            <li> <a href="#" onclick="animatedcollapse.toggle('div_crawl_complete');"><i class="fa fa-chevron-right"></i>Crawl EPG from Channels</a> </li>
+            <li> <a href="crawl_separate.php"><i class="fa fa-chevron-right"></i>Crawl Channel separate</a> </li>
+            <li> <a href="#" onclick="animatedcollapse.toggle('div_crawl_search');"><i class="fa fa-chevron-right"></i>Crawl search - Write Timer in Database</a></li>
+            <li> <a href="#" onclick="animatedcollapse.toggle('div_send_timer');"><i class="fa fa-chevron-right"></i>Send Timer from Database to Receiver</a> </li>
           </ul>
         </li>
         <li> <a href="#"><i class="fa fa-cog"></i>Settings<span class="fa arrow"></span></a>
@@ -359,7 +422,7 @@ $("#broadcast_main_now_today").html("<img src=\"images/loading.gif\" width=\"16\
           <ul class="nav nav-second-level">
             <li> <a href="teletext.php"><i class="fa fa-globe"></i>Teletext Browser</a> </li>
             <li> <a href="#" onclick="animatedcollapse.toggle('div_start_channelzapper');"> <i class="fa fa-arrow-up"></i>Channel Zapper</a> </li>
-            <li><a href="tv_services.php"><i class="fa fa-list"></i>TV Services</a> </li>
+            <li><a href="services.php"><i class="fa fa-list"></i>All Services</a> </li>
             <li> <a href="about.php"><i class="glyphicon glyphicon-question-sign"></i>About</a> </li>
           </ul>
         </li>
@@ -468,6 +531,7 @@ $("#broadcast_main_now_today").html("<img src=\"images/loading.gif\" width=\"16\
       </div>
       <!-- row -->
       <a name="broadcast_list" id="broadcast_list"></a>
+      <input id="time_format" type="hidden" value="">
       <div class="row">
         <div class="col-md-12">
           <h5>Broadcast</h5>
@@ -487,13 +551,25 @@ $("#broadcast_main_now_today").html("<img src=\"images/loading.gif\" width=\"16\
             <li class="">
               <button id="day_backward" href="#display_day_backward" class="btn btn-default" onClick="broadcast_main(this.id)" data-toggle="tab">Day -</button>
             </li>
+            <li id ="browse_time_panel">
+            <div class="spacer_5"></div>
+            <span>&nbsp;Time: 
+            <input id="broadcast_hh" class="basic-input" type="text" size="2" maxlength="2" placeholder="hh">
+            <input id="broadcast_mm" class="basic-input" type="text" size="2" maxlength="2" placeholder="mm">
+			<?php if ($time_format == '2'){ 
+			echo '<select id="broadcast_am_pm">
+              <option value="AM">AM</option>
+              <option value="PM">PM</option>
+            </select>'; } 
+			?>  
+            <button id="show_time" href="#display_broadcast_browse_time" class="btn btn-xs btn-default" onClick="broadcast_show_time(this.id)" data-toggle="tab">go</button>
+            </span>
+            </li>
           </ul>
           <div class="tab-content">
             <div class="tab-pane fade active in" id="display_now_today">
               <h4>Broadcast now</h4>
-              <div id="broadcast_main_now_today">
-                <?php if(!isset($broadcast_list_main_today) or $broadcast_list_main_today == ""){ $broadcast_list_main_today = ""; } else { echo $broadcast_list_main_today; } ?>
-              </div>
+              <div id="broadcast_main_now_today"></div>
               <!--broadcast_main_now_today-->
             </div>
             <div class="tab-pane fade" id="display_day_forward">
@@ -516,10 +592,15 @@ $("#broadcast_main_now_today").html("<img src=\"images/loading.gif\" width=\"16\
               <div id="broadcast_main_time_backward"> </div>
               <!--broadcast_main_time_backward-->
             </div>
+            <div class="tab-pane fade" id="display_broadcast_browse_time">
+              <h4>Broadcast</h4>
+              <div id="broadcast_browse_time"> </div>
+              <!--broadcast_main_time_forward-->
+            </div>
           </div>
         </div>
       </div>
-      <a name="primetime_list" id="primetime_list"></a>
+      <a name="primetime_list" id="primetime_list" value="<?php echo $time_format; ?>"></a>
       <!-- /. ROW  -->
       <hr />
       <div class="row">
@@ -535,13 +616,28 @@ $("#broadcast_main_now_today").html("<img src=\"images/loading.gif\" width=\"16\
             <li class="">
               <button id="primetime_day_backward" href="#display_primetime_day_backward" class="btn btn-default" onClick="primetime_main(this.id); animatedcollapse.show('primetime_main_today');" data-toggle="tab">Day -</button>
             </li>
+            <li class="">
+            <div class="spacer_5"></div>
+            <span>&nbsp;Set Primetime: 
+            <input id="primetime_hh" class="basic-input" type="text" size="2" maxlength="2" value="<?php echo $primetime_hh; ?>" placeholder="hh">
+            <input id="primetime_mm" class="basic-input" type="text" size="2" maxlength="2" value="<?php echo $primetime_mm; ?>" placeholder="mm">
+			<?php if ($time_format == '2'){
+			  if(date("A", $primetime) == 'AM'){ $selected0 = 'selected'; } else { $selected0 = ''; }
+			  if(date("A", $primetime) == 'PM'){ $selected1 = 'selected'; } else { $selected1 = ''; }
+			  echo '<select id="primetime_am_pm">
+              <option value="AM" '.$selected0.'>AM</option>
+              <option value="PM" '.$selected1.'>PM</option>
+			  </select>'; } 
+			  ?>
+              <input id="set_primetime" class="btn btn-xs btn-default" type="button" onclick="set_primetime()" value="set">
+              <span id="set_status"></span>
+              </span>
+            </li>
           </ul>
           <div class="tab-content">
             <div class="tab-pane fade active in" id="display_primetime_today">
               <h4>Primetime</h4>
-              <div id="primetime_main_today">
-                <?php if(!isset($primetime_list_main_today) or $primetime_list_main_today == ""){ $primetime_list_main_today = ""; } else { echo $primetime_list_main_today; } ?>
-              </div>
+              <div id="primetime_main_today"></div>
               <!--primetime_main_today-->
             </div>
             <div class="tab-pane fade" id="display_primetime_day_forward">

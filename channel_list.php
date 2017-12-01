@@ -197,7 +197,7 @@ animatedcollapse.init()
 </head>
 <body>
 <a id="top"></a>
-<div id="scroll_top" class="scroll_top"><a href="#" title="to top"><script language="JavaScript" type="text/javascript"> document.write ("<i class=\"glyphicon glyphicon-circle-arrow-up fa-"+scrolltop_btn_size+"x\"></i>");</script></a></div>
+<div id="scroll_top" class="scroll_top"><a href="#" title="to top"><script>document.write("<i class=\"glyphicon glyphicon-circle-arrow-up fa-"+scrolltop_btn_size+"x\"></i>");</script></a></div>
 <div id="wrapper">
   <div class="navbar navbar-inverse navbar-fixed-top">
     <div class="adjust-nav">
@@ -220,17 +220,17 @@ animatedcollapse.init()
   <nav class="navbar-default navbar-side" role="navigation">
     <div class="sidebar-collapse">
       <ul class="nav" id="main-menu">
-        <script language="JavaScript" type="text/javascript"> document.write(navbar_header_channel_list);</script>
+        <script>document.write(navbar_header_channel_list)</script>
         <li> <a href="dashboard.php"><i class="fa fa-home"></i>HOME</a> </li>
         <li> <a href="search.php"><i class="fa fa-search"></i>Search</a> </li>
-        <li> <a href="timer.php"><i class="fa fa-clock-o"></i>Timer</a> </li>
+        <li> <a href="timer.php"><i class="fa fa-clock-o"></i>Timer & Saved Search</a> </li>
         <li> <a href="#"><i class="fa fa-wrench"></i>Crawler Tools<span class="fa arrow"></span></a>
           <ul class="nav nav-second-level">
-            <li> <a href="#" onclick="animatedcollapse.toggle('div_crawl_channel_id');"><i class="fa fa-chevron-right"></i>Crawl channel ID's</a> </li>
-            <li> <a href="#" onclick="animatedcollapse.toggle('div_crawl_complete');"><i class="fa fa-chevron-right"></i>Crawl EPG from channels</a> </li>
-            <li> <a href="crawl_channel_separate.php"><i class="fa fa-chevron-right"></i>Crawl channel separate</a> </li>
-            <li> <a href="#" onclick="animatedcollapse.toggle('div_crawl_search');"><i class="fa fa-chevron-right"></i>Crawl search - Write timer in database</a></li>
-            <li> <a href="#" onclick="animatedcollapse.toggle('div_send_timer');"><i class="fa fa-chevron-right"></i>Send timer from database to Receiver</a> </li>
+            <li> <a href="#" onclick="animatedcollapse.toggle('div_crawl_channel_id');"><i class="fa fa-chevron-right"></i>Crawl Channel ID's</a> </li>
+            <li> <a href="#" onclick="animatedcollapse.toggle('div_crawl_complete');"><i class="fa fa-chevron-right"></i>Crawl EPG from Channels</a> </li>
+            <li> <a href="crawl_separate.php"><i class="fa fa-chevron-right"></i>Crawl Channel separate</a> </li>
+            <li> <a href="#" onclick="animatedcollapse.toggle('div_crawl_search');"><i class="fa fa-chevron-right"></i>Crawl Search - Write Timer in Database</a></li>
+            <li> <a href="#" onclick="animatedcollapse.toggle('div_send_timer');"><i class="fa fa-chevron-right"></i>Send Timer from Database to Receiver</a> </li>
           </ul>
         </li>
         <li role="presentation" class="active"> <a href="#"><i class="fa fa-cog"></i>Settings<span class="fa arrow"></span></a>
@@ -246,7 +246,7 @@ animatedcollapse.init()
           <ul class="nav nav-second-level">
             <li> <a href="teletext.php"><i class="fa fa-globe"></i>Teletext Browser</a> </li>
             <li> <a href="#" onclick="animatedcollapse.toggle('div_start_channelzapper');"> <i class="fa fa-arrow-up"></i>Channel Zapper</a> </li>
-            <li><a href="tv_services.php"><i class="fa fa-list"></i>TV Services</a> </li>
+            <li><a href="services.php"><i class="fa fa-list"></i>All Services</a> </li>
             <li> <a href="about.php"><i class="glyphicon glyphicon-question-sign"></i>About</a> </li>
           </ul>
         </li>

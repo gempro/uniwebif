@@ -38,6 +38,26 @@ include("inc/dashboard_config.php");
 	if ($first_entry['e2eventservicename'] == ''){ $first_entry['e2eventservicename'] = 'no data'; }	
 	if ($last_entry['e2eventservicename'] == ''){ $last_entry['e2eventservicename'] = 'no data'; }
 	
+	// crawler time
+	if ($time_format == '1'){
+	$crawler_hh = date("H",$crawler_timestamp);
+	$crawler_mm = date("i",$crawler_timestamp);
+	}
+	if ($time_format == '2'){
+	$crawler_hh = date("g",$crawler_timestamp);
+	$crawler_mm = date("i",$crawler_timestamp);
+	}
+	
+	// cz time
+	if ($time_format == '1'){
+	$cz_hh = date("H",$cz_timestamp);
+	$cz_mm = date("i",$cz_timestamp);
+	}
+	if ($time_format == '2'){
+	$cz_hh = date("g",$cz_timestamp);
+	$cz_mm = date("i",$cz_timestamp);
+	}
+	
 	// get settings
 	$sql = mysqli_query($dbmysqli, "SELECT * FROM settings");
 	$settings = mysqli_fetch_assoc($sql);
@@ -111,12 +131,16 @@ animatedcollapse.ontoggle=function($, divobj, state){ //fires each time a DIV is
 //divobj: DOM reference to DIV being expanded/ collapsed. Use "divobj.id" to get its ID
 //state: "block" or "none", depending on state
 }
-animatedcollapse.init()
+animatedcollapse.init();
+//
+$(function(){
+   $("#display_time_format").val("<?php if (!isset($time_format) or $time_format == ""){ $time_format = '2'; } echo $time_format; ?>");
+});
 </script>
 </head>
 <body>
 <a id="top"></a>
-<div id="scroll_top" class="scroll_top"><a href="#" title="to top"><script language="JavaScript" type="text/javascript"> document.write ("<i class=\"glyphicon glyphicon-circle-arrow-up fa-"+scrolltop_btn_size+"x\"></i>");</script></a></div>
+<div id="scroll_top" class="scroll_top"><a href="#" title="to top"><script>document.write("<i class=\"glyphicon glyphicon-circle-arrow-up fa-"+scrolltop_btn_size+"x\"></i>");</script></a></div>
 <div id="wrapper">
   <div class="navbar navbar-inverse navbar-fixed-top">
     <div class="adjust-nav">
@@ -139,17 +163,17 @@ animatedcollapse.init()
   <nav class="navbar-default navbar-side" role="navigation">
     <div class="sidebar-collapse">
       <ul class="nav" id="main-menu">
-        <script language="JavaScript" type="text/javascript"> document.write(navbar_header_settings);</script>
+        <script>document.write(navbar_header_settings)</script>
         <li> <a href="dashboard.php"><i class="fa fa-home"></i>HOME</a> </li>
         <li> <a href="search.php"><i class="fa fa-search"></i>Search</a> </li>
-        <li> <a href="timer.php"><i class="fa fa-clock-o"></i>Timer</a> </li>
+        <li> <a href="timer.php"><i class="fa fa-clock-o"></i>Timer & Saved Search</a> </li>
         <li> <a href="#"><i class="fa fa-wrench"></i>Crawler Tools<span class="fa arrow"></span></a>
           <ul class="nav nav-second-level">
-            <li> <a href="#" onclick="animatedcollapse.toggle('div_crawl_channel_id');"><i class="fa fa-chevron-right"></i>Crawl channel ID's</a> </li>
-            <li> <a href="#" onclick="animatedcollapse.toggle('div_crawl_complete');"><i class="fa fa-chevron-right"></i>Crawl EPG from channels</a> </li>
-            <li> <a href="crawl_channel_separate.php"><i class="fa fa-chevron-right"></i>Crawl channel separate</a> </li>
-            <li> <a href="#" onclick="animatedcollapse.toggle('div_crawl_search');"><i class="fa fa-chevron-right"></i>Crawl search - Write timer in database</a></li>
-            <li> <a href="#" onclick="animatedcollapse.toggle('div_send_timer');"><i class="fa fa-chevron-right"></i>Send timer from database to Receiver</a> </li>
+            <li> <a href="#" onclick="animatedcollapse.toggle('div_crawl_channel_id');"><i class="fa fa-chevron-right"></i>Crawl Channel ID's</a> </li>
+            <li> <a href="#" onclick="animatedcollapse.toggle('div_crawl_complete');"><i class="fa fa-chevron-right"></i>Crawl EPG from Channels</a> </li>
+            <li> <a href="crawl_separate.php"><i class="fa fa-chevron-right"></i>Crawl Channel separate</a> </li>
+            <li> <a href="#" onclick="animatedcollapse.toggle('div_crawl_search');"><i class="fa fa-chevron-right"></i>Crawl Search - Write Timer in Database</a></li>
+            <li> <a href="#" onclick="animatedcollapse.toggle('div_send_timer');"><i class="fa fa-chevron-right"></i>Send Timer from Database to Receiver</a> </li>
           </ul>
         </li>
         <li role="presentation" class="active"> <a href="#"><i class="fa fa-cog"></i>Settings<span class="fa arrow"></span></a>
@@ -165,7 +189,7 @@ animatedcollapse.init()
           <ul class="nav nav-second-level">
             <li> <a href="teletext.php"><i class="fa fa-globe"></i>Teletext Browser</a> </li>
             <li> <a href="#" onclick="animatedcollapse.toggle('div_start_channelzapper');"> <i class="fa fa-arrow-up"></i>Channel Zapper</a> </li>
-            <li><a href="tv_services.php"><i class="fa fa-list"></i>TV Services</a> </li>
+            <li><a href="services.php"><i class="fa fa-list"></i>All Services</a> </li>
             <li> <a href="about.php"><i class="glyphicon glyphicon-question-sign"></i>About</a> </li>
           </ul>
         </li>
@@ -185,6 +209,7 @@ animatedcollapse.init()
       <div class="row">
         <div class="col-md-12">
           <h2>Settings</h2>
+          <input id="display_time_format" type="hidden" value="">
         </div>
       </div>
       <!--crawl channel id-->
@@ -287,43 +312,40 @@ animatedcollapse.init()
             Set time when EPG Crawler should start
             <div class="spacer_5"></div>
             Hour:
-            <input type="text" id="crawler_hour" size="2" maxlength="2" value="<?php echo $settings['crawler_hour']?>">
+            <input type="text" id="crawler_hour" size="2" maxlength="2" value="<?php echo $crawler_hh; ?>">
             Minute:
-            <input type="text" id="crawler_minute" size="2" maxlength="2" value="<?php echo $settings['crawler_minute']?>">
-            <select id="crawler_am_pm" style="display:none;">
-              <option <? if ($settings['crawler_am_pm'] == 'AM'){ echo "selected"; } ?>>AM</option>
-              <option <? if ($settings['crawler_am_pm'] == 'PM'){ echo "selected"; } ?>>PM</option>
-            </select>
+            <input type="text" id="crawler_minute" size="2" maxlength="2" value="<?php echo $crawler_mm; ?>">
+            <?php if ($time_format == '2'){
+			if(date("A", $crawler_timestamp) == 'AM'){ $selected0 = 'selected'; } else { $selected0 = ''; }
+			if(date("A", $crawler_timestamp) == 'PM'){ $selected1 = 'selected'; } else { $selected1 = ''; }
+			echo '<select id="crawler_am_pm">
+			<option value="AM" '.$selected0.'>AM</option>
+			<option value="PM" '.$selected1.'>PM</option>
+			</select>'; }
+			?>
             <div class="spacer_5"></div>
             Next crawling:
 			<?php // time format 1
 			if ($settings['time_format'] == '1'){ $next_crawling = date("d.m.Y - H:i", $settings['crawler_timestamp']); }
 			// time format 2
 			if ($settings['time_format'] == '2'){ $next_crawling = date("n/d/Y - g:i A", $settings['crawler_timestamp']); }
-			if(!isset($next_crawling) or $next_crawling == "") { $next_crawling = ""; } else { $next_crawling = $next_crawling; }
+			if(!isset($next_crawling) or $next_crawling == "") { $next_crawling = ""; }
 			echo $next_crawling; ?>
             <div class="spacer_10"></div>
             When crawling finished, change to this channel
             <div class="spacer_5"></div>
             <select name="channel_id" id="channel_id" class="form-control">
-              <?php 
+            <?php 
             // get channels			
-			$sql="SELECT * FROM channel_list ORDER BY e2servicename ASC";
-			
+			$sql = "SELECT * FROM channel_list ORDER BY e2servicename ASC";
 			if ($result = mysqli_query($dbmysqli,$sql))
 			{
 			// Fetch one and one row
 			while ($obj = mysqli_fetch_object($result)) {
 			{
 			// set selected
-			if ($obj->zap_start == "1")
-			{
-			$select = "selected=\"selected\"";
-			}
-			elseif ($obj->zap_start == "0")
-			{
-			$select = "";
-			}
+			if ($obj->zap_start == "1") { $select = "selected=\"selected\""; } 
+			elseif ($obj->zap_start == "0") { $select = ""; }
 			echo utf8_encode("<option value='$obj->e2servicereference' $select>$obj->e2servicename</option>"); }    
 			}
 			}
@@ -347,13 +369,19 @@ animatedcollapse.init()
           Set time when Channel Zapper should start
           <div class="spacer_5"></div>
           Hour:
-          <input type="text" id="cz_hour" size="2" maxlength="2" value="<?php echo $settings['cz_hour']?>">
+          <input type="text" id="cz_hour" size="2" maxlength="2" value="<?php echo $cz_hh; ?>">
           Minute:
-          <input type="text" id="cz_minute" size="2" maxlength="2" value="<?php echo $settings['cz_minute']?>">
-          <select id="cz_am_pm" style="display:none;">
-            <option <? if ($settings['cz_am_pm'] == 'AM'){ echo "selected"; } ?>>AM</option>
-            <option <? if ($settings['cz_am_pm'] == 'PM'){ echo "selected"; } ?>>PM</option>
-          </select>
+          <input type="text" id="cz_minute" size="2" maxlength="2" value="<?php echo $cz_mm; ?>">
+          
+          <?php if ($time_format == '2'){
+			if(date("A", $cz_timestamp) == 'AM'){ $selected2 = 'selected'; } else { $selected2 = ''; }
+			if(date("A", $cz_timestamp) == 'PM'){ $selected3 = 'selected'; } else { $selected3 = ''; }
+			echo '<select id="cz_am_pm">
+			<option value="AM" '.$selected2.'>AM</option>
+			<option value="PM" '.$selected3.'>PM</option>
+			</select>'; }
+			?>
+          
           <div class="spacer_10"></div>
           Repeat zapping
           <select id="cz_repeat">
@@ -462,8 +490,7 @@ animatedcollapse.init()
             <option value="86400" <? if ($settings['del_time'] == '86400'){ echo "selected"; } ?>>24 hours</option>
           </select>
           <div class="spacer_10"></div>
-            Connect to Receiver
-            with 
+            Connect to Receiver with 
             <select id="url_format">
             <option value="http" <? if ($settings['url_format'] == 'http'){ echo "selected"; } ?>>http</option>
             <option value="https" <? if ($settings['url_format'] == 'https'){ echo "selected"; } ?>>https</option>
@@ -476,8 +503,11 @@ animatedcollapse.init()
           <input type="checkbox" id="send_timer" onclick="" <? if ($settings['send_timer'] == '1'){ echo "checked"; } ?> />
           Send timer automatic to Receiver
           <div class="spacer_10"></div>
+          <input type="checkbox" id="hide_old_timer" onclick="" <? if ($settings['hide_old_timer'] == '1'){ echo "checked"; } ?> />
+          Hide expired timer in timerlist
+          <div class="spacer_10"></div>
           <input type="checkbox" id="delete_old_timer" onclick="" <? if ($settings['delete_old_timer'] == '1'){ echo "checked"; } ?> />
-          Delete expired timer from database
+          Delete expired timer from database 
           <div class="spacer_10"></div>
           <input type="checkbox" id="delete_receiver_timer" onclick="" <? if ($settings['delete_receiver_timer'] == '1'){ echo "checked"; } ?> />
           Delete expired timer from Receiver

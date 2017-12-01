@@ -3,6 +3,12 @@ session_start();
 //
 include("inc/dashboard_config.php");
 
+	// check connection
+	if (mysqli_connect_errno()) {
+	printf("Connection failed: %s\n", mysqli_connect_error());
+	exit(); 
+	}
+	
 	// select oldest entry
 	$query = mysqli_query($dbmysqli, "SELECT e2eventservicename, e2eventstart FROM `epg_data` ORDER BY e2eventstart ASC LIMIT 0 , 1");
 	$first_entry = mysqli_fetch_assoc($query);
@@ -46,7 +52,7 @@ mysqli_close($dbmysqli);
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Uniwebif : About</title>
+<title>Uniwebif : Crawl channel separate</title>
 <!-- BOOTSTRAP STYLES-->
 <link href="assets/css/bootstrap.css" rel="stylesheet" />
 <!-- FONTAWESOME STYLES-->
@@ -89,6 +95,17 @@ animatedcollapse.ontoggle=function($, divobj, state){ //fires each time a DIV is
 }
 animatedcollapse.init()
 </script>
+<script>
+// display channel list
+$(window).load(function() {
+	$("#crawl_separate_list").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\"> EPG data is loading, this could take some time..");
+	$.post("functions/crawl_channel_separate_inc.php",
+	function(data){
+	// write data in container
+	$("#crawl_separate_list").html(data);
+	});
+});
+</script>
 </head>
 <body>
 <a id="top"></a>
@@ -98,7 +115,7 @@ animatedcollapse.init()
     <div class="adjust-nav">
       <div class="navbar-header">
         <button type="button" class="navbar-toggle" onclick="nav_icon_scroll()" data-toggle="collapse" data-target=".sidebar-collapse"> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button>
-        <a class="navbar-brand" href="about.php"><i class="fa fa-square-o"></i>&nbsp;About</a> </div>
+        <a class="navbar-brand" href="crawl_separate.php"><i class="fa fa-square-o"></i>&nbsp;Crawler</a> </div>
       <div class="navbar-collapse collapse">
         <ul class="nav navbar-nav navbar-right">
           <div class="row">
@@ -115,15 +132,15 @@ animatedcollapse.init()
   <nav class="navbar-default navbar-side" role="navigation">
     <div class="sidebar-collapse">
       <ul class="nav" id="main-menu">
-        <script>document.write(navbar_header_about)</script>
+        <script>document.write(navbar_header_crawl_separate)</script>
         <li> <a href="dashboard.php"><i class="fa fa-home"></i>HOME</a> </li>
         <li> <a href="search.php"><i class="fa fa-search"></i>Search</a> </li>
         <li> <a href="timer.php"><i class="fa fa-clock-o"></i>Timer & Saved Search</a> </li>
-        <li> <a href="#"><i class="fa fa-wrench"></i>Crawler Tools<span class="fa arrow"></span></a>
+        <li class="active"> <a href="#"><i class="fa fa-wrench"></i>Crawler Tools<span class="fa arrow"></span></a>
           <ul class="nav nav-second-level">
             <li> <a href="#" onclick="animatedcollapse.toggle('div_crawl_channel_id');"><i class="fa fa-chevron-right"></i>Crawl Channel ID's</a> </li>
             <li> <a href="#" onclick="animatedcollapse.toggle('div_crawl_complete');"><i class="fa fa-chevron-right"></i>Crawl EPG from Channels</a> </li>
-            <li> <a href="crawl_separate.php"><i class="fa fa-chevron-right"></i>Crawl Channel separate</a> </li>
+            <li> <a href="crawl_separate.php"><i class="fa fa-chevron-right"></i><strong>Crawl Channel separate</strong></a> </li>
             <li> <a href="#" onclick="animatedcollapse.toggle('div_crawl_search');"><i class="fa fa-chevron-right"></i>Crawl Search - Write Timer in Database</a></li>
             <li> <a href="#" onclick="animatedcollapse.toggle('div_send_timer');"><i class="fa fa-chevron-right"></i>Send Timer from Database to Receiver</a> </li>
           </ul>
@@ -137,12 +154,12 @@ animatedcollapse.init()
         </li>
         <li> <a href="records.php"><i class="glyphicon glyphicon-record"></i>Records</a> </li>
         <li> <a id="116" onclick="power_control(this.id)" style="cursor:pointer;"> <i class="glyphicon glyphicon-off"></i>Wake up / Standby <span id="pc116"></span></a> </li>
-        <li role="presentation" class="active"> <a href="#"><i class="glyphicon glyphicon-hand-right"></i>Extras<span class="fa arrow"></span></a>
+        <li> <a href="#"><i class="glyphicon glyphicon-hand-right"></i>Extras<span class="fa arrow"></span></a>
           <ul class="nav nav-second-level">
             <li> <a href="teletext.php"><i class="fa fa-globe"></i>Teletext Browser</a> </li>
             <li> <a href="#" onclick="animatedcollapse.toggle('div_start_channelzapper');"> <i class="fa fa-arrow-up"></i>Channel Zapper</a> </li>
             <li><a href="services.php"><i class="fa fa-list"></i>All Services</a> </li>
-            <li> <a href="about.php"><i class="glyphicon glyphicon-question-sign"></i><strong>About</strong></a> </li>
+            <li> <a href="about.php"><i class="glyphicon glyphicon-question-sign"></i>About</a> </li>
           </ul>
         </li>
       </ul>
@@ -160,7 +177,7 @@ animatedcollapse.init()
     <div id="page-inner">
       <div class="row">
         <div class="col-md-12">
-          <h2>About</h2>
+          <h2>Crawl channel separate</h2>
         </div>
       </div>
       <!--crawl channel id-->
@@ -206,13 +223,19 @@ animatedcollapse.init()
       <hr />
       <div class="row">
         <div class="col-md-12">
-        Uniwebif v1.2
-          <div class="spacer_10"></div>
-        Download latest version at <a href="https://github.com/gempro/uniwebif" target="_blank">Github</a>
+          <div id="channel_list">
+            <div id="crawl_separate_list"></div>
+          </div>
+          <!-- channel list -->
         </div>
       </div>
       <!-- /. ROW  -->
       <hr />
+      <!-- /. ROW  -->
+      <div class="row">
+        <div class="col-md-12"></div>
+      </div>
+      <!-- /. ROW  -->
     </div>
     <!-- /. PAGE INNER  -->
   </div>

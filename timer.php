@@ -2,7 +2,6 @@
 session_start();
 //
 include("inc/dashboard_config.php");
-include_once("functions/timer_list_inc.php");
 include_once("functions/search_list_inc.php");
 	
 	// select oldest entry
@@ -40,6 +39,38 @@ include_once("functions/search_list_inc.php");
 	if ($first_entry['e2eventservicename'] == ''){ $first_entry['e2eventservicename'] = 'no data'; }	
 	if ($last_entry['e2eventservicename'] == ''){ $last_entry['e2eventservicename'] = 'no data'; }
 	
+	// count timer
+	$stmt = $dbmysqli->prepare('SELECT COUNT(*) as count_timer FROM timer WHERE expired = "0" ');
+	if( !is_a($stmt, 'MySQLI_Stmt') || $dbmysqli->errno > 0 )
+	throw new Exception( $dbmysqli->error, $dbmysqli->errno );
+	$stmt->execute();
+	$stmt->bind_result($count_timer);
+	$stmt->fetch();
+	$stmt->close();
+	$count_timer = '('.$count_timer.')';
+	
+	// count saved search
+	$stmt = $dbmysqli->prepare('SELECT COUNT(*) as count_saved_search FROM saved_search ');
+	if( !is_a($stmt, 'MySQLI_Stmt') || $dbmysqli->errno > 0 )
+	throw new Exception( $dbmysqli->error, $dbmysqli->errno );
+	$stmt->execute();
+	$stmt->bind_result($count_saved_search);
+	$stmt->fetch();
+	$stmt->close();
+	$count_saved_search = '('.$count_saved_search.')';
+	
+	// hidden timer
+	$stmt = $dbmysqli->prepare('SELECT COUNT(*) as hidden_timer FROM timer WHERE `expired` = "0" AND `hide` = "1" ');
+	if( !is_a($stmt, 'MySQLI_Stmt') || $dbmysqli->errno > 0 )
+	throw new Exception( $dbmysqli->error, $dbmysqli->errno );
+	$stmt->execute();
+	$stmt->bind_result($hidden_timer);
+	$stmt->fetch();
+	$stmt->close();
+	if ($hidden_timer > 0){ 
+	$show_hidden_timer = ' (<a id="show_unhide" onclick="timerlist_panel(this.id)" style="cursor:pointer;">'.$hidden_timer.' hidden</a>)'; } else { $show_hidden_timer = '';
+	}
+	
 //close db
 mysqli_close($dbmysqli);
 ?>
@@ -48,7 +79,7 @@ mysqli_close($dbmysqli);
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Uniwebif : Timer</title>
+<title>Uniwebif : Timer &amp; Saved Search</title>
 <!-- BOOTSTRAP STYLES-->
 <link href="assets/css/bootstrap.css" rel="stylesheet" />
 <!-- FONTAWESOME STYLES-->
@@ -99,7 +130,7 @@ animatedcollapse.init()
 </head>
 <body>
 <a id="top"></a>
-<div id="scroll_top" class="scroll_top"><a href="#" title="to top"><script language="JavaScript" type="text/javascript"> document.write ("<i class=\"glyphicon glyphicon-circle-arrow-up fa-"+scrolltop_btn_size+"x\"></i>");</script></a></div>
+<div id="scroll_top" class="scroll_top"><a href="#" title="to top"><script>document.write("<i class=\"glyphicon glyphicon-circle-arrow-up fa-"+scrolltop_btn_size+"x\"></i>");</script></a></div>
 <div id="wrapper">
   <div class="navbar navbar-inverse navbar-fixed-top">
     <div class="adjust-nav">
@@ -122,17 +153,17 @@ animatedcollapse.init()
   <nav class="navbar-default navbar-side" role="navigation">
     <div class="sidebar-collapse">
       <ul class="nav" id="main-menu">
-        <script language="JavaScript" type="text/javascript"> document.write(navbar_header_timer);</script>
+        <script>document.write(navbar_header_timer)</script>
         <li> <a href="dashboard.php"><i class="fa fa-home"></i>HOME</a> </li>
         <li> <a href="search.php"><i class="fa fa-search"></i>Search</a> </li>
-        <li> <a href="timer.php"><i class="fa fa-clock-o"></i><strong>Timer</strong></a> </li>
+        <li> <a href="timer.php"><i class="fa fa-clock-o"></i><strong>Timer & Saved Search</strong></a> </li>
         <li> <a href="#"><i class="fa fa-wrench"></i>Crawler Tools<span class="fa arrow"></span></a>
           <ul class="nav nav-second-level">
-            <li> <a href="#" onclick="animatedcollapse.toggle('div_crawl_channel_id');"><i class="fa fa-chevron-right"></i>Crawl channel ID's</a> </li>
-            <li> <a href="#" onclick="animatedcollapse.toggle('div_crawl_complete');"><i class="fa fa-chevron-right"></i>Crawl EPG from channels</a> </li>
-            <li> <a href="crawl_channel_separate.php"><i class="fa fa-chevron-right"></i>Crawl channel separate</a> </li>
-            <li> <a href="#" onclick="animatedcollapse.toggle('div_crawl_search');"><i class="fa fa-chevron-right"></i>Crawl search - Write timer in database</a></li>
-            <li> <a href="#" onclick="animatedcollapse.toggle('div_send_timer');"><i class="fa fa-chevron-right"></i>Send timer from database to Receiver</a> </li>
+            <li> <a href="#" onclick="animatedcollapse.toggle('div_crawl_channel_id');"><i class="fa fa-chevron-right"></i>Crawl Channel ID's</a> </li>
+            <li> <a href="#" onclick="animatedcollapse.toggle('div_crawl_complete');"><i class="fa fa-chevron-right"></i>Crawl EPG from Channels</a> </li>
+            <li> <a href="crawl_separate.php"><i class="fa fa-chevron-right"></i>Crawl Channel separate</a> </li>
+            <li> <a href="#" onclick="animatedcollapse.toggle('div_crawl_search');"><i class="fa fa-chevron-right"></i>Crawl Search - Write Timer in Database</a></li>
+            <li> <a href="#" onclick="animatedcollapse.toggle('div_send_timer');"><i class="fa fa-chevron-right"></i>Send Timer from Database to Receiver</a> </li>
           </ul>
         </li>
         <li> <a href="#"><i class="fa fa-cog"></i>Settings<span class="fa arrow"></span></a>
@@ -148,7 +179,7 @@ animatedcollapse.init()
           <ul class="nav nav-second-level">
             <li> <a href="teletext.php"><i class="fa fa-globe"></i>Teletext Browser</a> </li>
             <li> <a href="#" onclick="animatedcollapse.toggle('div_start_channelzapper');"> <i class="fa fa-arrow-up"></i>Channel Zapper</a> </li>
-            <li><a href="tv_services.php"><i class="fa fa-list"></i>TV Services</a> </li>
+            <li><a href="services.php"><i class="fa fa-list"></i>All Services</a> </li>
             <li> <a href="about.php"><i class="glyphicon glyphicon-question-sign"></i>About</a> </li>
           </ul>
         </li>
@@ -213,9 +244,23 @@ animatedcollapse.init()
       <hr />
       <div class="row">
         <div class="col-md-12">
-          <h4>Timer in database</h4>
+          <h4>Timer in Database <?php echo $count_timer; echo $show_hidden_timer;?></h4>
           <div id="broadcast_main_now_today">
-            <?php if(!isset($timerlist) or $timerlist == "") { $timerlist = ""; } else { echo $timerlist; } ?>
+          <div class="timer_panel">
+          <span class="timerlist_checkbox"><input id="select_all" type="checkbox" onClick="select_timer_checkbox()"></span>
+          <input id="delete" type="button" class="btn btn-default btn-danger btn-xs" value="delete" onClick="timerlist_panel(this.id)">
+          <span id="del_buttons" style="display:none">
+          <input id="delete_db" type="button" class="btn btn-default btn-xs" value="from Database" onClick="timerlist_panel(this.id)">
+          <input id="delete_rec" type="button" class="btn btn-default btn-xs" value="from Receiver" onClick="timerlist_panel(this.id)">
+          <input id="delete_both" type="button" class="btn btn-default btn-xs" value="both" onClick="timerlist_panel(this.id)">
+          </span>
+          <input id="send" type="button" class="btn btn-default btn-success btn-xs" value="send" onClick="timerlist_panel(this.id)">
+          <input id="hide" type="button" class="btn btn-default btn-xs" value="hide" onClick="timerlist_panel(this.id)">
+          <input id="unhide" type="button" class="btn btn-primary btn-xs hidden" value="unhide" onClick="timerlist_panel(this.id)">
+          <span id="selected_box_sum"></span>
+          <span id="panel_action_status"></span>
+          </div>
+		  <div id="timerlist_inc"></div>
           </div>
           <!--timerlist-->
         </div>
@@ -225,7 +270,7 @@ animatedcollapse.init()
       <hr />
       <div class="row">
         <div class="col-md-12">
-          <h4>Saved search</h4>
+          <h4>Saved Search <?php echo $count_saved_search; ?></h4>
           <?php if(!isset($saved_search_list) or $saved_search_list == "") { $saved_search_list = ""; } else { echo $saved_search_list; } ?>
         </div>
       </div>
