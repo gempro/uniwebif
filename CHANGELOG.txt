@@ -1,6 +1,6 @@
 v1.2
 
-+ Option to exclude multiple terms from search
++ Option to exclude multiple terms from search (split terms with ; )
 
 + Option to browse broadcast list with time indication
 
