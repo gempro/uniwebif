@@ -2,10 +2,10 @@
 //
 include("../inc/dashboard_config.php");
 
-	if(!isset($_REQUEST['page']) or $_REQUEST['page'] == "") { $_REQUEST['page'] = ""; } else { $_REQUEST['page'] = $_REQUEST['page']; }
-	if(!isset($_REQUEST['resolution']) or $_REQUEST['resolution'] == "") { $_REQUEST['resolution'] = ""; } else { $_REQUEST['resolution'] = $_REQUEST['resolution']; }
-	if(!isset($_REQUEST['browse']) or $_REQUEST['browse'] == "") { $_REQUEST['browse'] = ""; } else { $_REQUEST['browse'] = $_REQUEST['browse']; }
-	if(!isset($_REQUEST['control']) or $_REQUEST['control'] == "") { $_REQUEST['control'] = ""; } else { $_REQUEST['control'] = $_REQUEST['control']; }
+	if(!isset($_REQUEST['page']) or $_REQUEST['page'] == "") { $_REQUEST['page'] = ""; }
+	if(!isset($_REQUEST['resolution']) or $_REQUEST['resolution'] == "") { $_REQUEST['resolution'] = ""; }
+	if(!isset($_REQUEST['browse']) or $_REQUEST['browse'] == "") { $_REQUEST['browse'] = ""; }
+	if(!isset($_REQUEST['control']) or $_REQUEST['control'] == "") { $_REQUEST['control'] = ""; }
 	
 	$page = $_REQUEST["page"];
 	$resolution = $_REQUEST["resolution"];

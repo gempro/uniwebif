@@ -31,7 +31,7 @@ include("../inc/dashboard_config.php");
 	}
 	
 	//dont increase timestamp on manual start
-	if(!isset($_REQUEST['manual']) or $_REQUEST['manual'] == "") { $_REQUEST['manual'] = ""; } else { $_REQUEST['manual'] = $_REQUEST['manual']; }
+	if(!isset($_REQUEST['manual']) or $_REQUEST['manual'] == "") { $_REQUEST['manual'] = ""; }
 	
 	$manual = $_REQUEST['manual'];
 	

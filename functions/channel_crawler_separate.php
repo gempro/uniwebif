@@ -26,8 +26,7 @@ if ($xml) {
     for ($i = 0; $i <= $epg_entries_per_channel; $i++) {
 
 	///////////////////////////////////////////////
-	if(!isset($xml->e2event[$i]->e2eventtitle) or $xml->e2event[$i]->e2eventtitle == "") 
-	{ $xml->e2event[$i]->e2eventtitle = ""; } else { $xml->e2event[$i]->e2eventtitle = $xml->e2event[$i]->e2eventtitle; }
+	if(!isset($xml->e2event[$i]->e2eventtitle) or $xml->e2event[$i]->e2eventtitle == ""){ $xml->e2event[$i]->e2eventtitle = ""; }
 	// if no title dont write in database
 	if($xml->e2event[$i]->e2eventtitle == "" ) {
 	

@@ -5,10 +5,6 @@ include("../inc/dashboard_config.php");
 	header('Content-Type: text/event-stream');
 	header('Cache-Control: no-cache');
 
-if (mysqli_connect_errno())
-	{
-	echo "Failed to connect to MySQL: " . mysqli_connect_error();
-	}
 	$sql = "SELECT * FROM timer WHERE `status` = 'waiting' ORDER BY `e2eventstart` ASC";
 	
 	if ($result = mysqli_query($dbmysqli,$sql))
@@ -18,6 +14,7 @@ if (mysqli_connect_errno())
 	{
 	$id = $obj->id;
 	$timer_request = $obj->timer_request;
+	$hash = $obj->hash;
 	$status = $obj->status;
 	
 	if ($status !== 'sent' ) {
@@ -27,10 +24,12 @@ if (mysqli_connect_errno())
 	$timer_request = str_replace("%27", "%60", $timer_request);
 	
 	$send_timer_request = file_get_contents($timer_request, false, $webrequest);
-	sleep(1);
+	
+	sleep(0.5);
 	
 	// mark as done
-	$sql = mysqli_query($dbmysqli, "UPDATE `timer` SET `status` = 'sent' WHERE `id` = '$id'");
+	$sql = mysqli_query($dbmysqli, "UPDATE `timer` SET `status` = 'sent' WHERE `id` = '$id' ");
+	$sql2 = mysqli_query($dbmysqli, "UPDATE epg_data SET timer = '1' WHERE `hash` = '$hash' ");
 	}
 	}
 	// answer for ajax

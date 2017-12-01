@@ -20,7 +20,7 @@ if ($xml) {
     for ($i = 0; $i <= $i; $i++) {
 
 	///////////////////////////////////////////////
-	if(!isset($xml->e2location[$i]) or $xml->e2location[$i] == ""){ $xml->e2location[$i] = ""; } else { $xml->e2location[$i] = $xml->e2location[$i]; }
+	if(!isset($xml->e2location[$i]) or $xml->e2location[$i] == ""){ $xml->e2location[$i] = ""; }
 	
 	// if no data exit
 	if($xml->e2location[$i] == "" ) {

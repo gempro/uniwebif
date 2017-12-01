@@ -25,13 +25,7 @@ include("../inc/dashboard_config.php");
 	
 	for ($i = 0; $i <= $channel_entries; $i++) {
 
-	if(!isset($xml->e2service[$i]->e2servicename) or $xml->e2service[$i]->e2servicename == "") 
-	{ 
-	$xml->e2service[$i]->e2servicename = "";
-	
-	} else {
-	
-	$xml->e2service[$i]->e2servicename = $xml->e2service[$i]->e2servicename; }
+	if(!isset($xml->e2service[$i]->e2servicename) or $xml->e2service[$i]->e2servicename == ""){ $xml->e2service[$i]->e2servicename = ""; }
 	
 	// if no channel name
 	if($xml->e2service[$i]->e2servicename == "" ) {

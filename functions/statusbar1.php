@@ -13,10 +13,7 @@ $xml = simplexml_load_string($getstatus_request);
 
 if ($xml) {
 
-	if(!isset($xml->e2service->e2servicereference) or $xml->e2service->e2servicereference == "")
-	{ 
-	$xml->e2service->e2servicereference = ""; } else { $xml->e2service->e2servicereference = $xml->e2service->e2servicereference; 
-	}
+	if(!isset($xml->e2service->e2servicereference) or $xml->e2service->e2servicereference == ""){ $xml->e2service->e2servicereference = ""; }
 	
 	// if no data
 	if($xml->e2service->e2servicereference == "") {
@@ -67,7 +64,7 @@ if ($xml) {
 	}
 	}
 	
-	if(!isset($statusbar) or $statusbar == "") { $statusbar = ""; } else { $statusbar = $statusbar; }
+	if(!isset($statusbar) or $statusbar == "") { $statusbar = ""; }
 	
 	echo $statusbar;
 }

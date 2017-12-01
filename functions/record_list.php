@@ -2,7 +2,6 @@
 <html>
 <head>
 <meta charset="utf-8" />
-<title>_broadcast_list_main</title>
 <script type="text/javascript">
 // record_list hover
 $(document).ready(function(){
@@ -96,7 +95,12 @@ $(document).ready(function(){
 	
 	$record_hash = hash('md4',$e2filename);
 	
-	if(!isset($record_list) or $record_list == "") { $record_list = ""; } else { $record_list = $record_list; }
+	if(!isset($record_list) or $record_list == ""){ $record_list = ""; }
+	
+	if ($imdb_symbol == '1' ){ $imdb_broadcast = '<a href="https://www.imdb.com/find?ref_=nv_sr_fn&q='.$e2title.'" target="_blank" title="Info on IMDb">
+	<i class="fa fa-info-circle fa-1x"></i></a>'; 
+	} else { 
+	$imdb_broadcast = ''; }
 	
 	$record_list = $record_list."
 	<div id=\"record_entry_$i\">
@@ -117,6 +121,7 @@ $(document).ready(function(){
 		  <p>$e2length minutes, $record_filesize</p>
 		</div>
 		<input id=\"$e2servicereference\" type=\"submit\" onClick=\"delete_record(this.id)\" value=\"DELETE RECORD\" title=\"Delete record\" class=\"btn btn-xs btn-danger\"/>
+		$imdb_broadcast
 		<a id=\"$e2filename\" onClick=\"create_m3u(this.id)\" title=\"Stream\" style=\"cursor:pointer;\"><i class=\"fa fa-desktop fa-1x\"></i></a>
 		<span id=\"record_id_$e2filename\" style=\"display:none\">$record_hash</span>
 		<span id=\"record_no_$e2servicereference\" style=\"display:none;\">$i</span>
@@ -129,7 +134,8 @@ $(document).ready(function(){
 	}
 	}
 	}
-	if(!isset($record_list) or $record_list == "") { $record_list = "No files to display.."; } else { $record_list = $record_list; }
+	if(!isset($record_list) or $record_list == "") { $record_list = "No files to display.."; }
+	
 	echo $record_list;
 ?>
 </body>

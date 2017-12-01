@@ -29,16 +29,15 @@ include("../inc/dashboard_config.php");
 	if(!isset($time) or $time == "") 
 	{ 
 	echo "time data missed"; 
+	exit;
+	}
 	
-	} else {
-	
-	if(!isset($_SESSION["sum_primetime_days"]) or $_SESSION["sum_primetime_days"] == "")
-	{ $_SESSION["sum_primetime_days"] = ""; }
-	else { $_SESSION["sum_primetime_days"] = $_SESSION["sum_primetime_days"]; }
+	if(!isset($_SESSION["sum_primetime_days"]) or $_SESSION["sum_primetime_days"] == ""){ $_SESSION["sum_primetime_days"] = ""; }
 	
 	$timestamp = time();
 	$date_for_primetime = date("d.m.Y");
-	$date = $date_for_primetime.'20:15';
+	$primetime_start = date("H:i",$primetime);
+	$date = $date_for_primetime.$primetime_start;
 	$primetime_start = strtotime($date) - $dur_down_primetime;
 	$primetime_end = strtotime($date) + $dur_up_primetime;
 	
@@ -62,6 +61,7 @@ include("../inc/dashboard_config.php");
 	$time_start = $timestamp_forward_start;
 	$time_end = $timestamp_forward_end;
 	
+	// time info
 	if ($time_format == '1')
 	{
 	// time format 1
@@ -77,12 +77,12 @@ include("../inc/dashboard_config.php");
 	}
 	
 	// get record locations
-	$sql2 = "SELECT * FROM `record_locations` ORDER BY id ASC";
+	$sql = "SELECT * FROM `record_locations` ORDER BY id ASC";
 	
-	if ($result2 = mysqli_query($dbmysqli,$sql2))
+	if ($result = mysqli_query($dbmysqli,$sql))
 	{
 	// Fetch one and one row
-	while ($obj = mysqli_fetch_object($result2)) {	
+	while ($obj = mysqli_fetch_object($result)) {	
 	{
 	if(!isset($rec_dropdown_primetime) or $rec_dropdown_primetime == "") { $rec_dropdown_primetime = ""; } else { $rec_dropdown_primetime = $rec_dropdown_primetime; }
 	$rec_dropdown_primetime = $rec_dropdown_primetime."<option value=\"$obj->id\">$obj->e2location</option>"; }
@@ -100,7 +100,7 @@ include("../inc/dashboard_config.php");
 	// Fetch one and one row
 	while ($obj = mysqli_fetch_object($result)) {
 	
-	if(!isset($primetime_list) or $primetime_list == "") { $primetime_list = ""; } else { $primetime_list = $primetime_list; }
+	if(!isset($primetime_list) or $primetime_list == "") { $primetime_list = ""; }
 	
 	$title_enc = rawurldecode($obj->title_enc);
 	$servicename_enc = rawurldecode($obj->servicename_enc);
@@ -110,51 +110,31 @@ include("../inc/dashboard_config.php");
 	if ($time_format == '1')
 	{
 	// time format 1
-	//$date_start = date("l, d.m.Y - H:i", $e2eventstart);
 	$e2eventstart = $obj->e2eventstart;
-	$date_start_weekday = date("l", $e2eventstart);
-	$date_start_day = date("d", $e2eventstart);
-	$date_start_month = date("m", $e2eventstart);
-	$date_start_year = date("Y", $e2eventstart);
-	$date_start_hour = date("H", $e2eventstart);
-	$date_start_minute = date("i", $e2eventstart);
-	$date_start = "$date_start_weekday, $date_start_day.$date_start_month.$date_start_year";
+	$date_start = date("l, d.m.Y", $e2eventstart);
 	
 	$e2eventend = $obj->e2eventend;
-	$date_end_weekday = date("l", $e2eventend);
-	$date_end_day = date("d", $e2eventend);
-	$date_end_month = date("m", $e2eventend);
-	$date_end_year = date("Y", $e2eventend);
-	$date_end_hour = date("H", $e2eventend);
-	$date_end_minute = date("i", $e2eventend);
-	$date_end = "$date_end_weekday, $date_end_day.$date_end_month.$date_end_year - $date_end_hour:$date_end_minute";
-	$primetime_time = "$date_start_hour:$date_start_minute - $date_end_hour:$date_end_minute";
+	$primetime_time = date("H:i", $e2eventstart).' - '.date("H:i", $e2eventend);
+	$spacer = '';
 	}
 	
 	if ($time_format == '2')
 	{
 	// time format 2
-	//$date_start = date("l n/d/Y - g:i A", $e2eventstart);
 	$e2eventstart = $obj->e2eventstart;
-	$date_start_weekday = date("l", $e2eventstart);
-	$date_start_month = date("n", $e2eventstart);
-	$date_start_day = date("d", $e2eventstart);
-	$date_start_year = date("Y", $e2eventstart);
-	$date_start_hour = date("g", $e2eventstart);
-	$date_start_minute = date("i", $e2eventstart);
-	$date_start_ampm = date("A", $e2eventstart);
-	$date_start = "$date_start_weekday, $date_start_month/$date_start_day/$date_start_year";
+	$date_start = date("l n/d/Y", $e2eventstart);
 	
 	$e2eventend = $obj->e2eventend;
-	$date_end_weekday = date("l", $e2eventend);
-	$date_end_month= date("n", $e2eventend);
-	$date_end_day = date("d", $e2eventend);
-	$date_end_year = date("Y", $e2eventend);
-	$date_end_hour = date("g", $e2eventend);
-	$date_end_minute = date("i", $e2eventend);
-	$date_end_ampm = date("A", $e2eventend);
-	$date_end = "$date_end_weekday, $date_end_month/$date_end_day/$date_end_year - $date_end_hour:$date_end_minute $date_end_ampm";
-	$primetime_time = "$date_start_hour:$date_start_minute $date_start_ampm - $date_end_hour:$date_end_minute $date_end_ampm";
+	$date_end = date("l n/d/Y - g:i A", $e2eventend);
+	
+	$primetime_time = date("g:i A", $e2eventstart).' - '.date("g:i A", $e2eventend);;
+	$spacer = '';
+	
+	$time_string_length = strlen($broadcast_time);
+	if($time_string_length == 16){ $spacer = '&nbsp;&nbsp;&nbsp;&nbsp;'; }
+	if($time_string_length == 17){ $spacer = '&nbsp;&nbsp;&nbsp;'; }
+	if($time_string_length == 18){ $spacer = '&nbsp;&nbsp;'; }
+	if($time_string_length > 18){ $spacer = '&nbsp;'; }
 	}
 	
 	if ($streaming_symbol == '1' ){ $stream_broadcast = '<a href="'.$url_format.'://'.$box_user.':'.$box_password.'@'.$box_ip.'/web/stream.m3u?ref='.$obj->e2eventservicereference.'" title="Stream"><i class="fa fa-desktop fa-1x"></i></a>'; 
@@ -171,7 +151,7 @@ include("../inc/dashboard_config.php");
 	$primetime_list = $primetime_list."
 		<div id=\"primetime_main\">
 	  <div id=\"primetime_$obj->hash\" style=\"cursor: pointer;\" onclick=\"primetime_list_desc(this.id);\">
-		<div id=\"cnt_time\"> <span class=\"$timer\">$primetime_time</span> </div>
+		<div id=\"cnt_time\"> <span class=\"$timer\">$primetime_time$spacer</span> </div>
 		<div id=\"cnt_title\"> <span class=\"$timer\">$title_enc</span>
 		  <div id=\"primetime_desc_inner\"> </div>
 		</div>
@@ -191,9 +171,9 @@ include("../inc/dashboard_config.php");
 		<div class=\"spacer_5\"></div>
 		<div id=\"broadcast-tab-button-group\">
   <div id=\"row1\">
-    <input id=\"primetime_timer_btn_$obj->hash\" type=\"submit\" onClick=\"primetime_timer(this.id)\" value=\"SET TIMER\" class=\"btn btn-success\"/ title=\"send timer instantly\"> </div>
+    <input id=\"primetime_timer_btn_$obj->hash\" type=\"submit\" onClick=\"primetime_timer(this.id)\" value=\"SET TIMER\" class=\"btn btn-success btn-sm\"/ title=\"send timer instantly\"> </div>
   <div id=\"row2\">
-    <input id=\"primetime_zap_btn_$obj->hash\" type=\"submit\" onClick=\"primetime_zap(this.id)\" value=\"ZAPP TO CHANNEL\" class=\"btn btn-default\"/> </div>
+    <input id=\"primetime_zap_btn_$obj->hash\" type=\"submit\" onClick=\"primetime_zap(this.id)\" value=\"ZAPP TO CHANNEL\" class=\"btn btn-default btn-sm\"/> </div>
   <div id=\"row3\">
   <span id=\"primetime_status_zap_$obj->hash\"></span> <span id=\"primetime_status_timer_$obj->hash\"></span> </div>
   <div style=\"clear:both\"></div>
@@ -203,10 +183,10 @@ include("../inc/dashboard_config.php");
   <div class=\"spacer_5\"></div>
   </div>
   </div>
-  <div class=\"spacer_10\"></div>"; }
+  <div class=\"spacer_10\"></div>"; 
   }
   }
-  if(!isset($primetime_list) or $primetime_list == "") { $primetime_list = "No data for this day"; } else { $primetime_list = $primetime_list; }
+  if(!isset($primetime_list) or $primetime_list == "") { $primetime_list = "No data for this day"; }
   
   echo $primetime_list;
 	

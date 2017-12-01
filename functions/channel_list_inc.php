@@ -6,27 +6,20 @@ include("../inc/dashboard_config.php");
  	header('Content-Type: text/event-stream');
 	header('Cache-Control: no-cache');
 
-	if(!isset($_POST['set_crawl']) or $_POST['set_crawl'] == "") { $_POST['set_crawl'] = ""; } else { $_POST['set_crawl'] = $_POST['set_crawl']; }
-	
-	if(!isset($_POST['set_zap']) or $_POST['set_zap'] == "") { $_POST['set_zap'] = ""; } else { $_POST['set_zap'] = $_POST['set_zap']; }
-	
-	if(!isset($_POST['channel_id']) or $_POST['channel_id'] == "") { $_POST['channel_id'] = ""; } else { $_POST['channel_id'] = $_POST['channel_id']; }
-	
-	if(!isset($_REQUEST['set_crawl']) or $_REQUEST['set_crawl'] == "") { $_REQUEST['set_crawl'] = ""; } else { $_REQUEST['set_crawl'] = $_REQUEST['set_crawl']; }
-	
-	if(!isset($_REQUEST['set_zap']) or $_REQUEST['set_zap'] == "") { $_REQUEST['set_zap'] = ""; } else { $_REQUEST['set_zap'] = $_REQUEST['set_zap']; }
-	
-	if(!isset($_REQUEST['channel_id']) or $_REQUEST['channel_id'] == "") { $_REQUEST['channel_id'] = ""; } else { $_REQUEST['channel_id'] = $_REQUEST['channel_id']; }
+	if(!isset($_POST['set_crawl']) or $_POST['set_crawl'] == "") { $_POST['set_crawl'] = ""; }
+	if(!isset($_POST['set_zap']) or $_POST['set_zap'] == "") { $_POST['set_zap'] = ""; }
+	if(!isset($_POST['channel_id']) or $_POST['channel_id'] == "") { $_POST['channel_id'] = ""; }
+	if(!isset($_REQUEST['set_crawl']) or $_REQUEST['set_crawl'] == "") { $_REQUEST['set_crawl'] = ""; }
+	if(!isset($_REQUEST['set_zap']) or $_REQUEST['set_zap'] == "") { $_REQUEST['set_zap'] = ""; }
+	if(!isset($_REQUEST['channel_id']) or $_REQUEST['channel_id'] == "") { $_REQUEST['channel_id'] = ""; }
 	
 	$set_crawl = $_REQUEST['set_crawl'];
-	
 	$set_zap = $_REQUEST['set_zap'];
-	
 	$channel_id = $_REQUEST['channel_id'];
 	
-	if(!isset($_REQUEST['action']) or $_REQUEST['action'] == "") { $_REQUEST['action'] = ""; } else { $_REQUEST['action'] = $_REQUEST['action']; }
-	if(!isset($_REQUEST['channel_name']) or $_REQUEST['channel_name'] == "") { $_REQUEST['channel_name'] = ""; } else { $_REQUEST['channel_name'] = $_REQUEST['channel_name']; }
-	if(!isset($_REQUEST['service_reference']) or $_REQUEST['service_reference'] == "") { $_REQUEST['service_reference'] = ""; } else { $_REQUEST['service_reference'] = $_REQUEST['service_reference']; }
+	if(!isset($_REQUEST['action']) or $_REQUEST['action'] == "") { $_REQUEST['action'] = ""; }
+	if(!isset($_REQUEST['channel_name']) or $_REQUEST['channel_name'] == "") { $_REQUEST['channel_name'] = ""; }
+	if(!isset($_REQUEST['service_reference']) or $_REQUEST['service_reference'] == "") { $_REQUEST['service_reference'] = ""; }
 	
 	$action = $_REQUEST['action'];
 	$channel_name = $_REQUEST['channel_name'];

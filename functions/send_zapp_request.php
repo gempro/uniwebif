@@ -6,7 +6,7 @@ include("../inc/dashboard_config.php");
  	header('Content-Type: text/event-stream');
 	header('Cache-Control: no-cache');
 	
-	if(!isset($_REQUEST['hash']) or $_REQUEST['hash'] == "") { $_REQUEST['hash'] = ""; } else { $_REQUEST['hash'] = $_REQUEST['hash']; }
+	if(!isset($_REQUEST['hash']) or $_REQUEST['hash'] == "") { $_REQUEST['hash'] = ""; }
 	
 	//recieve data	
 	$hash = $_REQUEST['hash'];

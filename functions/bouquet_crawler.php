@@ -19,14 +19,7 @@ if ($xml) {
 	for ($i = 0; $i <= $i; $i++) {
 
 	///////////////////////////////////////////////
-	if(!isset($xml->e2service[$i]->e2servicereference) or $xml->e2service[$i]->e2servicereference == "") 
-	{
-	$xml->e2service[$i]->e2servicereference = "";
-	
-	} else {
-	
-	$xml->e2service[$i]->e2servicereference = $xml->e2service[$i]->e2servicereference;
-	}
+	if(!isset($xml->e2service[$i]->e2servicereference) or $xml->e2service[$i]->e2servicereference == ""){ $xml->e2service[$i]->e2servicereference = ""; }
 	
 	// empty
 	if($xml->e2service[$i]->e2servicereference == "" ) {

@@ -97,6 +97,8 @@ include("../inc/dashboard_config.php");
 	$powerstate_request = "$url_format://$box_ip/web/powerstate?newstate=$powerstate";
 	$send_powerstate = file_get_contents($powerstate_request, false, $webrequest);
 	
+	if(!isset($next_dummy_timer_start) or $next_dummy_timer_start == "") { $next_dummy_timer_start = ""; }
+	
 	$sql = mysqli_query($dbmysqli, "UPDATE `settings` SET dummy_timer_time = '".$next_dummy_timer_start."' ");
 	$sql = mysqli_query($dbmysqli, "REPAIR TABLE `epg_data`");
 

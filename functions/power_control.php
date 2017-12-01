@@ -2,7 +2,7 @@
 //
 include("../inc/dashboard_config.php");
 
-	if(!isset($_REQUEST['command']) or $_REQUEST['command'] == "") { $_REQUEST['command'] = ""; } else { $_REQUEST['command'] = $_REQUEST['command']; }
+	if(!isset($_REQUEST['command']) or $_REQUEST['command'] == "") { $_REQUEST['command'] = ""; }
 	
 	//recieve data	
 	$command = $_REQUEST['command'];
