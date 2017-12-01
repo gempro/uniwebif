@@ -1,6 +1,6 @@
--- phpMyAdmin SQL Dump
 
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
+SET time_zone = "+00:00";
 
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -9,16 +9,30 @@ SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 /*!40101 SET NAMES utf8 */;
 
 --
--- Database: `uniwebif`
+-- Datenbank: `uniwebif`
 --
 
 -- --------------------------------------------------------
 
 --
--- Table `bouquet_list`
+-- Tabellenstruktur für Tabelle `all_services`
 --
 
-DROP TABLE IF EXISTS `bouquet_list`;
+CREATE TABLE IF NOT EXISTS `all_services` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `e2servicename` text NOT NULL,
+  `servicename_enc` text NOT NULL,
+  `e2servicereference` varchar(50) NOT NULL,
+  `channel_hash` varchar(100) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1379 ;
+
+-- --------------------------------------------------------
+
+--
+-- Tabellenstruktur für Tabelle `bouquet_list`
+--
+
 CREATE TABLE IF NOT EXISTS `bouquet_list` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `e2servicereference` text NOT NULL,
@@ -26,20 +40,14 @@ CREATE TABLE IF NOT EXISTS `bouquet_list` (
   `selected` int(1) NOT NULL DEFAULT '0',
   `crawl` int(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-
---
--- Data Table `bouquet_list`
---
-
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=12 ;
 
 -- --------------------------------------------------------
 
 --
--- Table `box_info`
+-- Tabellenstruktur für Tabelle `box_info`
 --
 
-DROP TABLE IF EXISTS `box_info`;
 CREATE TABLE IF NOT EXISTS `box_info` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `e2enigmaversion` varchar(100) NOT NULL,
@@ -47,20 +55,14 @@ CREATE TABLE IF NOT EXISTS `box_info` (
   `e2webifversion` varchar(100) NOT NULL,
   `e2model` varchar(100) NOT NULL,
   KEY `id` (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-
---
--- Data Table `box_info`
---
-
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
 
 -- --------------------------------------------------------
 
 --
--- Table `channel_list`
+-- Tabellenstruktur für Tabelle `channel_list`
 --
 
-DROP TABLE IF EXISTS `channel_list`;
 CREATE TABLE IF NOT EXISTS `channel_list` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `e2servicename` text NOT NULL,
@@ -74,20 +76,14 @@ CREATE TABLE IF NOT EXISTS `channel_list` (
   `channel_hash` varchar(100) NOT NULL,
   `last_crawl` int(12) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-
---
--- Data Table `channel_list`
---
-
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=154 ;
 
 -- --------------------------------------------------------
 
 --
--- Table `epg_data`
+-- Tabellenstruktur für Tabelle `epg_data`
 --
 
-DROP TABLE IF EXISTS `epg_data`;
 CREATE TABLE IF NOT EXISTS `epg_data` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `e2eventtitle` text NOT NULL,
@@ -135,43 +131,33 @@ CREATE TABLE IF NOT EXISTS `epg_data` (
   FULLTEXT KEY `description_enc` (`description_enc`),
   FULLTEXT KEY `descriptionextended_enc` (`descriptionextended_enc`),
   FULLTEXT KEY `epgsearch_enc` (`title_enc`,`e2eventservicename`,`description_enc`,`descriptionextended_enc`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-
---
--- Data Table `epg_data`
---
-
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=805585 ;
 
 -- --------------------------------------------------------
 
 --
--- Table `record_locations`
+-- Tabellenstruktur für Tabelle `record_locations`
 --
 
-DROP TABLE IF EXISTS `record_locations`;
 CREATE TABLE IF NOT EXISTS `record_locations` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `e2location` text NOT NULL,
   `selected` int(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-
---
--- Data Table `record_locations`
---
-
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
 
 -- --------------------------------------------------------
 
 --
--- Table `saved_search`
+-- Tabellenstruktur für Tabelle `saved_search`
 --
 
-DROP TABLE IF EXISTS `saved_search`;
 CREATE TABLE IF NOT EXISTS `saved_search` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `searchterm` text NOT NULL,
   `search_option` text NOT NULL,
+  `exclude_term` text NOT NULL,
+  `exclude_area` text NOT NULL,
   `e2location` text NOT NULL,
   `save_date` text NOT NULL,
   `e2eventservicereference` text NOT NULL,
@@ -179,21 +165,16 @@ CREATE TABLE IF NOT EXISTS `saved_search` (
   `servicename_enc` text NOT NULL,
   `activ` text NOT NULL,
   `action` text NOT NULL,
+  `rec_replay` varchar(255) NOT NULL DEFAULT 'off',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-
---
--- Data Table `saved_search`
---
-
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=213 ;
 
 -- --------------------------------------------------------
 
 --
--- Table `settings`
+-- Tabellenstruktur für Tabelle `settings`
 --
 
-DROP TABLE IF EXISTS `settings`;
 CREATE TABLE IF NOT EXISTS `settings` (
   `id` int(1) NOT NULL,
   `box_ip` text NOT NULL,
@@ -220,6 +201,7 @@ CREATE TABLE IF NOT EXISTS `settings` (
   `ticker_time` int(6) NOT NULL DEFAULT '86400',
   `mark_searchterm` int(1) NOT NULL DEFAULT '1',
   `send_timer` int(1) NOT NULL DEFAULT '0',
+  `hide_old_timer` int(1) NOT NULL DEFAULT '1',
   `delete_old_timer` int(1) NOT NULL DEFAULT '0',
   `delete_receiver_timer` int(1) NOT NULL DEFAULT '0',
   `dummy_timer` int(1) NOT NULL DEFAULT '0',
@@ -241,25 +223,18 @@ CREATE TABLE IF NOT EXISTS `settings` (
   `cz_worktime` varchar(12) NOT NULL,
   `dur_down_broadcast` int(4) NOT NULL DEFAULT '600',
   `dur_up_broadcast` int(4) NOT NULL DEFAULT '600',
+  `primetime` int(12) NOT NULL DEFAULT '0',
   `dur_down_primetime` int(4) NOT NULL DEFAULT '600',
   `dur_up_primetime` int(5) NOT NULL DEFAULT '7200',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
---
--- Data Table `settings`
---
-
-INSERT INTO `settings` (`id`, `box_ip`, `box_user`, `box_password`, `activate_cron`, `epg_entries_per_channel`, `channel_entries`, `time_format`, `epg_crawler`, `crawler_timestamp`, `crawler_hour`, `crawler_minute`, `crawler_am_pm`, `last_epg_crawl`, `start_epg_crawler`, `after_crawl_action`, `search_crawler`, `last_search_crawl`, `display_old_epg`, `streaming_symbol`, `imdb_symbol`, `timer_ticker`, `ticker_time`, `mark_searchterm`, `send_timer`, `delete_old_timer`, `delete_receiver_timer`, `dummy_timer`, `dummy_timer_time`, `dummy_timer_current`, `delete_old_epg`, `url_format`, `del_time`, `reload_progressbar1`, `extra_rec_time`, `cz_activate`, `cz_wait_time`, `cz_repeat`, `cz_hour`, `cz_minute`, `cz_am_pm`, `cz_start_channel`, `cz_timestamp`, `cz_worktime`, `dur_down_broadcast`, `dur_up_broadcast`, `dur_down_primetime`, `dur_up_primetime`) VALUES
-(0, 'localhost', 'root', '', 0, 500, 100, 2, 0, 0, '', '', '', 0, 30, 0, 0, 0, 0, 1, 0, 1, 86400, 1, 0, 0, 0, 0, 0, 0, 0, 'http', 21600, 1, 0, 0, 30, '', '', '', '', '', '0', '', 600, 600, 600, 7200);
-
 -- --------------------------------------------------------
 
 --
--- Table `timer`
+-- Tabellenstruktur für Tabelle `timer`
 --
 
-DROP TABLE IF EXISTS `timer`;
 CREATE TABLE IF NOT EXISTS `timer` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `e2eventtitle` text NOT NULL,
@@ -273,6 +248,8 @@ CREATE TABLE IF NOT EXISTS `timer` (
   `e2eventservicereference` varchar(255) NOT NULL,
   `search_term` text NOT NULL,
   `search_option` text NOT NULL,
+  `exclude_term` text NOT NULL,
+  `exclude_area` text NOT NULL,
   `record_location` text NOT NULL,
   `e2eventstart` varchar(12) NOT NULL,
   `e2eventend` varchar(12) NOT NULL,
@@ -282,31 +259,13 @@ CREATE TABLE IF NOT EXISTS `timer` (
   `status` text NOT NULL,
   `record_status` text NOT NULL,
   `show_ticker` int(1) NOT NULL DEFAULT '1',
+  `rec_replay` text NOT NULL,
+  `is_replay` int(1) NOT NULL,
+  `expired` int(1) NOT NULL DEFAULT '0',
+  `hide` int(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=70711 ;
 
---
--- Data Table `timer`
---
-
-
--- --------------------------------------------------------
-
---
--- Table `tv_services`
---
-
-DROP TABLE IF EXISTS `tv_services`;
-CREATE TABLE IF NOT EXISTS `tv_services` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `e2servicename` text NOT NULL,
-  `servicename_enc` text NOT NULL,
-  `e2servicereference` varchar(50) NOT NULL,
-  `channel_hash` varchar(100) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-
---
--- Data Table `tv_services`
---
-
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
