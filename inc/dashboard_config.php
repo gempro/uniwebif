@@ -3,11 +3,17 @@
 	ini_set('display_errors', 1);
 	error_reporting(E_ALL);
 	
-// ip from host
+	// ip from host
 	$script_location = '10.0.0.84';
+	
+	// sql settings
+	$sql_host = 'localhost';
+	$sql_user = 'uniwebif';
+	$sql_pass = 'uniwebif';
+	$sql_db = 'uniwebif';
 			
-// mysqli
-	@$dbmysqli = mysqli_connect("localhost", "uniwebif", "uniwebif", "uniwebif");
+	// mysqli
+	@$dbmysqli = mysqli_connect($sql_host, $sql_user, $sql_pass, $sql_db);
 	
 	if (mysqli_connect_errno()) {
 	printf("SQL connection error: %s\n", mysqli_connect_error());
@@ -24,7 +30,7 @@
 	$epg_entries_per_channel = $result['epg_entries_per_channel'] - 1;
 	$channel_entries = $result['channel_entries'] - 1;
 	$time_format = $result['time_format'];
-	if(!isset($time_format) or $time_format == "") { $time_format = "2"; } else { $time_format = $time_format; }
+	if(!isset($time_format) or $time_format == "") { $time_format = "2"; }
 	$start_epg_crawler = $result['start_epg_crawler'];
 	$after_crawl_action = $result['after_crawl_action'];
 	$delete_old_timer = $result['delete_old_timer'];
@@ -49,7 +55,9 @@
 	$dur_down_primetime = $result['dur_down_primetime'];
 	$dur_up_primetime = $result['dur_up_primetime'];
 	$cz_start_channel = $result['cz_start_channel'];
+	$cz_timestamp = $result['cz_timestamp'];
 	$crawler_timestamp = $result['crawler_timestamp'];
+	$primetime = $result['primetime'];
 
 // Webrequest
 	$webrequest = stream_context_create(array (
