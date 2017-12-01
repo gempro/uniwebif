@@ -1,5 +1,5 @@
 # uniwebif
-External and Universal Webinterface for Linux Receiver's
+Extern and Universal Webinterface for Linux Receiver's
 
 If you're not happy with the Webinterface from your Linux Receiver, you should have a look at it.
 
@@ -28,4 +28,4 @@ Online Demo: http://uniwebif-demo.techweb.at
 
 UPDATE INFO
 
-When changing from 1.0 to 1.1 it's required to reinstall the whole SQL Database cause some tables was added.
+When changing from 1.0 or 1.1 it's required to reinstall the whole SQL Database cause some tables was added.
