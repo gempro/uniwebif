@@ -14,10 +14,10 @@ $(document).ready(function(){
 		}
 });
 
-	$('#scroll_top').click(function(){
-		$('html, body').animate({scrollTop : 0},800);
-		return false;
-	});
+$('#scroll_top').click(function(){
+	$('html, body').animate({scrollTop : 0},800);
+	return false;
+});
 });
 
 // scroll top nav
@@ -57,15 +57,48 @@ function broadcast_list_desc(id) {
 // display broadcast list main
 function broadcast_main(id) {
 	$("#broadcast_main_"+id+"").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
+	//if (id !== 'now_today'){ $("#browse_time_panel").fadeOut("slow"); } else { $("#browse_time_panel").fadeIn("slow"); }
 	$.post("functions/broadcast_list_main.php",
 	{
 	time: id
 	},
 	function(data){
-	//scroll
 	$('html, body').animate({ scrollTop: ($(broadcast_list).offset().top)}, 'slow');
 	// write data in container
 	$("#broadcast_main_"+id+"").html(data);
+	}
+	);
+};
+
+// broadcast list show time
+function broadcast_show_time(id) {
+	var time_format = $("#time_format").val();
+	var hh = $("#broadcast_hh").val();
+	var mm = $("#broadcast_mm").val();
+	
+	if (time_format == 1) {
+	if(isFinite(String(hh)) == false || hh == '' || hh > 23){ var hh = "00"; $("#broadcast_hh").addClass("error-input"); return; } else { $("#broadcast_hh").removeClass("error-input"); };
+	if(isFinite(String(mm)) == false || mm == '' || mm > 59){ var mm = "00"; $("#broadcast_mm").addClass("error-input"); return; } else { $("#broadcast_mm").removeClass("error-input"); };
+	var am_pm = '0';
+	}
+	if (time_format == 2) {
+	if(isFinite(String(hh)) == false || hh == '' || hh > 12 || hh < 1){ var hh = "12"; $("#broadcast_hh").addClass("error-input"); return; } else { $("#broadcast_hh").removeClass("error-input"); };
+	if(isFinite(String(mm)) == false || mm == '' || mm > 59){ var mm = "00"; $("#broadcast_mm").addClass("error-input"); return; } else { $("#broadcast_mm").removeClass("error-input"); };
+	var am_pm = $("#broadcast_am_pm").val();
+	}
+	$("#show_time").attr('data-toggle', 'tab');
+	$("#broadcast_browse_time").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
+	$.post("functions/broadcast_list_main.php",
+	{
+	time: id,
+	hour: hh,
+	minute: mm,
+	ampm: am_pm
+	},
+	function(data){
+	$('html, body').animate({ scrollTop: ($(broadcast_list).offset().top)}, 'slow');
+	// write data in container
+	$("#broadcast_browse_time").html(data);
 	}
 	);
 };
@@ -98,12 +131,12 @@ $(document).ready(function(){
 
 // scroll top button broadcast
 $(document).ready(function(){
-	$(window).scroll(function(){
-		if ($(this).scrollTop() > 2500) {
-			$('#scroll_top_broadcast_list').fadeIn();
-		} else {
-			$('#scroll_top_broadcast_list').fadeOut();
-		}
+$(window).scroll(function(){
+	if ($(this).scrollTop() > 2500) {
+		$('#scroll_top_broadcast_list').fadeIn();
+	} else {
+		$('#scroll_top_broadcast_list').fadeOut();
+	}
 });
 
 	$('#scroll_top_broadcast_list').click(function(){
@@ -143,7 +176,7 @@ if (document.querySelector('html').clientWidth < 830)
 	var navbar_header_teletext = '';
 	var navbar_header_tv_services = '';
 	
-	} else { 
+	} else {
 	
 	var navbar_header_dashboard = '<li class="nav-header"><div id="nav-header"><i class="fa fa-home fa-3-5x"></i></div></li>';
 	var navbar_header_search = '<li class="nav-header"><div id="nav-header"><i class="fa fa-search fa-3-5x"></i></div></li>';
@@ -157,7 +190,7 @@ if (document.querySelector('html').clientWidth < 830)
 	var navbar_header_teletext = '<li class="nav-header"><div id="nav-header"><i class="fa fa-globe fa-3-5x"></i></div></li>';
 	var navbar_header_tv_services = '<li class="nav-header"><div id="nav-header"><i class="fa fa-list fa-3-5x"></i></div></li>';
 }
-
+//
 document.addEventListener('DOMContentLoaded', checkWidth);
 document.addEventListener('resize', checkWidth);
 function checkWidth() {
@@ -171,20 +204,18 @@ $(window).load(function() {
 	animatedcollapse.addDiv('statusbar_cnt_outter', 'fade=1,height=auto');
 	animatedcollapse.init()
 	animatedcollapse.show('statusbar_cnt_outter');
-	}
-	);
+	});
 });
-
-// reload statusbar
-var status_bar = "functions/statusbar1.php";
-var status_bar_load = 60;
+// reload
+	var status_bar = "functions/statusbar1.php";
+	var status_bar_load = 60;
 
 	$(document).ready(function() {	   
 	setInterval(function() {
 	$('#statusbar_cnt').load(status_bar + '?sb=' + (new Date().getTime()));
 	}, (status_bar_load*1000));
 	});
-}
+	}
 }
 
 <!--
@@ -213,21 +244,19 @@ if(typeof(EventSource) !== "undefined") {
 }
 
 <!--
-// send timer broadcast list main
+// send timer instant broadcast list main
 function broadcast_timer(id) {
 if(typeof(EventSource) !== "undefined") {
 	
 	var this_id = id.replace(/broadcast_timer_btn_/g, "");
 	var res = this_id.substr(3);
-	
 	var record_location = document.getElementById("rec_location_broadcast_"+this_id+"").value;
-	
 	document.getElementById("broadcast_status_timer_"+this_id+"").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
 	
     var source = new EventSource("functions/send_timer_instant.php?hash="+res+"&record_location="+record_location+"");
     source.onmessage = function(event) {
 	
-	document.getElementById("broadcast_status_timer_"+this_id+"").innerHTML = "<i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i> Timer sent";
+	document.getElementById("broadcast_status_timer_"+this_id+"").innerHTML = event.data;
 		
 	this.close();
 	};
@@ -274,7 +303,7 @@ if(typeof(EventSource) !== "undefined") {
     var source = new EventSource("functions/send_timer_instant.php?hash="+this_id+"&record_location="+record_location+"");
     source.onmessage = function(event) {
 		
-	document.getElementById("searchlist_status_timer_"+this_id+"").innerHTML = "<i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i> Timer sent";
+	document.getElementById("searchlist_status_timer_"+this_id+"").innerHTML = event.data;
 		
 	this.close();
 	};
@@ -309,6 +338,7 @@ if(typeof(EventSource) !== "undefined") {
 // primetime banner link
 $(document).ready(function() {
     $('#primetime_banner').click(function(e) {
+	primetime_main('primetime_today');
 	animatedcollapse.show('primetime_main_today');
     $('html, body').animate({ scrollTop: ($(primetime_list).offset().top)}, 'slow');
     });
@@ -316,17 +346,17 @@ $(document).ready(function() {
 
 // scroll top button primetime
 $(document).ready(function(){
-	$(window).scroll(function(){
-		if ($(this).scrollTop() > 4000) {
-			$('#scroll_top_primetime_list').fadeIn();
-		} else {
-			$('#scroll_top_primetime_list').fadeOut();
-		}
+$(window).scroll(function(){
+	if ($(this).scrollTop() > 4000) {
+		$('#scroll_top_primetime_list').fadeIn();
+	} else {
+		$('#scroll_top_primetime_list').fadeOut();
+	}
 });
 
-	$('#scroll_top_primetime_list').click(function(){
-		$('html, body').animate({ scrollTop: ($(primetime_list).offset().top)}, 'slow');
-		return false;
+$('#scroll_top_primetime_list').click(function(){
+	$('html, body').animate({ scrollTop: ($(primetime_list).offset().top)}, 'slow');
+	return false;
 	});
 });
 
@@ -356,7 +386,6 @@ function primetime_main(id) {
 	time: this_id
 	},
 	function(data){
-	//scroll
 	$('html, body').animate({ scrollTop: ($(primetime_list).offset().top)}, 'slow');
 	// write data in container
 	$("#primetime_main_"+this_id+"").html(data);
@@ -392,7 +421,6 @@ function primetime_timer(id) {
 if(typeof(EventSource) !== "undefined") {
 	
 	var this_id = id.replace(/primetime_timer_btn_/g, "");
-	
 	var record_location = document.getElementById("rec_location_primetime_"+this_id+"").value;
 	
 	document.getElementById("primetime_status_timer_"+this_id+"").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
@@ -400,13 +428,47 @@ if(typeof(EventSource) !== "undefined") {
     var source = new EventSource("functions/send_timer_instant.php?hash="+this_id+"&record_location="+record_location+"");
     source.onmessage = function(event) {
 		
-	document.getElementById("primetime_status_timer_"+this_id+"").innerHTML = "<i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i> Timer sent";
+	document.getElementById("primetime_status_timer_"+this_id+"").innerHTML = event.data;
 	
 	this.close();
 	};
 	} else {
 	document.getElementById("primetime_status_timer_"+this_id+"").value = "Error";
 	}
+}
+
+// set primetime
+function set_primetime(){
+	var time_format = $("#time_format").val();
+	var hh = $("#primetime_hh").val();
+	var mm = $("#primetime_mm").val();
+	
+	if (time_format == 1)
+	{
+	if(isFinite(String(hh)) == false || hh == '' || hh > 23){ var hh = "12"; $("#primetime_hh").val("12"); };
+	if(isFinite(String(mm)) == false || mm == '' || mm > 59){ var mm = "00"; $("#primetime_mm").val("00"); };
+	var am_pm = '0';
+	}
+	
+	if (time_format == 2)
+	{
+	if(isFinite(String(hh)) == false || hh == '' || hh > 12){ var hh = "12"; $("#primetime_hh").addClass("error-input"); } else { $("#primetime_hh").removeClass("error-input"); };
+	if(isFinite(String(mm)) == false || mm == '' || mm > 59){ var mm = "00"; $("#primetime_mm").addClass("error-input"); } else { $("#primetime_mm").removeClass("error-input"); };
+	var am_pm = $("#primetime_am_pm").val();
+	}
+	
+	$("#set_status").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
+	$.post("functions/primetime_set.php",
+	{
+	hour: hh,
+	minute: mm,
+	ampm: am_pm
+	},
+	function(data){
+	// write data in container
+	$("#set_status").html(data);
+	}
+	);
 }
 
 <!--
@@ -420,7 +482,6 @@ function channelbrowser_main(id) {
 	channel: channel_id
 	},
 	function(data){
-	//scroll
 	$('html, body').animate({ scrollTop: ($(channelbrowser_list).offset().top)}, 'slow');
 	// write data in container
 	$("#channelbrowser_main_"+id+"").html(data);
@@ -454,17 +515,17 @@ $(document).ready(function() {
 
 // scroll top button channelbrowser
 $(document).ready(function(){
-	$(window).scroll(function(){
-		if ($(this).scrollTop() > 5500) {
-			$('#scroll_top_channelbrowser_list').fadeIn();
-		} else {
-			$('#scroll_top_channelbrowser_list').fadeOut();
-		}
+$(window).scroll(function(){
+	if ($(this).scrollTop() > 5500) {
+		$('#scroll_top_channelbrowser_list').fadeIn();
+	} else {
+		$('#scroll_top_channelbrowser_list').fadeOut();
+	}
 });
 
-	$('#scroll_top_channelbrowser_list').click(function(){
-		$('html, body').animate({ scrollTop: ($(channelbrowser_list).offset().top)}, 'slow');
-		return false;
+$('#scroll_top_channelbrowser_list').click(function(){
+	$('html, body').animate({ scrollTop: ($(channelbrowser_list).offset().top)}, 'slow');
+	return false;
 	});
 });
 
@@ -482,7 +543,6 @@ if(typeof(EventSource) !== "undefined") {
     source.onmessage = function(event) {
 		
 	document.getElementById("channelbrowser_status_zap_"+this_id+"").innerHTML = "";
-	
 	document.getElementById("channelbrowser_zap_btn_"+this_id+"").value = "CHANNEL ZAPP OK";
 	
 	this.close();
@@ -506,7 +566,7 @@ if(typeof(EventSource) !== "undefined") {
     var source = new EventSource("functions/send_timer_instant.php?hash="+res+"&record_location="+record_location+"");
     source.onmessage = function(event) {
 		
-	document.getElementById("channelbrowser_status_timer_"+this_id+"").innerHTML = "<i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i> Timer sent";
+	document.getElementById("channelbrowser_status_timer_"+this_id+"").innerHTML = event.data;
 	
 	this.close();
 	};
@@ -516,22 +576,21 @@ if(typeof(EventSource) !== "undefined") {
 }
 
 <!--
+// load timerlist
+$(document).ready(function(){
+	$.post("functions/timer_list_inc.php",
+	function(data){
+	$("#timerlist_inc").html(data);
+	});
+});
+
 // open timerlist
-function timerlist_delete(id) {
+function timerlist_desc(id) {
 	var this_id = id.replace(/timer_/g, "");
 	animatedcollapse.addDiv('timerlist_btn_'+this_id, 'fade=1,height=auto');
 	animatedcollapse.init()
 	animatedcollapse.toggle('timerlist_btn_'+this_id);
 }
-
-// timerlist hover
-$(document).ready(function(){
-    $("#timerlist*").hover(function(){
-        $(this).css("background-color", "#FAFAFA");
-        }, function(){
-        $(this).css("background-color", "white");
-    });
-});
 
 // timerlist delete timer
 function delete_timer(id) {
@@ -569,14 +628,14 @@ function timerlist_send_timer(id) {
 if(typeof(EventSource) !== "undefined") {
 	
 	var this_id = id.replace(/timerlist_send_timer_btn_/g, "");
-	
+	var record_location = document.getElementById("timerlist_rec_location_"+this_id+"").innerHTML;
 	document.getElementById("timerlist_send_timer_status_"+this_id+"").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
 	
-    var source = new EventSource("functions/send_timer_instant.php?hash="+this_id+"&location=timerlist");
+    var source = new EventSource("functions/send_timer_instant.php?hash="+this_id+"&record_location="+record_location+"&location=timerlist");
     
 	source.onmessage = function(event) {
 		
-	document.getElementById("timerlist_send_timer_status_"+this_id+"").innerHTML = "<i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i> Timer sent";
+	document.getElementById("timerlist_send_timer_status_"+this_id+"").innerHTML = event.data;
 	
 	this.close();
 	};
@@ -598,13 +657,85 @@ if(typeof(EventSource) !== "undefined") {
     
 	source.onmessage = function(event) {
 		
-	document.getElementById("tickerlist_send_timer_status_"+this_id+"").innerHTML = "<input type=\"submit\" class=\"btn btn-xs btn-success\" value=\"Timer set\">";
+	document.getElementById("tickerlist_send_timer_status_"+this_id+"").innerHTML = event.data;
 	
 	this.close();
 	};
 	} else {
     alert("Sorry, your browser does not support server-sent events...");
 	}
+}
+
+// timerlist panel
+function select_timer_checkbox(){
+	if (select_all.checked == true){ $("[id^=box]").prop("checked", true); }
+	if (select_all.checked == false){ $("[id^=box]").prop("checked", false); }
+	count_selected();
+}
+//
+function count_selected(){
+	var summary = document.querySelectorAll('input[id^=box]:checked').length;
+	$("#selected_box_sum").html("(" + summary + ")");
+}
+//
+function timerlist_panel(id){
+	var checked = []
+	$("input[name='timerlist_checkbox[]']:checked").each(function ()
+	{
+	checked.push(parseInt($(this).val()));
+	});
+	if (id == 'delete'){
+	$("#del_buttons").toggle();
+	return;
+	}
+	if (id == 'send' || id == 'delete_db' || id == 'delete_rec' || id == 'delete_both' || id == 'hide' || id == 'unhide'){
+	if (checked == 0){ return; }
+	}
+	if (id == 'show_unhide'){
+	$("[id^=timerlist_div_outer_]").removeClass("hidden");
+	$("#unhide").removeClass("hidden");
+	return;
+	}
+	
+	//if ($('#timerlist_div_outer_'+checked.join()+'.opac_70')){ console.log("yes"); } else { console.log("no"); }
+	
+	$("#panel_action_status").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
+
+	var selected_timer = checked.join(';');
+
+	$.post("functions/timer_list_panel.php",
+	{
+	panel_action: id,
+	timer_id: selected_timer
+	},
+	function(data){
+	// write data in container
+	$("#panel_action_status").html("<i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i>");
+	$("#selected_box_sum").html("");
+	
+if (data == 'unhide_done'){
+	$("input[name='timerlist_checkbox[]']:checked").each(function ()
+	{
+	$('#timerlist_div_outer_'+$(this).val()).removeClass("opac_70");
+	});
+	}
+	
+function hide_timer_div(){
+	if (data == 'delete_db_done' || data == 'delete_both_done' || data == 'hide_done'){
+	$("input[name='timerlist_checkbox[]']:checked").each(function ()
+	{
+	animatedcollapse.addDiv('timerlist_div_outer_'+$(this).val(), 'fade=1,height=auto');
+	animatedcollapse.init()
+	animatedcollapse.hide('timerlist_div_outer_'+$(this).val());
+	});
+function unselect_boxes(){
+	$("[id^=box]").prop("checked", false);
+	}
+	window.setTimeout(unselect_boxes, 1500);
+	}
+	}
+	window.setTimeout(hide_timer_div, 1000);
+	});
 }
 
 <!--
@@ -668,7 +799,6 @@ function create_m3u(id){
 	document.getElementById("m3u_"+id+"").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
 	
 	var record_id = document.getElementById("record_id_"+id+"").innerHTML;
-	
     var source = new EventSource("functions/create_m3u.php?record_file="+id+"&record_id="+record_id+"");
     
 	source.onmessage = function(event) {
@@ -698,14 +828,13 @@ if (confirm('Are you sure?')) {
 	del_id: id
 	},
 	function(data){
-	
 	animatedcollapse.addDiv('record_entry_'+record_no, 'fade=1,height=auto');
 	animatedcollapse.init()
 	animatedcollapse.hide('record_entry_'+record_no);
 	}
 	);
 	} else {
-    // exit
+    return;
 }
 }
 
@@ -734,13 +863,16 @@ if(typeof(EventSource) !== "undefined") {
 	var this_id = id.replace(/saved_search_list_save_btn_/g, "");
 	var searchterm = document.getElementById("searchterm_"+this_id+"").value;
 	var searcharea = document.getElementById("searcharea_"+this_id+"").value;
+	var exclude_term = document.getElementById("exclude_term_"+this_id+"").value;
+	var exclude_area = document.getElementById("exclude_area_"+this_id+"").value;
+	var rec_replay = document.getElementById("rec_replay_"+this_id+"").value;
 	var channel = document.getElementById("channel_dropdown_saved_search_list_"+this_id+"").value;
 	var record_location = document.getElementById("rec_dropdown_saved_search_list_"+this_id+"").value;
 	var active = document.getElementById("active_"+this_id+"").value;
 	
 	document.getElementById("saved_search_list_status_"+this_id+"").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
 	
-    var source = new EventSource("functions/search_list_edit.php?id="+this_id+"&searchterm="+searchterm+"&searcharea="+searcharea+"&channel="+channel+"&record_location="+record_location+"&active="+active+"&action=save");
+    var source = new EventSource("functions/search_list_edit.php?id="+this_id+"&searchterm="+searchterm+"&searcharea="+searcharea+"&exclude_term="+exclude_term+"&exclude_area="+exclude_area+"&rec_replay="+rec_replay+"&channel="+channel+"&record_location="+record_location+"&active="+active+"&action=save");
     
 	source.onmessage = function(event) {
 		
@@ -780,7 +912,6 @@ if(typeof(EventSource) !== "undefined") {
 	document.getElementById("saved_search_list_status_"+this_id+"").value = "Sorry, your browser does not support server-sent events...";
 	}
 }
-
 
 <!--
 function crawl_complete() {
@@ -1033,6 +1164,7 @@ if(typeof(EventSource) !== "undefined") {
 <!--
 function save_settings() {
 	
+	var display_time_format = document.getElementById("display_time_format").value;
 	if (document.getElementById("activate_cron").checked == true) { var activate_cron = '1'; }
 	if (document.getElementById("activate_cron").checked == false) { var activate_cron = '0'; }
 	
@@ -1051,7 +1183,7 @@ function save_settings() {
 	
 	var crawler_hour = document.getElementById("crawler_hour").value;
 	var crawler_minute = document.getElementById("crawler_minute").value;
-	var crawler_am_pm = document.getElementById("crawler_am_pm").value;
+	if (display_time_format == '2'){ var crawler_am_pm = document.getElementById("crawler_am_pm").value; } else { var crawler_am_pm = '0'; }
 	
 	if (document.getElementById("search_crawler").checked == true) { var search_crawler = '1'; }
 	if (document.getElementById("search_crawler").checked == false) { var search_crawler = '0'; }
@@ -1104,8 +1236,9 @@ function save_settings() {
 	var cz_wait_time = document.getElementById("cz_wait_time").value;
 	var cz_hour = document.getElementById("cz_hour").value;
 	var cz_minute = document.getElementById("cz_minute").value;
-	var cz_repeat = document.getElementById("cz_repeat").value;
-	var cz_am_pm = document.getElementById("cz_am_pm").value;
+	var cz_repeat = document.getElementById("cz_repeat").value;	
+	if (display_time_format == '2'){ var cz_am_pm = document.getElementById("cz_am_pm").value; } else { var cz_am_pm = '0'; }
+
 	var cz_start_channel = document.getElementById("channel_id").value;
 	
 	var start_epg_crawler = document.getElementById("start_epg_crawler").value;
@@ -1132,7 +1265,6 @@ if(typeof(EventSource) !== "undefined") {
 	document.getElementById("save_settings_status").innerHTML = "Sorry, your browser does not support server-sent events...";
 	}
 }
-
 
 <!--
 // copy record locations from receiver
@@ -1384,8 +1516,7 @@ function teletext_page() {
 	function(data){
 	// write data in container
 	$("#teletext_img").html(data);
-	}
-	);
+	});
 };
 
 // browse page
