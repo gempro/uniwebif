@@ -130,7 +130,7 @@ include("../inc/dashboard_config.php");
 	$primetime_time = date("g:i A", $e2eventstart).' - '.date("g:i A", $e2eventend);;
 	$spacer = '';
 	
-	$time_string_length = strlen($broadcast_time);
+	$time_string_length = strlen($primetime_time);
 	if($time_string_length == 16){ $spacer = '&nbsp;&nbsp;&nbsp;&nbsp;'; }
 	if($time_string_length == 17){ $spacer = '&nbsp;&nbsp;&nbsp;'; }
 	if($time_string_length == 18){ $spacer = '&nbsp;&nbsp;'; }
