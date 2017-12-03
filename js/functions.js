@@ -687,8 +687,6 @@ function timerlist_panel(id){
 	}
 	if (id == 'show_unhide'){
 	//$("[id^=timerlist_div_outer_]").removeClass("hidden");
-	
-	
 	$("#selected_box_sum").html("");
 	$(function(){
 	$.post("functions/timer_list_inc.php",
@@ -738,6 +736,7 @@ function unselect_boxes(){
 	$("[id^=box]").prop("checked", false);
 	}
 	window.setTimeout(unselect_boxes, 1500);
+	$("#select_all").prop("checked", false);
 	}
 	}
 	window.setTimeout(hide_timer_div, 1000);
