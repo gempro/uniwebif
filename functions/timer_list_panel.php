@@ -54,7 +54,7 @@
 	$sql2 = mysqli_query($dbmysqli, "UPDATE `epg_data` SET timer = '0' WHERE `hash` = '".$hash."' ");
 	}
 	sleep(1);
-	echo 'del rec done';
+	echo 'del_rec_done';
 	}
 	
 	
