@@ -572,6 +572,7 @@ $(document).ready(function(){
 function reload_timerlist(){
 	$.post("functions/timer_list_inc.php",
 	function(data){
+	$("#selected_box_sum").html("");
 	$("#unhide").addClass("hidden");
 	$("#show_unhide").attr("onclick", "timerlist_panel(this.id)");
 	$("#timerlist_inc").html(data);
