@@ -361,6 +361,12 @@ display:none;
 #broadcast_main #cnt_time {
 	width: auto;
 	height: auto;
+	float: left;
+	margin-right: 10px;
+}
+#broadcast_main #cnt_time_2 {
+	width: auto;
+	height: auto;
 	min-width: 13%;
 	float: left;
 	margin-right: 10px;
@@ -406,6 +412,12 @@ display:none;
 	box-sizing: border-box;
 }
 #primetime_main #cnt_time {
+	width: auto;
+	height: auto;
+	float: left;
+	margin-right: 10px;
+}
+#primetime_main #cnt_time_2 {
 	width: auto;
 	height: auto;
 	min-width: 13%;
@@ -478,6 +490,12 @@ display:none;
 	box-sizing: border-box;
 }
 #channelbrowser_main #cnt_time {
+	width: auto;
+	height: auto;
+	float: left;
+	margin-right: 10px;
+}
+#channelbrowser_main #cnt_time_2 {
 	width: auto;
 	height: auto;
 	min-width: 13%;
