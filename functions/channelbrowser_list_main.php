@@ -160,7 +160,7 @@ $channelbrowser_list = $channelbrowser_list."
 		<div id=\"channelbrowser_main\">
 	  <div id=\"channelbrowser_$rand$obj->hash\" style=\"cursor: pointer;\" onclick=\"channelbrowser_list_desc(this.id);\">
 		<div id=\"cnt_time\"> <span class=\"$timer\">$broadcast_time</span> </div>
-		<div id=\"cnt_title\"> <span class=\"$timer\">$title_enc $time_string_length</span>
+		<div id=\"cnt_title\"> <span class=\"$timer\">$title_enc</span>
 		  <div id=\"channelbrowser_desc_inner\"> </div>
 		</div>
 		<div id=\"cnt_channel\"> <span class=\"$timer\">$servicename_enc</span> </div>
