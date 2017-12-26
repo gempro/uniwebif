@@ -361,6 +361,7 @@ display:none;
 #broadcast_main #cnt_time {
 	width: auto;
 	height: auto;
+	min-width: 13%;
 	float: left;
 	margin-right: 10px;
 }
@@ -407,6 +408,7 @@ display:none;
 #primetime_main #cnt_time {
 	width: auto;
 	height: auto;
+	min-width: 13%;
 	float: left;
 	margin-right: 10px;
 }
@@ -478,6 +480,7 @@ display:none;
 #channelbrowser_main #cnt_time {
 	width: auto;
 	height: auto;
+	min-width: 13%;
 	float: left;
 	margin-right: 10px;
 }
