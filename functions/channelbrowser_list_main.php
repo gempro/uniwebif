@@ -128,6 +128,8 @@ include("../inc/dashboard_config.php");
 	
 	$e2eventend = $obj->e2eventend;
 	$broadcast_time = date("H:i", $e2eventstart).' - '.date("H:i", $e2eventend);
+	
+	$td_spacer = 'cnt_time';
 	}
 	
 	if ($time_format == '2')
@@ -139,7 +141,9 @@ include("../inc/dashboard_config.php");
 	$e2eventend = $obj->e2eventend;
 	$date_end = date("l n/d/Y - g:i A", $e2eventend);
 	
-	$broadcast_time = date("g:i A", $e2eventstart).' - '.date("g:i A", $e2eventend);;
+	$broadcast_time = date("g:i A", $e2eventstart).' - '.date("g:i A", $e2eventend);
+	
+	$td_spacer = 'cnt_time_2';
 	}
 	
 	if ($streaming_symbol == '1' ){ $stream_broadcast = '<a href="'.$url_format.'://'.$box_user.':'.$box_password.'@'.$box_ip.'/web/stream.m3u?ref='.$obj->e2eventservicereference.'" title="Stream"><i class="fa fa-desktop fa-1x"></i></a>'; 
@@ -159,7 +163,7 @@ include("../inc/dashboard_config.php");
 $channelbrowser_list = $channelbrowser_list."
 		<div id=\"channelbrowser_main\">
 	  <div id=\"channelbrowser_$rand$obj->hash\" style=\"cursor: pointer;\" onclick=\"channelbrowser_list_desc(this.id);\">
-		<div id=\"cnt_time\"> <span class=\"$timer\">$broadcast_time</span> </div>
+		<div id=\"$td_spacer\"> <span class=\"$timer\">$broadcast_time</span> </div>
 		<div id=\"cnt_title\"> <span class=\"$timer\">$title_enc</span>
 		  <div id=\"channelbrowser_desc_inner\"> </div>
 		</div>
