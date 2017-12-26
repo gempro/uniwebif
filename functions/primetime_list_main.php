@@ -115,7 +115,6 @@ include("../inc/dashboard_config.php");
 	
 	$e2eventend = $obj->e2eventend;
 	$primetime_time = date("H:i", $e2eventstart).' - '.date("H:i", $e2eventend);
-	$spacer = '';
 	}
 	
 	if ($time_format == '2')
@@ -128,13 +127,6 @@ include("../inc/dashboard_config.php");
 	$date_end = date("l n/d/Y - g:i A", $e2eventend);
 	
 	$primetime_time = date("g:i A", $e2eventstart).' - '.date("g:i A", $e2eventend);;
-	$spacer = '';
-	
-	$time_string_length = strlen($primetime_time);
-	if($time_string_length == 16){ $spacer = '&nbsp;&nbsp;&nbsp;&nbsp;'; }
-	if($time_string_length == 17){ $spacer = '&nbsp;&nbsp;&nbsp;'; }
-	if($time_string_length == 18){ $spacer = '&nbsp;&nbsp;'; }
-	if($time_string_length > 18){ $spacer = '&nbsp;'; }
 	}
 	
 	if ($streaming_symbol == '1' ){ $stream_broadcast = '<a href="'.$url_format.'://'.$box_user.':'.$box_password.'@'.$box_ip.'/web/stream.m3u?ref='.$obj->e2eventservicereference.'" title="Stream"><i class="fa fa-desktop fa-1x"></i></a>'; 
@@ -151,7 +143,7 @@ include("../inc/dashboard_config.php");
 	$primetime_list = $primetime_list."
 		<div id=\"primetime_main\">
 	  <div id=\"primetime_$obj->hash\" style=\"cursor: pointer;\" onclick=\"primetime_list_desc(this.id);\">
-		<div id=\"cnt_time\"> <span class=\"$timer\">$primetime_time$spacer</span> </div>
+		<div id=\"cnt_time\"> <span class=\"$timer\">$primetime_time</span> </div>
 		<div id=\"cnt_title\"> <span class=\"$timer\">$title_enc</span>
 		  <div id=\"primetime_desc_inner\"> </div>
 		</div>

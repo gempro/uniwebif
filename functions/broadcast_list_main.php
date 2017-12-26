@@ -105,7 +105,6 @@ include("../inc/dashboard_config.php");
 	
 	$e2eventend = $obj->e2eventend;
 	$broadcast_time = date("H:i", $e2eventstart).' - '.date("H:i", $e2eventend);
-	$spacer = '';
 	}
 	
 	if ($time_format == '2')
@@ -118,13 +117,6 @@ include("../inc/dashboard_config.php");
 	$date_end = date("l n/d/Y - g:i A", $e2eventend);
 	
 	$broadcast_time = date("g:i A", $e2eventstart).' - '.date("g:i A", $e2eventend);;
-	$spacer = '';
-	
-	$time_string_length = strlen($broadcast_time);
-	if($time_string_length == 16){ $spacer = '&nbsp;&nbsp;&nbsp;&nbsp;'; }
-	if($time_string_length == 17){ $spacer = '&nbsp;&nbsp;&nbsp;'; }
-	if($time_string_length == 18){ $spacer = '&nbsp;&nbsp;'; }
-	if($time_string_length > 18){ $spacer = '&nbsp;'; }
 	}
 	
 	if ($streaming_symbol == '1' ){
@@ -149,7 +141,7 @@ include("../inc/dashboard_config.php");
 	$broadcast_list = $broadcast_list."
 		<div id=\"broadcast_main\">
 	  <div id=\"broadcast_$rand$obj->hash\" style=\"cursor: pointer;\" onclick=\"broadcast_list_desc(this.id);\">
-		<div id=\"cnt_time\"> <span class=\"$timer\">$broadcast_time$spacer</span> </div>
+		<div id=\"cnt_time\"> <span class=\"$timer\">$broadcast_time</span> </div>
 		<div id=\"cnt_title\"> <span class=\"$timer\">$title_enc</span>
 		  <div id=\"broadcast_desc_inner\"> </div>
 		</div>
