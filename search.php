@@ -126,7 +126,7 @@ include_once("inc/header_info.php");
 	// search all
 	if ($option == 'all' or $option == '')
 	{
-	$sql = 'SELECT * `FROM epg_data` '.$search_include.' MATCH (title_enc, e2eventservicename, description_enc, descriptionextended_enc) AGAINST ("%'.$raw_term.'%") '.$exclude_time.' '.$search_include2.' `title_enc` LIKE "%'.$raw_term.'%" '.$exclude_time.' '.$search_include2.' `e2eventservicename` LIKE "%'.$raw_term.'%" '.$exclude_time.' '.$search_include2.' `description_enc` LIKE "%'.$raw_term.'%" '.$exclude_time.' '.$search_include2.' `descriptionextended_enc` LIKE "%'.$raw_term.'%" '.$exclude_time.' ORDER BY `e2eventstart` ASC';
+	$sql = 'SELECT * FROM `epg_data` '.$search_include.' MATCH (title_enc, e2eventservicename, description_enc, descriptionextended_enc) AGAINST ("%'.$raw_term.'%") '.$exclude_time.' '.$search_include2.' `title_enc` LIKE "%'.$raw_term.'%" '.$exclude_time.' '.$search_include2.' `e2eventservicename` LIKE "%'.$raw_term.'%" '.$exclude_time.' '.$search_include2.' `description_enc` LIKE "%'.$raw_term.'%" '.$exclude_time.' '.$search_include2.' `descriptionextended_enc` LIKE "%'.$raw_term.'%" '.$exclude_time.' ORDER BY `e2eventstart` ASC';
 	
 	// count hits
 	$stmt = $dbmysqli->prepare('SELECT COUNT(*) as count_search FROM `epg_data` '.$search_include.' MATCH (title_enc, e2eventservicename, description_enc, descriptionextended_enc) AGAINST ("%'.$raw_term.'%") '.$exclude_time.' '.$search_include2.' `title_enc` LIKE "%'.$raw_term.'%" '.$exclude_time.' '.$search_include2.' `e2eventservicename` LIKE "%'.$raw_term.'%" '.$exclude_time.' '.$search_include2.' `description_enc` LIKE "%'.$raw_term.'%" '.$exclude_time.' '.$search_include2.' `descriptionextended_enc` LIKE "%'.$raw_term.'%" '.$exclude_time.' ');
