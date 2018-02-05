@@ -1,39 +1,30 @@
-
- Installationsanleitung Universal Webinterface (Uniwebif)
- --------------------------------------------------------
+﻿
+ Installationsanleitung - Universelles externes Webinterface für Enigma2 Linux Receiver 
+ --------------------------------------------------------------------------------------
 
  Benötige Funktionen auf dem Server/Webhost
 
- - Aktiviertes mysqli Modul für die SQL Datenbank
+ - Aktiviertes PHP mysqli Modul für die SQL Datenbank
  
- - Aktiviertes allow_url_fopen für die Verwendung von file_get_contents
+ - Aktiviertes allow_url_fopen für die Verwendung von file_get_contents (In php.ini 'allow_url_fopen = on' hinzufügen)
 
- --------------------------------------------------------
-
+ --------------------------------------------------------------------------------------
+ 
  1. zip Datei entpacken
-
- 2. SQL Datenbank 'uniwebif', Benutzername 'uniwebif' mit Passwort 'uniwebif' erstellen*
-
- 3. SQL Datei in Datenbank 'uniwebif' importieren
-
- 4. IP Adresse vom Server/Webhost in Datei inc/dashboard_config.php eintragen ( $script_location )
-
- 5. Auf dem Server/Webhost Ordner mit Bezeichnung 'uniwebif' erstellen
-
- 6. Alle Dateien und Ordner auf den Server/Webhost in Ordner /uniwebif hochladen
-
- 7. CHMOD 777 für Datei: /uniwebif/functions/create_m3u.php
-
- 8. CHMOD 777 für Ordner: /uniwebif/tmp
-
- 9. settings.php im Browser öffnen
-
- 10. Login Daten von Receiver eintragen: IP, Benutzername, Passwort
-
- Wenn alle Einstellungen erledigt sind, erstelle einen Cronjob der die Datei cron.php im Ordner /inc ca. alle 3 Minuten aufruft.
  
- Bitte das Tutorial Video ansehen wo gezeigt wird wie das Script verwendet wird. (https://www.youtube.com/watch?v=lj4EOlJzquk)
-
- Wenn die Receiver Login Daten korrekt sind und trotzdem eine Fehlermeldung erscheint, bitte /help/help.html im Browser öffnen.
+ 2. setup.php in Browser öffnen
  
- *falls andere SQL Login Daten verwendet werden, diese in der Datei /inc/dashboard_config.php ändern
+ 3. SQL Root Benutzer und Passwort eintragen
+ 
+ 4. User und Passwort von Receiver eintragen
+ 
+ 5. Uniwebif installieren
+ 
+ 6. Die Schritte ausführen die nach der Installation angezeigt werden.
+ 
+ 
+ Tutorial um mehr über die Funktionen zu erfahren: https://www.youtube.com/watch?v=lj4EOlJzquk
+ 
+ Guide lesen in Ordner: /help
+ 
+ Online Demo: http://uniwebif-demo.techweb.at

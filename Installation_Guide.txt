@@ -1,43 +1,30 @@
-
- Installation Guide Universal Webinterface (Uniwebif)
- ----------------------------------------------------
+ 
+ Installation Guide - Universal extern Webinterface for Enigma2 Linux Receiver
+ -----------------------------------------------------------------------------
 
  Requirements on Server/Webhost
 
- - Activated mysqli module for the SQL Database
+ - Activated PHP mysqli module for the SQL Database
 
- - Activated allow_url_fopen for the usage from file_get_contents
+ - Activated allow_url_fopen for the usage from file_get_contents (Add 'allow_url_fopen = on' in php.ini)
 
- ----------------------------------------------------
+ -----------------------------------------------------------------------------
 
  1. Unpack the zip file
-
- 2. Create database 'uniwebif', username 'uniwebif' with password 'uniwebif'*
-
- 3. Import the SQL file into your database
-
- 4. Set IP adress from Server/Webhost in file inc/dashboard_config.php ( $script_location )
-
- 5. Create a folder named 'uniwebif' on Server/Webhost 
-
- 6. Upload all files and folders to folder /uniwebif
-
- 7. CHMOD 777 for file: /uniwebif/functions/create_m3u.php
-
- 8. CHMOD 777 for folder: /uniwebif/tmp
-
- 9. Open settings.php in your Browser
-
- 10. Insert Receiver Login data: IP, Username and Password
-
  
- After all settings done, create a cronjob and call the cron.php file in folder /inc may every 3 minutes.
-
- Watch the Tutorial where furthermore functions from script are shown. (https://www.youtube.com/watch?v=lj4EOlJzquk)
-
- If the Receiver login is correct and you regardless got an error, please read /help/help.html in your Browser.
-
+ 2. Open setup.php in your Browser
  
- *When using other SQL login data, change it in file /inc/dashboard_config.php
-
+ 3. Type in your SQL Root user and password
  
+ 4. Type in the user and IP from Receiver
+ 
+ 5. Install Uniwebif
+ 
+ 6. Follow the steps which are described after installation
+ 
+ 
+ Watch Tutorial to learn more about the Interface: https://www.youtube.com/watch?v=lj4EOlJzquk
+ 
+ Read Guide in folder: /help
+ 
+ Online Demo: http://uniwebif-demo.techweb.at
