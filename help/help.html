@@ -39,8 +39,8 @@ a:active {
 <p><img src="images/error_msg.png" width="1029" height="179"></p>
 <p>When this message is displayed mostly your XML file from Receiver has an other structure, or the adress to the file is different.</p>
 <p>That could happend when the Receiver has not  <strong>Enigma2</strong>  running, or the Webinterface from Receiver is written different.</p>
-<p>But with some changes in the php files, you could make Uniwebif compatible. </p>
-<p>If you have no Editor to open the php files with line numbering, download the free Open Source Application <a href="https://notepad-plus-plus.org/download" target="_blank">Notepad++</a></p>
+<p>But with some changes in the PHP files, you could make Uniwebif compatible. </p>
+<p>If you have no Editor to open the PHP files with line numbering, download the free Open Source Application <a href="https://notepad-plus-plus.org/download" target="_blank">Notepad++</a></p>
 <p><br>
   <strong>Step 1</strong>: Watch this <a href="https://www.youtube.com/watch?v=hvZuh15vmRQ" target="_blank">video</a> to learn how you get the address from the EPG XML file to see it in Browser, and to get the url from the requests to Receiver.<br>
   <br>
@@ -49,40 +49,25 @@ a:active {
 <p><strong>As example</strong> an entry from a broadcast:</p>
 <p>A single entry in  XML file was opend with &lt;e2event&gt; and closed with &lt;/e2event&gt;<br>
   The XML tag for the broadcast title is &lt;e2eventtitle&gt;<br>
-The php file read the tag with $xml-&gt;e2event[$i]-&gt;e2eventtitle</p>
+The PHP file read the tag with $xml-&gt;e2event[$i]-&gt;e2eventtitle</p>
 <p><img src="images/xml_example.png" width="1023" height="300"><br>
 </p>
-<p>If your XML file look like this &lt;eventtitle&gt; <strong>without e2</strong> you have to change the line in php to this:</p>
+<p>If your XML file look like this &lt;eventtitle&gt; <strong>without e2</strong> you have to change the lines in PHP files to this:</p>
 <p> $xml-&gt;event[$i]-&gt;eventtitle<br>
   $xml-&gt;event[$i]-&gt;eventdescription and so on..<br>
 </p>
 <p><br>
-C<strong>hange</strong> the lines in these php files in folder /functions.</p>
-<p>bouquet_crawler.php | Line 22, 24, 28, 32, 37, 38<br>
-channel_crawler_complete.php | Line 18, 20, 24, 28, 33-45<br>
-channel_id_crawler.php | Line 34, 36, 40 ,43, 48, 49, 50<br>
-power_control.php | Line 30<br>
-save_rec_locations.php | Line 35<br>
-save_box_settings.php | Line 32<br>
-</p>
-<h3><br>
-  Check also if the address from the requests to Receiver are not different!<br>
-  The lines could be found at these php files, in folder /functions<br>
+C<strong>hange</strong> the lines in all PHP files in folder /functions.</p>
+<p>To do that quick, drag all  PHP files from folder functions into  Notepad++ and click on menue 'Search' on top.</p>
+<p>Paste $xml-&gt; into search field and click 'Search in opend files'.</p>
+<p>Edit all entries where <strong>e2</strong> occurs and remove it.</p>
+<p>&nbsp;</p>
+<h3>Check also if the address from the requests to Receiver are not different!<br>
 </h3>
-<p>bouquet_crawler.php | Line 10<br>
-  channel_crawler_complete.php | Line 8<br>
-  channel_crawler_zapp_request.php | Line 24<br>
-channel_id_crawler.php | Line 23<br>
-channelzapper.php | Line 66, 78, 90<br>
-crawler_cron.php | Line 6, 14, 21, 50, 58, 68, 74, 82, 89<br>
-power_control.php | Line 16, 19<br>
-save_timer_in_db.php | Line 81<br>
-  send_zapp_request.php | Line 24<br>
-  send_timer_instant.php | Line 45<br>
-  save_rec_locations.php | Line 16<br>
-  save_box_settings.php | Line 26<br>
-  statusbar1.php | <br>
-  timer_list_inc.php | Line 32</p>
+<p>To do that quick, use again the search function in Notepad++ and type in searchfield $url_format</p>
+<p>If the URL from your Receiver is different you have to edit these lines. Also in file cron.php in folder /inc</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>For more help visit <a href="https://github.com/gempro/uniwebif/issues" target="_blank">github.com/gempro/uniwebif/issues</a><br>
 </p>
