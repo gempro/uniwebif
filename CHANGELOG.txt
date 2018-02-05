@@ -1,3 +1,33 @@
+v1.3
+
++ Installation function added (setup.php)
+
+(Menue: Timer & Saved Search)
++ Option to sort saved search list alphabetical
++ Summary of Timer from current day are displayed
++ Summary from sent Timers to Receiver are displayed
++ Hide button added within Timerlist entries
+
+(Menue: Records)
++ Summary of Records in a folder are displayed
++ Summary of Records from current day are displayed
++ Summary of used Diskspace from files are displayed
+
+(Menue: Settings)
++ Option to show also hidden Timer in Ticker on Startpage
+
+(Menue: Crawler Tools -> Crawl Channel separate)
++ Option to get Info and crawl EPG from a single channel
+
+(Menue: Extras > Services
++ Option to add single channels from complete service list, to personal channel list
+
+Perfomance
++ Automatic Search Crawler pauses until a saved search was edited/added or new EPG was in database
++ Cron function for automatic search, pauses during EPG Crawler is working
+
+-------------------------------------------------------------------------------------------------------------
+
 v1.2
 
 + Option to exclude multiple terms from search (split terms with ; )
