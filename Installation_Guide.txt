@@ -16,7 +16,7 @@
  
  3. Type in your SQL Root user and password
  
- 4. Type in the user and IP from Receiver
+ 4. Type in the IP, user and password from Receiver
  
  5. Install Uniwebif
  
