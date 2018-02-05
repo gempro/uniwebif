@@ -170,7 +170,7 @@ animatedcollapse.init()
       <hr />
       <div class="row">
         <div class="col-md-12">
-        Uniwebif v1.2
+        Uniwebif v1.3
           <div class="spacer_10"></div>
         Download latest version at <a href="https://github.com/gempro/uniwebif" target="_blank">Github</a>
         </div>
