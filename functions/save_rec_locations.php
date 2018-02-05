@@ -23,15 +23,16 @@ if ($xml) {
 	if(!isset($xml->e2location[$i]) or $xml->e2location[$i] == ""){ $xml->e2location[$i] = ""; }
 	
 	// if no data exit
-	if($xml->e2location[$i] == "" ) {
-	//echo 'empty';
+	if($xml->e2location[$i] == "" ){
+	echo "data: ok\n\n";
+	exit;
 	
 	} else {
 	
 	// define line
 	$e2locations = utf8_decode($xml->e2location[$i]);
 	
-	$sql = mysqli_query($dbmysqli, "INSERT INTO record_locations (e2location) values ('$e2locations')");
+	$sql = mysqli_query($dbmysqli, "INSERT INTO `record_locations` (e2location) values ('$e2locations')");
 	}
 	}
 	}

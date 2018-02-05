@@ -20,7 +20,7 @@ include("../inc/dashboard_config.php");
 	
 	} else { 
 	
-	$sql = mysqli_query($dbmysqli, "UPDATE bouquet_list SET crawl = '$crawl_bouquet' WHERE id = '$bouquet_id'");
+	$sql = mysqli_query($dbmysqli, "UPDATE `bouquet_list` SET `crawl` = '$crawl_bouquet' WHERE `id` = '$bouquet_id' ");
 	
 	// close db
 	mysqli_close($dbmysqli);

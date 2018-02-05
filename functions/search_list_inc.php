@@ -1,14 +1,14 @@
 <?php 
 //
+include("../inc/dashboard_config.php");
+	
 	if(!isset($_REQUEST['delete_id']) or $_REQUEST['delete_id'] == "") { $_REQUEST['delete_id'] = "";
 	
 	} else {
 	
-	include("../inc/dashboard_config.php");
-	
 	$delete_id = $_REQUEST['delete_id'];
 	
-	$sql = mysqli_query($dbmysqli, "DELETE FROM `saved_search` WHERE id = '".$delete_id."' ");
+	$sql = mysqli_query($dbmysqli, "DELETE FROM `saved_search` WHERE `id` = '".$delete_id."' ");
 	
 	sleep(1);
 	header('Content-Type: text/event-stream');
@@ -17,8 +17,27 @@
 	exit;
 	}
 	
+	// sort saved search
+	if(!isset($_REQUEST['sort_list']) or $_REQUEST['sort_list'] == ""){ 
+	
+	$sortby = $search_list_sort; 
+	
+	
+	} else {
+	
+	$sort_list = $_REQUEST['sort_list'];
+	
+	$sql = mysqli_query($dbmysqli, "UPDATE `settings` SET `search_list_sort` = '".$sort_list."' ");
+	
+	$sortby = $sort_list;
+	
+	}
+	
+	if ($sortby == 'id'){ $sortby1 = 'DESC'; }
+	if ($sortby == 'searchterm'){ $sortby1 = 'ASC'; }
+	
 	// get record locations
-	$sql2 = "SELECT * FROM `record_locations` ORDER BY id ASC";
+	$sql2 = "SELECT * FROM `record_locations` ORDER BY `id` ASC";
 	if ($result2 = mysqli_query($dbmysqli,$sql2))
 	{
 	// Fetch one and one row
@@ -30,7 +49,7 @@
 	}
 	
 	// channel dropdown
-	$sql2 = "SELECT * FROM `channel_list` ORDER BY e2servicename ASC";
+	$sql2 = "SELECT * FROM `channel_list` ORDER BY `e2servicename` ASC";
 	if ($result2 = mysqli_query($dbmysqli,$sql2))
 	{
 	// Fetch one and one row
@@ -45,7 +64,7 @@
 	}
 	//
 	
-	$sql = "SELECT * FROM `saved_search` ORDER BY id DESC";
+	$sql = "SELECT * FROM `saved_search` ORDER BY ".$sortby." ".$sortby1." ";
 	if ($result = mysqli_query($dbmysqli,$sql))
 	{
 	// Fetch one and one row
@@ -56,8 +75,10 @@
 	$servicename_enc = rawurldecode($obj->servicename_enc);
 	$searchterm = rawurldecode($obj->searchterm);
 	$search_option = $obj->search_option;
+	$obj->search_option = str_replace("extdescription", "extended description", $obj->search_option);
 	$exclude_term = rawurldecode($obj->exclude_term);
 	$exclude_area = $obj->exclude_area;
+	$record_location = $obj->e2location;
 	$activ = $obj->activ;
 	$rec_replay = $obj->rec_replay;
 	
@@ -105,17 +126,22 @@
 	$channel_id = $obj->e2eventservicereference; 
 	}
 	
+	// get record location id
+	$sql = mysqli_query($dbmysqli, "SELECT * FROM `record_locations` WHERE `e2location` = '".$record_location."' LIMIT 0,1");
+	$result3 = mysqli_fetch_assoc($sql);
+	$rec_location_id = $result3['id'];
+	
 	$saved_search_list = $saved_search_list."
 	<div id=\"search_list_div_$obj->id\">
 	<div id=\"saved_search_list\">
 	  <div class=\"row\">
 		<div id=\"saved_search_list_$obj->id\" onclick=\"saved_search_list_edit(this.id);\" style=\"cursor: pointer;\">
 		  <div class=\"col-md-3\">
-			<p>Searchterm<br>
+			<p>Term<br>
 			$searchterm</p>
 		  </div>
 		  <div class=\"col-md-2\">
-			<p>Searcharea<br>
+			<p>Area<br>
 			$obj->search_option</p>
 		  </div>
 		  <div class=\"col-md-3\">
@@ -144,7 +170,7 @@
 			<option value=\"all\" $selected6>all</option>
 			<option value=\"title\" $selected7>title</option>
 			<option value=\"description\" $selected8>description</option>
-			<option value=\"extdescription\" $selected9>extended description</option>
+			<option value=\"extdescription\" $selected9>ext. description</option>
 		  </select></p>
 		  <!---->
 		  <div class=\"spacer_5\"></div><div class=\"spacer_3\"></div>
@@ -152,7 +178,7 @@
 			<option value=\"\" $selected0></option>
 			<option value=\"1\" $selected1>title</option>
 			<option value=\"2\" $selected2>description</option>
-			<option value=\"3\" $selected3>extended description</option>
+			<option value=\"3\" $selected3>ext. description</option>
 		  </select></p>
 		  </div>
 		  <!---->
@@ -162,7 +188,7 @@
 			<option value=\"NULL\">All channels</option>
 			$channel_dropdown_saved_search_list</select></p>
 			<div class=\"spacer_7\"></div>
-			<p>Set Timer for Replays<br><select id=\"rec_replay_$obj->id\" class=\"search_list_replay\">
+			<p>Timer for Replays<br><select id=\"rec_replay_$obj->id\" class=\"search_list_replay\">
 			<option value=\"yes\" $selected4>yes&nbsp;&nbsp;</option>
 			<option value=\"no\" $selected5>no&nbsp;&nbsp;</option>
 		  </select></p>
@@ -180,7 +206,7 @@
 		  </select></p>
 		  </div>
 		  </div>
-		  <a href=\"search.php?searchterm=$obj->searchterm&option=$obj->search_option&exclude_term=$exclude_term&exclude_area=$exclude_area&search_channel=$search_channel&channel_id=$channel_id&rec_replay=$rec_replay\" target=\"_blank\" title=\"Show results\" class=\"search_list_mg\">
+		  <a href=\"search.php?searchterm=$obj->searchterm&option=$search_option&exclude_term=$obj->exclude_term&exclude_area=$exclude_area&record_location=$rec_location_id&search_channel=$search_channel&channel_id=$channel_id&rec_replay=$rec_replay\" target=\"_blank\" title=\"Show results\" class=\"search_list_mg\">
 		  <i class=\"fa fa-search fa-1x\"></i></a>
 		<input id=\"saved_search_list_save_btn_$obj->id\" type=\"submit\" onClick=\"saved_search_list_save(this.id)\" value=\"SAVE\" class=\"btn btn-success btn-sm\">
 		<input id=\"saved_search_list_delete_btn_$obj->id\" type=\"submit\" onClick=\"saved_search_list_delete(this.id)\" value=\"DELETE\" class=\"btn btn-danger btn-sm\"/>
@@ -193,5 +219,5 @@
 	</div>";
 	}
 }
-if(!isset($saved_search_list) or $saved_search_list == "") { $saved_search_list = "No saved searches..<hr />"; }
+if(!isset($saved_search_list) or $saved_search_list == "") { $saved_search_list = "No saved searches..<hr />"; } else { echo $saved_search_list; }
 ?>

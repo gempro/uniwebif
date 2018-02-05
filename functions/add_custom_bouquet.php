@@ -24,7 +24,7 @@ include("../inc/dashboard_config.php");
 	
 	} else {
 	
-	$sql = mysqli_query($dbmysqli, "INSERT INTO bouquet_list (e2servicereference, e2servicename, selected, crawl) values ('$custom_bouquet_url','$custom_bouquet_title','0','0')");
+	$sql = mysqli_query($dbmysqli, "INSERT INTO `bouquet_list` (e2servicereference, e2servicename, selected, crawl) values ('$custom_bouquet_url', '$custom_bouquet_title', '0', '0')");
 	
 	// close db
 	mysqli_close($dbmysqli);

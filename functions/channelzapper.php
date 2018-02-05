@@ -3,12 +3,13 @@
 include("../inc/dashboard_config.php");
 
 // update timestamp
-	$res = mysqli_query($dbmysqli, "SELECT cz_wait_time, cz_repeat, cz_timestamp FROM settings WHERE id = 0");
+	$res = mysqli_query($dbmysqli, "SELECT * FROM `settings` WHERE id = '0' ");
 	$result = mysqli_fetch_assoc($res);
 	
 	$cz_wait_time = $result['cz_wait_time'];
 	$cz_repeat = $result['cz_repeat'];
 	$cz_timestamp = $result['cz_timestamp'];
+	$cz_sleeptime = $result['cz_wait_time'];
 	
 	if ($cz_repeat == 'daily')
 	{
@@ -40,11 +41,11 @@ include("../inc/dashboard_config.php");
 	$cz_timestamp = $result['cz_timestamp'];
 	}
 	
-	$sql = mysqli_query($dbmysqli, "UPDATE settings set cz_timestamp = '".$cz_timestamp."' WHERE id = 0");
+	$sql = mysqli_query($dbmysqli, "UPDATE `settings` SET `cz_timestamp` = '".$cz_timestamp."' WHERE id = '0' ");
 
 	// calculate work time
-	$stmt = $dbmysqli->prepare('SELECT COUNT(*) AS sum_zap_channels FROM channel_list WHERE zap = 1');
-	if( !is_a($stmt, 'MySQLI_Stmt') || $dbmysqli->errno > 0 )
+	$stmt = $dbmysqli->prepare("SELECT COUNT(*) AS sum_zap_channels FROM `channel_list` WHERE zap = '1' ");
+	if( !is_a($stmt, "MySQLI_Stmt") || $dbmysqli->errno > 0 )
 	throw new Exception( $dbmysqli->error, $dbmysqli->errno );
 	
 	$stmt->execute();
@@ -54,9 +55,9 @@ include("../inc/dashboard_config.php");
 	
 	$cz_worktime = $sum_zap_channels * $cz_wait_time + 10;
 	
-	$sql = mysqli_query($dbmysqli, "UPDATE settings SET cz_worktime = '".$cz_worktime."' WHERE id = 0");
+	$sql = mysqli_query($dbmysqli, "UPDATE `settings` SET `cz_worktime` = '".$cz_worktime."' WHERE `id` = '0' ");
 
-	$sql = "SELECT e2servicereference FROM channel_list where zap = 1 ORDER BY e2servicename ASC";
+	$sql = "SELECT `e2servicereference` FROM `channel_list` where `zap` = '1' ORDER BY `e2servicename` ASC";
 	
 	$sleeptime = $result['cz_wait_time'];
 	
@@ -92,12 +93,26 @@ include("../inc/dashboard_config.php");
 	
 	$zap_request = "$url_format://$box_ip/web/zap?sRef=$e2servicereference";
 	$zap_channel = file_get_contents($zap_request, false, $webrequest);
-	sleep($sleeptime);
+	
+	sleep($cz_sleeptime);
+	
+	//save provider from channel in db
+	$xmlfile = ''.$url_format.'://'.$box_ip.'/web/getcurrent';
+	$request = file_get_contents($xmlfile, false, $webrequest);
+	$xml = simplexml_load_string($request);
+	
+if($xml->e2service->e2providername != "") 
+	{	
+	$e2providername = $xml->e2service->e2providername;
+	$sql = mysqli_query($dbmysqli, "UPDATE `channel_list` SET `e2providername` = '$e2providername' WHERE `e2servicereference` = '".$obj->e2servicereference."' ");
+	}
+	
+	//
 	}
     }
 	}
 	// zap to start channel
-	$res = mysqli_query($dbmysqli, "SELECT e2servicereference FROM channel_list where zap_start = 1");
+	$res = mysqli_query($dbmysqli, "SELECT `e2servicereference` FROM `channel_list` WHERE `zap_start` = '1' ");
 	$result = mysqli_fetch_assoc($res);
 	$start_channel = $result['e2servicereference'];
 	

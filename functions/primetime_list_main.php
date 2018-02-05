@@ -23,7 +23,47 @@ $(document).ready(function(){
 header('Cache-Control: no-cache');
 //
 include("../inc/dashboard_config.php");
+
+	if(!isset($_REQUEST['action']) or $_REQUEST['action'] == ""){ $_REQUEST['action'] = ""; }
+	$action = $_REQUEST['action'];
 	
+// set
+if ($action == 'set'){
+	
+	$timestamp = time();
+	$hour = $_REQUEST['hour'];
+	$minute = $_REQUEST['minute'];
+	$ampm = $_REQUEST['ampm'];
+	
+	if ($ampm !== '0'){
+	if ($ampm == 'PM'){  
+	if ($hour == '12'){ $hour = $hour - 12; }
+	}
+	if ($ampm == 'AM'){
+	if ($hour == '12'){ $hour = $hour + 12; }
+	}
+	}
+	
+	$date_start = date("d.m.Y, ".$hour.":".$minute."",$timestamp);
+	$time_start = strtotime($date_start);
+	
+	if ($ampm !== '0'){
+	//
+	if ($ampm == 'AM'){ $time_start - 43200; }
+	if ($ampm == 'PM'){ $time_start = $time_start + 43200; }
+	}
+	
+	$sql = mysqli_query($dbmysqli, "UPDATE `settings` SET `primetime` = '$time_start' WHERE `id` = '0' ");
+	
+	echo '<i class=\'glyphicon glyphicon-ok fa-1x green\'></i>';
+	
+	sleep(1);
+}
+//
+
+// show
+if ($action == 'show'){
+
 	$time = $_REQUEST['time'];
 	
 	if(!isset($time) or $time == "") 
@@ -149,7 +189,6 @@ include("../inc/dashboard_config.php");
 	  <div id=\"primetime_$obj->hash\" style=\"cursor: pointer;\" onclick=\"primetime_list_desc(this.id);\">
 		<div id=\"$td_spacer\"> <span class=\"$timer\">$primetime_time</span> </div>
 		<div id=\"cnt_title\"> <span class=\"$timer\">$title_enc</span>
-		  <div id=\"primetime_desc_inner\"> </div>
 		</div>
 		<div id=\"cnt_channel\"> <span class=\"$timer\">$servicename_enc</span> </div>
 		<div style=\"clear:both\"></div>
@@ -167,9 +206,9 @@ include("../inc/dashboard_config.php");
 		<div class=\"spacer_5\"></div>
 		<div id=\"broadcast-tab-button-group\">
   <div id=\"row1\">
-    <input id=\"primetime_timer_btn_$obj->hash\" type=\"submit\" onClick=\"primetime_timer(this.id)\" value=\"SET TIMER\" class=\"btn btn-success btn-sm\"/ title=\"send timer instantly\"> </div>
+    <input id=\"primetime_timer_btn_$obj->hash\" type=\"submit\" onClick=\"primetime_timer(this.id)\" value=\"SET TIMER\" class=\"btn btn-success btn-sm\"/ title=\"send Timer to Receiver\"> </div>
   <div id=\"row2\">
-    <input id=\"primetime_zap_btn_$obj->hash\" type=\"submit\" onClick=\"primetime_zap(this.id)\" value=\"ZAPP TO CHANNEL\" class=\"btn btn-default btn-sm\"/> </div>
+    <input id=\"primetime_zap_btn_$obj->hash\" type=\"submit\" name=\"$obj->e2eventservicereference\" onClick=\"primetime_zap(this.id,this.name)\" value=\"ZAP TO CHANNEL\" class=\"btn btn-default btn-sm\"/> </div>
   <div id=\"row3\">
   <span id=\"primetime_status_zap_$obj->hash\"></span> <span id=\"primetime_status_timer_$obj->hash\"></span> </div>
   <div style=\"clear:both\"></div>
@@ -191,6 +230,7 @@ include("../inc/dashboard_config.php");
 
 //close db
 mysqli_close($dbmysqli);
+}
 ?>
 </body>
 </html>

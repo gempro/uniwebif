@@ -5,27 +5,19 @@ include("../inc/dashboard_config.php");
 	// ajax header
  	header('Content-Type: text/event-stream');
 	header('Cache-Control: no-cache');
+
+	if(!isset($_REQUEST['e2servicereference']) or $_REQUEST['e2servicereference'] == "") { $_REQUEST['e2servicereference'] = ""; }
+
+	$e2servicereference = $_REQUEST['e2servicereference'];
 	
-	if(!isset($_REQUEST['hash']) or $_REQUEST['hash'] == "") { $_REQUEST['hash'] = ""; }
-	
-	//recieve data	
-	$hash = $_REQUEST['hash'];
-	
-	if(!isset($hash) or $hash == "") 
+	if(!isset($e2servicereference) or $e2servicereference == "") 
 	{ 
 	echo "data: data missed\n\n"; 
 	
 	} else {
 	
-	$sql = mysqli_query($dbmysqli, "SELECT e2eventservicereference FROM epg_data WHERE hash = '".$hash."'");
-	$result = mysqli_fetch_assoc($sql);
-	$e2eventservicereference = $result['e2eventservicereference'];
-	
-	$zapp_request = "$url_format://$box_ip/web/zap?sRef=$e2eventservicereference";
+	$zapp_request = "$url_format://$box_ip/web/zap?sRef=$e2servicereference";
 	$request = file_get_contents($zapp_request, false, $webrequest);
-	
-	// close db
-	mysqli_close($dbmysqli);
 	
 	sleep(1);
 	
@@ -33,5 +25,5 @@ include("../inc/dashboard_config.php");
 	echo "data: ok\n\n";
 
 	}
-	
+
 ?>

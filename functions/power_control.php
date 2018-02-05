@@ -1,4 +1,4 @@
-<?
+<?php 
 //
 include("../inc/dashboard_config.php");
 

@@ -13,11 +13,12 @@ include("../inc/dashboard_config.php");
 	$action = $_REQUEST['action'];	
 	
 	if ($action == 'delete'){
-	$sql = mysqli_query($dbmysqli, "DELETE FROM saved_search WHERE id = $id");
+	$sql = mysqli_query($dbmysqli, "DELETE FROM `saved_search` WHERE `id` = '$id' ");
+	
+	mysqli_close($dbmysqli);
 	
 	// answer for ajax
 	echo "data: done!\n\n";
-	mysqli_close($dbmysqli);
 	
 	} else {
 	
@@ -31,7 +32,7 @@ include("../inc/dashboard_config.php");
 	$active = $_REQUEST['active'];
 	
 	// get channel name
-	$sql = mysqli_query($dbmysqli, "SELECT e2servicename, servicename_enc FROM `channel_list` WHERE e2servicereference = '$channel'");
+	$sql = mysqli_query($dbmysqli, "SELECT e2servicename, servicename_enc FROM `channel_list` WHERE `e2servicereference` = '$channel' ");
 	$result = mysqli_fetch_assoc($sql);
 	
 	$e2servicename = $result['e2servicename'];
@@ -49,8 +50,7 @@ include("../inc/dashboard_config.php");
 	if ($record_location == ''){ $rec_location_sql =  ''; } else { $rec_location_sql = ', e2location = "'.$record_location.'"'; }
 	if ($active == ''){ $active_sql = ''; } else { $active_sql = ', activ = "'.$active.'"'; }
 	
-	$sql = mysqli_query($dbmysqli, "UPDATE saved_search SET
-	$searchterm_sql$searcharea_sql$exclude_term_sql$exclude_area_sql$rec_replay_sql$channel_sql$rec_location_sql$active_sql WHERE id = $id");
+	$sql = mysqli_query($dbmysqli, "UPDATE `saved_search` SET $searchterm_sql $searcharea_sql $exclude_term_sql $exclude_area_sql $rec_replay_sql $channel_sql $rec_location_sql, last_change = \"$time\" , crawled = \"0\" $active_sql WHERE id = \"$id\" ");
 	
 	// close db
 	mysqli_close($dbmysqli);

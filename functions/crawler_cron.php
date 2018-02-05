@@ -25,7 +25,7 @@ include("../inc/dashboard_config.php");
 	
 	sleep(10);
 	
-	$sql = "SELECT * FROM channel_list WHERE `crawl` = 1 ORDER BY e2servicename ASC";
+	$sql = "SELECT * FROM `channel_list` WHERE `crawl` = '1' ORDER BY `e2servicename` ASC";
 	
 	if ($result = mysqli_query($dbmysqli,$sql))
 	{
@@ -34,7 +34,7 @@ include("../inc/dashboard_config.php");
 	{
 	
 	//count entries
-	$stmt = $dbmysqli->prepare("SELECT COUNT(*) AS sum_entries FROM `epg_data` WHERE channel_hash = '".$obj->channel_hash."' ");
+	$stmt = $dbmysqli->prepare("SELECT COUNT(*) AS sum_entries FROM `epg_data` WHERE `channel_hash` = '".$obj->channel_hash."' ");
 	if( !is_a($stmt, 'MySQLI_Stmt') || $dbmysqli->errno > 0 )
 	throw new Exception( $dbmysqli->error, $dbmysqli->errno );
 		
@@ -46,22 +46,34 @@ include("../inc/dashboard_config.php");
 	if ($sum_entries < $start_epg_crawler)
 	{
 	
-	// send zapp request
+	// send zap request
 	$zapp_request = "$url_format://$box_ip/web/zap?sRef=$obj->e2servicereference";
 	$request = file_get_contents($zapp_request, false, $webrequest);
 	
-	$sql = mysqli_query($dbmysqli, "DELETE FROM epg_data WHERE channel_hash = '".$obj->channel_hash."'");
+	$sql = mysqli_query($dbmysqli, "DELETE FROM `epg_data` WHERE `channel_hash` = '".$obj->channel_hash."'");
 	
 	sleep($cz_sleeptime);
 	
+	//save provider from channel in db
+	$xmlfile = ''.$url_format.'://'.$box_ip.'/web/getcurrent';
+	$request = file_get_contents($xmlfile, false, $webrequest);
+	$xml = simplexml_load_string($request);
+	
+if($xml->e2service->e2providername != "")
+	{ 
+	$e2providername = $xml->e2service->e2providername;
+	$sql = mysqli_query($dbmysqli, "UPDATE `channel_list` SET `e2providername` = '$e2providername' WHERE `e2servicereference` = '".$obj->e2servicereference."' ");
+	}
+	
 	// crawl channel
-	$start_crawl_request = "$url_format://$script_location/uniwebif/functions/channel_crawler_complete.php?channel_id=$obj->e2servicereference";
-	$start_crawl = file_get_contents($start_crawl_request); }
+	$start_crawl_request = "$url_format://$server_ip/$script_folder/functions/channel_crawler_complete.php?channel_id=$obj->e2servicereference";
+	$start_crawl = file_get_contents($start_crawl_request);
+	}
 	}
 	}
     }
 	// zap to start channel
-	$sql2 = mysqli_query($dbmysqli, "SELECT e2servicereference FROM channel_list WHERE zap_start = 1");
+	$sql2 = mysqli_query($dbmysqli, "SELECT `e2servicereference` FROM `channel_list` WHERE `zap_start` = '1' ");
 	$result2 = mysqli_fetch_assoc($sql2);
 	$start_channel = $result2['e2servicereference'];
 	
@@ -99,7 +111,14 @@ include("../inc/dashboard_config.php");
 	
 	if(!isset($next_dummy_timer_start) or $next_dummy_timer_start == "") { $next_dummy_timer_start = ""; }
 	
-	$sql = mysqli_query($dbmysqli, "UPDATE `settings` SET dummy_timer_time = '".$next_dummy_timer_start."' ");
+	$sql = mysqli_query($dbmysqli, "UPDATE `settings` SET `dummy_timer_time` = '".$next_dummy_timer_start."' ");
+	
+	// reset saved search
+	$sql = mysqli_query($dbmysqli, "UPDATE `saved_search` SET `crawled` = '0' WHERE `activ` = 'yes' ");
+	
 	$sql = mysqli_query($dbmysqli, "REPAIR TABLE `epg_data`");
+	
+	// set epg crawler not working
+	$sql = mysqli_query($dbmysqli, "UPDATE `settings` SET `epg_crawler_activ` = '0' ");
 
 ?>

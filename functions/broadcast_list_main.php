@@ -70,9 +70,8 @@ include("../inc/dashboard_config.php");
 	echo '<p>' .$date_from_day. '</p>';
 	}
 	
-	
 	// get record locations
-	$sql = "SELECT * FROM `record_locations` ORDER BY id ASC";
+	$sql = "SELECT * FROM `record_locations` ORDER BY `id` ASC";
 	if ($result = mysqli_query($dbmysqli,$sql))
 	{
 	// Fetch one and one row
@@ -83,7 +82,7 @@ include("../inc/dashboard_config.php");
 	}
 	}
 
-	$sql = "SELECT * FROM `epg_data` WHERE e2eventstart BETWEEN '$time_start' and '$time_end' ORDER BY e2eventstart ASC";
+	$sql = "SELECT * FROM `epg_data` WHERE `e2eventstart` BETWEEN '$time_start' and '$time_end' ORDER BY `e2eventstart` ASC";
 
 	if ($result = mysqli_query($dbmysqli,$sql))
 	{
@@ -147,7 +146,6 @@ include("../inc/dashboard_config.php");
 	  <div id=\"broadcast_$rand$obj->hash\" style=\"cursor: pointer;\" onclick=\"broadcast_list_desc(this.id);\">
 		<div id=\"$td_spacer\"> <span class=\"$timer\">$broadcast_time</span> </div>
 		<div id=\"cnt_title\"> <span class=\"$timer\">$title_enc</span>
-		  <div id=\"broadcast_desc_inner\"> </div>
 		</div>
 		<div id=\"cnt_channel\"> <span class=\"$timer\">$servicename_enc</span> </div>
 		<div style=\"clear:both\"></div>
@@ -165,9 +163,9 @@ include("../inc/dashboard_config.php");
 		<div class=\"spacer_5\"></div>
 		<div id=\"broadcast-tab-button-group\">
   <div id=\"row1\">
-    <input id=\"broadcast_timer_btn_$rand$obj->hash\" type=\"submit\" onClick=\"broadcast_timer(this.id)\" value=\"SET TIMER\" class=\"btn btn-success btn-sm\" title=\"send timer instantly\"/> </div>
+    <input id=\"broadcast_timer_btn_$rand$obj->hash\" type=\"submit\" onClick=\"broadcast_timer(this.id)\" value=\"SET TIMER\" class=\"btn btn-success btn-sm\" title=\"send Timer to Receiver\"/> </div>
   <div id=\"row2\">
-    <input id=\"broadcast_zap_btn_$rand$obj->hash\" type=\"submit\" onClick=\"broadcast_zap(this.id)\" value=\"ZAPP TO CHANNEL\" class=\"btn btn-default btn-sm\"/> </div>
+    <input id=\"broadcast_zap_btn_$rand$obj->hash\" name=\"$obj->e2eventservicereference\" type=\"submit\" onClick=\"broadcast_zap(this.id,this.name)\" value=\"ZAP TO CHANNEL\" class=\"btn btn-default btn-sm\"/> </div>
   <div id=\"row3\">
 	<span id=\"broadcast_status_zap_$rand$obj->hash\"></span> <span id=\"broadcast_status_timer_$rand$obj->hash\"></span> </div>
 	<div style=\"clear:both\"></div>

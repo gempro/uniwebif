@@ -1,20 +1,18 @@
 <?php 
-// answer for ajax
-header('Content-Type: text/event-stream');
-header('Cache-Control: no-cache');
-echo "data: channel crawl - done!\n\n";
 //
 include("../inc/dashboard_config.php");
-include("utc.php");
+
+	// set epg crawler as current working
+	$sql = mysqli_query($dbmysqli, "UPDATE `settings` SET `epg_crawler_activ` = '1' ");
 
 	$channel_hash = $_REQUEST["channel_hash"];
 	
-	$sql = mysqli_query($dbmysqli, "SELECT e2servicereference FROM channel_list WHERE channel_hash = '".$channel_hash."'");
+	$sql = mysqli_query($dbmysqli, "SELECT `e2servicereference` FROM `channel_list` WHERE `channel_hash` = '".$channel_hash."' ");
 	$result = mysqli_fetch_assoc($sql);
 	$e2servicereference = $result['e2servicereference'];
 	
 	// delete before crawling
-	$sql = mysqli_query($dbmysqli, "DELETE FROM epg_data WHERE channel_hash = '".$channel_hash."'");
+	$sql = mysqli_query($dbmysqli, "DELETE FROM `epg_data` WHERE `channel_hash` = '".$channel_hash."' ");
 	
 	$xmlfile = ''.$url_format.'://'.$box_ip.'/web/epgservice?sRef='.$e2servicereference.'';
 	
@@ -23,10 +21,12 @@ include("utc.php");
 	$xml = simplexml_load_string(preg_replace('/[^\x{0009}\x{000a}\x{000d}\x{0020}-\x{D7FF}\x{E000}-\x{FFFD}]+/u', ' ', $getEPG_request));
 
 if ($xml) {
-    for ($i = 0; $i <= $epg_entries_per_channel; $i++) {
+    
+	for ($i = 0; $i <= $epg_entries_per_channel; $i++) {
 
 	///////////////////////////////////////////////
 	if(!isset($xml->e2event[$i]->e2eventtitle) or $xml->e2event[$i]->e2eventtitle == ""){ $xml->e2event[$i]->e2eventtitle = ""; }
+	
 	// if no title dont write in database
 	if($xml->e2event[$i]->e2eventtitle == "" ) {
 	
@@ -105,18 +105,18 @@ if ($xml) {
 	$end_weekday = str_replace("Sunday", "Sonntag", $end_weekday);
 	}
 		
-	// timeformat
-	// us start time
+	// timeformat 2
 	$us_starthour = date("g",$starttime);
 	$start_minute = date("i",$starttime);
 	$ampm = date("A",$starttime);
 	$us_start_date = $start_month. "/" .$start_day. "/" .$start_year. " " .$us_starthour. ":" .$start_minute. " " .$ampm;
 	
-	// us end time
 	$us_endhour = date("g",$e2eventend);
 	$end_minute = date("i",$e2eventend);
 	$ampm = date("A",$e2eventend);
 	$us_end_date = $end_month. "/" .$end_day. "/" .$end_year. " " .$us_endhour. ":" .$end_minute. " " .$ampm;
+	
+	$end_weekday = date("l",$e2eventend);
 	
 	// mark hd channels
 	if (preg_match("/\bHD\b/i", $e2eventservicename)) {
@@ -147,9 +147,33 @@ if ($xml) {
 	}
 	}
 	}
-	$time = time();
-	$sql = mysqli_query($dbmysqli, "UPDATE channel_list set last_crawl = '$time' WHERE channel_hash = '$channel_hash' ");
+	
+	// latest entry
+	$sql = mysqli_query($dbmysqli, "SELECT `e2eventend` FROM `epg_data` WHERE `channel_hash` = '$channel_hash' ORDER BY `e2eventend` DESC LIMIT 0 , 1");
+	$result = mysqli_fetch_assoc($sql);
+	$last_epg = $result['e2eventend'];
+	
+	// last crawl / last entry
+	$sql = mysqli_query($dbmysqli, "UPDATE `channel_list` SET `last_crawl` = '$time', `last_epg` = '$last_epg' WHERE `channel_hash` = '$channel_hash' ");
+	
+	// update last epg timestamp // settings
+	$sql = mysqli_query($dbmysqli, "SELECT `e2eventend` FROM `epg_data` ORDER BY `e2eventend` DESC LIMIT 0 , 1");
+	$result = mysqli_fetch_assoc($sql);
+	$last_epg = $result['e2eventend'];
+	$sql = mysqli_query($dbmysqli, "UPDATE `settings` SET `last_epg` = '$last_epg' WHERE `id` = '0' ");
+	
+	// reset saved search
+	$sql = mysqli_query($dbmysqli, "UPDATE `saved_search` SET `crawled` = '0' WHERE `activ` = 'yes' ");
+	
+	// set epg crawler not working
+	$sql = mysqli_query($dbmysqli, "UPDATE `settings` SET `epg_crawler_activ` = '0' ");
 	
 	// close db
 	mysqli_close($dbmysqli);
+	
+	// answer for ajax
+	header('Content-Type: text/event-stream');
+	header('Cache-Control: no-cache');
+	echo "data: channel crawl - done!\n\n";
+
 ?>

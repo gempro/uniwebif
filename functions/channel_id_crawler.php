@@ -4,7 +4,7 @@ include("../inc/dashboard_config.php");
 
 	$sql = mysqli_query($dbmysqli, "TRUNCATE `channel_list`");
 
-	$sql = "SELECT * FROM bouquet_list WHERE crawl = 1";
+	$sql = "SELECT * FROM `bouquet_list` WHERE `crawl` = '1' ";
 	
 	if ($result = mysqli_query($dbmysqli,$sql))
 	{
@@ -43,7 +43,7 @@ include("../inc/dashboard_config.php");
 	// channel hash
 	$channel_hash = hash('md4',$e2servicename);
 	
-	$sql = mysqli_query($dbmysqli, "INSERT INTO channel_list (e2servicename,servicename_enc,e2servicereference,channel_hash) values ('$e2servicename','$servicename_enc','$e2servicereference','$channel_hash')");
+	$sql = mysqli_query($dbmysqli, "INSERT INTO `channel_list` (e2servicename, servicename_enc, e2servicereference, e2providername, channel_hash) values ('$e2servicename', '$servicename_enc', '$e2servicereference', '-', '$channel_hash')");
 	}}}
 	}}}
 	// answer for ajax
@@ -64,5 +64,5 @@ include("../inc/dashboard_config.php");
 	//channel_list AS Dup WHERE NOT channel_list.id = Dup.id AND channel_list.id > Dup.id AND channel_list.e2servicereference = Dup.e2servicereference");
 	
 	// delete broken channels
-	$sql = mysqli_query($dbmysqli, "DELETE FROM channel_list WHERE e2servicename = '<n/a>' OR e2servicename = '.' ");
+	$sql = mysqli_query($dbmysqli, "DELETE FROM `channel_list` WHERE `e2servicename` = '<n/a>' OR `e2servicename` = '.' ");
 ?>

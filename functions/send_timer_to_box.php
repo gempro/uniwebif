@@ -5,7 +5,7 @@ include("../inc/dashboard_config.php");
 	header('Content-Type: text/event-stream');
 	header('Cache-Control: no-cache');
 
-	$sql = "SELECT * FROM timer WHERE `status` = 'waiting' ORDER BY `e2eventstart` ASC";
+	$sql = "SELECT * FROM `timer` WHERE `status` = 'waiting' ORDER BY `e2eventstart` ASC";
 	
 	if ($result = mysqli_query($dbmysqli,$sql))
 	{
@@ -29,7 +29,7 @@ include("../inc/dashboard_config.php");
 	
 	// mark as done
 	$sql = mysqli_query($dbmysqli, "UPDATE `timer` SET `status` = 'sent' WHERE `id` = '$id' ");
-	$sql2 = mysqli_query($dbmysqli, "UPDATE epg_data SET timer = '1' WHERE `hash` = '$hash' ");
+	$sql2 = mysqli_query($dbmysqli, "UPDATE `epg_data` SET `timer` = '1' WHERE `hash` = '$hash' ");
 	}
 	}
 	// answer for ajax

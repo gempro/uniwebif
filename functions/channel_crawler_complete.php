@@ -1,7 +1,9 @@
 <?php 
 //
 include("../inc/dashboard_config.php");
-include("utc.php");
+
+//	// epg crawler working
+//	$sql = mysqli_query($dbmysqli, "UPDATE settings SET epg_crawler_activ = '1'");
 
 	$channel_id = $_REQUEST["channel_id"];
 	
@@ -12,6 +14,7 @@ include("utc.php");
 	$xml = simplexml_load_string(preg_replace('/[^\x{0009}\x{000a}\x{000d}\x{0020}-\x{D7FF}\x{E000}-\x{FFFD}]+/u', ' ', $getEPG_request));
 
 if ($xml) {
+
     for ($i = 0; $i <= $epg_entries_per_channel; $i++) {
 
 	///////////////////////////////////////////////
@@ -132,13 +135,25 @@ if ($xml) {
 	// channel hash
 	$channel_hash = hash('md4',$e2eventservicename);
 	
-	$sql = mysqli_query($dbmysqli, "INSERT INTO epg_data (e2eventtitle,title_enc,e2eventservicename,servicename_enc,e2eventdescription,description_enc,e2eventdescriptionextended,descriptionextended_enc,e2eventid,start_date,us_start_date,start_day,start_month,start_year,start_hour,start_minute,start_weekday,end_date,us_end_date,end_day,end_month,end_year,end_hour,end_minute,end_weekday,total_min,e2eventstart,e2eventend,e2eventduration,e2eventcurrenttime,e2eventservicereference,hd_channel,crawler_time,hash,channel_hash)
-	 values ('$e2eventtitle','$title_enc','$e2eventservicename','$servicename_enc','$e2eventdescription','$description_enc','$e2eventdescriptionextended','$descriptionextended_enc','$e2eventid','$start_date','$us_start_date','$start_day','$start_month','$start_year','$start_hour','$start_minute','$start_weekday','$end_date','$us_end_date','$end_day','$end_month','$end_year','$end_hour','$end_minute','$end_weekday','$total_min','$e2eventstart','$e2eventend','$e2eventduration','$e2eventcurrenttime','$e2eventservicereference','$hd_channel','$crawler_time','$hash','$channel_hash')"); 
+	$sql = mysqli_query($dbmysqli, "
+	INSERT INTO `epg_data` (e2eventtitle, title_enc, e2eventservicename, servicename_enc, e2eventdescription, description_enc, e2eventdescriptionextended, descriptionextended_enc, e2eventid, start_date, us_start_date, start_day, start_month, start_year, start_hour, start_minute, start_weekday, end_date, us_end_date, end_day, end_month, end_year, end_hour, end_minute, end_weekday, total_min, e2eventstart, e2eventend, e2eventduration, e2eventcurrenttime, e2eventservicereference, hd_channel, crawler_time, hash, channel_hash)
+	values 
+	('$e2eventtitle', '$title_enc', '$e2eventservicename', '$servicename_enc', '$e2eventdescription', '$description_enc', '$e2eventdescriptionextended', '$descriptionextended_enc', '$e2eventid', '$start_date', '$us_start_date', '$start_day', '$start_month', '$start_year', '$start_hour', '$start_minute', '$start_weekday', '$end_date', '$us_end_date', '$end_day', '$end_month', '$end_year', '$end_hour', '$end_minute', '$end_weekday', '$total_min', '$e2eventstart', '$e2eventend', '$e2eventduration', '$e2eventcurrenttime', '$e2eventservicereference', '$hd_channel', '$crawler_time', '$hash', '$channel_hash')"); 
 	}
 	}
 	}
-	$time = time();
-	$sql = mysqli_query($dbmysqli, "UPDATE channel_list set last_crawl = '$time' WHERE channel_hash = '$channel_hash' ");
+	// latest entry
+	$sql = mysqli_query($dbmysqli, "SELECT `e2eventend` FROM `epg_data` WHERE `channel_hash` = '$channel_hash' ORDER BY `e2eventend` DESC LIMIT 0 , 1");
+	$result = mysqli_fetch_assoc($sql);
+	$last_epg = $result['e2eventend'];
+	
+	// last crawl / last entry
+	$sql = mysqli_query($dbmysqli, "UPDATE `channel_list` SET `last_crawl` = '$time', `last_epg` = '$last_epg' WHERE `channel_hash` = '$channel_hash' ");
+	
+	// update last epg timestamp // settings
+	$sql = mysqli_query($dbmysqli, "SELECT `e2eventend` FROM `epg_data` ORDER BY `e2eventend` DESC LIMIT 0 , 1");
+	$result = mysqli_fetch_assoc($sql);
+	$sql = mysqli_query($dbmysqli, "UPDATE `settings` SET `last_epg` = '$last_epg' WHERE `id` = '0' ");
 	
 	// close db
 	mysqli_close($dbmysqli);

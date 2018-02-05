@@ -1,4 +1,4 @@
-<? 
+<?php 
 //
 	include("../inc/dashboard_config.php");
 	
@@ -17,11 +17,14 @@
 	$i > 0;
 	if(!isset($key) or $key == ""){ $key = ""; }
 	
-	$sql = mysqli_query($dbmysqli, "SELECT `hash` FROM `timer` WHERE `id` = '".$key."' ");
+	$sql = mysqli_query($dbmysqli, "SELECT * FROM `timer` WHERE `id` = '".$key."' ");
 	$result = mysqli_fetch_assoc($sql);
 	$hash = $result['hash'];
+	$status = $result['status'];
 	
+	if ($status == 'manual' or $status == 'sent'){
 	$sql2 = mysqli_query($dbmysqli, "UPDATE `epg_data` SET timer = '0' WHERE `hash` = '".$hash."' ");
+	}
 	
 	$sql3 = mysqli_query($dbmysqli, "DELETE FROM `timer` WHERE `id` = '".$key."' ");
 	}
@@ -45,18 +48,20 @@
 	$e2eventstart = $result['e2eventstart'];
 	$e2eventend = $result['e2eventend'];
 	$hash = $result['hash'];
+	$status = $result['status'];
 	
 	$deleteTimer = "$url_format://$box_ip/web/timerdelete?sRef=".$e2eventservicereference."&begin=".$e2eventstart."&end=".$e2eventend."";
 	$deleteTimer_request = file_get_contents($deleteTimer, false, $webrequest);
 	
 	$sql = mysqli_query($dbmysqli, "UPDATE `timer` SET status = 'rec_deleted' WHERE `id` = '".$key."' ");
 	
+	if ($status == 'manual' or $status == 'sent'){
 	$sql2 = mysqli_query($dbmysqli, "UPDATE `epg_data` SET timer = '0' WHERE `hash` = '".$hash."' ");
 	}
-	sleep(1);
-	echo 'del_rec_done';
 	}
-	
+	sleep(1);
+	echo 'delete_rec_done';
+	}
 	
 	// delete both
 	if ($panel_action == 'delete_both')
@@ -74,11 +79,14 @@
 	$e2eventstart = $result['e2eventstart'];
 	$e2eventend = $result['e2eventend'];
 	$hash = $result['hash'];
+	$status = $result['status'];
 	
 	$deleteTimer = "$url_format://$box_ip/web/timerdelete?sRef=".$e2eventservicereference."&begin=".$e2eventstart."&end=".$e2eventend."";
 	$deleteTimer_request = file_get_contents($deleteTimer, false, $webrequest);
 	
+	if ($status == 'manual' or $status == 'sent'){
 	$sql2 = mysqli_query($dbmysqli, "UPDATE `epg_data` SET timer = '0' WHERE `hash` = '".$hash."' ");
+	}
 	
 	$sql3 = mysqli_query($dbmysqli, "DELETE FROM `timer` WHERE `id` = '".$key."' ");
 	}
@@ -115,15 +123,14 @@
 	
 	$send_timer_request = file_get_contents($timer_request, false, $webrequest);
 	
-	$sql = mysqli_query($dbmysqli, "UPDATE `timer` SET status = 'manual' WHERE `id` = '".$key."' ");
+	$sql = mysqli_query($dbmysqli, "UPDATE `timer` SET `status` = 'manual' WHERE `id` = '".$key."' ");
 	
-	$sql = mysqli_query($dbmysqli, "UPDATE epg_data SET timer = '1' WHERE hash = '".$hash."' ");
+	$sql = mysqli_query($dbmysqli, "UPDATE epg_data SET `timer` = '1' WHERE `hash` = '".$hash."' ");
 	
 	sleep(0.5);
 	}
-	echo 'send done';
+	echo 'send_done';
 	}
-	
 	
 	// hide
 	if ($panel_action == 'hide')
@@ -133,7 +140,7 @@
 	{ 
 	$i > 0;
 	if(!isset($key) or $key == ""){ $key = ""; }
-	$sql = mysqli_query($dbmysqli, "UPDATE `timer` set hide = '1' WHERE `id` = '".$key."' ");
+	$sql = mysqli_query($dbmysqli, "UPDATE `timer` SET `hide` = '1' WHERE `id` = '".$key."' ");
 	}
 	sleep(1);
 	echo 'hide_done';
@@ -148,8 +155,8 @@
 	{ 
 	$i > 0;
 	if(!isset($key) or $key == ""){ $key = ""; }
-	$sql = mysqli_query($dbmysqli, "UPDATE `timer` set hide = '0' WHERE `id` = '".$key."' ");
-	} // ecplode for i
+	$sql = mysqli_query($dbmysqli, "UPDATE `timer` SET `hide` = '0' WHERE `id` = '".$key."' ");
+	} // explode for i
 	sleep(1);
 	echo 'unhide_done';
 	}

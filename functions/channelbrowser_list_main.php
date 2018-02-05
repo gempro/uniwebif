@@ -26,8 +26,8 @@ include("../inc/dashboard_config.php");
 	$time = $_REQUEST['time'];
 	$channel = $_REQUEST['channel'];
 	
-	$sql = mysqli_query($dbmysqli, "UPDATE channel_list set cb_selected = '0'");
-	$sql = mysqli_query($dbmysqli, "UPDATE channel_list set cb_selected = '1' WHERE e2servicereference = '$channel'");
+	$sql = mysqli_query($dbmysqli, "UPDATE `channel_list` SET `cb_selected` = '0' ");
+	$sql = mysqli_query($dbmysqli, "UPDATE `channel_list` SET `cb_selected` = '1' WHERE `e2servicereference` = '$channel' ");
 	
 	$date_for_cb = date("d.m.Y");
 	$date_start = $date_for_cb.'00:00';
@@ -105,7 +105,7 @@ include("../inc/dashboard_config.php");
 	if(!isset($time_start) or $time_start == "") { $time_start = $cb_time_start; }
 	if(!isset($time_end) or $time_end == "") { $time_end = $cb_time_end; }
 	
-	$sql = "SELECT * FROM `epg_data` WHERE e2eventservicereference = '$channel' AND e2eventstart BETWEEN '$time_start' and '$time_end' ORDER BY e2eventstart ASC";
+	$sql = "SELECT * FROM `epg_data` WHERE `e2eventservicereference` = '$channel' AND `e2eventstart` BETWEEN '$time_start' and '$time_end' ORDER BY `e2eventstart` ASC";
 
 	if ($result = mysqli_query($dbmysqli,$sql))
 	{
@@ -165,7 +165,6 @@ $channelbrowser_list = $channelbrowser_list."
 	  <div id=\"channelbrowser_$rand$obj->hash\" style=\"cursor: pointer;\" onclick=\"channelbrowser_list_desc(this.id);\">
 		<div id=\"$td_spacer\"> <span class=\"$timer\">$broadcast_time</span> </div>
 		<div id=\"cnt_title\"> <span class=\"$timer\">$title_enc</span>
-		  <div id=\"channelbrowser_desc_inner\"> </div>
 		</div>
 		<div id=\"cnt_channel\"> <span class=\"$timer\">$servicename_enc</span> </div>
 		<div style=\"clear:both\"></div>
@@ -183,9 +182,9 @@ $channelbrowser_list = $channelbrowser_list."
 		<div class=\"spacer_5\"></div>
 <div id=\"broadcast-tab-button-group\">
   <div id=\"row1\">
-    <input id=\"channelbrowser_timer_btn_$rand$obj->hash\" type=\"submit\" onClick=\"channelbrowser_timer(this.id)\" value=\"SET TIMER\" class=\"btn btn-success btn-sm\" title=\"send timer instantly\"/> </div>
+    <input id=\"channelbrowser_timer_btn_$rand$obj->hash\" type=\"submit\" onClick=\"channelbrowser_timer(this.id)\" value=\"SET TIMER\" class=\"btn btn-success btn-sm\" title=\"send Timer to Receiver\"/> </div>
   <div id=\"row2\">
-    <input id=\"channelbrowser_zap_btn_$rand$obj->hash\" type=\"submit\" onClick=\"channelbrowser_zap(this.id)\" value=\"ZAPP TO CHANNEL\" class=\"btn btn-default btn-sm\"/> </div>
+    <input id=\"channelbrowser_zap_btn_$rand$obj->hash\" type=\"submit\" name=\"$obj->e2eventservicereference\" onClick=\"channelbrowser_zap(this.id,this.name)\" value=\"ZAP TO CHANNEL\" class=\"btn btn-default btn-sm\"/> </div>
   <div id=\"row3\">
   <span id=\"channelbrowser_status_zap_$rand$obj->hash\"></span>
   <span id=\"channelbrowser_status_timer_$rand$obj->hash\"></span>

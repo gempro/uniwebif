@@ -24,7 +24,6 @@ include("../inc/dashboard_config.php");
 //	$exclude_term = str_replace("\"", "", $exclude_term);
 //	$exclude_term = str_replace("'", "", $exclude_term);
 //	$exclude_term = str_replace("%", "", $exclude_term);
-	
 	$rec_replay = $_REQUEST["rec_replay"];
 	
 	if ($channel_id !== ''){ $e2servicereference = $channel_id; } else { $e2servicereference = 'NULL'; }
@@ -38,7 +37,7 @@ include("../inc/dashboard_config.php");
 	} else {
 	
 	// get channel name
-	$query = mysqli_query($dbmysqli, "SELECT e2servicename, servicename_enc FROM `channel_list` WHERE e2servicereference = '".$e2servicereference."' LIMIT 0 , 1");
+	$query = mysqli_query($dbmysqli, "SELECT e2servicename, servicename_enc FROM `channel_list` WHERE `e2servicereference` = '".$e2servicereference."' LIMIT 0 , 1");
 	$result = mysqli_fetch_assoc($query);
 	
 	$e2servicename = $result['e2servicename'];
@@ -48,7 +47,7 @@ include("../inc/dashboard_config.php");
 	if ($servicename_enc == ''){ $e2servicename = 'NULL'; }
 	
 	// get record path
-	$query = mysqli_query($dbmysqli, "SELECT e2location FROM `record_locations` WHERE id = '".$record_location."' LIMIT 0 , 1");
+	$query = mysqli_query($dbmysqli, "SELECT `e2location` FROM `record_locations` WHERE `id` = '".$record_location."' LIMIT 0 , 1");
 	$result = mysqli_fetch_assoc($query);
 	$record_location = $result['e2location'];
 	if ($record_location == ''){ $record_location = 'NULL'; }
@@ -63,24 +62,15 @@ include("../inc/dashboard_config.php");
 	//
 	if ($obj->searchterm == $searchterm and $obj->search_option == $search_option and $obj->e2location == $record_location and $obj->e2eventservicereference == $e2servicereference and $obj->exclude_term == $exclude_term and $obj->exclude_area == $exclude_area and $obj->rec_replay == $rec_replay){
 	
-	echo "data: save search - nok!\n\n"; mysqli_free_result($result); mysqli_close($dbmysqli); exit; }
+	echo "data: save search - nok!\n\n"; exit; }
 	}
 	}
     }
 	
-	if ($time_format == '1')
-	{
-	// time format 1
-	$save_date = date("d.m.Y", $time);
-	}
-	if ($time_format == '2')
-	{
-	// time format 2
-	$save_date = date("n/d/Y", $time);
-	}
+	$save_date = $time;
 	
 	//write in db
-   $sql = mysqli_query($dbmysqli, "INSERT INTO saved_search (searchterm, search_option, exclude_term, exclude_area, e2location, save_date, e2eventservicereference, e2eventservicename, servicename_enc, activ, rec_replay) values ('$searchterm','$search_option','$exclude_term','$exclude_area','$record_location','$save_date','$e2servicereference','$e2servicename','$servicename_enc','yes','$rec_replay')");
+   $sql = mysqli_query($dbmysqli, "INSERT INTO `saved_search` (searchterm, search_option, exclude_term, exclude_area, e2location, save_date, e2eventservicereference, e2eventservicename, servicename_enc, activ, rec_replay) values ('$searchterm', '$search_option', '$exclude_term', '$exclude_area', '$record_location', '$save_date', '$e2servicereference', '$e2servicename', '$servicename_enc', 'yes', '$rec_replay')");
 	}	
 	// ajax header
 	echo "data: save search - done!\n\n";

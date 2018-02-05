@@ -5,7 +5,7 @@ include("../inc/dashboard_config.php");
 header('Content-Type: text/event-stream');
 header('Cache-Control: no-cache');
 
-$sql = mysqli_query($dbmysqli, "TRUNCATE bouquet_list");
+$sql = mysqli_query($dbmysqli, "TRUNCATE `bouquet_list`");
 	
 $xmlfile = ''.$url_format.'://'.$box_ip.'/web/getservices';
 
@@ -23,6 +23,8 @@ if ($xml) {
 	
 	// empty
 	if($xml->e2service[$i]->e2servicereference == "" ) {
+	echo "data: ok\n\n";
+	exit;
 	
 	} else {
 	
@@ -36,7 +38,7 @@ if ($xml) {
 	
 	$e2servicename = str_replace("Š", " ", $e2servicename);
 	
-	$sql = mysqli_query($dbmysqli, "INSERT INTO bouquet_list (e2servicereference,e2servicename) values ('$e2servicereference','$e2servicename')"); }
+	$sql = mysqli_query($dbmysqli, "INSERT INTO `bouquet_list` (e2servicereference, e2servicename) values ('$e2servicereference', '$e2servicename')"); }
 	}
 	}
 	// answer for ajax
