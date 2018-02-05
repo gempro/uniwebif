@@ -2,50 +2,7 @@
 session_start();
 //
 include("inc/dashboard_config.php");
-
-	// check connection
-	if (mysqli_connect_errno()) {
-	printf("Connection failed: %s\n", mysqli_connect_error());
-	exit(); 
-	}
-	
-	// select oldest entry
-	$query = mysqli_query($dbmysqli, "SELECT e2eventservicename, e2eventstart FROM `epg_data` ORDER BY e2eventstart ASC LIMIT 0 , 1");
-	$first_entry = mysqli_fetch_assoc($query);
-	
-	if ($time_format == '1')
-	{
-	// time format 1
-	$date_first = date("d.m.Y H:i", $first_entry['e2eventstart']);
-	}
-	if ($time_format == '2')
-	{
-	// time format 2
-	$date_first = date("n/d/Y g:i A", $first_entry['e2eventstart']);
-	}
-	
-	// select latest entry
-	$query = mysqli_query($dbmysqli, "SELECT e2eventservicename, e2eventstart FROM `epg_data` ORDER BY e2eventstart DESC LIMIT 0 , 1");
-	$last_entry = mysqli_fetch_assoc($query);
-	
-	if ($time_format == '1')
-	{
-	// time format 1
-	$date_latest = date("d.m.Y H:i", $last_entry['e2eventstart']);
-	}
-	if ($time_format == '2')
-	{
-	// time format 2
-	$date_latest = date("n/d/Y g:i A", $last_entry['e2eventstart']);
-	}
-	
-	if ($date_first == '01.01.1970 01:00' or $date_first == '1/01/1970 1:00 AM'){ $date_first = 'no data'; }
-	if ($date_latest == '01.01.1970 01:00' or $date_latest == '1/01/1970 1:00 AM'){ $date_latest = 'no data'; }
-	if ($first_entry['e2eventservicename'] == ''){ $first_entry['e2eventservicename'] = 'no data'; }	
-	if ($last_entry['e2eventservicename'] == ''){ $last_entry['e2eventservicename'] = 'no data'; }
-
-//close db
-mysqli_close($dbmysqli);
+include_once("inc/header_info.php");
 ?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -96,62 +53,16 @@ animatedcollapse.ontoggle=function($, divobj, state){ //fires each time a DIV is
 animatedcollapse.init()
 
 <!--
-// tv services list
+// all services list
 $(window).load(function() {
-	$("#tv_services_list").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
+	$("#all_services_list").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
 	$.post("functions/services_inc.php",
 	function(data){
 	// write data in container
-	$("#tv_services_list").html(data);
+	$("#all_services_list").html(data);
 	}
 	);
 });
-
-// zapp request
-function tv_services_zapp(id) {
-	
-	var this_id = id.replace(/tv_services_zapp_btn_/g, "");
-	
-	document.getElementById("tv_services_status_zapp_"+this_id+"").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
-	
-if(typeof(EventSource) !== "undefined") {
-	
-    var source = new EventSource("functions/services_zapp_request.php?e2servicereference="+this_id+"");
-    source.onmessage = function(event) {
-		
-	document.getElementById("tv_services_status_zapp_"+this_id+"").innerHTML = "";
-	document.getElementById("tv_services_zapp_btn_"+this_id+"").value = "CHANNEL ZAPP OK";
-	
-	this.close();
-	};
-	} else {
-	document.getElementById("tv_services_status_zapp_"+this_id+"").value = "Sorry, your browser does not support server-sent events...";
-	}
-}
-
-// crawl tv services
-function tv_services_crawl() {
-
-	$("#tv_services_list").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\"> Copying TV Services from Receiver..");
-	
-if(typeof(EventSource) !== "undefined") {
-	
-    var source = new EventSource("functions/services_inc.php?action=crawl");
-    source.onmessage = function(event) {
-	
-	$.post("functions/services_inc.php",
-	function(data){
-	// write data in container
-	$("#tv_services_list").html(data);
-	}
-	);
-	
-	this.close();
-	};
-	} else {
-	document.getElementById("tv_services_list").value = "Sorry, your browser does not support server-sent events...";
-	}
-}
 </script>
 </head>
 <body>
@@ -167,7 +78,7 @@ if(typeof(EventSource) !== "undefined") {
         <ul class="nav navbar-nav navbar-right">
           <div class="row">
             <div class="col-md-12">
-              <div id="navbar_info">oldest: <span class="badge"><?php echo $date_first; echo " - "; echo utf8_encode($first_entry['e2eventservicename']); ?></span> latest: <span class="badge-success"><?php echo $date_latest; echo " - "; echo utf8_encode($last_entry['e2eventservicename']); ?></span> </div>
+              <div id="navbar_info">oldest: <span class="badge"><?php echo $date_first; echo " - "; echo utf8_encode($first_entry['e2eventservicename']); ?></span> latest: <span class="badge-success"><?php echo $date_latest; echo " - "; echo utf8_encode($last_entry['e2eventservicename']); ?></span> <?php echo $header_date; ?></div>
               <!--navbar_info-->
             </div>
           </div>
@@ -179,7 +90,7 @@ if(typeof(EventSource) !== "undefined") {
   <nav class="navbar-default navbar-side" role="navigation">
     <div class="sidebar-collapse">
       <ul class="nav" id="main-menu">
-        <script>document.write(navbar_header_tv_services)</script>
+        <script>document.write(navbar_header_all_services)</script>
         <li> <a href="dashboard.php"><i class="fa fa-home"></i>HOME</a> </li>
         <li> <a href="search.php"><i class="fa fa-search"></i>Search</a> </li>
         <li> <a href="timer.php"><i class="fa fa-clock-o"></i>Timer & Saved Search</a> </li>
@@ -206,6 +117,7 @@ if(typeof(EventSource) !== "undefined") {
             <li> <a href="teletext.php"><i class="fa fa-globe"></i>Teletext Browser</a> </li>
             <li> <a href="#" onclick="animatedcollapse.toggle('div_start_channelzapper');"> <i class="fa fa-arrow-up"></i>Channel Zapper</a> </li>
             <li><a href="services.php"><i class="fa fa-list"></i><strong>All Services</strong></a> </li>
+            <li> <a href="setup.php"><i class="fa fa-wrench"></i>Setup</a> </li>
             <li> <a href="about.php"><i class="glyphicon glyphicon-question-sign"></i>About</a> </li>
           </ul>
         </li>
@@ -216,7 +128,7 @@ if(typeof(EventSource) !== "undefined") {
   <div id="page-wrapper">
   <div class="row">
   <div class="col-md-12">
-  <div id="statusbar_cnt_outter">
+  <div id="statusbar_cnt_outter" class="statusbar_cnt_outter">
   <div id="statusbar_cnt"></div>
   </div>
   </div>
@@ -225,8 +137,6 @@ if(typeof(EventSource) !== "undefined") {
       <div class="row">
         <div class="col-md-12">
           <h2>Services</h2>
-          <input type="submit" onClick="tv_services_crawl()" value="Get Services from Receiver" class="btn btn-default"/>
-          <span id="tv_services_status_crawl"></span>
         </div>
       </div>
       <!--crawl channel id-->
@@ -270,10 +180,13 @@ if(typeof(EventSource) !== "undefined") {
       </div>
       <!--div_channelzapper-->
       <hr />
+      <input type="submit" onClick="all_services_crawl()" value="Get Services from Receiver" class="btn btn-default"/>
+      <span id="all_services_status_crawl"></span>
+      <hr />
       <div class="row">
         <div class="col-md-12">
           <div id="channel_list">
-            <div id="tv_services_list"></div>
+            <div id="all_services_list"></div>
           </div>
           <!-- channel list -->
         </div>
@@ -300,5 +213,14 @@ if(typeof(EventSource) !== "undefined") {
 <script src="assets/js/jquery.metisMenu.js"></script>
 <!-- CUSTOM SCRIPTS -->
 <script src="assets/js/custom.js"></script>
+<script>
+$(document).ready(function(){
+   var statusbar = '<?php if(!isset($_SESSION["statusbar"]) or $_SESSION["statusbar"] == "") { $_SESSION["statusbar"] = ""; } echo $_SESSION["statusbar"]; ?>';
+   if (statusbar == '1'){
+   $("#statusbar_cnt_outter").removeClass("statusbar_cnt_outter"); 
+   $("#statusbar_cnt").html("&nbsp;");
+   }
+});
+</script>
 </body>
 </html>

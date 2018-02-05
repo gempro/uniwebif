@@ -2,65 +2,48 @@
 session_start();
 //
 include("inc/dashboard_config.php");
-include_once("functions/search_list_inc.php");
-	
-	// select oldest entry
-	$query = mysqli_query($dbmysqli, "SELECT e2eventservicename, e2eventstart FROM `epg_data` ORDER BY e2eventstart ASC LIMIT 0 , 1");
-	$first_entry = mysqli_fetch_assoc($query);
-	
-	if ($time_format == '1')
-	{
-	// time format 1
-	$date_first = date("d.m.Y H:i", $first_entry['e2eventstart']);
-	}
-	if ($time_format == '2')
-	{
-	// time format 2
-	$date_first = date("n/d/Y g:i A", $first_entry['e2eventstart']);
-	}
-	
-	// select latest entry
-	$query = mysqli_query($dbmysqli, "SELECT e2eventservicename, e2eventstart FROM `epg_data` ORDER BY e2eventstart DESC LIMIT 0 , 1");
-	$last_entry = mysqli_fetch_assoc($query);
-	
-	if ($time_format == '1')
-	{
-	// time format 1
-	$date_latest = date("d.m.Y H:i", $last_entry['e2eventstart']);
-	}
-	if ($time_format == '2')
-	{
-	// time format 2
-	$date_latest = date("n/d/Y g:i A", $last_entry['e2eventstart']);
-	}
-	
-	if ($date_first == '01.01.1970 01:00' or $date_first == '1/01/1970 1:00 AM'){ $date_first = 'no data'; }
-	if ($date_latest == '01.01.1970 01:00' or $date_latest == '1/01/1970 1:00 AM'){ $date_latest = 'no data'; }
-	if ($first_entry['e2eventservicename'] == ''){ $first_entry['e2eventservicename'] = 'no data'; }	
-	if ($last_entry['e2eventservicename'] == ''){ $last_entry['e2eventservicename'] = 'no data'; }
-	
+include_once("inc/header_info.php");
+
 	// count timer
-	$stmt = $dbmysqli->prepare('SELECT COUNT(*) as count_timer FROM timer WHERE expired = "0" ');
+	$stmt = $dbmysqli->prepare('SELECT COUNT(*) as count_timer FROM `timer` WHERE `expired` = "0" ');
 	if( !is_a($stmt, 'MySQLI_Stmt') || $dbmysqli->errno > 0 )
 	throw new Exception( $dbmysqli->error, $dbmysqli->errno );
 	$stmt->execute();
 	$stmt->bind_result($count_timer);
 	$stmt->fetch();
 	$stmt->close();
-	$count_timer = '('.$count_timer.')';
+	$count_timer = $count_timer.' Timer in Database';
 	
-	// count saved search
-	$stmt = $dbmysqli->prepare('SELECT COUNT(*) as count_saved_search FROM saved_search ');
+	// sent timer
+	$stmt = $dbmysqli->prepare('SELECT COUNT(*) as sent_timer FROM `timer` WHERE `expired` = "0" AND `status` = "sent" OR `expired` = "0" AND `status` = "manual" ');
 	if( !is_a($stmt, 'MySQLI_Stmt') || $dbmysqli->errno > 0 )
 	throw new Exception( $dbmysqli->error, $dbmysqli->errno );
 	$stmt->execute();
-	$stmt->bind_result($count_saved_search);
+	$stmt->bind_result($sent_timer);
 	$stmt->fetch();
 	$stmt->close();
-	$count_saved_search = '('.$count_saved_search.')';
+	if ($sent_timer > 0){ 
+	$show_sent_timer = ' | <span class="timer_panel_info">'.$sent_timer.' sent | </span>'; } else { $show_sent_timer = '';
+	}
+	
+	// timer today
+	$start = date("d.m.Y, 00:00", $time);
+	$end = date("d.m.Y, 23:59", $time);
+	$start_time = strtotime($start);
+	$end_time = strtotime($end);
+	$stmt = $dbmysqli->prepare('SELECT COUNT(*) as timer_today FROM `timer` WHERE `e2eventstart` BETWEEN "'.$start_time.'" AND "'.$end_time.'" AND `expired` = "0" ');
+	if( !is_a($stmt, 'MySQLI_Stmt') || $dbmysqli->errno > 0 )
+	throw new Exception( $dbmysqli->error, $dbmysqli->errno );
+	$stmt->execute();
+	$stmt->bind_result($timer_today);
+	$stmt->fetch();
+	$stmt->close();
+	if ($sent_timer > 0){
+	$show_timer_today = ' <span class="timer_panel_info">'.$timer_today.' today | </span>'; } else { $show_timer_today = ''; 
+	}
 	
 	// hidden timer
-	$stmt = $dbmysqli->prepare('SELECT COUNT(*) as hidden_timer FROM timer WHERE `expired` = "0" AND `hide` = "1" ');
+	$stmt = $dbmysqli->prepare('SELECT COUNT(*) as hidden_timer FROM `timer` WHERE `expired` = "0" AND `hide` = "1" ');
 	if( !is_a($stmt, 'MySQLI_Stmt') || $dbmysqli->errno > 0 )
 	throw new Exception( $dbmysqli->error, $dbmysqli->errno );
 	$stmt->execute();
@@ -68,8 +51,19 @@ include_once("functions/search_list_inc.php");
 	$stmt->fetch();
 	$stmt->close();
 	if ($hidden_timer > 0){ 
-	$show_hidden_timer = ' (<a id="show_unhide" onclick="timerlist_panel(this.id)" style="cursor:pointer;">'.$hidden_timer.' hidden</a>)'; } else { $show_hidden_timer = '';
+	$show_hidden_timer = ' <span class="timer_panel_info">
+	<a id="show_unhide" onclick="timerlist_panel(this.id)" title="show" style="cursor:pointer;">'.$hidden_timer.' hidden</a></span>'; } else { $show_hidden_timer = '';
 	}
+	
+	// count saved search
+	$stmt = $dbmysqli->prepare('SELECT COUNT(*) as count_saved_search FROM `saved_search` ');
+	if( !is_a($stmt, 'MySQLI_Stmt') || $dbmysqli->errno > 0 )
+	throw new Exception( $dbmysqli->error, $dbmysqli->errno );
+	$stmt->execute();
+	$stmt->bind_result($count_saved_search);
+	$stmt->fetch();
+	$stmt->close();
+	$count_saved_search = '('.$count_saved_search.')';
 	
 //close db
 mysqli_close($dbmysqli);
@@ -127,6 +121,32 @@ animatedcollapse.ontoggle=function($, divobj, state){ //fires each time a DIV is
 }
 animatedcollapse.init()
 </script>
+<script>
+// load timerlist
+$(document).ready(function(){
+	$.post("functions/timer_list_inc.php",
+	function(data){
+	$("#timerlist_inc").html(data);
+	});
+});
+// display channel list
+$(window).load(function() {
+	$.post("functions/search_list_inc.php",
+	function(data){
+	// write data in container
+	$("#search_list").html(data);
+	}
+	);
+});
+function sortby(){
+var search_list_sort = document.getElementById("sort_setting").value;
+	$.post("functions/search_list_inc.php?sort_list="+search_list_sort+"",
+	function(data){
+	// write data in container
+	$("#search_list").html(data);
+	});
+}
+</script>
 </head>
 <body>
 <a id="top"></a>
@@ -141,7 +161,7 @@ animatedcollapse.init()
         <ul class="nav navbar-nav navbar-right">
           <div class="row">
             <div class="col-md-12">
-              <div id="navbar_info">oldest: <span class="badge"><?php echo $date_first; echo " - "; echo utf8_encode($first_entry['e2eventservicename']); ?></span> latest: <span class="badge-success"><?php echo $date_latest; echo " - "; echo utf8_encode($last_entry['e2eventservicename']); ?></span> </div>
+              <div id="navbar_info">oldest: <span class="badge"><?php echo $date_first; echo " - "; echo utf8_encode($first_entry['e2eventservicename']); ?></span> latest: <span class="badge-success"><?php echo $date_latest; echo " - "; echo utf8_encode($last_entry['e2eventservicename']); ?></span> <?php echo $header_date; ?></div>
               <!--navbar_info-->
             </div>
           </div>
@@ -180,6 +200,7 @@ animatedcollapse.init()
             <li> <a href="teletext.php"><i class="fa fa-globe"></i>Teletext Browser</a> </li>
             <li> <a href="#" onclick="animatedcollapse.toggle('div_start_channelzapper');"> <i class="fa fa-arrow-up"></i>Channel Zapper</a> </li>
             <li><a href="services.php"><i class="fa fa-list"></i>All Services</a> </li>
+            <li> <a href="setup.php"><i class="fa fa-wrench"></i>Setup</a> </li>
             <li> <a href="about.php"><i class="glyphicon glyphicon-question-sign"></i>About</a> </li>
           </ul>
         </li>
@@ -190,7 +211,7 @@ animatedcollapse.init()
   <div id="page-wrapper">
   <div class="row">
   <div class="col-md-12">
-  <div id="statusbar_cnt_outter">
+  <div id="statusbar_cnt_outter" class="statusbar_cnt_outter">
   <div id="statusbar_cnt"></div>
   </div>
   </div>
@@ -244,19 +265,19 @@ animatedcollapse.init()
       <hr />
       <div class="row">
         <div class="col-md-12">
-          <h4>Timer in Database <?php echo $count_timer; echo $show_hidden_timer;?></h4>
-          <div id="broadcast_main_now_today">
+          <h4><?php echo $count_timer; echo $show_sent_timer; echo $show_timer_today; echo $show_hidden_timer; ?> </h4>
+          <div id="timerlist_main">
           <div class="timer_panel">
           <span class="timerlist_checkbox"><input id="select_all" type="checkbox" onClick="select_timer_checkbox()"></span>
+          <input id="send" type="button" class="btn btn-default btn-success btn-xs" value="send" title="send Timer to Receiver" onClick="timerlist_panel(this.id)">
+          <input id="hide" type="button" class="btn btn-primary btn-xs" value="hide" title="hide Timer from list" onClick="timerlist_panel(this.id)">
           <input id="delete" type="button" class="btn btn-default btn-danger btn-xs" value="delete" onClick="timerlist_panel(this.id)">
           <span id="del_buttons" style="display:none">
-          <input id="delete_db" type="button" class="btn btn-default btn-xs" value="from Database" onClick="timerlist_panel(this.id)">
           <input id="delete_rec" type="button" class="btn btn-default btn-xs" value="from Receiver" onClick="timerlist_panel(this.id)">
+          <input id="delete_db" type="button" class="btn btn-default btn-xs" value="from Database" onClick="timerlist_panel(this.id)">
           <input id="delete_both" type="button" class="btn btn-default btn-xs" value="both" onClick="timerlist_panel(this.id)">
           </span>
-          <input id="send" type="button" class="btn btn-default btn-success btn-xs" value="send" onClick="timerlist_panel(this.id)">
-          <input id="hide" type="button" class="btn btn-default btn-xs" value="hide" onClick="timerlist_panel(this.id)">
-          <input id="unhide" type="button" class="btn btn-primary btn-xs hidden" value="unhide" onClick="timerlist_panel(this.id)">
+          <input id="unhide" type="button" class="btn btn-default btn-xs hidden" value="unhide" title="unhide selected" onClick="timerlist_panel(this.id)">
           <span id="selected_box_sum"></span>
           <span id="panel_action_status"></span>
           </div>
@@ -270,8 +291,12 @@ animatedcollapse.init()
       <hr />
       <div class="row">
         <div class="col-md-12">
-          <h4>Saved Search <?php echo $count_saved_search; ?></h4>
-          <?php if(!isset($saved_search_list) or $saved_search_list == "") { $saved_search_list = ""; } else { echo $saved_search_list; } ?>
+          <h4>Saved Search <?php echo $count_saved_search; ?>
+          <select name="select" id="sort_setting" class="sort_setting" onChange="sortby()">
+              <option value="id" <?php if($search_list_sort == 'id'){ echo 'selected'; } ?>>sort standard</option>
+              <option value="searchterm" <?php if($search_list_sort == 'searchterm'){ echo 'selected'; } ?>>sort by term</option>
+            </select></h4>
+          <div id="search_list"></div>
         </div>
       </div>
       <!-- /. ROW  -->
@@ -290,5 +315,14 @@ animatedcollapse.init()
 <script src="assets/js/jquery.metisMenu.js"></script>
 <!-- CUSTOM SCRIPTS -->
 <script src="assets/js/custom.js"></script>
+<script>
+$(document).ready(function(){
+   var statusbar = '<?php if(!isset($_SESSION["statusbar"]) or $_SESSION["statusbar"] == "") { $_SESSION["statusbar"] = ""; } echo $_SESSION["statusbar"]; ?>';
+   if (statusbar == '1'){
+   $("#statusbar_cnt_outter").removeClass("statusbar_cnt_outter"); 
+   $("#statusbar_cnt").html("&nbsp;");
+   }
+});
+</script>
 </body>
 </html>

@@ -2,43 +2,10 @@
 session_start();
 //
 include("inc/dashboard_config.php");
+include_once("inc/header_info.php");
 	
-	// select oldest entry
-	$query = mysqli_query($dbmysqli, "SELECT e2eventservicename, e2eventstart FROM `epg_data` ORDER BY e2eventstart ASC LIMIT 0 , 1");
-	$first_entry = mysqli_fetch_assoc($query);
-	
-	if ($time_format == '1')
-	{
-	// time format 1
-	$date_first = date("d.m.Y H:i", $first_entry['e2eventstart']);
-	}
-	if ($time_format == '2')
-	{
-	// time format 2
-	$date_first = date("n/d/Y g:i A", $first_entry['e2eventstart']);
-	}
-	
-	// select latest entry
-	$query = mysqli_query($dbmysqli, "SELECT e2eventservicename, e2eventstart FROM `epg_data` ORDER BY e2eventstart DESC LIMIT 0 , 1");
-	$last_entry = mysqli_fetch_assoc($query);
-	
-	if ($time_format == '1')
-	{
-	// time format 1
-	$date_latest = date("d.m.Y H:i", $last_entry['e2eventstart']);
-	}
-	if ($time_format == '2')
-	{
-	// time format 2
-	$date_latest = date("n/d/Y g:i A", $last_entry['e2eventstart']);
-	}
-	
-	if ($date_first == '01.01.1970 01:00' or $date_first == '1/01/1970 1:00 AM'){ $date_first = 'no data'; }
-	if ($date_latest == '01.01.1970 01:00' or $date_latest == '1/01/1970 1:00 AM'){ $date_latest = 'no data'; }
-	if ($first_entry['e2eventservicename'] == ''){ $first_entry['e2eventservicename'] = 'no data'; }	
-	if ($last_entry['e2eventservicename'] == ''){ $last_entry['e2eventservicename'] = 'no data'; }
-	
-	$sql = "SELECT * from channel_list order by e2servicename ASC";
+	// channel list
+	$sql = "SELECT * FROM `channel_list` ORDER BY `e2servicename` ASC";
 	
 	// delete selected channels
 	if(isset($_POST['channel_delete']))
@@ -50,12 +17,12 @@ include("inc/dashboard_config.php");
 	$del_id = $checkbox_delete[$i];
 	
 	// delete epg from channel
-	$sql = mysqli_query($dbmysqli, "SELECT channel_hash FROM channel_list WHERE id = '$del_id'");
+	$sql = mysqli_query($dbmysqli, "SELECT `channel_hash` FROM `channel_list` WHERE `id` = '$del_id' ");
 	$result = mysqli_fetch_assoc($sql);
-	$sql = mysqli_query($dbmysqli, "DELETE FROM epg_data WHERE channel_hash = '".$result['channel_hash']."' ");
+	$sql = mysqli_query($dbmysqli, "DELETE FROM `epg_data` WHERE `channel_hash` = '".$result['channel_hash']."' ");
 	
 	// delete channel
-	$sql = "DELETE FROM channel_list WHERE id = '$del_id'";
+	$sql = "DELETE FROM `channel_list` WHERE `id` = '$del_id' ";
 	$result = mysqli_query($dbmysqli, $sql);
 	$sql = mysqli_query($dbmysqli, "OPTIMIZE TABLE `channel_list`");
 	}
@@ -68,7 +35,7 @@ include("inc/dashboard_config.php");
 	// select crawl
 	if(isset($_POST['select_all_crawl']))
 	{
-	$sql = "UPDATE `channel_list` set crawl = 1";
+	$sql = "UPDATE `channel_list` SET `crawl` = '1' ";
 	$result = mysqli_query($dbmysqli, $sql);
 	Header("Location: channel_list.php"); 
 	exit();
@@ -77,7 +44,7 @@ include("inc/dashboard_config.php");
 	// unselect all crawl
 	if(isset($_POST['unselect_all_crawl']))
 	{
-	$sql = "UPDATE `channel_list` set crawl = 0";
+	$sql = "UPDATE `channel_list` SET `crawl` = '0' ";
 	$result = mysqli_query($dbmysqli, $sql);
 	Header("Location: channel_list.php"); 
 	exit();
@@ -86,7 +53,7 @@ include("inc/dashboard_config.php");
 	// select zap
 	if(isset($_POST['select_all_zap']))
 	{
-	$sql = "UPDATE `channel_list` set zap = 1";
+	$sql = "UPDATE `channel_list` SET `zap` = '1' ";
 	$result = mysqli_query($dbmysqli, $sql);
 	Header("Location: channel_list.php"); 
 	exit();
@@ -95,7 +62,7 @@ include("inc/dashboard_config.php");
 	// unselect all zap
 	if(isset($_POST['unselect_all_zap']))
 	{
-	$sql = "UPDATE `channel_list` set zap = 0";
+	$sql = "UPDATE `channel_list` SET `zap` = '0' ";
 	$result = mysqli_query($dbmysqli, $sql);
 	Header("Location: channel_list.php"); 
 	exit();
@@ -123,7 +90,10 @@ include("inc/dashboard_config.php");
 	{
 	$checked_zap = ""; }
 	
-	if(!isset($channel_list) or $channel_list == "") { $channel_list = ""; } else { $channel_list = $channel_list; }
+	if(!isset($channel_list) or $channel_list == "") { $channel_list = ""; }
+	
+	if(!isset($obj->e2providername) or $obj->e2providername == "") { $obj->e2providername = ""; }
+	
 	$channel_list = $channel_list."<div id=\"channel_list_content\">
 		<div id=\"row1\"><!--channel crawl-->
 		  <input id=\"set_crawl_channel_$obj->id\" name=\"checkbox_crawl[]\" type=\"checkbox\" onClick=\"set_crawl_channel(this.id)\" $checked_crawl>
@@ -135,6 +105,9 @@ include("inc/dashboard_config.php");
 		  <input id=\"checkbox_del\" name=\"checkbox_delete[]\" type=\"checkbox\" value=\"$obj->id\">
 		</div>
 		<div id=\"row4\">$obj->e2servicename <span id=\"edit_channel_$obj->id\"></span>
+		</div>
+		<div id=\"row5\"><!--channel provider-->
+		$obj->e2providername
 		</div>
 		<div style=\"clear:both\">&nbsp;</div>
 		</div>";
@@ -208,7 +181,7 @@ animatedcollapse.init()
         <ul class="nav navbar-nav navbar-right">
           <div class="row">
             <div class="col-md-12">
-              <div id="navbar_info">oldest: <span class="badge"><?php echo $date_first; echo " - "; echo utf8_encode($first_entry['e2eventservicename']); ?></span> latest: <span class="badge-success"><?php echo $date_latest; echo " - "; echo utf8_encode($last_entry['e2eventservicename']); ?></span> </div>
+              <div id="navbar_info">oldest: <span class="badge"><?php echo $date_first; echo " - "; echo utf8_encode($first_entry['e2eventservicename']); ?></span> latest: <span class="badge-success"><?php echo $date_latest; echo " - "; echo utf8_encode($last_entry['e2eventservicename']); ?></span> <?php echo $header_date; ?></div>
               <!--navbar_info-->
             </div>
           </div>
@@ -247,6 +220,7 @@ animatedcollapse.init()
             <li> <a href="teletext.php"><i class="fa fa-globe"></i>Teletext Browser</a> </li>
             <li> <a href="#" onclick="animatedcollapse.toggle('div_start_channelzapper');"> <i class="fa fa-arrow-up"></i>Channel Zapper</a> </li>
             <li><a href="services.php"><i class="fa fa-list"></i>All Services</a> </li>
+            <li> <a href="setup.php"><i class="fa fa-wrench"></i>Setup</a> </li>
             <li> <a href="about.php"><i class="glyphicon glyphicon-question-sign"></i>About</a> </li>
           </ul>
         </li>
@@ -257,7 +231,7 @@ animatedcollapse.init()
   <div id="page-wrapper">
   <div class="row">
   <div class="col-md-12">
-  <div id="statusbar_cnt_outter">
+  <div id="statusbar_cnt_outter" class="statusbar_cnt_outter">
   <div id="statusbar_cnt"></div>
   </div>
   </div>
@@ -318,7 +292,7 @@ animatedcollapse.init()
               <div id="row2"><input name="unselect_all_crawl" type="submit" class="btn btn-xs btn-success" value="unselect all">
               </div>
               <div id="row3">
-              Channel's to crawl
+              Channel to crawl
               </div>
               <div style="clear:both"></div>
             </div>
@@ -329,7 +303,7 @@ animatedcollapse.init()
               <div id="row2"><input name="unselect_all_zap" type="submit" class="btn btn-xs btn-primary" value="unselect all">
               </div>
               <div id="row3">
-                Channel's for Zapper 
+                Channel for Zapper 
               </div>
               <div style="clear:both"></div>
             </div>
@@ -339,8 +313,7 @@ animatedcollapse.init()
               </div>
               <div id="row2">
               </div>
-              <div id="row3">Delete channel's from list
-              </div>
+              <div id="row3">Delete channel from list              </div>
               <div style="clear:both"></div>
                <div class="spacer_10"></div>
               <div class="row">
@@ -385,5 +358,14 @@ animatedcollapse.init()
 <script src="assets/js/jquery.metisMenu.js"></script>
 <!-- CUSTOM SCRIPTS -->
 <script src="assets/js/custom.js"></script>
+<script>
+$(document).ready(function(){
+   var statusbar = '<?php if(!isset($_SESSION["statusbar"]) or $_SESSION["statusbar"] == "") { $_SESSION["statusbar"] = ""; } echo $_SESSION["statusbar"]; ?>';
+   if (statusbar == '1'){
+   $("#statusbar_cnt_outter").removeClass("statusbar_cnt_outter"); 
+   $("#statusbar_cnt").html("&nbsp;");
+   }
+});
+</script>
 </body>
 </html>
