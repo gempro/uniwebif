@@ -37,20 +37,20 @@ body {
 	padding-bottom: 15px;
 	padding-right: 30px;
 }
-#statusbar_cnt_outter {
+.statusbar_cnt_outter {
 	display:none;
 }
-#statusbar1 {
+#statusbar {
 	width: 100%;
 	height: auto;
 }
-#statusbar1 #row1 {
+#statusbar #row1 {
 	width: 90%;
 	min-width: 90%;
 	height: auto;
 	float: left;
 }
-#statusbar1 #row2 {
+#statusbar #row2 {
 	min-width: 10%;
 	max-width: 10%
 	height: auto;
@@ -280,9 +280,16 @@ body {
 	text-align: center;
 }
 #channel_list_content #row4 {
-	width: 85%;
+	width: 40%;
 	float: left;
 	background-color: #F5F5F5;
+	padding-left: 5px;
+	border: 1px solid #F5F5F5;
+}
+#channel_list_content #row5 {
+	width: 30%;
+	float: left;
+	background-color: #DFDFDF;
 	padding-left: 5px;
 	border: 1px solid #F5F5F5;
 }
@@ -307,9 +314,16 @@ body {
 	text-align: center;
 }
 #channel_list_content #row4 {
-	width: 60%;
+	width: 30%;
 	float: left;
 	background-color: #F5F5F5;
+	padding-left: 5px;
+	border: 1px solid #F5F5F5;
+}
+#channel_list_content #row5 {
+	width: 30%;
+	float: left;
+	background-color: #DFDFDF;
 	padding-left: 5px;
 	border: 1px solid #F5F5F5;
 }
@@ -609,6 +623,9 @@ display:none;
 	padding-bottom: 9px;
 	padding-left: 5px;
 }
+.timer_panel_info {
+	font-size: 14px;
+}
 #record_list_main {
 	width: 100%;
 	height: auto;
@@ -755,6 +772,9 @@ max-width:90%;
 .green {
 	color:#5CB85C;
 }
+.gray {
+	color:#CCCCCC;
+}
 .basic-input {
 	border: thin solid #ccc;
 }
@@ -781,12 +801,19 @@ max-width:90%;
 .rec_location_dropdown {
 	max-width:90%;
 }
+.sort_setting {
+	font-size: 0.7em;
+	font-weight: normal;
+}
 .hidden {
 	display:none;
 }
 .opac_70 {
 	opacity:.7;
 	color: #428BCA;
+}
+.strong {
+	font-weight: bold;
 }
 @media (max-width: 991px) {
 .rec_location_btn {
@@ -1205,4 +1232,3 @@ width: 260px;
 border-radius: 0px;
 }
 }
-
