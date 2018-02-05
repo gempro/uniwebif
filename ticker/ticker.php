@@ -86,12 +86,16 @@ include("../inc/dashboard_config.php");
 	$sql = mysqli_query($dbmysqli, "UPDATE timer set show_ticker = '0' WHERE hash = '".$hash."' ");
 	exit;
 	}
+	
+	if ($show_hidden_ticker == '1'){ 
+	$hidden_timer = '';
+	} else { $hidden_timer = ' AND `hide` = 0'; }
 
 	$time_duration = $time + $ticker_time;
 	
 	// count timer for scroll duration
 	$ticker_time_end = $time + $ticker_time;
-	$stmt = $dbmysqli->prepare('SELECT COUNT(*) AS sum_timer FROM timer WHERE show_ticker = "1" AND e2eventstart BETWEEN "'.$time.'" AND "'.$ticker_time_end.'" ');
+	$stmt = $dbmysqli->prepare('SELECT COUNT(*) AS sum_timer FROM timer WHERE show_ticker = "1" AND e2eventstart BETWEEN "'.$time.'" AND "'.$ticker_time_end.'" '.$hidden_timer.' ');
 	if( !is_a($stmt, 'MySQLI_Stmt') || $dbmysqli->errno > 0 )
 	throw new Exception( $dbmysqli->error, $dbmysqli->errno );
 		
@@ -104,7 +108,7 @@ include("../inc/dashboard_config.php");
 		
 	if ($sum_timer < '2'){ $scroll_duration = '36000000'; $show_navigate = 'display:none;'; } else { $scroll_duration = '15000'; $show_navigate = ''; }
 
-	$sql = "SELECT * FROM timer WHERE show_ticker = '1' AND e2eventstart BETWEEN '".$time."' AND '".$time_duration."' ";
+	$sql = "SELECT * FROM timer WHERE show_ticker = '1' AND e2eventstart BETWEEN '".$time."' AND '".$time_duration."' ".$hidden_timer." ";
 	
 	if ($result = mysqli_query($dbmysqli,$sql))
 	{
@@ -179,29 +183,29 @@ if ($time_format == '1')
 	}
 	
 	$ticker_list = $ticker_list. "
-			<li style=\"list-style: none;\">
-			<div id=\"timer_banner_div_$hash\">
-		  <div id=\"timer_banner\">
-		<div id=\"row1\">
-		<div id=\"ticker_btn\">
-		<p><a href=\"#timer_info\" title=\"$title_enc\" class=\"btn btn-default btn-xs btn-block\" data-toggle=\"popover\" data-trigger=\"focus\" data-html=\"true\" data-content=\"<p>$description_enc</p> $descriptionextended_enc\">more Info</a></p>
-		</div>
-		  <center><span id=\"tickerlist_send_timer_status_$hash\"><p>
-			<input type=\"submit\" id=\"tickerlist_send_timer_btn_$hash\" onclick=\"tickerlist_send_timer(this.id)\" class=\"btn btn-xs btn-success\" title=\"set Timer instantly\" value=\"set Timer\" style=\"$show_timer_btn\">$timer_status
-		  </p></span></center>
-		</div>
-		<div id=\"row2\"> <i class=\"glyphicon glyphicon-hand-right fa-4x\"></i>
-		  <p>
-			<input type=\"submit\" id=\"tickerlist_$hash\" onclick=\"remove_ticker_event(this.id)\" class=\"btn btn-xs btn-default\" title=\"hide from Ticker\" value=\"remove\">
-		  </p>
-		</div>
-		<div id=\"row3\">
-		  <p>$title_enc</p>
-		  <p>$timer_time | $servicename_enc </p>
-		</div>
-		<div style=\"clear:both\">&nbsp;</div>
-	  </div></div>
-	</li>";
+		<li style=\"list-style: none;\">
+		<div id=\"timer_banner_div_$hash\">
+	  <div id=\"timer_banner\">
+	<div id=\"row1\">
+	<div id=\"ticker_btn\">
+	<p><a href=\"#timer_info\" title=\"$title_enc\" class=\"btn btn-default btn-xs btn-block\" data-toggle=\"popover\" data-trigger=\"focus\" data-html=\"true\" data-content=\"<p>$description_enc</p> $descriptionextended_enc\">more Info</a></p>
+	</div>
+	  <center><span id=\"tickerlist_send_timer_status_$hash\"><p>
+		<input type=\"submit\" id=\"tickerlist_send_timer_btn_$hash\" onclick=\"tickerlist_send_timer(this.id)\" class=\"btn btn-xs btn-success\" title=\"set Timer instantly\" value=\"set Timer\" style=\"$show_timer_btn\">$timer_status
+	  </p></span></center>
+	</div>
+	<div id=\"row2\"> <i class=\"glyphicon glyphicon-hand-right fa-4x\"></i>
+	  <p>
+		<input type=\"submit\" id=\"tickerlist_$hash\" onclick=\"remove_ticker_event(this.id)\" class=\"btn btn-xs btn-default\" title=\"hide from Ticker\" value=\"remove\">
+	  </p>
+	</div>
+	<div id=\"row3\">
+	  <p>$title_enc</p>
+	  <p>$timer_time | $servicename_enc </p>
+	</div>
+	<div style=\"clear:both\">&nbsp;</div>
+  </div></div>
+</li>";
 	}
   }
 // Free result set
