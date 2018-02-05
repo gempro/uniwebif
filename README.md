@@ -10,6 +10,8 @@ Overview of the functions:
 - EPG to SQL
 - Optimized for mobile devices
 
+![Screenshot](screenshot.png)
+
 For hosting the script, i've used a Raspberry Pi Modell B with 512mB RAM. So less ressources are needed.
 
 Requirements on Server/Webspace:
@@ -23,9 +25,3 @@ Uniwebif was compatible with Enigma2 Receivers, but with some little changes it 
 Watch Tutorial for more Information: https://www.youtube.com/watch?v=lj4EOlJzquk
 
 Online Demo: http://uniwebif-demo.techweb.at
-
----
-
-UPDATE INFO
-
-When changing from 1.0 or 1.1 it's required to reinstall the whole SQL Database cause some tables was added.
