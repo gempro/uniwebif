@@ -165,9 +165,10 @@ if (document.querySelector('html').clientWidth < 830){
 	var navbar_header_channel_list = '';
 	var navbar_header_bouquet_list = '';
 	var navbar_header_records = '';
-	var navbar_header_about = '';
 	var navbar_header_teletext = '';
-	var navbar_header_tv_services = '';
+	var navbar_header_all_services = '';
+	var navbar_header_setup = '';
+	var navbar_header_about = '';
 	
 	} else {
 	
@@ -179,19 +180,21 @@ if (document.querySelector('html').clientWidth < 830){
 	var navbar_header_channel_list = '<li class="nav-header"><div id="nav-header"><i class="fa fa-list fa-3-5x"></i></div></li>';
 	var navbar_header_bouquet_list = '<li class="nav-header"><div id="nav-header"><i class="fa fa-list fa-3-5x"></i></div></li>';
 	var navbar_header_records = '<li class="nav-header"><div id="nav-header"><i class="glyphicon glyphicon-record fa-3-5x"></i></div></li>';
-	var navbar_header_about = '<li class="nav-header"><div id="nav-header"><i class="glyphicon glyphicon-question-sign fa-3-5x"></i></div></li>';
 	var navbar_header_teletext = '<li class="nav-header"><div id="nav-header"><i class="fa fa-globe fa-3-5x"></i></div></li>';
-	var navbar_header_tv_services = '<li class="nav-header"><div id="nav-header"><i class="fa fa-list fa-3-5x"></i></div></li>';
+	var navbar_header_all_services = '<li class="nav-header"><div id="nav-header"><i class="fa fa-list fa-3-5x"></i></div></li>';
+	var navbar_header_setup = '<li class="nav-header"><div id="nav-header"><i class="fa fa-wrench fa-3-5x"></i></div></li>';
+	var navbar_header_about = '<li class="nav-header"><div id="nav-header"><i class="glyphicon glyphicon-question-sign fa-3-5x"></i></div></li>';
 }
 //
-document.addEventListener('DOMContentLoaded', checkWidth);
-document.addEventListener('resize', checkWidth);
+	document.addEventListener('DOMContentLoaded', checkWidth);
+	document.addEventListener('resize', checkWidth);
+	
 function checkWidth() {
-if (document.querySelector('html').clientWidth > 1200) {
-// statusbar
-$(window).load(function() {
-	$.post("functions/statusbar1.php",
-	function(data){		
+	if (document.querySelector('html').clientWidth > 1200) {
+	// statusbar
+	$(window).load(function() {
+	$.post("functions/statusbar.php",
+function(data){		
 	// write data in container
 	$("#statusbar_cnt").html(data);
 	animatedcollapse.addDiv('statusbar_cnt_outter', 'fade=1,height=auto');
@@ -200,10 +203,10 @@ $(window).load(function() {
 	});
 });
 // reload
-	var status_bar = "functions/statusbar1.php";
+	var status_bar = "functions/statusbar.php";
 	var status_bar_load = 60;
 
-	$(document).ready(function() {	   
+	$(document).ready(function() {
 	setInterval(function() {
 	$('#statusbar_cnt').load(status_bar + '?sb=' + (new Date().getTime()));
 	}, (status_bar_load*1000));
@@ -211,8 +214,8 @@ $(window).load(function() {
 	}
 }
 
-// zapp request broadcast list main
-function broadcast_zap(id) {
+// zap request broadcast list main
+function broadcast_zap(id,name) {
 	
 	var this_id = id.replace(/broadcast_zap_btn_/g, "");
 	var res = this_id.substr(3);
@@ -221,12 +224,12 @@ function broadcast_zap(id) {
 	
 if(typeof(EventSource) !== "undefined") {
 	
-    var source = new EventSource("functions/send_zapp_request.php?hash="+res+"");
+    var source = new EventSource("functions/send_zapp_request.php?e2servicereference="+name+"");
     source.onmessage = function(event) {
 		
 	document.getElementById("broadcast_status_zap_"+this_id+"").innerHTML = "";
 		
-	document.getElementById("broadcast_zap_btn_"+this_id+"").value = "CHANNEL ZAPP OK";
+	document.getElementById("broadcast_zap_btn_"+this_id+"").value = "CHANNEL ZAP OK";
 		
 	this.close();
 	};
@@ -237,11 +240,13 @@ if(typeof(EventSource) !== "undefined") {
 
 // send timer instant broadcast list main
 function broadcast_timer(id) {
+	
 if(typeof(EventSource) !== "undefined") {
 	
 	var this_id = id.replace(/broadcast_timer_btn_/g, "");
 	var res = this_id.substr(3);
 	var record_location = document.getElementById("rec_location_broadcast_"+this_id+"").value;
+	
 	document.getElementById("broadcast_status_timer_"+this_id+"").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
 	
     var source = new EventSource("functions/send_timer_instant.php?hash="+res+"&record_location="+record_location+"");
@@ -256,8 +261,8 @@ if(typeof(EventSource) !== "undefined") {
 	}
 }
 
-// zapp request searchlist
-function searchlist_zap(id) {
+// zap request searchlist
+function searchlist_zap(id,name) {
 	
 	var this_id = id.replace(/searchlist_zap_btn_/g, "");
 	
@@ -265,12 +270,12 @@ function searchlist_zap(id) {
 	
 if(typeof(EventSource) !== "undefined") {
 	
-    var source = new EventSource("functions/send_zapp_request.php?hash="+this_id+"");
+    var source = new EventSource("functions/send_zapp_request.php?e2servicereference="+name+"");
     source.onmessage = function(event) {
 		
-	document.getElementById("searchlist_status_zap_"+this_id+"").innerHTML = "<i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i>";
+	document.getElementById("searchlist_status_zap_"+this_id+"").innerHTML = "";
 	
-	document.getElementById("searchlist_zap_btn_"+this_id+"").value = "CHANNEL ZAPP OK";
+	document.getElementById("searchlist_zap_btn_"+this_id+"").value = "CHANNEL ZAP OK";
 	
 	this.close();
 	};
@@ -281,6 +286,7 @@ if(typeof(EventSource) !== "undefined") {
 
 // send timer searchlist
 function searchlist_timer(id) {
+	
 if(typeof(EventSource) !== "undefined") {
 	
 	var this_id = id.replace(/searchlist_timer_btn_/g, "");
@@ -301,8 +307,8 @@ if(typeof(EventSource) !== "undefined") {
 	}
 }
 
-// zapp request separate channel crawler
-function channel_crawler_zap(id) {
+// zap request separate channel crawler
+function channel_crawler_zap(id,name) {
 	
 	var this_id = id.replace(/channel_crawler_zap_/g, "");
 	
@@ -310,7 +316,7 @@ function channel_crawler_zap(id) {
 	
 if(typeof(EventSource) !== "undefined") {
 	
-    var source = new EventSource("functions/channel_crawler_zapp_request.php?channel_hash="+this_id+"");
+    var source = new EventSource("functions/send_zapp_request.php?e2servicereference="+name+"");
     source.onmessage = function(event) {
 		
 	document.getElementById("channel_crawler_status_zap_"+this_id+"").innerHTML = "";
@@ -320,6 +326,30 @@ if(typeof(EventSource) !== "undefined") {
 	} else {
 	document.getElementById("channel_crawler_status_zap_"+this_id+"").value = "Sorry, your browser does not support server-sent events...";
 	}
+}
+
+// display all channels
+function show_all(){
+	$("#crawl_separate_list").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\"> EPG data is loading, this could take some time..");
+	$.post("functions/channel_crawler_separate_inc.php?channel=all",
+	function(data){
+	// write data in container
+	$("#crawl_separate_list").html(data);
+	});
+}
+// show channel panel
+function show_panel(){
+	animatedcollapse.toggle('single_channel_panel');
+}
+// display single channel
+function show_single_data(){
+	var channel = document.getElementById("channel_id").value;
+	$("#crawl_separate_list").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
+	$.post("functions/channel_crawler_separate_inc.php?channel="+channel+"",
+	function(data){
+	// write data in container
+	$("#crawl_separate_list").html(data);
+	});
 }
 
 // primetime banner link
@@ -366,13 +396,15 @@ $(document).ready(function(){
 
 // display primetime list main
 function primetime_main(id) {
+	
 	var this_id = id.replace(/primetime_/g, "");
 	$("#primetime_main_"+this_id+"").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
 	$.post("functions/primetime_list_main.php",
 	{
+	action: 'show',
 	time: this_id
 	},
-	function(data){
+function(data){
 	$('html, body').animate({ scrollTop: ($(primetime_list).offset().top)}, 'slow');
 	// write data in container
 	$("#primetime_main_"+this_id+"").html(data);
@@ -380,8 +412,8 @@ function primetime_main(id) {
 	);
 };
 
-// zapp request primetime list
-function primetime_zap(id) {
+// zap request primetime list
+function primetime_zap(id,name) {
 	
 	var this_id = id.replace(/primetime_zap_btn_/g, "");
 	
@@ -389,12 +421,12 @@ function primetime_zap(id) {
 	
 if(typeof(EventSource) !== "undefined") {
 	
-    var source = new EventSource("functions/send_zapp_request.php?hash="+this_id+"");
+    var source = new EventSource("functions/send_zapp_request.php?e2servicereference="+name+"");
     source.onmessage = function(event) {
 		
 	document.getElementById("primetime_status_zap_"+this_id+"").innerHTML = "";
 	
-	document.getElementById("primetime_zap_btn_"+this_id+"").value = "CHANNEL ZAPP OK";
+	document.getElementById("primetime_zap_btn_"+this_id+"").value = "CHANNEL ZAP OK";
 	
 	this.close();
 	};
@@ -405,6 +437,7 @@ if(typeof(EventSource) !== "undefined") {
 
 // send timer primetime list main / search
 function primetime_timer(id) {
+	
 if(typeof(EventSource) !== "undefined") {
 	
 	var this_id = id.replace(/primetime_timer_btn_/g, "");
@@ -426,6 +459,9 @@ if(typeof(EventSource) !== "undefined") {
 
 // set primetime
 function set_primetime(){
+	
+	$("#set_status").fadeIn();
+	
 	var time_format = $("#time_format").val();
 	var hh = $("#primetime_hh").val();
 	var mm = $("#primetime_mm").val();
@@ -445,8 +481,9 @@ function set_primetime(){
 	}
 	
 	$("#set_status").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
-	$.post("functions/primetime_set.php",
+	$.post("functions/primetime_list_main.php",
 	{
+	action: 'set',
 	hour: hh,
 	minute: mm,
 	ampm: am_pm
@@ -454,12 +491,16 @@ function set_primetime(){
 	function(data){
 	// write data in container
 	$("#set_status").html(data);
+	
+	$("#set_status").fadeOut(4000);
+	
 	}
 	);
 }
 
 // display channelbrowser list main
 function channelbrowser_main(id) {
+	
 	var channel_id = document.getElementById("channel_id").value;
 	$("#channelbrowser_main_"+id+"").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
 	$.post("functions/channelbrowser_list_main.php",
@@ -467,7 +508,7 @@ function channelbrowser_main(id) {
 	time: id,
 	channel: channel_id
 	},
-	function(data){
+function(data){
 	$('html, body').animate({ scrollTop: ($(channelbrowser_list).offset().top)}, 'slow');
 	// write data in container
 	$("#channelbrowser_main_"+id+"").html(data);
@@ -477,6 +518,7 @@ function channelbrowser_main(id) {
 
 // open info channelbrowser_list_desc
 function channelbrowser_list_desc(id) {
+	
 	var this_id = id.replace(/channelbrowser_/g, "");
 	animatedcollapse.addDiv('channelbrowser_btn_'+this_id, 'fade=1,height=auto');
 	animatedcollapse.init()
@@ -515,8 +557,8 @@ $('#scroll_top_channelbrowser_list').click(function(){
 	});
 });
 
-// zapp request channelbrowser list
-function channelbrowser_zap(id) {
+// zap request channelbrowser list
+function channelbrowser_zap(id,name) {
 	
 	var this_id = id.replace(/channelbrowser_zap_btn_/g, "");
 	var res = this_id.substr(3);
@@ -525,11 +567,11 @@ function channelbrowser_zap(id) {
 	
 if(typeof(EventSource) !== "undefined") {
 	
-    var source = new EventSource("functions/send_zapp_request.php?hash="+res+"");
+    var source = new EventSource("functions/send_zapp_request.php?e2servicereference="+name+"");
     source.onmessage = function(event) {
 		
 	document.getElementById("channelbrowser_status_zap_"+this_id+"").innerHTML = "";
-	document.getElementById("channelbrowser_zap_btn_"+this_id+"").value = "CHANNEL ZAPP OK";
+	document.getElementById("channelbrowser_zap_btn_"+this_id+"").value = "CHANNEL ZAP OK";
 	
 	this.close();
 	};
@@ -540,6 +582,7 @@ if(typeof(EventSource) !== "undefined") {
 
 // send timer channelbrowser list
 function channelbrowser_timer(id) {
+	
 if(typeof(EventSource) !== "undefined") {
 	
 	var this_id = id.replace(/channelbrowser_timer_btn_/g, "");
@@ -559,26 +602,6 @@ if(typeof(EventSource) !== "undefined") {
 	}
 }
 
-<!--
-// load timerlist
-$(document).ready(function(){
-	$.post("functions/timer_list_inc.php",
-	function(data){
-	$("#timerlist_inc").html(data);
-	});
-});
-
-// reload timerlist
-function reload_timerlist(){
-	$.post("functions/timer_list_inc.php",
-	function(data){
-	$("#selected_box_sum").html("");
-	$("#unhide").addClass("hidden");
-	$("#show_unhide").attr("onclick", "timerlist_panel(this.id)");
-	$("#timerlist_inc").html(data);
-});
-}
-
 // open timerlist
 function timerlist_desc(id) {
 	var this_id = id.replace(/timer_/g, "");
@@ -588,28 +611,23 @@ function timerlist_desc(id) {
 }
 
 // timerlist delete timer
-function delete_timer(id) {
+function timerlist_delete_timer(id) {
 	
 	var this_id = id.replace(/delete_timer_btn_/g, "");
 	
 	document.getElementById("timerlist_status_"+this_id+"").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
 	
-	if (document.getElementById("delete_from_box_"+this_id+"").checked == true) { var delete_from_box = '1'; }
-	if (document.getElementById("delete_from_box_"+this_id+"").checked == false) { var delete_from_box = '0'; }
+//	if (document.getElementById("delete_from_box_"+this_id+"").checked == true) { var delete_from_box = '1'; }
+//	if (document.getElementById("delete_from_box_"+this_id+"").checked == false) { var delete_from_box = '0'; }
 	
 if(typeof(EventSource) !== "undefined") {
 	
-    var source = new EventSource("functions/timer_list_inc.php?delete_id="+this_id+"&delete_from_box="+delete_from_box+"");
+    var source = new EventSource("functions/timer_list_inc.php?action=delete&timer_id="+this_id+"");
     source.onmessage = function(event) {
 		
 	document.getElementById("timerlist_status_"+this_id+"").innerHTML = "<i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i> Timer deleted";
-		
-	animatedcollapse.addDiv('timerlist_div_outer_'+this_id, 'fade=1,height=auto');
-	animatedcollapse.init()
-	
-	function hide_timerlist_div_outer() { animatedcollapse.toggle('timerlist_div_outer_'+this_id);
-	}
-	window.setTimeout(hide_timerlist_div_outer, 1000);
+
+	$("#tl_glyphicon_status_"+this_id+"").attr({style:"color:#D9534F", title:"not sent"});
 		
 	this.close();
 	};
@@ -619,23 +637,55 @@ if(typeof(EventSource) !== "undefined") {
 }
 
 // timerlist send timer
-function timerlist_send_timer(id) {
+function timerlist_send_timer(id,name) {
+	
 if(typeof(EventSource) !== "undefined") {
 	
 	var this_id = id.replace(/timerlist_send_timer_btn_/g, "");
 	var record_location = document.getElementById("timerlist_rec_location_"+this_id+"").innerHTML;
+	
 	document.getElementById("timerlist_send_timer_status_"+this_id+"").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
 	
-    var source = new EventSource("functions/send_timer_instant.php?hash="+this_id+"&record_location="+record_location+"&location=timerlist");
+    var source = new EventSource("functions/send_timer_instant.php?location=timerlist&hash="+this_id+"&record_location="+record_location+"");
     
 	source.onmessage = function(event) {
 		
 	document.getElementById("timerlist_send_timer_status_"+this_id+"").innerHTML = event.data;
 	
+	$("#tl_glyphicon_status_"+name+"").attr({style:"color:#5CB85C", title:"sent"});
+
 	this.close();
 	};
 	} else {
 	document.getElementById("timerlist_send_timer_status_"+this_id+"").value = "Sorry, your browser does not support server-sent events...";
+	}
+}
+
+// timerlist hide timer
+function timerlist_hide_timer(id) {
+	
+	var this_id = id.replace(/timerlist_hide_timer_btn_/g, "");
+	
+if(typeof(EventSource) !== "undefined") {
+	
+    var source = new EventSource("functions/timer_list_inc.php?action=hide&timer_id="+this_id+"");
+    source.onmessage = function(event) {
+	
+	document.getElementById("timerlist_status_"+this_id+"").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
+	
+function hide_timerlist_div_outer() { 
+	
+	animatedcollapse.addDiv('timerlist_div_outer_'+this_id, 'fade=1,height=auto');
+	animatedcollapse.init();
+	animatedcollapse.toggle('timerlist_div_outer_'+this_id);
+	}
+	window.setTimeout(hide_timerlist_div_outer, 1000);
+	
+		
+	this.close();
+	};
+	} else {
+	document.getElementById("timerlist_status_"+this_id+"").value = "Sorry, your browser does not support server-sent events...";
 	}
 }
 
@@ -661,6 +711,18 @@ if(typeof(EventSource) !== "undefined") {
 	}
 }
 
+// reload timerlist
+function reload_timerlist(){
+	$.post("functions/timer_list_inc.php",
+	function(data){
+	$("#selected_box_sum").html("");
+	$("#unhide").addClass("hidden");
+	$("#show_unhide").attr("onclick", "timerlist_panel(this.id)");
+	$("#show_unhide").attr({ title:"show"});
+	$("#timerlist_inc").html(data);
+});
+}
+
 // timerlist panel
 function select_timer_checkbox(){
 	if (select_all.checked == true){ $("[id^=box]").prop("checked", true); }
@@ -674,11 +736,16 @@ function count_selected(){
 }
 //
 function timerlist_panel(id){
+	
+	$("#panel_action_status").html("");
+	$("#panel_action_status").fadeIn();
+	
 	var checked = []
 	$("input[name='timerlist_checkbox[]']:checked").each(function ()
 	{
 	checked.push(parseInt($(this).val()));
 	});
+	
 	if (id == 'delete'){
 	$("#del_buttons").toggle();
 	return;
@@ -686,18 +753,21 @@ function timerlist_panel(id){
 	if (id == 'send' || id == 'delete_db' || id == 'delete_rec' || id == 'delete_both' || id == 'hide' || id == 'unhide'){
 	if (checked == 0){ return; }
 	}
+	
 	if (id == 'show_unhide'){
 	//$("[id^=timerlist_div_outer_]").removeClass("hidden");
 	$("#selected_box_sum").html("");
+	
 	$(function(){
 	$.post("functions/timer_list_inc.php",
 	{
 	action: 'unhide'
 	},
-	function(data){
+function(data){
 	$("#unhide").removeClass("hidden");
 	$("#select_all").prop("checked", false);
 	$("#show_unhide").attr("onclick", "reload_timerlist()");
+	$("#show_unhide").attr({ title:"hide"});
 	$("#timerlist_inc").html(data);
 	});
 	});
@@ -713,12 +783,31 @@ function timerlist_panel(id){
 	panel_action: id,
 	timer_id: selected_timer
 	},
-	function(data){
+function(data){
 	// write data in container
 	$("#panel_action_status").html("<i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i>");
+	
 	$("#selected_box_sum").html("");
 	
-if (data == 'unhide_done'){
+	if (data == 'send_done'){
+	$("#panel_action_status").fadeOut(4000);
+	$("input[name='timerlist_checkbox[]']:checked").each(function ()
+	{
+	$("#tl_glyphicon_status_"+$(this).val()+"").attr({style:"color:#5CB85C", title:"sent"});
+	});
+	}
+	
+	if (data == 'delete_rec_done'){
+	$("#panel_action_status").fadeOut(4000);
+	$("input[name='timerlist_checkbox[]']:checked").each(function ()
+	{
+	$("#tl_glyphicon_status_"+$(this).val()+"").attr({style:"color:#D9534F", title:"not sent"});
+	});
+	
+	}
+	
+	if (data == 'unhide_done'){
+	$("#panel_action_status").fadeOut(4000);
 	$("input[name='timerlist_checkbox[]']:checked").each(function ()
 	{
 	$('#timerlist_div_outer_'+$(this).val()).removeClass("opac_70");
@@ -732,7 +821,10 @@ function hide_timer_div(){
 	animatedcollapse.addDiv('timerlist_div_outer_'+$(this).val(), 'fade=1,height=auto');
 	animatedcollapse.init()
 	animatedcollapse.hide('timerlist_div_outer_'+$(this).val());
+	$("#panel_action_status").fadeOut(1000);
+	//$("#panel_action_status").val("");
 	});
+
 function unselect_boxes(){
 	$("[id^=box]").prop("checked", false);
 	}
@@ -751,11 +843,11 @@ function browse_records() {
 	
 	$("#record_list").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
 	
-	$.post("functions/record_list.php",
+	$.post("functions/record_list_inc.php",
 	{
 	record_location: id
 	},
-	function(data){
+function(data){
 	// write data in container
 	$("#record_list").html(data);
 	}
@@ -774,10 +866,12 @@ function reload_rec_location() {
 
 if(typeof(EventSource) !== "undefined") {
 	
+	alert("Done..");
+	
     var source = new EventSource("functions/save_rec_locations.php");
     source.onmessage = function(event) {
 		
-	function refresh_page () { 
+function refresh_page () { 
 	<!--
 	s1 = 'loca';
 	s2 = 'tion.r';
@@ -788,8 +882,6 @@ if(typeof(EventSource) !== "undefined") {
 	}
 	window.setTimeout(refresh_page, 1000);
 	
-	document.getElementById("reload_rec_btn").value = "Reload done!";
-	
 	this.close();
 	};
 	} else {
@@ -799,6 +891,7 @@ if(typeof(EventSource) !== "undefined") {
 
 // create m3u
 function create_m3u(id){
+	
 	if(typeof(EventSource) !== "undefined") {
 		
 	document.getElementById("m3u_"+id+"").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
@@ -828,7 +921,7 @@ if (confirm('Are you sure?')) {
 	
 	document.getElementById("del_status_"+record_no+"").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
 	
-	$.post("functions/record_list.php?action=delete",
+	$.post("functions/record_list_inc.php?action=delete",
 	{
 	del_id: id
 	},
@@ -843,7 +936,6 @@ if (confirm('Are you sure?')) {
 }
 }
 
-<!--
 // saved search list list hover
 $(document).ready(function(){
     $("#saved_search_list*").hover(function(){
@@ -855,6 +947,7 @@ $(document).ready(function(){
 
 // open saved search list
 function saved_search_list_edit(id) {
+	
 	var this_id = id.replace(/saved_search_list_/g, "");
 	animatedcollapse.addDiv('saved_search_list_div_'+this_id, 'fade=1,height=auto');
 	animatedcollapse.init()
@@ -863,11 +956,12 @@ function saved_search_list_edit(id) {
 
 // edit saved search list
 function saved_search_list_save(id) {
+	
 if(typeof(EventSource) !== "undefined") {
 	var this_id = id.replace(/saved_search_list_save_btn_/g, "");
-	var searchterm = document.getElementById("searchterm_"+this_id+"").value;
+	var searchterm = encodeURIComponent(document.getElementById("searchterm_"+this_id+"").value);
 	var searcharea = document.getElementById("searcharea_"+this_id+"").value;
-	var exclude_term = document.getElementById("exclude_term_"+this_id+"").value;
+	var exclude_term = encodeURIComponent(document.getElementById("exclude_term_"+this_id+"").value);
 	var exclude_area = document.getElementById("exclude_area_"+this_id+"").value;
 	var rec_replay = document.getElementById("rec_replay_"+this_id+"").value;
 	var channel = document.getElementById("channel_dropdown_saved_search_list_"+this_id+"").value;
@@ -891,6 +985,7 @@ if(typeof(EventSource) !== "undefined") {
 
 // saved search list delete
 function saved_search_list_delete(id) {
+	
 if(typeof(EventSource) !== "undefined") {
 	
 	var this_id = id.replace(/saved_search_list_delete_btn_/g, "");
@@ -906,7 +1001,8 @@ if(typeof(EventSource) !== "undefined") {
 	animatedcollapse.addDiv('search_list_div_'+this_id, 'fade=1,height=auto');
 	animatedcollapse.init()
 	
-	function hide_search_list_div() { animatedcollapse.toggle('search_list_div_'+this_id);
+function hide_search_list_div() { 
+	animatedcollapse.toggle('search_list_div_'+this_id);
 	}
 	window.setTimeout(hide_search_list_div, 1000);
 	
@@ -919,6 +1015,7 @@ if(typeof(EventSource) !== "undefined") {
 
 <!--
 function crawl_complete() {
+	
 if(typeof(EventSource) !== "undefined") {
 	
 	document.getElementById("crawl_complete_btn").disabled = true;
@@ -929,19 +1026,23 @@ if(typeof(EventSource) !== "undefined") {
 
 	if (event.data == 'Channel EPG crawling - done!') {
 	
-	function hide_status () { animatedcollapse.hide('crawl_complete_status');
+function hide_status () { 
+	animatedcollapse.hide('crawl_complete_status');
 	}
 	window.setTimeout(hide_status, 2000);
 	
-	function reset_status () { document.getElementById("crawl_complete_status").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
+function reset_status () { 
+	document.getElementById("crawl_complete_status").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
 	}
 	window.setTimeout(reset_status, 2500);
 	
-	function hide_div_crawl_complete () { animatedcollapse.hide('div_crawl_complete');
+function hide_div_crawl_complete () { 
+	animatedcollapse.hide('div_crawl_complete');
 	}
 	window.setTimeout(hide_div_crawl_complete, 3000);
 	
-	function reset_crawl_complete_btn () { document.getElementById("crawl_complete_btn").disabled = false;
+function reset_crawl_complete_btn () { 
+	document.getElementById("crawl_complete_btn").disabled = false;
 	}
 	window.setTimeout(reset_crawl_complete_btn, 3500);
 	
@@ -981,6 +1082,7 @@ if(typeof(EventSource) !== "undefined") {
 
 <!--
 function crawl_channel_id() {
+	
 if(typeof(EventSource) !== "undefined") {
 	
 	document.getElementById("crawl_channel_id_btn").disabled = true;
@@ -997,19 +1099,23 @@ if(typeof(EventSource) !== "undefined") {
 	
 	if (event.data == 'Channel ID crawling - done!') {
 	
-	function hide_status () { animatedcollapse.hide('crawl_channel_id_status');
+function hide_status () { 
+	animatedcollapse.hide('crawl_channel_id_status');
 	}
 	window.setTimeout(hide_status, 2000);
 	
-	function reset_status () { document.getElementById("crawl_channel_id_status").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
+function reset_status () { 
+	document.getElementById("crawl_channel_id_status").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
 	}
 	window.setTimeout(reset_status, 2500);
 	
-	function hide_div_crawl_channel_id () { animatedcollapse.hide('div_crawl_channel_id');
+function hide_div_crawl_channel_id () { 
+	animatedcollapse.hide('div_crawl_channel_id');
 	}
 	window.setTimeout(hide_div_crawl_channel_id, 3000);
 
-	function reset_crawl_channel_id_btn () { document.getElementById("crawl_channel_id_btn").disabled = false;
+function reset_crawl_channel_id_btn () { 
+	document.getElementById("crawl_channel_id_btn").disabled = false;
 	}
 	window.setTimeout(reset_crawl_channel_id_btn, 3500);
 	
@@ -1021,31 +1127,37 @@ if(typeof(EventSource) !== "undefined") {
 	}
 }
 
-<!--
+//
 function crawl_saved_search() {
+	
 if(typeof(EventSource) !== "undefined") {
 	
 	document.getElementById("crawl_search_btn").disabled = true;
 
     var source = new EventSource("functions/save_timer_in_db.php");
     source.onmessage = function(event) {
+	
 	document.getElementById("crawl_search_status").innerHTML = event.data;
 
 	if (event.data == 'Timer from saved search, written in database!') {
 	
-	function hide_status () { animatedcollapse.hide('crawl_search_status');
+function hide_status () { 
+	animatedcollapse.hide('crawl_search_status');
 	}
 	window.setTimeout(hide_status, 2000);
 	
-	function reset_status () { document.getElementById("crawl_search_status").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
+function reset_status () { 
+	document.getElementById("crawl_search_status").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
 	}
 	window.setTimeout(reset_status, 2500);
 	
-	function hide_div_crawl_savedsearch () { animatedcollapse.hide('div_crawl_search');
+function hide_div_crawl_savedsearch () { 
+	animatedcollapse.hide('div_crawl_search');
 	}
 	window.setTimeout(hide_div_crawl_savedsearch, 3000);
 	
-	function reset_crawl_search_btn () { document.getElementById("crawl_search_btn").disabled = false;
+	function reset_crawl_search_btn () { 
+	document.getElementById("crawl_search_btn").disabled = false;
 	}
 	window.setTimeout(reset_crawl_search_btn, 3500);
 	
@@ -1057,31 +1169,37 @@ if(typeof(EventSource) !== "undefined") {
 	}
 }
 
-<!--
+//
 function send_timer() {
+	
 if(typeof(EventSource) !== "undefined") {
 	
 	document.getElementById("send_timer_btn").disabled = true;
 	
     var source = new EventSource("functions/send_timer_to_box.php");
     source.onmessage = function(event) {
+	
 	document.getElementById("send_timer_status").innerHTML = event.data;
 	<!---->
 	if (event.data == 'Timer was sent from database to Receiver!') {
 	
-	function hide_status () { animatedcollapse.hide('send_timer_status');
+function hide_status () { 
+	animatedcollapse.hide('send_timer_status');
 	}
 	window.setTimeout(hide_status, 2000);
 	
-	function reset_status () { document.getElementById("send_timer_status").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
+function reset_status () { 
+	document.getElementById("send_timer_status").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
 	}
 	window.setTimeout(reset_status, 2500);
 	
-	function hide_div_send_timer () { animatedcollapse.hide('div_send_timer');
+function hide_div_send_timer () { 
+	animatedcollapse.hide('div_send_timer');
 	}
 	window.setTimeout(hide_div_send_timer, 3000);
 	
-	function reset_send_timer_btn () { document.getElementById("send_timer_btn").disabled = false;
+function reset_send_timer_btn () { 
+	document.getElementById("send_timer_btn").disabled = false;
 	}
 	window.setTimeout(reset_send_timer_btn, 3500);
 	
@@ -1093,31 +1211,37 @@ if(typeof(EventSource) !== "undefined") {
 	}
 }
 
-<!--
+//
 function start_channelzapper() {
+	
 if(typeof(EventSource) !== "undefined") {
 	
 	document.getElementById("start_channelzapper_btn").disabled = true;
 	
     var source = new EventSource("functions/channelzapper.php?manual=yes");
     source.onmessage = function(event) {
+	
 	document.getElementById("channelzapper_status").innerHTML = event.data;
 
 	if (event.data == 'all channels zapped - done!') {
 	
-	function hide_status () { animatedcollapse.hide('channelzapper_status');
+function hide_status () { 
+	animatedcollapse.hide('channelzapper_status');
 	}
 	window.setTimeout(hide_status, 2000);
 	
-	function reset_status () { document.getElementById("channelzapper_status").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
+function reset_status () { 
+	document.getElementById("channelzapper_status").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
 	}
 	window.setTimeout(reset_status, 2500);
 	
-	function hide_div_start_channelzapper () { animatedcollapse.hide('div_start_channelzapper');
+function hide_div_start_channelzapper () { 
+	animatedcollapse.hide('div_start_channelzapper');
 	}
 	window.setTimeout(hide_div_start_channelzapper, 3000);
 	
-	function reset_start_channelzapper_btn () { document.getElementById("start_channelzapper_btn").disabled = false;
+function reset_start_channelzapper_btn () { 
+	document.getElementById("start_channelzapper_btn").disabled = false;
 	}
 	window.setTimeout(reset_start_channelzapper_btn, 3500);
 	
@@ -1129,7 +1253,7 @@ if(typeof(EventSource) !== "undefined") {
 	}
 }
 
-<!--
+//
 function save_box_settings() {
 	var box_ip = encodeURIComponent(document.getElementById("box_ip").value);
 	var box_user = encodeURIComponent(document.getElementById("box_user").value);
@@ -1139,6 +1263,7 @@ function save_box_settings() {
 	animatedcollapse.hide('save_box_info');
 
 if(typeof(EventSource) !== "undefined") {
+	
     var source = new EventSource("functions/save_box_settings.php?box_ip="+box_ip+"&box_user="+box_user+"&box_password="+box_password);
     source.onmessage = function(event) {
 
@@ -1164,7 +1289,7 @@ if(typeof(EventSource) !== "undefined") {
 	}
 }
 
-<!--
+//
 function save_settings() {
 	
 	var display_time_format = document.getElementById("display_time_format").value;
@@ -1186,7 +1311,6 @@ function save_settings() {
 	
 	var crawler_hour = document.getElementById("crawler_hour").value;
 	var crawler_minute = document.getElementById("crawler_minute").value;
-	if (display_time_format == '2'){ var crawler_am_pm = document.getElementById("crawler_am_pm").value; } else { var crawler_am_pm = '0'; }
 	
 	if (document.getElementById("search_crawler").checked == true) { var search_crawler = '1'; }
 	if (document.getElementById("search_crawler").checked == false) { var search_crawler = '0'; }
@@ -1202,6 +1326,9 @@ function save_settings() {
 	
 	if (document.getElementById("timer_ticker").checked == true) { var timer_ticker = '1'; }
 	if (document.getElementById("timer_ticker").checked == false) { var timer_ticker = '0'; }
+	
+	if (document.getElementById("show_hidden_ticker").checked == true) { var show_hidden_ticker = '1'; }
+	if (document.getElementById("show_hidden_ticker").checked == false) { var show_hidden_ticker = '0'; }
 	
 	var ticker_time = document.getElementById("ticker_time").value;
 	
@@ -1219,7 +1346,8 @@ function save_settings() {
 	
 	if (document.getElementById("dummy_timer").checked == true) { var dummy_timer = '1'; }
 	if (document.getElementById("dummy_timer").checked == false) { var dummy_timer = '0'; }
-	
+		
+	var start_epg_crawler = document.getElementById("start_epg_crawler").value;
 	var after_crawl_action = document.getElementById("after_crawl_action").value;
 	
 	if (document.getElementById("delete_old_epg").checked == true) { var delete_old_epg = '1'; }
@@ -1230,8 +1358,8 @@ function save_settings() {
 	var del_time = document.getElementById("del_time").value;
 	var extra_rec_time = document.getElementById("extra_rec_time").value;
 	
-	if (document.getElementById("reload_progressbar1").checked == true) { var reload_progressbar1 = '1'; }
-	if (document.getElementById("reload_progressbar1").checked == false) { var reload_progressbar1 = '0'; }
+	if (document.getElementById("reload_progressbar").checked == true) { var reload_progressbar = '1'; }
+	if (document.getElementById("reload_progressbar").checked == false) { var reload_progressbar = '0'; }
 	
 	if (document.getElementById("mark_searchterm").checked == true) { var mark_searchterm = '1'; }
 	if (document.getElementById("mark_searchterm").checked == false) { var mark_searchterm = '0'; }
@@ -1247,55 +1375,89 @@ function save_settings() {
 
 	var cz_start_channel = document.getElementById("channel_id").value;
 	
-	var start_epg_crawler = document.getElementById("start_epg_crawler").value;
+	document.getElementById("save_settings_status").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";	
 	
-	document.getElementById("save_settings_status").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
-
-if(typeof(EventSource) !== "undefined") {
-    var source = new EventSource("functions/save_settings.php?activate_cron="+activate_cron+"&epg_entries_per_channel="+epg_entries_per_channel+"&channel_entries="+channel_entries+"&time_format="+time_format+"&dur_down_broadcast="+dur_down_broadcast+"&dur_up_broadcast="+dur_up_broadcast+"&dur_down_primetime="+dur_down_primetime+"&dur_up_primetime="+dur_up_primetime+"&epg_crawler="+epg_crawler+"&crawler_hour="+crawler_hour+"&crawler_minute="+crawler_minute+"&crawler_am_pm="+crawler_am_pm+"&start_epg_crawler="+start_epg_crawler+"&search_crawler="+search_crawler+"&timer_ticker="+timer_ticker+"&ticker_time="+ticker_time+"&streaming_symbol="+streaming_symbol+"&imdb_symbol="+imdb_symbol+"&display_old_epg="+display_old_epg+"&send_timer="+send_timer+"&hide_old_timer="+hide_old_timer+"&delete_old_timer="+delete_old_timer+"&delete_receiver_timer="+delete_receiver_timer+"&dummy_timer="+dummy_timer+"&after_crawl_action="+after_crawl_action+"&delete_old_epg="+delete_old_epg+"&url_format="+url_format+"&del_time="+del_time+"&reload_progressbar1="+reload_progressbar1+"&extra_rec_time="+extra_rec_time+"&mark_searchterm="+mark_searchterm+"&cz_activate="+cz_activate+"&cz_wait_time="+cz_wait_time+"&cz_hour="+cz_hour+"&cz_minute="+cz_minute+"&cz_repeat="+cz_repeat+"&cz_am_pm="+cz_am_pm+"&cz_start_channel="+cz_start_channel);
-    source.onmessage = function(event) {
-
+	$.post("functions/save_settings.php",
+	{
+	activate_cron: activate_cron,
+	epg_entries_per_channel: epg_entries_per_channel,
+	channel_entries: channel_entries,
+	time_format: time_format,
+	dur_down_broadcast: dur_down_broadcast,
+	dur_up_broadcast: dur_up_broadcast,
+	dur_down_primetime: dur_down_primetime,
+	dur_up_primetime: dur_up_primetime,
+	epg_crawler: epg_crawler,
+	crawler_hour: crawler_hour,
+	crawler_minute: crawler_minute,
+	start_epg_crawler: start_epg_crawler,
+	search_crawler: search_crawler,
+	timer_ticker: timer_ticker,
+	show_hidden_ticker: show_hidden_ticker,
+	ticker_time: ticker_time,
+	streaming_symbol: streaming_symbol,
+	imdb_symbol: imdb_symbol,
+	display_old_epg: display_old_epg,
+	send_timer: send_timer,
+	hide_old_timer: hide_old_timer,
+	delete_old_timer: delete_old_timer,
+	delete_receiver_timer: delete_receiver_timer,
+	dummy_timer: dummy_timer,
+	after_crawl_action: after_crawl_action,
+	delete_old_epg: delete_old_epg,
+	url_format: url_format,
+	del_time: del_time,
+	reload_progressbar: reload_progressbar,
+	extra_rec_time: extra_rec_time,
+	mark_searchterm: mark_searchterm,
+	cz_activate: cz_activate,
+	cz_wait_time: cz_wait_time,
+	cz_hour: cz_hour,
+	cz_minute: cz_minute,
+	cz_repeat: cz_repeat,
+	cz_am_pm: cz_am_pm,
+	cz_start_channel: cz_start_channel
+	},
+	function(data){
 	<!---if error--->
-	if (event.data == 'data missed') {		
+	if (data == 'data missed') {		
 	document.getElementById("save_settings_status").innerHTML = "Data missed!";
-	this.close();
-	}
-	
-	if (event.data == 'ok') {
+	}	
+	if (data == 'ok') {
 	document.getElementById("save_settings_status").innerHTML = "<i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i> Settings saved";
-
-	this.close();
 	}
-	};
-	} else {
-	document.getElementById("save_settings_status").innerHTML = "Sorry, your browser does not support server-sent events...";
-	}
+	});
 }
 
 // copy record locations from receiver
 function save_rec_locations() {
-document.getElementById("save_box_info_status").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
+	
+	document.getElementById("save_box_info_status").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
+	
 if(typeof(EventSource) !== "undefined") {
 	
     var source = new EventSource("functions/save_rec_locations.php");
     source.onmessage = function(event) {
 	document.getElementById("save_box_info_status").innerHTML = event.data;
-	<!---->
+
 	if (event.data == 'ok') {
 	
 	document.getElementById("save_box_info_status").innerHTML = "Record locations and bouquets has been copied!";
 	
-	function hide_div_save_box_info_status () { animatedcollapse.hide('save_box_info_status');
+function hide_div_save_box_info_status () { 
+	animatedcollapse.hide('save_box_info_status');
 	}
-	window.setTimeout(hide_div_save_box_info_status, 3000);
+	window.setTimeout(hide_div_save_box_info_status, 2000);
 	
-	function hide_div_save_box_info () { animatedcollapse.hide('save_box_info');
+function hide_div_save_box_info () { 
+	animatedcollapse.hide('save_box_info');
 	}
-	window.setTimeout(hide_div_save_box_info, 3000);
+	window.setTimeout(hide_div_save_box_info, 2000);
 		
-	function hide_save_box_settings_status () { animatedcollapse.hide('save_box_settings_status');
+function hide_save_box_settings_status () { 
+	animatedcollapse.hide('save_box_settings_status');
 	}
-	window.setTimeout(hide_save_box_settings_status, 3000);
+	window.setTimeout(hide_save_box_settings_status, 2000);
 	
 	save_bouquet_data();
 	
@@ -1309,14 +1471,13 @@ if(typeof(EventSource) !== "undefined") {
 
 // copy bouquet urls from receiver
 function save_bouquet_data() {
+	
 if(typeof(EventSource) !== "undefined") {
 	
     var source = new EventSource("functions/bouquet_crawler.php");
     source.onmessage = function(event) {
-		
-	this.close();
 	
-	function refresh_page () { 
+	function refresh_page(){ 
 	<!--
 	s1 = 'loca';
 	s2 = 'tion.r';
@@ -1325,7 +1486,9 @@ if(typeof(EventSource) !== "undefined") {
 	if (document.all || document.getElementById || document.layers)
 	eval(s1+s2+s3+s4);
 	}
-	window.setTimeout(refresh_page, 3000);
+	window.setTimeout(refresh_page, 2500);
+	
+	this.close();
 	
 	};
 	} else {
@@ -1334,8 +1497,8 @@ if(typeof(EventSource) !== "undefined") {
 }
 
 // set channel to crawl
-function set_crawl_channel(id)
-	{
+function set_crawl_channel(id) {
+	
 if(typeof(EventSource) !== "undefined") {
 	
 	var this_id = id.replace(/set_crawl_channel_/g, "");
@@ -1359,8 +1522,8 @@ if(typeof(EventSource) !== "undefined") {
 }
 
 // set channel for channelzapper
-function set_zap_channel(id)
-	{
+function set_zap_channel(id){
+	
 if(typeof(EventSource) !== "undefined") {
 	
 	var this_id = id.replace(/set_zap_channel_/g, "");
@@ -1384,8 +1547,8 @@ if(typeof(EventSource) !== "undefined") {
 }
 
 // add channel
-function add_single_channel()
-	{
+function add_single_channel() {
+	
 if(typeof(EventSource) !== "undefined") {
 	
 	document.getElementById("add_single_channel_status").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
@@ -1434,6 +1597,7 @@ function save_bouquet_settings(id)
 if(typeof(EventSource) !== "undefined") {
 	
 	var this_id = id.replace(/save_bouquet_settings_status_/g, "");
+	
 	document.getElementById("save_bouquet_settings_status_"+this_id+"").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
 
 	if (document.getElementById(id).checked == true) { var crawl_bouquet = '1'; }
@@ -1442,7 +1606,8 @@ if(typeof(EventSource) !== "undefined") {
     var source = new EventSource("functions/save_bouquet_settings.php?crawl_bouquet="+crawl_bouquet+"&bouquet_id="+id+"");
 	
     source.onmessage = function(event) {
-    document.getElementById("save_bouquet_settings_status_"+this_id+"").innerHTML = event.data;
+    
+	document.getElementById("save_bouquet_settings_status_"+this_id+"").innerHTML = event.data;
 	
 	this.close();
 	};
@@ -1453,6 +1618,7 @@ if(typeof(EventSource) !== "undefined") {
 
 // add custom bouquet
 function add_custom_bouquet() {
+	
 if(typeof(EventSource) !== "undefined") {
 	
 	document.getElementById("add_custom_bouquet_status").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
@@ -1475,8 +1641,10 @@ if(typeof(EventSource) !== "undefined") {
 
 // power control
 function power_control(id){
+	
 if(typeof(EventSource) !== "undefined") {
 	
+	$("#pc"+id+"").fadeIn();
 	document.getElementById("pc"+id+"").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
 
     var source = new EventSource("functions/power_control.php?command="+id+"");
@@ -1484,6 +1652,7 @@ if(typeof(EventSource) !== "undefined") {
 	
 	if (event.data == 'true') {
 	document.getElementById("pc"+id+"").innerHTML = "<i class=\"glyphicon glyphicon-arrow-down fa-1x\" style=\"color:#D9534F\"></i>";
+	$("#pc"+id+"").fadeOut(4000);
 	this.close(); }
 	
 	if (event.data == 'error') {
@@ -1492,6 +1661,7 @@ if(typeof(EventSource) !== "undefined") {
 	
 	if (event.data == 'false') {
 	document.getElementById("pc"+id+"").innerHTML = "<i class=\"glyphicon glyphicon-arrow-up fa-1x\" style=\"color:#5CB85C\"></i>";
+	$("#pc"+id+"").fadeOut(4000);
 	this.close(); }
 	
 	};
@@ -1557,3 +1727,71 @@ function teletext_control(id) {
 	}
 	);
 };
+
+// add channel from services list
+function all_services_add(id,name) {
+	
+	var this_id = id.replace(/all_services_add_btn_/g, "");
+	
+	document.getElementById("all_services_status_add_"+this_id+"").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
+	
+if(typeof(EventSource) !== "undefined") {
+	
+    var source = new EventSource("functions/services_inc.php?action=add&id="+name+"");
+    source.onmessage = function(event) {
+		
+	document.getElementById("all_services_status_add_"+this_id+"").innerHTML = event.data;
+	
+	this.close();
+	};
+	} else {
+	document.getElementById("all_services_status_add_"+this_id+"").value = "Sorry, your browser does not support server-sent events...";
+	}
+}
+
+// services zap request
+function all_services_zapp(id,name) {
+	
+	var this_id = id.replace(/all_services_zapp_btn_/g, "");
+	
+	document.getElementById("all_services_status_zapp_"+this_id+"").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
+	
+if(typeof(EventSource) !== "undefined") {
+	
+    var source = new EventSource("functions/send_zapp_request.php?e2servicereference="+name+"");
+    source.onmessage = function(event) {
+
+	$("#all_services_status_zapp_"+this_id+"").html("<i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i>");
+	$("#all_services_status_zapp_"+this_id+"").fadeOut(4000);
+	$("#all_services_status_zapp_"+this_id+"").innerHTML("");
+	
+	this.close();
+	};
+	} else {
+	document.getElementById("all_services_status_zapp_"+this_id+"").value = "Sorry, your browser does not support server-sent events...";
+	}
+}
+
+// crawl all services
+function all_services_crawl() {
+
+	$("#all_services_list").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\"> Copy services from Receiver..");
+	
+if(typeof(EventSource) !== "undefined") {
+	
+    var source = new EventSource("functions/services_inc.php?action=crawl");
+    source.onmessage = function(event) {
+	
+	$.post("functions/services_inc.php",
+	function(data){
+	// write data in container
+	$("#all_services_list").html(data);
+	}
+	);
+	
+	this.close();
+	};
+	} else {
+	document.getElementById("all_services_list").value = "Sorry, your browser does not support server-sent events...";
+	}
+}
