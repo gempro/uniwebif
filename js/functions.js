@@ -617,17 +617,27 @@ function timerlist_delete_timer(id) {
 	
 	document.getElementById("timerlist_status_"+this_id+"").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
 	
-//	if (document.getElementById("delete_from_box_"+this_id+"").checked == true) { var delete_from_box = '1'; }
-//	if (document.getElementById("delete_from_box_"+this_id+"").checked == false) { var delete_from_box = '0'; }
+	if (document.getElementById("timerlist_delete_db_"+this_id+"").checked == true) { var delete_from_db = '1'; }
+	if (document.getElementById("timerlist_delete_db_"+this_id+"").checked == false) { var delete_from_db = '0'; }
 	
 if(typeof(EventSource) !== "undefined") {
 	
-    var source = new EventSource("functions/timer_list_inc.php?action=delete&timer_id="+this_id+"");
+    var source = new EventSource("functions/timer_list_inc.php?action=delete&timer_id="+this_id+"&delete_from_db="+delete_from_db+"");
     source.onmessage = function(event) {
-		
+	
 	document.getElementById("timerlist_status_"+this_id+"").innerHTML = "<i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i> Timer deleted";
 
 	$("#tl_glyphicon_status_"+this_id+"").attr({style:"color:#D9534F", title:"not sent"});
+	
+	if (event.data == "deleted_db")
+	{ 
+	animatedcollapse.addDiv('timerlist_div_outer_'+this_id, 'fade=1,height=auto');
+	animatedcollapse.init()
+	
+function hide_timerlist_div_outer() { animatedcollapse.toggle('timerlist_div_outer_'+this_id);
+	}
+	window.setTimeout(hide_timerlist_div_outer, 1000);
+	}
 		
 	this.close();
 	};
@@ -644,20 +654,20 @@ if(typeof(EventSource) !== "undefined") {
 	var this_id = id.replace(/timerlist_send_timer_btn_/g, "");
 	var record_location = document.getElementById("timerlist_rec_location_"+this_id+"").innerHTML;
 	
-	document.getElementById("timerlist_send_timer_status_"+this_id+"").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
+	document.getElementById("timerlist_status_"+name+"").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
 	
     var source = new EventSource("functions/send_timer_instant.php?location=timerlist&hash="+this_id+"&record_location="+record_location+"");
     
 	source.onmessage = function(event) {
 		
-	document.getElementById("timerlist_send_timer_status_"+this_id+"").innerHTML = event.data;
+	document.getElementById("timerlist_status_"+name+"").innerHTML = event.data;
 	
 	$("#tl_glyphicon_status_"+name+"").attr({style:"color:#5CB85C", title:"sent"});
 
 	this.close();
 	};
 	} else {
-	document.getElementById("timerlist_send_timer_status_"+this_id+"").value = "Sorry, your browser does not support server-sent events...";
+	document.getElementById("timerlist_status_"+this_id+"").value = "Sorry, your browser does not support server-sent events...";
 	}
 }
 
@@ -680,7 +690,6 @@ function hide_timerlist_div_outer() {
 	animatedcollapse.toggle('timerlist_div_outer_'+this_id);
 	}
 	window.setTimeout(hide_timerlist_div_outer, 1000);
-	
 		
 	this.close();
 	};
