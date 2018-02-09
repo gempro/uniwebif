@@ -58,27 +58,21 @@ $("#timerlist*").hover(function(){
 	
 	$sql = mysqli_query($dbmysqli, "UPDATE `timer` SET `status` = 'waiting' WHERE `id` = '".$timer_id."' ");
 	//
-//	header('Content-Type: text/event-stream');
-//	header('Cache-Control: no-cache');
-//	echo "data:deleted\n\n";
-//	exit;
 	}
 	
-		// delete timer from database
+	// delete timer from database
 	if ($delete_from_db == '1')
 	{
 	$sql = mysqli_query($dbmysqli, "DELETE FROM `timer` WHERE `id` = '".$timer_id."' ");
 	//
-
 	echo "data:deleted_db\n\n";
 	exit;
 	
 	} else {
-
+	
 	echo "data:deleted\n\n";
 	exit;
 	}
-	
 	}
 	
 	// hide single timer
