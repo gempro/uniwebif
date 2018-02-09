@@ -27,9 +27,14 @@ $("#timerlist*").hover(function(){
 	} else {
 
 	if ($action == 'delete'){
-	if(!isset($_REQUEST['delete_from_box']) or $_REQUEST['delete_from_box'] == "") { $_REQUEST['delete_from_box'] = ""; }	
+	if(!isset($_REQUEST['delete_from_box']) or $_REQUEST['delete_from_box'] == "") { $_REQUEST['delete_from_box'] = ""; }
+	if(!isset($_REQUEST['delete_from_db']) or $_REQUEST['delete_from_db'] == "") { $_REQUEST['delete_from_db'] = ""; }
 	
 	$timer_id = $_REQUEST['timer_id'];
+	$delete_from_db = $_REQUEST['delete_from_db'];
+	
+	header('Content-Type: text/event-stream');
+	header('Cache-Control: no-cache');
 
 	// unmark timer
 	$sql = mysqli_query($dbmysqli, "SELECT * FROM `timer` WHERE `id` = '".$timer_id."' ");
@@ -53,11 +58,27 @@ $("#timerlist*").hover(function(){
 	
 	$sql = mysqli_query($dbmysqli, "UPDATE `timer` SET `status` = 'waiting' WHERE `id` = '".$timer_id."' ");
 	//
-	header('Content-Type: text/event-stream');
-	header('Cache-Control: no-cache');
+//	header('Content-Type: text/event-stream');
+//	header('Cache-Control: no-cache');
+//	echo "data:deleted\n\n";
+//	exit;
+	}
+	
+		// delete timer from database
+	if ($delete_from_db == '1')
+	{
+	$sql = mysqli_query($dbmysqli, "DELETE FROM `timer` WHERE `id` = '".$timer_id."' ");
+	//
+
+	echo "data:deleted_db\n\n";
+	exit;
+	
+	} else {
+
 	echo "data:deleted\n\n";
 	exit;
 	}
+	
 	}
 	
 	// hide single timer
@@ -229,8 +250,8 @@ if ($obj->record_status == 'c_expired')
 		  <input id=\"timerlist_send_timer_btn_$obj->hash\" name=\"$obj->id\" type=\"submit\" onClick=\"timerlist_send_timer(this.id,this.name)\" value=\"SEND TIMER\" class=\"btn btn-success btn-sm\" title=\"send Timer to Receiver\"/>
 		  <input id=\"timerlist_hide_timer_btn_$obj->id\" type=\"submit\" onClick=\"timerlist_hide_timer(this.id)\" value=\"HIDE TIMER\" class=\"btn btn-primary btn-sm\" title=\"hide Timer from list\"/>
 		  <input id=\"delete_timer_btn_$obj->id\" type=\"submit\" onClick=\"timerlist_delete_timer(this.id)\" value=\"DELETE TIMER\" class=\"btn btn-danger btn-sm\" title=\"delete Timer from Receiver\"/>
+		  <span class=\"del_checkbox\"><input id=\"timerlist_delete_db_$obj->id\" type=\"checkbox\"> delete also from Database</span>
 		  <span id=\"timerlist_status_$obj->id\"></span>
-		  <span id=\"timerlist_send_timer_status_$obj->hash\"></span>
 		  </div>
 		</div><div class=\"spacer_10\"></div>
 		</div>";
