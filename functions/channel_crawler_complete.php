@@ -2,9 +2,6 @@
 //
 include("../inc/dashboard_config.php");
 
-//	// epg crawler working
-//	$sql = mysqli_query($dbmysqli, "UPDATE settings SET epg_crawler_activ = '1'");
-
 	$channel_id = $_REQUEST["channel_id"];
 	
 	$xmlfile = ''.$url_format.'://'.$box_ip.'/web/epgservice?sRef='.$channel_id.'';
@@ -52,62 +49,25 @@ if ($xml) {
 	$e2eventdescriptionextended = str_replace("'", "", $e2eventdescriptionextended);
 	$e2eventdescriptionextended = str_replace("\"", "", $e2eventdescriptionextended);
 	
-	// Timestamp Start
+	// timestamp start
 	$start_day = date("d",$starttime);
+	$start_weekday = date("l",$starttime);
 	$start_month = date("m",$starttime);
 	$start_year = date("Y",$starttime);
-	
 	$start_hour = date("H",$starttime);
 	$start_minute = date("i",$starttime);
-	
-	$start_date = $start_day. "." .$start_month. "." .$start_year. " " .$start_hour. ":" .$start_minute;
-	
-	$start_weekday = date("l",$starttime);
-	
-	if ($time_format == '1')
-	{
-	// time format 1
-	$start_weekday = str_replace("Monday", "Montag", $start_weekday);
-	$start_weekday = str_replace("Tuesday", "Dienstag", $start_weekday);
-	$start_weekday = str_replace("Wednesday", "Mittwoch", $start_weekday);
-	$start_weekday = str_replace("Thursday", "Donnerstag", $start_weekday);
-	$start_weekday = str_replace("Friday", "Freitag", $start_weekday);
-	$start_weekday = str_replace("Saturday", "Samstag", $start_weekday);
-	$start_weekday = str_replace("Sunday", "Sonntag", $start_weekday);
-	}
+	$start_date = date("d.m.Y H:i", $starttime);
+	$us_start_date = date("m/d/Y H:i A", $starttime);
 		
-	// Timestamp End
+	// timestamp end
 	$end_day = date("d",$e2eventend);
+	$end_weekday = date("l",$e2eventend);
 	$end_month = date("m",$e2eventend);
 	$end_year = date("Y",$e2eventend);
-	
 	$end_hour = date("H",$e2eventend);
 	$end_minute = date("i",$e2eventend);
-	
-	$end_date = $end_day. "." .$end_month. "." .$end_year. " " .$end_hour. ":" .$end_minute;
-	
-	if ($time_format == '1')
-	{ // time format 1
-	$end_weekday = date("l",$e2eventend);
-	$end_weekday = str_replace("Monday", "Montag", $end_weekday);
-	$end_weekday = str_replace("Tuesday", "Dienstag", $end_weekday);
-	$end_weekday = str_replace("Wednesday", "Mittwoch", $end_weekday);
-	$end_weekday = str_replace("Thursday", "Donnerstag", $end_weekday);
-	$end_weekday = str_replace("Friday", "Freitag", $end_weekday);
-	$end_weekday = str_replace("Saturday", "Samstag", $end_weekday);
-	$end_weekday = str_replace("Sunday", "Sonntag", $end_weekday);
-	}
-		
-	// time format 2
-	$us_starthour = date("g",$starttime);
-	$start_minute = date("i",$starttime);
-	$ampm = date("A",$starttime);
-	$us_start_date = $start_month. "/" .$start_day. "/" .$start_year. " " .$us_starthour. ":" .$start_minute. " " .$ampm;
-	//
-	$us_endhour = date("g",$e2eventend);
-	$end_minute = date("i",$e2eventend);
-	$ampm = date("A",$e2eventend);
-	$us_end_date = $end_month. "/" .$end_day. "/" .$end_year. " " .$us_endhour. ":" .$end_minute. " " .$ampm;
+	$end_date = date("d.m.Y H:i", $e2eventend);
+	$us_end_date = date("m/d/Y H:i A", $e2eventend);
 	
 	// mark hd channels
 	if (preg_match("/\bHD\b/i", $e2eventservicename)) {
@@ -118,19 +78,19 @@ if ($xml) {
 	
 	// complete time
 	$difference = $e2eventend - $starttime;
-	$stunden = floor ($difference / 3600);
+	$hours = floor ($difference / 3600);
 	$total_min = floor ($difference / 60);
 	$rest = $difference % 3600;
-	$minuten = floor ($rest / 60);
-	$sekunden = $rest % 60;
+	$minutes = floor ($rest / 60);
+	$seconds = $rest % 60;
 	
 	// crawler_time
-	$crawler_time = "".$thedate." ".$thetime."";
+	$crawler_time = date("m/d/Y H:i:s", $time);
 	
 	// unique id
 	$hash = hash('md4',$servicename_enc.$e2eventstart.$e2eventend);
 	
-	// unique id
+	// channel hash
 	$channel_hash = hash('md4',$e2eventservicename);
 	
 	$sql = mysqli_query($dbmysqli, "
