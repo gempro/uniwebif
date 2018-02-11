@@ -136,8 +136,8 @@ if ($xml) {
 	// crawler_time
 	$crawler_time = "".$thedate." ".$thetime."";
 	
-	// hash
-	$hash = substr(md5(rand()),0,50);
+	// unique id
+	$hash = hash('md4',$servicename_enc.$e2eventstart.$e2eventend);
 	
 	// channel hash
 	$channel_hash = hash('md4',$e2eventservicename);

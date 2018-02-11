@@ -98,14 +98,12 @@ if ($xml) {
 	$end_weekday = str_replace("Sunday", "Sonntag", $end_weekday);
 	}
 		
-	// timeformat
-	// us start time
+	// time format 2
 	$us_starthour = date("g",$starttime);
 	$start_minute = date("i",$starttime);
 	$ampm = date("A",$starttime);
 	$us_start_date = $start_month. "/" .$start_day. "/" .$start_year. " " .$us_starthour. ":" .$start_minute. " " .$ampm;
-	
-	// us end time
+	//
 	$us_endhour = date("g",$e2eventend);
 	$end_minute = date("i",$e2eventend);
 	$ampm = date("A",$e2eventend);
@@ -129,10 +127,10 @@ if ($xml) {
 	// crawler_time
 	$crawler_time = "".$thedate." ".$thetime."";
 	
-	// hash
-	$hash = substr(md5(rand()),0,50);
+	// unique id
+	$hash = hash('md4',$servicename_enc.$e2eventstart.$e2eventend);
 	
-	// channel hash
+	// unique id
 	$channel_hash = hash('md4',$e2eventservicename);
 	
 	$sql = mysqli_query($dbmysqli, "
