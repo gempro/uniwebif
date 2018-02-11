@@ -25,6 +25,17 @@ $("#timerlist*").hover(function(){
 	if(!isset($_REQUEST['timer_id']) or $_REQUEST['timer_id'] == "") { $_REQUEST['timer_id'] = ""; 
 	
 	} else {
+	
+	header('Content-Type: text/event-stream');
+	header('Cache-Control: no-cache');
+	
+	// hide single timer
+	if ($action == 'hide'){
+	$timer_id = $_REQUEST['timer_id'];
+	$sql =  mysqli_query($dbmysqli, "UPDATE `timer` SET `hide` = '1' WHERE `id` = '".$timer_id."' ");
+	echo "data:hided\n\n";
+	exit;
+	}
 
 	if ($action == 'delete'){
 	if(!isset($_REQUEST['delete_from_box']) or $_REQUEST['delete_from_box'] == "") { $_REQUEST['delete_from_box'] = ""; }
@@ -32,9 +43,6 @@ $("#timerlist*").hover(function(){
 	
 	$timer_id = $_REQUEST['timer_id'];
 	$delete_from_db = $_REQUEST['delete_from_db'];
-	
-	header('Content-Type: text/event-stream');
-	header('Cache-Control: no-cache');
 
 	// unmark timer
 	$sql = mysqli_query($dbmysqli, "SELECT * FROM `timer` WHERE `id` = '".$timer_id."' ");
@@ -73,16 +81,6 @@ $("#timerlist*").hover(function(){
 	echo "data:deleted\n\n";
 	exit;
 	}
-	}
-	
-	// hide single timer
-	if ($action == 'hide'){
-	$timer_id = $_REQUEST['timer_id'];
-	$sql =  mysqli_query($dbmysqli, "UPDATE `timer` SET `hide` = '1' WHERE `id` = '".$timer_id."' ");
-	header('Content-Type: text/event-stream');
-	header('Cache-Control: no-cache');
-	echo "data:hided\n\n";
-	exit;
 	}
 	
 	// unhide
