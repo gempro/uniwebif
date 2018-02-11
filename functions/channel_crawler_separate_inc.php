@@ -83,6 +83,10 @@ include("../inc/dashboard_config.php");
 	<div class=\"spacer_10\"></div>";
 	}
 	}
+	
+	if(!isset($channel_list) or $channel_list == "") { $channel_list = "No channels to display..."; }
+	if(!isset($header) or $header == "") { $header = ""; }
+	
 	echo utf8_encode($header.$channel_list.'<hr>');
 	
 	// Free result set
