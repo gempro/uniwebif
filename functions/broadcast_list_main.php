@@ -42,12 +42,12 @@ include("../inc/dashboard_config.php");
 	$ampm = $_REQUEST['ampm'];
 	
 	if ($ampm !== '0'){
-	if ($ampm == 'AM'){ $ampm = 'A'; }
-	if ($ampm == 'PM'){  $ampm = 'P'; }
-	} else { $ampm = ''; }
+	if ($ampm == 'AM'){ $hour = $hour; }
+	if ($ampm == 'PM'){ $hour = $hour + 12; }
+	}
 	
 	//
-	$set_time = date("d.m.Y, ".$hour.":".$minute." ".$ampm."", $_SESSION["browse_timestamp"]);
+	$set_time = date("d.m.Y, ".$hour.":".$minute."", $_SESSION["browse_timestamp"]);
 	$_SESSION["browse_timestamp"] = strtotime($set_time) + $dur_down_broadcast;
 	}
 	
