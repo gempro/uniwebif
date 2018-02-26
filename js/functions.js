@@ -72,13 +72,13 @@ function broadcast_show_time(id) {
 	var mm = $("#broadcast_mm").val();
 	
 	if (time_format == 1) {
-	if(isFinite(String(hh)) == false || hh == '' || hh > 23){ var hh = "00"; $("#broadcast_hh").addClass("error-input"); return; } else { $("#broadcast_hh").removeClass("error-input"); };
-	if(isFinite(String(mm)) == false || mm == '' || mm > 59){ var mm = "00"; $("#broadcast_mm").addClass("error-input"); return; } else { $("#broadcast_mm").removeClass("error-input"); };
+	if(isFinite(String(hh)) == false || hh == '' || hh > 23){ var hh = "00"; $("#broadcast_hh").val("00"); }
+	if(isFinite(String(mm)) == false || mm == '' || mm > 59){ var mm = "00"; $("#broadcast_mm").val("00"); }
 	var am_pm = '0';
 	}
 	if (time_format == 2) {
-	if(isFinite(String(hh)) == false || hh == '' || hh > 12 || hh < 1){ var hh = "12"; $("#broadcast_hh").addClass("error-input"); return; } else { $("#broadcast_hh").removeClass("error-input"); };
-	if(isFinite(String(mm)) == false || mm == '' || mm > 59){ var mm = "00"; $("#broadcast_mm").addClass("error-input"); return; } else { $("#broadcast_mm").removeClass("error-input"); };
+	if(isFinite(String(hh)) == false || hh == '' || hh > 12 || hh < 1){ var hh = "12"; $("#broadcast_hh").val("12"); }
+	if(isFinite(String(mm)) == false || mm == '' || mm > 59){ var mm = "00"; $("#broadcast_mm").val("00"); }
 	var am_pm = $("#broadcast_am_pm").val();
 	}
 	$("#show_time").attr('data-toggle', 'tab');
@@ -475,8 +475,8 @@ function set_primetime(){
 	
 	if (time_format == 2)
 	{
-	if(isFinite(String(hh)) == false || hh == '' || hh > 12){ var hh = "12"; $("#primetime_hh").addClass("error-input"); } else { $("#primetime_hh").removeClass("error-input"); };
-	if(isFinite(String(mm)) == false || mm == '' || mm > 59){ var mm = "00"; $("#primetime_mm").addClass("error-input"); } else { $("#primetime_mm").removeClass("error-input"); };
+	if(isFinite(String(hh)) == false || hh == '' || hh > 12){ var hh = "12"; $("#primetime_hh").val("12"); }
+	if(isFinite(String(mm)) == false || mm == '' || mm > 59){ var mm = "00"; $("#primetime_mm").val("00"); }
 	var am_pm = $("#primetime_am_pm").val();
 	}
 	
