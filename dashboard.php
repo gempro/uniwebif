@@ -278,12 +278,12 @@ $("#broadcast_hh").on({
     change: function () {
 	var hh = $('#broadcast_hh').val();
 	if (time_format == '1') {
-	if(isFinite(String(hh)) == false || hh > 23 || hh < 1){ $("#broadcast_hh").addClass("error-input");
-	} else { $("#broadcast_hh").removeClass("error-input"); };
+	if(isFinite(String(hh)) == false || hh > 23 || hh < 1){ var hh = '00'; $("#broadcast_hh").val("00");
+	}
 	}
 	if (time_format == '2') {
-	if(isFinite(String(hh)) == false || hh > 12 || hh < 1){ $("#broadcast_hh").addClass("error-input");
-	} else { $("#broadcast_hh").removeClass("error-input"); };
+	if(isFinite(String(hh)) == false || hh > 12 || hh < 1){ var hh = '12'; $("#broadcast_hh").val("12");
+	}
 	}
    }
 });
@@ -292,24 +292,24 @@ $(function(){
 $("#broadcast_mm").on({
     change: function () {
 	var mm = $('#broadcast_mm').val();
-	if(isFinite(String(mm)) == false || mm > 59 || mm < 1){ $("#broadcast_mm").addClass("error-input");
-	} else { $("#broadcast_mm").removeClass("error-input"); };
+	if(isFinite(String(mm)) == false || mm > 59 || mm < 1){ var mm = '00'; $("#broadcast_mm").val("00");
+	}
     }
 });
 });
-// time input broadcast list
+// time input primetime list
 $(function(){
 	var time_format = '<?php echo $time_format; ?>';
 $("#primetime_hh").on({
     change: function () {
 	var hh = $('#primetime_hh').val();
 	if (time_format == '1') {
-	if(isFinite(String(hh)) == false || hh > 23 || hh < 1){ $("#primetime_hh").addClass("error-input");
+	if(isFinite(String(hh)) == false || hh > 23 || hh < 1){ var hh = '00'; $("#primetime_hh").val("00");
 	} else { $("#primetime_hh").removeClass("error-input"); };
 	}
 	if (time_format == '2') {
-	if(isFinite(String(hh)) == false || hh > 12 || hh < 1){ $("#primetime_hh").addClass("error-input");
-	} else { $("#primetime_hh").removeClass("error-input"); };
+	if(isFinite(String(hh)) == false || hh > 12 || hh < 1){ var hh = '12'; $("#primetime_hh").val("12");
+	}
 	}
    }
 });
@@ -318,8 +318,8 @@ $(function(){
 $("#primetime_mm").on({
     change: function () {
 	var mm = $('#primetime_mm').val();
-	if(isFinite(String(mm)) == false || mm > 59 || mm < 1){ $("#primetime_mm").addClass("error-input");
-	} else { $("#primetime_mm").removeClass("error-input"); };
+	if(isFinite(String(mm)) == false || mm > 59 || mm < 1){ var mm = '00'; $("#primetime_mm").val("00");
+	}
     }
 });
 });
