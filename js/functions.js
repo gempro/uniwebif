@@ -803,6 +803,7 @@ function(data){
 	$("input[name='timerlist_checkbox[]']:checked").each(function ()
 	{
 	$("#tl_glyphicon_status_"+$(this).val()+"").attr({style:"color:#5CB85C", title:"sent"});
+	$("[id^=box]").prop("checked", false);
 	});
 	}
 	
@@ -811,6 +812,7 @@ function(data){
 	$("input[name='timerlist_checkbox[]']:checked").each(function ()
 	{
 	$("#tl_glyphicon_status_"+$(this).val()+"").attr({style:"color:#D9534F", title:"not sent"});
+	$("[id^=box]").prop("checked", false);
 	});
 	
 	}
@@ -820,6 +822,7 @@ function(data){
 	$("input[name='timerlist_checkbox[]']:checked").each(function ()
 	{
 	$('#timerlist_div_outer_'+$(this).val()).removeClass("opac_70");
+	$("[id^=box]").prop("checked", false);
 	});
 	}
 	
