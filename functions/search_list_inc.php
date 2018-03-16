@@ -1,3 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<script type="text/javascript">
+// saved search list list hover
+$(document).ready(function(){
+    $("#saved_search_list*").hover(function(){
+	$(this).css("background-color", "#FAFAFA");
+    }, function(){
+    $(this).css("background-color", "white");
+  });
+});
+</script>
+</head>
+<body>
 <?php 
 //
 include("../inc/dashboard_config.php");
@@ -221,3 +237,5 @@ include("../inc/dashboard_config.php");
 }
 if(!isset($saved_search_list) or $saved_search_list == "") { $saved_search_list = "No saved searches..<hr />"; } else { echo $saved_search_list; }
 ?>
+</body>
+</html>
