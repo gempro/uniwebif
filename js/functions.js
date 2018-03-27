@@ -1765,6 +1765,7 @@ if(typeof(EventSource) !== "undefined") {
 function all_services_zapp(id,name) {
 	
 	var this_id = id.replace(/all_services_zapp_btn_/g, "");
+	$("#all_services_status_zapp_"+this_id+"").html("");
 	
 	document.getElementById("all_services_status_zapp_"+this_id+"").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
 	
@@ -1772,10 +1773,9 @@ if(typeof(EventSource) !== "undefined") {
 	
     var source = new EventSource("functions/send_zapp_request.php?e2servicereference="+name+"");
     source.onmessage = function(event) {
-	this.close();
 	$("#all_services_status_zapp_"+this_id+"").html("<i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i>");
 	$("#all_services_status_zapp_"+this_id+"").fadeOut(4000);
-	$("#all_services_status_zapp_"+this_id+"").innerHTML("");
+	this.close();
 	};
 	} else {
 	document.getElementById("all_services_status_zapp_"+this_id+"").value = "Sorry, your browser does not support server-sent events...";
