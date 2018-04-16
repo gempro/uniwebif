@@ -698,6 +698,32 @@ function hide_timerlist_div_outer() {
 	}
 }
 
+// timerlist unhide timer
+function timerlist_unhide_timer(id) {
+	
+	var this_id = id.replace(/timerlist_unhide_timer_btn_/g, "");
+	
+if(typeof(EventSource) !== "undefined") {
+	
+	document.getElementById("timerlist_status_"+this_id+"").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
+    var source = new EventSource("functions/timer_list_inc.php?action=unhide&timer_id="+this_id+"");
+    source.onmessage = function(event) {
+	
+	document.getElementById("timerlist_status_"+this_id+"").innerHTML = "<i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i>";
+	$('#timerlist_div_outer_'+this_id).removeClass("opac_70");
+	
+	document.getElementById("timerlist_unhide_timer_btn_"+this_id+"").value = "HIDE TIMER";
+	document.getElementById("timerlist_unhide_timer_btn_"+this_id+"").setAttribute('onclick','timerlist_hide_timer(this.id)');
+	document.getElementById("timerlist_unhide_timer_btn_"+this_id+"").title = "hide Timer from list";
+	document.getElementById("timerlist_unhide_timer_btn_"+this_id+"").id = "timerlist_hide_timer_btn_"+this_id+"";
+		
+	this.close();
+	};
+	} else {
+	document.getElementById("timerlist_status_"+this_id+"").value = "Sorry, your browser does not support server-sent events...";
+	}
+}
+
 // tickerlist send timer
 function tickerlist_send_timer(id) {
 	
@@ -707,7 +733,7 @@ if(typeof(EventSource) !== "undefined") {
 
 	document.getElementById("tickerlist_send_timer_status_"+this_id+"").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
 	
-    var source = new EventSource("functions/send_timer_instant.php?hash="+this_id+"");
+    var source = new EventSource("functions/send_timer_instant.php?hash="+this_id+"&location=ticker");
     
 	source.onmessage = function(event) {
 		
@@ -741,7 +767,12 @@ function select_timer_checkbox(){
 //
 function count_selected(){
 	var summary = document.querySelectorAll('input[id^=box]:checked').length;
-	$("#selected_box_sum").html("(" + summary + ")");
+	$("#selected_box_sum").html("("+summary+")");
+	
+	if (summary > '0'){ $("#selected_box_sum").fadeIn(500); }
+	if (summary < '1'){ $("#selected_box_sum").fadeOut(1500); }
+	
+	console.log(summary);
 }
 //
 function timerlist_panel(id){
@@ -1323,6 +1354,7 @@ function save_settings() {
 	
 	var crawler_hour = document.getElementById("crawler_hour").value;
 	var crawler_minute = document.getElementById("crawler_minute").value;
+	if (display_time_format == '2'){ var crawler_am_pm = document.getElementById("crawler_am_pm").value; } else { var crawler_am_pm = '0'; }
 	
 	if (document.getElementById("search_crawler").checked == true) { var search_crawler = '1'; }
 	if (document.getElementById("search_crawler").checked == false) { var search_crawler = '0'; }
@@ -1402,6 +1434,7 @@ function save_settings() {
 	epg_crawler: epg_crawler,
 	crawler_hour: crawler_hour,
 	crawler_minute: crawler_minute,
+	crawler_am_pm: crawler_am_pm,
 	start_epg_crawler: start_epg_crawler,
 	search_crawler: search_crawler,
 	timer_ticker: timer_ticker,
@@ -1765,7 +1798,6 @@ if(typeof(EventSource) !== "undefined") {
 function all_services_zapp(id,name) {
 	
 	var this_id = id.replace(/all_services_zapp_btn_/g, "");
-	$("#all_services_status_zapp_"+this_id+"").html("");
 	
 	document.getElementById("all_services_status_zapp_"+this_id+"").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
 	
@@ -1773,9 +1805,10 @@ if(typeof(EventSource) !== "undefined") {
 	
     var source = new EventSource("functions/send_zapp_request.php?e2servicereference="+name+"");
     source.onmessage = function(event) {
+	this.close();
 	$("#all_services_status_zapp_"+this_id+"").html("<i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i>");
 	$("#all_services_status_zapp_"+this_id+"").fadeOut(4000);
-	this.close();
+	$("#all_services_status_zapp_"+this_id+"").innerHTML("");
 	};
 	} else {
 	document.getElementById("all_services_status_zapp_"+this_id+"").value = "Sorry, your browser does not support server-sent events...";
@@ -1804,4 +1837,15 @@ if(typeof(EventSource) !== "undefined") {
 	} else {
 	document.getElementById("all_services_list").value = "Sorry, your browser does not support server-sent events...";
 	}
+}
+
+//
+function check_git_update(){
+$(function(){
+	$("#update_status").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
+	$.post("functions/check_git_update.php",
+	function(data){
+	$("#update_status").html(data);
+});
+});
 }
