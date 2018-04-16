@@ -14,6 +14,7 @@ include("../inc/dashboard_config.php");
 	$epg_crawler = $_REQUEST['epg_crawler'];
 	$crawler_hour = $_REQUEST['crawler_hour'];
 	$crawler_minute = $_REQUEST['crawler_minute'];
+	$crawler_am_pm = $_REQUEST['crawler_am_pm'];
 	$search_crawler = $_REQUEST['search_crawler'];
 	$start_epg_crawler = $_REQUEST['start_epg_crawler'];
 	$display_old_epg = $_REQUEST['display_old_epg'];
@@ -42,12 +43,14 @@ include("../inc/dashboard_config.php");
 	$cz_am_pm = $_REQUEST['cz_am_pm'];
 	$cz_start_channel = $_REQUEST['cz_start_channel'];
 	
+	if ($crawler_am_pm == '0'){ $crawler_am_pm = ''; }
+	
 	if (!is_numeric($cz_wait_time)) { $cz_wait_time = '30'; }
 	if (!is_numeric($cz_hour) or $cz_hour > 23) { $cz_hour = '12'; }
 	if (!is_numeric($cz_minute) or $cz_minute > 59) { $cz_minute = '00'; }
 
-	if ($cz_am_pm == 'AM'){ $cz_am_pm = 'AM'; }
-	if ($cz_am_pm == 'PM'){ $cz_am_pm = 'PM'; }
+//	if ($cz_am_pm == 'AM'){ $cz_am_pm = 'AM'; }
+//	if ($cz_am_pm == 'PM'){ $cz_am_pm = 'PM'; }
 	if ($cz_am_pm == '0'){ $cz_am_pm = ''; }
 	
 	$date_for_cz = date("d.m.Y ");
@@ -58,7 +61,7 @@ include("../inc/dashboard_config.php");
 	if (!is_numeric($crawler_minute) or $crawler_minute > 59) { $crawler_minute = '00'; }
 
 	$date_for_crawler = date("d.m.Y ");
-	$crawler_start = $date_for_crawler.$crawler_hour.':'.$crawler_minute;
+	$crawler_start = $date_for_crawler.$crawler_hour.':'.$crawler_minute.$crawler_am_pm;
 	if (strtotime($crawler_start) > $time){ $crawler_timestamp = strtotime($crawler_start); } else { $crawler_timestamp = strtotime($crawler_start) + 86400; }
 	
 	if(!isset($epg_entries_per_channel) or $epg_entries_per_channel == "" or !isset($channel_entries) or $channel_entries == "") 
