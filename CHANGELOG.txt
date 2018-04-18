@@ -1,3 +1,9 @@
+v1.4
+
++ Timer conflicts on Receiver are shown after sending
++ Summary of timers on Receiver are shown in Timerlist
++ Some similiar display and function bugs fixed
+
 v1.3
 
 + Installation function added (setup.php)
