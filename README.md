@@ -1,5 +1,5 @@
 # uniwebif
-Extern and Universal Webinterface for Linux Receiver's
+Extern and Universal Webinterface for Enigma2 Linux Receiver's
 
 If you're not happy with the Webinterface from your Linux Receiver, you should have a look at it.
 
