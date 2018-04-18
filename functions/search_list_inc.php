@@ -222,7 +222,7 @@ include("../inc/dashboard_config.php");
 		  </select></p>
 		  </div>
 		  </div>
-		  <a href=\"search.php?searchterm=$obj->searchterm&option=$search_option&exclude_term=$obj->exclude_term&exclude_area=$exclude_area&record_location=$rec_location_id&search_channel=$search_channel&channel_id=$channel_id&rec_replay=$rec_replay\" target=\"_blank\" title=\"Show results\" class=\"search_list_mg\">
+		  <a href=\"search.php?searchterm=$obj->searchterm&option=$search_option&exclude_term=$obj->exclude_term&exclude_area=$exclude_area&record_location=$rec_location_id&search_channel=$search_channel&channel_id=$channel_id&rec_replay=$rec_replay\" target=\"_blank\" title=\"Show results\">
 		  <i class=\"fa fa-search fa-1x\"></i></a>
 		<input id=\"saved_search_list_save_btn_$obj->id\" type=\"submit\" onClick=\"saved_search_list_save(this.id)\" value=\"SAVE\" class=\"btn btn-success btn-sm\">
 		<input id=\"saved_search_list_delete_btn_$obj->id\" type=\"submit\" onClick=\"saved_search_list_delete(this.id)\" value=\"DELETE\" class=\"btn btn-danger btn-sm\"/>

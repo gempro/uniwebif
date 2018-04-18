@@ -14,9 +14,18 @@ include("../inc/dashboard_config.php");
 	{ 
 	echo "data: data missed\n\n"; 
 	
+	} else { 
+	
+	if($location == 'timerlist'){
+	
+	$sql = mysqli_query($dbmysqli, "SELECT * FROM `timer` WHERE `hash` = '".$hash."' ");
+	
 	} else {
 
 	$sql = mysqli_query($dbmysqli, "SELECT * FROM `epg_data` WHERE `hash` = '".$hash."' ");
+	
+	}
+	
 	$result = mysqli_fetch_assoc($sql);
 	
 	$e2eventtitle = $result['e2eventtitle'];
@@ -27,13 +36,12 @@ include("../inc/dashboard_config.php");
 	$description_enc = $result['description_enc'];
 	$e2eventdescriptionextended = $result['e2eventdescriptionextended'];
 	$descriptionextended_enc = $result['descriptionextended_enc'];
-	$e2eventid = $result['e2eventid'];
+	//$e2eventid = $result['e2eventid'];
 	$e2eventstart = $result['e2eventstart'];
 	$e2eventend = $result['e2eventend'];
 	$e2eventservicereference = $result['e2eventservicereference'];
 	$channel_hash = $result['channel_hash'];
 	
-	//
 	$sql = mysqli_query($dbmysqli, "UPDATE `epg_data` SET `timer` = '1' WHERE `hash` = '".$hash."' ");
 	
 	// get record location
@@ -44,10 +52,18 @@ include("../inc/dashboard_config.php");
 	// additional record time
 	$e2eventend = $e2eventend + $extra_rec_time;
 	
+	if($location == 'timerlist'){ $e2eventend = $result['e2eventend']; }
+	
 	$timer_request = "$url_format://$box_ip/web/timeradd?sRef=".$e2eventservicereference."&begin=".$e2eventstart."&end=".$e2eventend."&name=".$title_enc."&description=".$description_enc."&dirname=".$e2location."&afterevent=3";
 	
 	// request with eventid
 	//$timer_request = "http://$box_ip/web/timeraddbyeventid?sRef=".$e2eventservicereference."&eventid=".$e2eventid."&dirname=".$e2location."";
+	
+	// timer conflict
+	$get_timer_status = file_get_contents($timer_request, false, $webrequest);
+	$xml = simplexml_load_string($get_timer_status);
+	$timer_status = $xml->e2state;
+	if($timer_status == "TRUE" || $timer_status == "True" || $timer_status == "true"){ $timer_status = ""; } else { $timer_status = " - <span class=\"error\">Conflict on Receiver</span>"; }
 	
 	sleep(1);
 	
@@ -97,7 +113,12 @@ include("../inc/dashboard_config.php");
 	// answer for ajax
 	header('Content-Type: text/event-stream');
 	header('Cache-Control: no-cache');
-	echo "data: <i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i> Timer sent $same_timer_msg\n\n";
+	
+	if ($location == 'ticker'){ 
+	echo "data: <i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i>\n\n";
+	} else {
+	echo "data: <i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i> Timer sent $same_timer_msg $timer_status\n\n";
+	}
 	// 
 	
 }

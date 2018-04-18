@@ -36,6 +36,15 @@ $("#timerlist*").hover(function(){
 	echo "data:hided\n\n";
 	exit;
 	}
+	
+	// unhide single timer
+	if ($action == 'unhide'){
+	sleep(1);
+	$timer_id = $_REQUEST['timer_id'];
+	$sql =  mysqli_query($dbmysqli, "UPDATE `timer` SET `hide` = '0' WHERE `id` = '".$timer_id."' ");
+	echo "data:unhided\n\n";
+	exit;
+	}
 
 	if ($action == 'delete'){
 	if(!isset($_REQUEST['delete_from_box']) or $_REQUEST['delete_from_box'] == "") { $_REQUEST['delete_from_box'] = ""; }
@@ -147,7 +156,7 @@ $("#timerlist*").hover(function(){
 if ($obj->status == 'waiting')
 		{
 		$status = '
-		<i class="fa fa-search fa-1x" style="color:#000" title="Automatic search"></i> | 
+		<i id="tl_glyphicon_status_m_'.$obj->id.'" class="fa fa-search fa-1x" style="color:#000" title="Automatic search"></i> | 
 		<i id="tl_glyphicon_status_'.$obj->id.'" class="glyphicon glyphicon-export" style="color:#D9534F" title="not sent"></i>
 		';
 		}
@@ -155,7 +164,7 @@ if ($obj->status == 'waiting')
 if ($obj->status == 'rec_deleted')
 		{
 		$status = '
-		<i class="fa fa-hand-o-up fa-1x" style="color:#000" title="manual"></i> | 
+		<i id="tl_glyphicon_status_m_'.$obj->id.'" class="fa fa-hand-o-up fa-1x" style="color:#000" title="manual"></i> | 
 		<i id="tl_glyphicon_status_'.$obj->id.'" class="glyphicon glyphicon-export" style="color:#D9534F" title="not sent"></i>
 		';
 		}
@@ -163,7 +172,7 @@ if ($obj->status == 'rec_deleted')
 if ($obj->status == 'sent')
 		{
 		$status = '
-		<i class="fa fa-search fa-1x" style="color:#000" title="Automatic search"></i> | 
+		<i id="tl_glyphicon_status_m_'.$obj->id.'" class="fa fa-search fa-1x" style="color:#000" title="Automatic search"></i> | 
 		<i id="tl_glyphicon_status_'.$obj->id.'" class="glyphicon glyphicon-export" style="color:#5CB85C" title="sent"></i>
 		';
 		}
@@ -171,7 +180,7 @@ if ($obj->status == 'sent')
 if ($obj->status == 'manual')
 		{
 		$status = '
-		<i class="fa fa-hand-o-up fa-1x" style="color:#000" title="manual"></i> | 
+		<i id="tl_glyphicon_status_m_'.$obj->id.'" class="fa fa-hand-o-up fa-1x" style="color:#000" title="manual"></i> | 
 		<i id="tl_glyphicon_status_'.$obj->id.'" class="glyphicon glyphicon-export" style="color:#5CB85C" title="sent"></i>
 		';
 		}
@@ -209,7 +218,14 @@ if ($obj->record_status == 'c_expired')
 		
 		if ($is_replay == '1'){ $replay_sign = '<i class="fa fa-repeat"></i>'; } else { $replay_sign = ''; }
 		
-		if ($hidden == '1'){ $hidden_class = 'class="opac_70"'; } else { $hidden_class = ''; }
+		if ($hidden == '1'){ $hidden_class = 'class="opac_70"'; 
+		$hide_button = "<input id=\"timerlist_unhide_timer_btn_$obj->id\" type=\"submit\" onClick=\"timerlist_unhide_timer(this.id)\" value=\"UNHIDE TIMER\" class=\"btn btn-primary btn-sm\" title=\"unhide Timer from list\"/>"; 
+		
+		} else { 
+		
+		$hidden_class = ''; 
+		$hide_button = "<input id=\"timerlist_hide_timer_btn_$obj->id\" type=\"submit\" onClick=\"timerlist_hide_timer(this.id)\" value=\"HIDE TIMER\" class=\"btn btn-primary btn-sm\" title=\"hide Timer from list\"/>";
+		}
 		
 		$timerlist = $timerlist."<div id=\"timerlist_div_outer_$obj->id\" $hidden_class>
 		<div id=\"timerlist\">
@@ -234,13 +250,14 @@ if ($obj->record_status == 'c_expired')
 		  $description_enc<div class=\"spacer_5\"></div>
 		  $descriptionextended_enc<div class=\"spacer_5\"></div>
 		  </div>
+		  <a href=\"search.php?searchterm=$title_enc&option=title\" target=\"_blank\" title=\"Search title\"><i class=\"fa fa-search fa-1x\"></i></a>
 		  Searchterm: <strong>$search_term</strong> | Searcharea: $obj->search_option | Record location: $obj->record_location 
 		  <span id=\"timerlist_rec_location_$obj->hash\" style=\"display:none;\">$rec_location_id</span>
 		  <div class=\"spacer_5\"></div>
 		  $term_status $area_status $spacer $replay_status
 		  <div class=\"spacer_5\"></div>
 		  <input id=\"timerlist_send_timer_btn_$obj->hash\" name=\"$obj->id\" type=\"submit\" onClick=\"timerlist_send_timer(this.id,this.name)\" value=\"SEND TIMER\" class=\"btn btn-success btn-sm\" title=\"send Timer to Receiver\"/>
-		  <input id=\"timerlist_hide_timer_btn_$obj->id\" type=\"submit\" onClick=\"timerlist_hide_timer(this.id)\" value=\"HIDE TIMER\" class=\"btn btn-primary btn-sm\" title=\"hide Timer from list\"/>
+		  $hide_button
 		  <input id=\"delete_timer_btn_$obj->id\" type=\"submit\" onClick=\"timerlist_delete_timer(this.id)\" value=\"DELETE TIMER\" class=\"btn btn-danger btn-sm\" title=\"delete Timer from Receiver\"/>
 		  <span class=\"del_checkbox\"><input id=\"timerlist_delete_db_$obj->id\" type=\"checkbox\"> delete also from Database</span>
 		  <span id=\"timerlist_status_$obj->id\"></span>

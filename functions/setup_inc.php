@@ -321,17 +321,10 @@ if ($setting == 'install'){
 	  `primetime` int(12) NOT NULL DEFAULT '0',
 	  `dur_down_primetime` int(4) NOT NULL DEFAULT '0',
 	  `dur_up_primetime` int(5) NOT NULL DEFAULT '7200',
+	  `current_git_push` int(12) NOT NULL DEFAULT '0',
 	  PRIMARY KEY (`id`)
 	) ENGINE = MYISAM CHARACTER SET utf8 COLLATE utf8_general_ci;
 	");
-	
-	$timestamp = time();
-	$time = date("d.m.Y, 20:00:00",$timestamp);
-	$primetime = strtotime($time);
-	
-	$query = mysqli_query($dbmysqli, "
-	INSERT INTO `uniwebif`.`settings` (`box_ip`, `box_user`, `box_password`, `server_ip`, `script_folder`, `primetime`) VALUES 
-	('".$receiver_ip."', '".$receiver_user."', '".$receiver_pass."', '".$server_ip."', '".$script_folder."', '".$primetime."')");
 	
 	$query = mysqli_query($dbmysqli, "DROP TABLE IF EXISTS `uniwebif`.`timer`");
 	$query = mysqli_query($dbmysqli, "
