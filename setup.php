@@ -45,7 +45,6 @@ function save_sql(){
 	var sql_user = $("#sql_user").val();
 	var sql_pass = $("#sql_pass").val();
 	$("#sql_status").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
-
 	$.post("functions/setup_inc.php",
 	{
 	setting: 'sql',
@@ -56,15 +55,12 @@ function save_sql(){
 	function(data){
 	// write data in container
 	$("#sql_status").html(data);
-	
 	if (data == 'Connection OK!'){ 
 	//$('#receiver_settings').fadeIn();
 	animatedcollapse.show('receiver_settings');
-	
 	}
 	});
 }
-
 //
 function save_receiver(){
 
@@ -72,7 +68,6 @@ function save_receiver(){
 	var receiver_user = $("#receiver_user").val();
 	var receiver_pass = $("#receiver_pass").val();
 	$("#receiver_status").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
-
 	$.post("functions/setup_inc.php",
 	{
 	setting: 'receiver',
@@ -83,21 +78,18 @@ function save_receiver(){
 	function(data){
 	// write data in container
 	$("#receiver_status").html(data);
-	
 	if (data == 'Connection OK!'){
 	//$('#sql_done').fadeIn();
 	animatedcollapse.show('sql_done');
-	
 	}
 	});
 }
-
+//
 function install(){
 	$("#install_status").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
 	
 	var server_ip = $("#server_ip").val();
 	var script_folder = $("#script_folder").val();
-	
 	$.post("functions/setup_inc.php",
 	{
 	setting: 'install',
@@ -107,27 +99,20 @@ function install(){
 	function(data){
 	// write data in container
 	$("#install_status").html(data);
-	
 	if (data == 'SQL Installation OK!'){
 	//$('#steps').fadeIn();
-	animatedcollapse.show('steps');
-	
-	}
-	});
-}
+	animatedcollapse.show('steps');	
+	}}
+);}
 </script>
 </head>
 <body>
-<a id="top"></a>
-<div id="scroll_top" class="scroll_top"><a href="#" title="to top">
-  <script>document.write("<i class=\"glyphicon glyphicon-circle-arrow-up fa-"+scrolltop_btn_size+"x\"></i>");</script>
-  </a></div>
 <div id="wrapper">
   <div class="navbar navbar-inverse navbar-fixed-top">
     <div class="adjust-nav">
       <div class="navbar-header">
         <button type="button" class="navbar-toggle" onclick="nav_icon_scroll()" data-toggle="collapse" data-target=".sidebar-collapse"> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button>
-        <a class="navbar-brand" href="about.php"><i class="fa fa-square-o"></i>&nbsp;Setup</a> </div>
+        <a class="navbar-brand" href="setup.php"><i class="fa fa-square-o"></i>&nbsp;Setup</a> </div>
       <div class="navbar-collapse collapse">
         <ul class="nav navbar-nav navbar-right">
           <div class="row"> </div>
@@ -143,7 +128,6 @@ function install(){
           <div id="nav-header"><i class="fa fa-wrench fa-3-5x"></i> </div>
         </li>
         <li> <a href="setup.php"><i class="fa fa-wrench"></i><strong>Setup</strong></a> </li>
-        </li>
       </ul>
     </div>
   </nav>
@@ -151,7 +135,7 @@ function install(){
   <div id="page-wrapper">
     <div class="row">
       <div class="col-md-12">
-        <div id="statusbar_cnt_outter" class="statusbar_cnt_outter">
+        <div id="statusbar_cnt_outer" class="statusbar_cnt_outer">
           <div id="statusbar_cnt"></div>
         </div>
       </div>
@@ -336,12 +320,12 @@ function install(){
               For more Information read the <a href="help/guide.html" target="_blank">Guide</a> or <a href="http://uniwebif.techweb.at/faq.php" target="_blank">FAQ</a><br>
               Tutorial Video which show the main functions is <a href="https://www.youtube.com/watch?v=lj4EOlJzquk" target="_blank">here</a>.<br>
               For any questions, issues or suggestions visit <a href="https://github.com/gempro/uniwebif/issues" target="_blank">Github</a>.</div>
-          </div>
-          <!-- col -->
+          	 </div>
+          	<!-- col -->
+       	   </div>
+          <!-- row -->
+       	 <hr />
         </div>
-        <!-- row -->
-        <hr />
-      </div>
       <!---->
     </div>
     <!-- /. PAGE INNER  -->

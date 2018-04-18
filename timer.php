@@ -52,7 +52,9 @@ include_once("inc/header_info.php");
 	$stmt->close();
 	if ($hidden_timer > 0){ 
 	$show_hidden_timer = ' <span class="timer_panel_info">
-	<a id="show_unhide" onclick="timerlist_panel(this.id)" title="show" style="cursor:pointer;">'.$hidden_timer.' hidden</a></span>'; } else { $show_hidden_timer = '';
+	<a id="show_unhide" onclick="timerlist_panel(this.id)" title="show" style="cursor:pointer;">'.$hidden_timer.' hidden</a></span>'; 
+	} else { 
+	$show_hidden_timer = '<span class="timer_panel_info">0 hidden</span>';
 	}
 	
 	// count saved search
@@ -64,6 +66,14 @@ include_once("inc/header_info.php");
 	$stmt->fetch();
 	$stmt->close();
 	$count_saved_search = '('.$count_saved_search.')';
+	
+	// timer on receiver
+	$xmlfile = ''.$url_format.'://'.$box_ip.'/web/timerlist';
+	$getTimer = file_get_contents($xmlfile, false, $webrequest);
+	$sum = preg_match_all("#<e2timerlist>(.*?)</e2timerlist>#si", $getTimer, $match_sum);
+	$timer_summary = preg_match_all("#<e2timer>(.*?)</e2timer>#si", $match_sum[0][0]);
+	
+	$receiver_timer = ' <span class="timer_panel_info">| '.$timer_summary.' on Receiver</span>';
 	
 //close db
 mysqli_close($dbmysqli);
@@ -211,7 +221,7 @@ var search_list_sort = document.getElementById("sort_setting").value;
   <div id="page-wrapper">
   <div class="row">
   <div class="col-md-12">
-  <div id="statusbar_cnt_outter" class="statusbar_cnt_outter">
+  <div id="statusbar_cnt_outer" class="statusbar_cnt_outer">
   <div id="statusbar_cnt"></div>
   </div>
   </div>
@@ -265,7 +275,7 @@ var search_list_sort = document.getElementById("sort_setting").value;
       <hr />
       <div class="row">
         <div class="col-md-12">
-          <h4><?php echo $count_timer; echo $show_sent_timer; echo $show_timer_today; echo $show_hidden_timer; ?> </h4>
+          <h4><?php echo $count_timer; echo $show_sent_timer; echo $show_timer_today; echo $show_hidden_timer; echo $receiver_timer; ?> </h4>
           <div id="timerlist_main">
           <div class="timer_panel">
           <span class="timerlist_checkbox"><input id="select_all" type="checkbox" onClick="select_timer_checkbox()"></span>
@@ -319,7 +329,7 @@ var search_list_sort = document.getElementById("sort_setting").value;
 $(document).ready(function(){
    var statusbar = '<?php if(!isset($_SESSION["statusbar"]) or $_SESSION["statusbar"] == "") { $_SESSION["statusbar"] = ""; } echo $_SESSION["statusbar"]; ?>';
    if (statusbar == '1'){
-   $("#statusbar_cnt_outter").removeClass("statusbar_cnt_outter"); 
+   $("#statusbar_cnt_outer").removeClass("statusbar_cnt_outer"); 
    $("#statusbar_cnt").html("&nbsp;");
    }
 });

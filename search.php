@@ -14,8 +14,8 @@ include_once("inc/header_info.php");
 	if(!isset($_REQUEST['exclude_area']) or $_REQUEST['exclude_area'] == "") { $_REQUEST['exclude_area'] = ""; }
 	if(!isset($_REQUEST['rec_replay']) or $_REQUEST['rec_replay'] == "") { $_REQUEST['rec_replay'] = ""; }
 	
-	$searchterm = $_POST["searchterm"];
-	$searchterm = $_REQUEST["searchterm"];
+	$searchterm = trim($_POST["searchterm"]);
+	$searchterm = trim($_REQUEST["searchterm"]);
 	$searchterm = str_replace("\"", "", $searchterm);
 	//$searchterm = str_replace("'", "", $searchterm);
 	$searchterm = str_replace("%", "", $searchterm);
@@ -436,7 +436,7 @@ function check_exclude(){
   <div id="page-wrapper">
   <div class="row">
   <div class="col-md-12">
-  <div id="statusbar_cnt_outter" class="statusbar_cnt_outter">
+  <div id="statusbar_cnt_outer" class="statusbar_cnt_outer">
   <div id="statusbar_cnt"></div>
   </div>
   </div>
@@ -526,7 +526,7 @@ function check_exclude(){
               <div id="btn2">Recording path: 
                 <select name="record_location" id="searchlist_record_location">
                   <?php 
-					$sql = "SELECT * from record_locations order by id ASC";
+					$sql = "SELECT * FROM `record_locations` ORDER BY `id` ASC";
 			
 					if ($result = mysqli_query($dbmysqli,$sql))
 					{
@@ -568,7 +568,7 @@ function check_exclude(){
             <select name="channel_id" id="channel_id" class="form-control">
 			<?php 
 			// get channels
-			$sql = "SELECT * FROM channel_list ORDER BY e2servicename ASC";
+			$sql = "SELECT * FROM `channel_list` ORDER BY `e2servicename` ASC";
 			
 			if ($result = mysqli_query($dbmysqli,$sql))
 			{
@@ -635,7 +635,7 @@ function check_exclude(){
 $(document).ready(function(){
    var statusbar = '<?php if(!isset($_SESSION["statusbar"]) or $_SESSION["statusbar"] == "") { $_SESSION["statusbar"] = ""; } echo $_SESSION["statusbar"]; ?>';
    if (statusbar == '1'){
-   $("#statusbar_cnt_outter").removeClass("statusbar_cnt_outter"); 
+   $("#statusbar_cnt_outer").removeClass("statusbar_cnt_outer"); 
    $("#statusbar_cnt").html("&nbsp;");
    }
 });
