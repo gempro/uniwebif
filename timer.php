@@ -23,7 +23,8 @@ include_once("inc/header_info.php");
 	$stmt->fetch();
 	$stmt->close();
 	if ($sent_timer > 0){ 
-	$show_sent_timer = ' | <span class="timer_panel_info">'.$sent_timer.' sent | </span>'; } else { $show_sent_timer = '';
+	$show_sent_timer = ' | <span class="timer_panel_info">'.$sent_timer.' sent | </span>'; 
+	} else { $show_sent_timer = ' | <span class="timer_panel_info">0 sent | </span>';
 	}
 	
 	// timer today
@@ -39,7 +40,8 @@ include_once("inc/header_info.php");
 	$stmt->fetch();
 	$stmt->close();
 	if ($sent_timer > 0){
-	$show_timer_today = ' <span class="timer_panel_info">'.$timer_today.' today | </span>'; } else { $show_timer_today = ''; 
+	$show_timer_today = ' <span class="timer_panel_info">'.$timer_today.' today | </span>'; 
+	} else { $show_timer_today = ' <span class="timer_panel_info">0 today | </span>'; 
 	}
 	
 	// hidden timer
@@ -54,7 +56,7 @@ include_once("inc/header_info.php");
 	$show_hidden_timer = ' <span class="timer_panel_info">
 	<a id="show_unhide" onclick="timerlist_panel(this.id)" title="show" style="cursor:pointer;">'.$hidden_timer.' hidden</a></span>'; 
 	} else { 
-	$show_hidden_timer = '<span class="timer_panel_info">0 hidden</span>';
+	$show_hidden_timer = '<span class="timer_panel_info"> 0 hidden</span>';
 	}
 	
 	// count saved search
