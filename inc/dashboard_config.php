@@ -18,7 +18,7 @@
 	}
 	
 	// load settings from db
-	$query = mysqli_query($dbmysqli, "SELECT * FROM `settings` WHERE id = '0' ");
+	$query = mysqli_query($dbmysqli, "SELECT * FROM `settings` WHERE `id` = '0' ");
 	$result = mysqli_fetch_assoc($query);
 	
 	$box_ip = $result['box_ip'];
@@ -30,6 +30,7 @@
 	$epg_entries_per_channel = $result['epg_entries_per_channel'] - 1;
 	$channel_entries = $result['channel_entries'] - 1;
 	$time_format = $result['time_format'];
+	$crawler_timestamp = $result['crawler_timestamp'];
 	$start_epg_crawler = $result['start_epg_crawler'];
 	$after_crawl_action = $result['after_crawl_action'];
 	$delete_old_timer = $result['delete_old_timer'];
@@ -46,17 +47,16 @@
 	$del_time = $result['del_time'];
 	$reload_progressbar = $result['reload_progressbar'];
 	$search_list_sort = $result['search_list_sort'];
-	$extra_rec_time = $result['extra_rec_time'];
 	$cz_sleeptime = $result['cz_wait_time'];
+	$cz_start_channel = $result['cz_start_channel'];
+	$cz_timestamp = $result['cz_timestamp'];
+	$extra_rec_time = $result['extra_rec_time'];
 	$mark_searchterm = $result['mark_searchterm'];
 	$dur_down_broadcast = $result['dur_down_broadcast'];
 	$dur_up_broadcast = $result['dur_up_broadcast'];
+	$primetime = $result['primetime'];
 	$dur_down_primetime = $result['dur_down_primetime'];
 	$dur_up_primetime = $result['dur_up_primetime'];
-	$cz_start_channel = $result['cz_start_channel'];
-	$cz_timestamp = $result['cz_timestamp'];
-	$crawler_timestamp = $result['crawler_timestamp'];
-	$primetime = $result['primetime'];
 
 	// Webrequest
 	$webrequest = stream_context_create(array (
