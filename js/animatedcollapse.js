@@ -187,8 +187,8 @@ uninit:function(){
 	})
 	opendivids=(opendivids=='')? 'nada' : opendivids.replace(/,$/, '')
 	groupswithpersist=(groupswithpersist=='')? 'nada' : groupswithpersist.replace(/,$/, '')
-	this.setCookie('acopendivids', opendivids)
-	this.setCookie('acgroupswithpersist', groupswithpersist)
+//	this.setCookie('acopendivids', opendivids)
+//	this.setCookie('acgroupswithpersist', groupswithpersist)
 },
 
 getCookie:function(Name){ 
@@ -198,15 +198,15 @@ getCookie:function(Name){
 	return null
 },
 
-setCookie:function(name, value, days){
-	if (typeof days!="undefined"){ //if set persistent cookie
-		var expireDate = new Date()
-		expireDate.setDate(expireDate.getDate()+days)
-		document.cookie = name+"="+value+"; path=/; expires="+expireDate.toGMTString()
-	}
-	else //else if this is a session only cookie
-		document.cookie = name+"="+value+"; path=/"
-},
+//setCookie:function(name, value, days){
+//	if (typeof days!="undefined"){ //if set persistent cookie
+//		var expireDate = new Date()
+//		expireDate.setDate(expireDate.getDate()+days)
+//		document.cookie = name+"="+value+"; path=/; expires="+expireDate.toGMTString()
+//	}
+//	else //else if this is a session only cookie
+//		document.cookie = name+"="+value+"; path=/"
+//},
 
 urlparamselect:function(){
 	window.location.search.match(/expanddiv=([\w\-_,]+)/i) //search for expanddiv=divid or divid1,divid2,etc
