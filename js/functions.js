@@ -220,16 +220,16 @@ function broadcast_zap(id,name) {
 	var this_id = id.replace(/broadcast_zap_btn_/g, "");
 	var res = this_id.substr(3);
 	
+	$("#broadcast_status_zap_"+this_id+"").fadeIn();
 	document.getElementById("broadcast_status_zap_"+this_id+"").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
 	
 if(typeof(EventSource) !== "undefined") {
 	
     var source = new EventSource("functions/send_zapp_request.php?e2servicereference="+name+"");
     source.onmessage = function(event) {
-		
-	document.getElementById("broadcast_status_zap_"+this_id+"").innerHTML = "";
-		
-	document.getElementById("broadcast_zap_btn_"+this_id+"").value = "CHANNEL ZAP OK";
+	
+	$("#broadcast_status_zap_"+this_id+"").html("<i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i>");
+	$("#broadcast_status_zap_"+this_id+"").fadeOut(3000);
 		
 	this.close();
 	};
@@ -266,6 +266,7 @@ function searchlist_zap(id,name) {
 	
 	var this_id = id.replace(/searchlist_zap_btn_/g, "");
 	
+	$("#searchlist_status_zap_"+this_id+"").fadeIn();
 	document.getElementById("searchlist_status_zap_"+this_id+"").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
 	
 if(typeof(EventSource) !== "undefined") {
@@ -273,9 +274,8 @@ if(typeof(EventSource) !== "undefined") {
     var source = new EventSource("functions/send_zapp_request.php?e2servicereference="+name+"");
     source.onmessage = function(event) {
 		
-	document.getElementById("searchlist_status_zap_"+this_id+"").innerHTML = "";
-	
-	document.getElementById("searchlist_zap_btn_"+this_id+"").value = "CHANNEL ZAP OK";
+	$("#searchlist_status_zap_"+this_id+"").html("<i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i>");
+	$("#searchlist_status_zap_"+this_id+"").fadeOut(3000);
 	
 	this.close();
 	};
@@ -312,6 +312,7 @@ function channel_crawler_zap(id,name) {
 	
 	var this_id = id.replace(/channel_crawler_zap_/g, "");
 	
+	$("#channel_crawler_status_zap_"+this_id+"").fadeIn();
 	document.getElementById("channel_crawler_status_zap_"+this_id+"").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
 	
 if(typeof(EventSource) !== "undefined") {
@@ -319,7 +320,8 @@ if(typeof(EventSource) !== "undefined") {
     var source = new EventSource("functions/send_zapp_request.php?e2servicereference="+name+"");
     source.onmessage = function(event) {
 		
-	document.getElementById("channel_crawler_status_zap_"+this_id+"").innerHTML = "";
+	$("#channel_crawler_status_zap_"+this_id+"").html("<i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i>");
+	$("#channel_crawler_status_zap_"+this_id+"").fadeOut(3000);
 	
 	this.close();
 	};
@@ -417,6 +419,7 @@ function primetime_zap(id,name) {
 	
 	var this_id = id.replace(/primetime_zap_btn_/g, "");
 	
+	$("#primetime_status_zap_"+this_id+"").fadeIn();
 	document.getElementById("primetime_status_zap_"+this_id+"").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
 	
 if(typeof(EventSource) !== "undefined") {
@@ -424,9 +427,8 @@ if(typeof(EventSource) !== "undefined") {
     var source = new EventSource("functions/send_zapp_request.php?e2servicereference="+name+"");
     source.onmessage = function(event) {
 		
-	document.getElementById("primetime_status_zap_"+this_id+"").innerHTML = "";
-	
-	document.getElementById("primetime_zap_btn_"+this_id+"").value = "CHANNEL ZAP OK";
+	$("#primetime_status_zap_"+this_id+"").html("<i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i>");
+	$("#primetime_status_zap_"+this_id+"").fadeOut(3000);
 	
 	this.close();
 	};
@@ -563,6 +565,7 @@ function channelbrowser_zap(id,name) {
 	var this_id = id.replace(/channelbrowser_zap_btn_/g, "");
 	var res = this_id.substr(3);
 	
+	$("#channelbrowser_status_zap_"+this_id+"").fadeIn();
 	document.getElementById("channelbrowser_status_zap_"+this_id+"").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
 	
 if(typeof(EventSource) !== "undefined") {
@@ -570,8 +573,8 @@ if(typeof(EventSource) !== "undefined") {
     var source = new EventSource("functions/send_zapp_request.php?e2servicereference="+name+"");
     source.onmessage = function(event) {
 		
-	document.getElementById("channelbrowser_status_zap_"+this_id+"").innerHTML = "";
-	document.getElementById("channelbrowser_zap_btn_"+this_id+"").value = "CHANNEL ZAP OK";
+	$("#channelbrowser_status_zap_"+this_id+"").html("<i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i>");
+	$("#channelbrowser_status_zap_"+this_id+"").fadeOut(3000);
 	
 	this.close();
 	};
@@ -768,11 +771,8 @@ function select_timer_checkbox(){
 function count_selected(){
 	var summary = document.querySelectorAll('input[id^=box]:checked').length;
 	$("#selected_box_sum").html("("+summary+")");
-	
 	if (summary > '0'){ $("#selected_box_sum").fadeIn(500); }
 	if (summary < '1'){ $("#selected_box_sum").fadeOut(1500); }
-	
-	console.log(summary);
 }
 //
 function timerlist_panel(id){
@@ -1799,16 +1799,18 @@ function all_services_zapp(id,name) {
 	
 	var this_id = id.replace(/all_services_zapp_btn_/g, "");
 	
+	$("#all_services_status_zapp_"+this_id+"").fadeIn();
 	document.getElementById("all_services_status_zapp_"+this_id+"").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
 	
 if(typeof(EventSource) !== "undefined") {
 	
     var source = new EventSource("functions/send_zapp_request.php?e2servicereference="+name+"");
     source.onmessage = function(event) {
-	this.close();
+	
 	$("#all_services_status_zapp_"+this_id+"").html("<i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i>");
-	$("#all_services_status_zapp_"+this_id+"").fadeOut(4000);
-	$("#all_services_status_zapp_"+this_id+"").innerHTML("");
+	$("#all_services_status_zapp_"+this_id+"").fadeOut(3000);
+	
+	this.close();
 	};
 	} else {
 	document.getElementById("all_services_status_zapp_"+this_id+"").value = "Sorry, your browser does not support server-sent events...";
