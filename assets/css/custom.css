@@ -37,7 +37,7 @@ body {
 	padding-bottom: 15px;
 	padding-right: 30px;
 }
-.statusbar_cnt_outter {
+.statusbar_cnt_outer {
 	display:none;
 }
 #statusbar {
@@ -735,6 +735,51 @@ max-width:90%;
 max-width:90%;
 }
 }
+.exclude_channel_c {
+	border: thin solid #000;
+}
+.exclude_channel_g {
+	border: thin solid #CCC;
+}
+#status_exclude_channel {
+	color: #000;
+}
+.exclude_title_c {
+	border: thin solid #F0AD4E;
+}
+.exclude_title_g {
+	border: thin solid #CCC;
+}
+#status_exclude_title {
+	color: #F0AD4E;
+}
+.exclude_title_text {
+	color: #F0AD4E;
+}
+.exclude_description_c {
+	border: thin solid #5CB85C;
+}
+.exclude_description_g {
+	border: thin solid #CCC;
+}
+#status_exclude_description {
+	color: #5CB85C;
+}
+.exclude_description_text {
+	color: #5CB85C;
+}
+.exclude_extdescription_c {
+	border: thin solid #0000CC;
+}
+.exclude_extdescription_g {
+	border: thin solid #CCC;
+}
+#status_exclude_extdescription {
+	color: #0000CC;
+}
+.exclude_extdescription_text {
+	color: #0000CC;
+}
 .highlight_e2eventtitle {
 	color: #000;
 	background-color:#FFFF00;
@@ -784,7 +829,6 @@ max-width:90%;
 .timer {
 	font-weight: bold;
 }
-
 .sr_channel {
 	font-weight: bold;
 	cursor:pointer;
