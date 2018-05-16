@@ -1,3 +1,8 @@
+v1.5
+
++ Search function improved. Now it's possible to exclude multiple terms from broadcast channel, broadcast title, broadcast description and extended broadcast description.
+To update the SQL tables from Version 1.4 to 1.5, it's required to execute file update.php in folder /functions.
+
 v1.4
 
 + Timer conflicts on Receiver are shown after sending
