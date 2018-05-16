@@ -3,9 +3,9 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Erstellungszeit: 05. Februar 2018 um 18:35
+-- Erstellungszeit: 16. Mai 2018 um 18:58
 -- Server Version: 5.5.58
--- PHP-Version: 5.5.9-1ubuntu4.22
+-- PHP-Version: 5.5.9-1ubuntu4.24
 
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 
@@ -75,14 +75,12 @@ CREATE TABLE IF NOT EXISTS `box_info` (
   `e2webifversion` varchar(255) NOT NULL,
   `e2model` varchar(255) NOT NULL,
   KEY `id` (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 --
 -- Daten für Tabelle `box_info`
 --
 
-INSERT INTO `box_info` (`id`, `e2enigmaversion`, `e2imageversion`, `e2webifversion`, `e2model`) VALUES
-(1, '2010-04-29-experimental', 'Experimental 2010-04-29', '1.6.2', 'dm800');
 
 -- --------------------------------------------------------
 
@@ -132,7 +130,7 @@ CREATE TABLE IF NOT EXISTS `epg_data` (
   `descriptionextended_enc` text NOT NULL,
   `e2eventid` varchar(10) NOT NULL,
   `start_date` varchar(255) NOT NULL,
-  `us_start_date` text NOT NULL,
+  `us_start_date` varchar(255) NOT NULL,
   `start_day` varchar(2) NOT NULL,
   `start_month` varchar(2) NOT NULL,
   `start_year` varchar(4) NOT NULL,
@@ -186,16 +184,12 @@ CREATE TABLE IF NOT EXISTS `record_locations` (
   `e2location` varchar(255) NOT NULL,
   `selected` int(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 --
 -- Daten für Tabelle `record_locations`
 --
 
-INSERT INTO `record_locations` (`id`, `e2location`, `selected`) VALUES
-(1, '/hdd/movie/', 0),
-(2, '/hdd/movie/Doku/', 0),
-(3, '/hdd/movie/Serien/', 0);
 
 -- --------------------------------------------------------
 
@@ -208,8 +202,10 @@ CREATE TABLE IF NOT EXISTS `saved_search` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `searchterm` varchar(255) NOT NULL,
   `search_option` varchar(255) NOT NULL,
-  `exclude_term` text NOT NULL,
-  `exclude_area` varchar(255) NOT NULL,
+  `exclude_channel` text NOT NULL,
+  `exclude_title` text NOT NULL,
+  `exclude_description` text NOT NULL,
+  `exclude_extdescription` text NOT NULL,
   `e2location` varchar(255) NOT NULL,
   `save_date` int(12) NOT NULL,
   `last_change` int(12) NOT NULL,
@@ -292,6 +288,7 @@ CREATE TABLE IF NOT EXISTS `settings` (
   `primetime` int(12) NOT NULL DEFAULT '0',
   `dur_down_primetime` int(4) NOT NULL DEFAULT '0',
   `dur_up_primetime` int(5) NOT NULL DEFAULT '7200',
+  `current_git_push` int(12) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
@@ -299,8 +296,6 @@ CREATE TABLE IF NOT EXISTS `settings` (
 -- Daten für Tabelle `settings`
 --
 
-INSERT INTO `settings` (`id`, `box_ip`, `box_user`, `box_password`, `url_format`, `server_ip`, `script_folder`, `activate_cron`, `epg_entries_per_channel`, `channel_entries`, `time_format`, `epg_crawler`, `crawler_activ`, `crawler_timestamp`, `crawler_hour`, `crawler_minute`, `last_epg_crawl`, `last_epg`, `start_epg_crawler`, `after_crawl_action`, `search_crawler`, `last_search_crawl`, `display_old_epg`, `streaming_symbol`, `imdb_symbol`, `timer_ticker`, `show_hidden_ticker`, `ticker_time`, `mark_searchterm`, `send_timer`, `hide_old_timer`, `delete_old_timer`, `delete_receiver_timer`, `dummy_timer`, `dummy_timer_time`, `dummy_timer_current`, `delete_old_epg`, `del_time`, `reload_progressbar`, `search_list_sort`, `extra_rec_time`, `cz_activate`, `cz_wait_time`, `cz_repeat`, `cz_hour`, `cz_minute`, `cz_am_pm`, `cz_start_channel`, `cz_timestamp`, `cz_worktime`, `dur_down_broadcast`, `dur_up_broadcast`, `primetime`, `dur_down_primetime`, `dur_up_primetime`) VALUES
-(0, '', '', '', 'http', '', 'uniwebif', 0, 250, 100, 2, 0, 0, 0, '', '', 0, 0, 50, 0, 0, 0, 0, 1, 1, 1, 0, 604800, 1, 0, 1, 1, 0, 0, 0, 0, 1, 86400, 0, 'id', 0, 0, 15, '', '', '', '', '', '0', '0', 300, 1800, 1517857200, 0, 7200);
 
 -- --------------------------------------------------------
 
@@ -322,8 +317,10 @@ CREATE TABLE IF NOT EXISTS `timer` (
   `e2eventservicereference` varchar(255) NOT NULL,
   `search_term` varchar(255) NOT NULL,
   `search_option` varchar(255) NOT NULL,
-  `exclude_term` varchar(255) NOT NULL,
-  `exclude_area` varchar(255) NOT NULL,
+  `exclude_channel` text NOT NULL,
+  `exclude_title` text NOT NULL,
+  `exclude_description` text NOT NULL,
+  `exclude_extdescription` text NOT NULL,
   `record_location` varchar(255) NOT NULL,
   `e2eventstart` varchar(12) NOT NULL,
   `e2eventend` varchar(12) NOT NULL,
