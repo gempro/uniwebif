@@ -229,7 +229,7 @@ if(typeof(EventSource) !== "undefined") {
     source.onmessage = function(event) {
 	
 	$("#broadcast_status_zap_"+this_id+"").html("<i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i>");
-	$("#broadcast_status_zap_"+this_id+"").fadeOut(3000);
+	$("#broadcast_status_zap_"+this_id+"").fadeOut(2000);
 		
 	this.close();
 	};
@@ -275,7 +275,7 @@ if(typeof(EventSource) !== "undefined") {
     source.onmessage = function(event) {
 		
 	$("#searchlist_status_zap_"+this_id+"").html("<i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i>");
-	$("#searchlist_status_zap_"+this_id+"").fadeOut(3000);
+	$("#searchlist_status_zap_"+this_id+"").fadeOut(2000);
 	
 	this.close();
 	};
@@ -321,7 +321,7 @@ if(typeof(EventSource) !== "undefined") {
     source.onmessage = function(event) {
 		
 	$("#channel_crawler_status_zap_"+this_id+"").html("<i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i>");
-	$("#channel_crawler_status_zap_"+this_id+"").fadeOut(3000);
+	$("#channel_crawler_status_zap_"+this_id+"").fadeOut(2000);
 	
 	this.close();
 	};
@@ -428,7 +428,7 @@ if(typeof(EventSource) !== "undefined") {
     source.onmessage = function(event) {
 		
 	$("#primetime_status_zap_"+this_id+"").html("<i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i>");
-	$("#primetime_status_zap_"+this_id+"").fadeOut(3000);
+	$("#primetime_status_zap_"+this_id+"").fadeOut(2000);
 	
 	this.close();
 	};
@@ -494,7 +494,7 @@ function set_primetime(){
 	// write data in container
 	$("#set_status").html(data);
 	
-	$("#set_status").fadeOut(4000);
+	$("#set_status").fadeOut(2000);
 	
 	}
 	);
@@ -574,7 +574,7 @@ if(typeof(EventSource) !== "undefined") {
     source.onmessage = function(event) {
 		
 	$("#channelbrowser_status_zap_"+this_id+"").html("<i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i>");
-	$("#channelbrowser_status_zap_"+this_id+"").fadeOut(3000);
+	$("#channelbrowser_status_zap_"+this_id+"").fadeOut(2000);
 	
 	this.close();
 	};
@@ -641,7 +641,10 @@ function hide_timerlist_div_outer() { animatedcollapse.toggle('timerlist_div_out
 	}
 	window.setTimeout(hide_timerlist_div_outer, 1000);
 	}
-		
+	$("#box_"+this_id+"").attr({name:'null'});
+	$("#box_"+this_id+"").attr({id:'null'});
+	load_timer_list_panel();
+	
 	this.close();
 	};
 	} else {
@@ -666,6 +669,8 @@ if(typeof(EventSource) !== "undefined") {
 	document.getElementById("timerlist_status_"+name+"").innerHTML = event.data;
 	
 	$("#tl_glyphicon_status_"+name+"").attr({style:"color:#5CB85C", title:"sent"});
+	
+	load_timer_list_panel();
 
 	this.close();
 	};
@@ -675,7 +680,7 @@ if(typeof(EventSource) !== "undefined") {
 }
 
 // timerlist hide timer
-function timerlist_hide_timer(id) {
+function timerlist_hide_timer(id,name) {
 	
 	var this_id = id.replace(/timerlist_hide_timer_btn_/g, "");
 	
@@ -691,8 +696,21 @@ function hide_timerlist_div_outer() {
 	animatedcollapse.addDiv('timerlist_div_outer_'+this_id, 'fade=1,height=auto');
 	animatedcollapse.init();
 	animatedcollapse.toggle('timerlist_div_outer_'+this_id);
+	
+	if($("#box_"+name+"").is(':checked')){
+	var summary = $("#selected_box_sum").text();
+	var summary = summary.replace("(", "");
+	var summary = summary.replace(")", "");
+	var summary = summary - 1;
+	$("#selected_box_sum").html("("+summary+")");
+	$("#box_"+name+"").attr('checked', false);
+	if (summary < '1'){ $("#selected_box_sum").fadeOut(1500); }
+	}
 	}
 	window.setTimeout(hide_timerlist_div_outer, 1000);
+	$("#box_"+this_id+"").attr({name:'null'});
+	$("#box_"+this_id+"").attr({id:'null'});
+	load_timer_list_panel();
 		
 	this.close();
 	};
@@ -712,13 +730,14 @@ if(typeof(EventSource) !== "undefined") {
     var source = new EventSource("functions/timer_list_inc.php?action=unhide&timer_id="+this_id+"");
     source.onmessage = function(event) {
 	
-	document.getElementById("timerlist_status_"+this_id+"").innerHTML = "<i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i>";
+	document.getElementById("timerlist_status_"+this_id+"").innerHTML = "";
 	$('#timerlist_div_outer_'+this_id).removeClass("opac_70");
-	
-	document.getElementById("timerlist_unhide_timer_btn_"+this_id+"").value = "HIDE TIMER";
+	document.getElementById("timerlist_unhide_timer_btn_"+this_id+"").value = "HIDE";
 	document.getElementById("timerlist_unhide_timer_btn_"+this_id+"").setAttribute('onclick','timerlist_hide_timer(this.id)');
 	document.getElementById("timerlist_unhide_timer_btn_"+this_id+"").title = "hide Timer from list";
 	document.getElementById("timerlist_unhide_timer_btn_"+this_id+"").id = "timerlist_hide_timer_btn_"+this_id+"";
+	
+	load_timer_list_panel();
 		
 	this.close();
 	};
@@ -726,6 +745,16 @@ if(typeof(EventSource) !== "undefined") {
 	document.getElementById("timerlist_status_"+this_id+"").value = "Sorry, your browser does not support server-sent events...";
 	}
 }
+
+
+// timerlist show excluded
+function timerlist_show_exclude(id){
+	
+	animatedcollapse.addDiv('timerlist_excluded_terms_'+id, 'fade=1,height=auto');
+	animatedcollapse.init();
+	animatedcollapse.toggle('timerlist_excluded_terms_'+id);
+	
+	}
 
 // tickerlist send timer
 function tickerlist_send_timer(id) {
@@ -830,31 +859,38 @@ function(data){
 	$("#selected_box_sum").html("");
 	
 	if (data == 'send_done'){
-	$("#panel_action_status").fadeOut(4000);
+	$("#panel_action_status").fadeOut(2000);
 	$("input[name='timerlist_checkbox[]']:checked").each(function ()
 	{
 	$("#tl_glyphicon_status_"+$(this).val()+"").attr({style:"color:#5CB85C", title:"sent"});
 	$("[id^=box]").prop("checked", false);
 	});
+	$("#select_all").prop("checked", false);
+	load_timer_list_panel();
 	}
 	
 	if (data == 'delete_rec_done'){
-	$("#panel_action_status").fadeOut(4000);
+	$("#panel_action_status").fadeOut(2000);
 	$("input[name='timerlist_checkbox[]']:checked").each(function ()
 	{
 	$("#tl_glyphicon_status_"+$(this).val()+"").attr({style:"color:#D9534F", title:"not sent"});
 	$("[id^=box]").prop("checked", false);
 	});
-	
+	$("#select_all").prop("checked", false);
+	load_timer_list_panel();
 	}
 	
 	if (data == 'unhide_done'){
-	$("#panel_action_status").fadeOut(4000);
+	$("#panel_action_status").fadeOut(2000);
 	$("input[name='timerlist_checkbox[]']:checked").each(function ()
 	{
 	$('#timerlist_div_outer_'+$(this).val()).removeClass("opac_70");
 	$("[id^=box]").prop("checked", false);
+	$("#select_all").prop("checked", false);
+	$("#timerlist_unhide_timer_btn_"+$(this).val()+"").val("HIDE");
+	$("#timerlist_unhide_timer_btn_"+$(this).val()+"").attr({value:'HIDE', onclick:'timerlist_hide_timer(this.id)', title:'hide Timer from list', id:'timerlist_hide_timer_btn_'+$(this).val()+''});
 	});
+	load_timer_list_panel();
 	}
 	
 function hide_timer_div(){
@@ -864,15 +900,13 @@ function hide_timer_div(){
 	animatedcollapse.addDiv('timerlist_div_outer_'+$(this).val(), 'fade=1,height=auto');
 	animatedcollapse.init()
 	animatedcollapse.hide('timerlist_div_outer_'+$(this).val());
-	$("#panel_action_status").fadeOut(1000);
-	//$("#panel_action_status").val("");
+	$("#panel_action_status").fadeOut(2000);
+	$("#box_"+$(this).val()+"").attr({name:'null'});
+	$("#box_"+$(this).val()+"").attr({id:'null'});
 	});
-
-function unselect_boxes(){
 	$("[id^=box]").prop("checked", false);
-	}
-	window.setTimeout(unselect_boxes, 1500);
 	$("#select_all").prop("checked", false);
+	load_timer_list_panel();
 	}
 	}
 	window.setTimeout(hide_timer_div, 1000);
@@ -1004,8 +1038,10 @@ if(typeof(EventSource) !== "undefined") {
 	var this_id = id.replace(/saved_search_list_save_btn_/g, "");
 	var searchterm = encodeURIComponent(document.getElementById("searchterm_"+this_id+"").value);
 	var searcharea = document.getElementById("searcharea_"+this_id+"").value;
-	var exclude_term = encodeURIComponent(document.getElementById("exclude_term_"+this_id+"").value);
-	var exclude_area = document.getElementById("exclude_area_"+this_id+"").value;
+	var exclude_channel = encodeURIComponent(document.getElementById("exclude_channel_"+this_id+"").value);
+	var exclude_title = encodeURIComponent(document.getElementById("exclude_title_"+this_id+"").value);
+	var exclude_description = document.getElementById("exclude_description_"+this_id+"").value;
+	var exclude_extdescription = document.getElementById("exclude_extdescription_"+this_id+"").value;
 	var rec_replay = document.getElementById("rec_replay_"+this_id+"").value;
 	var channel = document.getElementById("channel_dropdown_saved_search_list_"+this_id+"").value;
 	var record_location = document.getElementById("rec_dropdown_saved_search_list_"+this_id+"").value;
@@ -1013,7 +1049,7 @@ if(typeof(EventSource) !== "undefined") {
 	
 	document.getElementById("saved_search_list_status_"+this_id+"").innerHTML = "<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">";
 	
-    var source = new EventSource("functions/search_list_edit.php?id="+this_id+"&searchterm="+searchterm+"&searcharea="+searcharea+"&exclude_term="+exclude_term+"&exclude_area="+exclude_area+"&rec_replay="+rec_replay+"&channel="+channel+"&record_location="+record_location+"&active="+active+"&action=save");
+    var source = new EventSource("functions/search_list_edit.php?id="+this_id+"&searchterm="+searchterm+"&searcharea="+searcharea+"&exclude_channel="+exclude_channel+"&exclude_title="+exclude_title+"&exclude_description="+exclude_description+"&exclude_extdescription="+exclude_extdescription+"&rec_replay="+rec_replay+"&channel="+channel+"&record_location="+record_location+"&active="+active+"&action=save");
     
 	source.onmessage = function(event) {
 		
@@ -1697,7 +1733,7 @@ if(typeof(EventSource) !== "undefined") {
 	
 	if (event.data == 'true') {
 	document.getElementById("pc"+id+"").innerHTML = "<i class=\"glyphicon glyphicon-arrow-down fa-1x\" style=\"color:#D9534F\"></i>";
-	$("#pc"+id+"").fadeOut(4000);
+	$("#pc"+id+"").fadeOut(2000);
 	this.close(); }
 	
 	if (event.data == 'error') {
@@ -1706,7 +1742,7 @@ if(typeof(EventSource) !== "undefined") {
 	
 	if (event.data == 'false') {
 	document.getElementById("pc"+id+"").innerHTML = "<i class=\"glyphicon glyphicon-arrow-up fa-1x\" style=\"color:#5CB85C\"></i>";
-	$("#pc"+id+"").fadeOut(4000);
+	$("#pc"+id+"").fadeOut(2000);
 	this.close(); }
 	
 	};
@@ -1808,7 +1844,7 @@ if(typeof(EventSource) !== "undefined") {
     source.onmessage = function(event) {
 	
 	$("#all_services_status_zapp_"+this_id+"").html("<i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i>");
-	$("#all_services_status_zapp_"+this_id+"").fadeOut(3000);
+	$("#all_services_status_zapp_"+this_id+"").fadeOut(2000);
 	
 	this.close();
 	};
