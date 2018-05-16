@@ -77,8 +77,6 @@ include_once("inc/header_info.php");
 	
 	$receiver_timer = ' <span class="timer_panel_info">| '.$timer_summary.' on Receiver</span>';
 	
-//close db
-mysqli_close($dbmysqli);
 ?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -140,16 +138,21 @@ $(document).ready(function(){
 	function(data){
 	$("#timerlist_inc").html(data);
 	});
-});
 // display channel list
-$(window).load(function() {
 	$.post("functions/search_list_inc.php",
 	function(data){
 	// write data in container
 	$("#search_list").html(data);
-	}
-	);
+	});
 });
+// load timer panel
+function load_timer_list_panel(){
+	$.post("functions/timer_list_panel_inc.php",
+	function(data){
+	// write data in container
+	$("#timerlist_panel").html(data);
+	});
+}
 function sortby(){
 var search_list_sort = document.getElementById("sort_setting").value;
 	$.post("functions/search_list_inc.php?sort_list="+search_list_sort+"",
@@ -277,7 +280,7 @@ var search_list_sort = document.getElementById("sort_setting").value;
       <hr />
       <div class="row">
         <div class="col-md-12">
-          <h4><?php echo $count_timer; echo $show_sent_timer; echo $show_timer_today; echo $show_hidden_timer; echo $receiver_timer; ?> </h4>
+          <h4 id="timerlist_panel"><?php echo $count_timer; echo $show_sent_timer; echo $show_timer_today; echo $show_hidden_timer; echo $receiver_timer; ?> </h4>
           <div id="timerlist_main">
           <div class="timer_panel">
           <span class="timerlist_checkbox"><input id="select_all" type="checkbox" onClick="select_timer_checkbox()"></span>

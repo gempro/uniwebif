@@ -87,12 +87,17 @@ function save_receiver(){
 //
 function install(){
 	$("#install_status").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
-	
+	var receiver_ip = $("#receiver_ip").val();
+	var receiver_user = $("#receiver_user").val();
+	var receiver_pass = $("#receiver_pass").val();
 	var server_ip = $("#server_ip").val();
 	var script_folder = $("#script_folder").val();
 	$.post("functions/setup_inc.php",
 	{
 	setting: 'install',
+	receiver_ip: receiver_ip,
+	receiver_user: receiver_user,
+	receiver_pass: receiver_pass,
 	server_ip: server_ip,
 	script_folder: script_folder
 	},
@@ -317,7 +322,7 @@ function install(){
               Now create a <strong>Cron</strong>, which called may every 3 minutes the file /uniwebif/inc/<strong>cron.php</strong><br>
               <h2>Ready!</h2>
               Most important Settings are done, and the script was working.<br>
-              For more Information read the <a href="help/guide.html" target="_blank">Guide</a> or <a href="http://uniwebif.techweb.at/faq.php" target="_blank">FAQ</a><br>
+              For more Information read the <a href="help/guide.html" target="_blank">Guide</a> or <a href="http://uniwebif-demo.techweb.at/faq.php" target="_blank">FAQ</a><br>
               Tutorial Video which show the main functions is <a href="https://www.youtube.com/watch?v=lj4EOlJzquk" target="_blank">here</a>.<br>
               For any questions, issues or suggestions visit <a href="https://github.com/gempro/uniwebif/issues" target="_blank">Github</a>.</div>
           	 </div>

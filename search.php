@@ -10,8 +10,10 @@ include_once("inc/header_info.php");
 	if(!isset($_REQUEST['search_channel']) or $_REQUEST['search_channel'] == ""){ $_REQUEST['search_channel'] = ""; }
 	if(!isset($_REQUEST['channel_id']) or $_REQUEST['channel_id'] == "") { $_REQUEST['channel_id'] = ""; }
 	if(!isset($_REQUEST['record_location']) or $_REQUEST['record_location'] == "") { $_REQUEST['record_location'] = ""; }
-	if(!isset($_REQUEST['exclude_term']) or $_REQUEST['exclude_term'] == "") { $_REQUEST['exclude_term'] = ""; }
-	if(!isset($_REQUEST['exclude_area']) or $_REQUEST['exclude_area'] == "") { $_REQUEST['exclude_area'] = ""; }
+	if(!isset($_REQUEST['exclude_channel']) or $_REQUEST['exclude_channel'] == "") { $_REQUEST['exclude_channel'] = ""; }
+	if(!isset($_REQUEST['exclude_title']) or $_REQUEST['exclude_title'] == "") { $_REQUEST['exclude_title'] = ""; }
+	if(!isset($_REQUEST['exclude_description']) or $_REQUEST['exclude_description'] == "") { $_REQUEST['exclude_description'] = ""; }
+	if(!isset($_REQUEST['exclude_extdescription']) or $_REQUEST['exclude_extdescription'] == "") { $_REQUEST['exclude_extdescription'] = ""; }
 	if(!isset($_REQUEST['rec_replay']) or $_REQUEST['rec_replay'] == "") { $_REQUEST['rec_replay'] = ""; }
 	
 	$searchterm = trim($_POST["searchterm"]);
@@ -25,11 +27,25 @@ include_once("inc/header_info.php");
 	$channel_id = $_REQUEST["channel_id"];
 	$record_location = $_REQUEST["record_location"];
 	
-	$exclude_term = $_REQUEST["exclude_term"];
-	$exclude_area = $_REQUEST["exclude_area"];
-	$exclude_term = str_replace("\"", "", $exclude_term);
-	//$exclude_term = str_replace("'", "", $exclude_term);
-	$exclude_term = str_replace("%", "", $exclude_term);
+	$exclude_channel = $_REQUEST["exclude_channel"];
+	$exclude_channel = str_replace("\"", "", $exclude_channel);
+	//$exclude_channel = str_replace("'", "", $exclude_channel);
+	$exclude_channel = str_replace("%", "", $exclude_channel);
+	
+	$exclude_title = $_REQUEST["exclude_title"];
+	$exclude_title = str_replace("\"", "", $exclude_title);
+	//$exclude_title = str_replace("'", "", $exclude_title);
+	$exclude_title = str_replace("%", "", $exclude_title);
+	
+	$exclude_description = $_REQUEST["exclude_description"];
+	$exclude_description = str_replace("\"", "", $exclude_description);
+	//$exclude_description = str_replace("'", "", $exclude_description);
+	$exclude_description = str_replace("%", "", $exclude_description);
+	
+	$exclude_extdescription = $_REQUEST["exclude_extdescription"];
+	$exclude_extdescription = str_replace("\"", "", $exclude_extdescription);
+	//$exclude_extdescription = str_replace("'", "", $exclude_extdescription);
+	$exclude_extdescription = str_replace("%", "", $exclude_extdescription);
 	
 	$rec_replay = $_REQUEST["rec_replay"];
 	
@@ -87,49 +103,66 @@ include_once("inc/header_info.php");
 	
 	$raw_term = rawurlencode($searchterm);
 	
-	$raw_exclude = rawurlencode($exclude_term);
+	$raw_exclude_channel = rawurlencode($exclude_channel);
 	// exclude titel
-	if ($exclude_term !== '' and $exclude_area == '1'){
+	if ($raw_exclude_channel !== ''){
 	// explode
-	$tags = explode(rawurlencode(';') , $raw_exclude);
+	$tags = explode(rawurlencode(';') , $raw_exclude_channel);
 	foreach($tags as $i =>$key) { $i >0;
-	if(!isset($exclude_part) or $exclude_part == "") { $exclude_part = ""; }
-	if(!isset($key) or $key == "") { $search_string = ''; } else { $search_string = 'AND `title_enc` NOT LIKE "%'.$key.'%" '; }
-	$exclude_part = $exclude_part.$search_string;
+	if(!isset($exclude_channel_part) or $exclude_channel_part == "") { $exclude_channel_part = ""; }
+	if(!isset($key) or $key == "") { $search_string = ''; } else { $search_string = 'AND `servicename_enc` NOT LIKE "%'.$key.'%" '; }
+	$exclude_channel_part = $exclude_channel_part.$search_string;
 	} // ecplode 	
 	}
 	
+	$raw_exclude_title = rawurlencode($exclude_title);
+	// exclude titel
+	if ($raw_exclude_title !== ''){
+	// explode
+	$tags = explode(rawurlencode(';') , $raw_exclude_title);
+	foreach($tags as $i =>$key) { $i >0;
+	if(!isset($exclude_title_part) or $exclude_title_part == "") { $exclude_title_part = ""; }
+	if(!isset($key) or $key == "") { $search_string = ''; } else { $search_string = 'AND `title_enc` NOT LIKE "%'.$key.'%" '; }
+	$exclude_title_part = $exclude_title_part.$search_string;
+	} // ecplode 	
+	}
+	
+	$raw_exclude_description = rawurlencode($exclude_description);
 	// exclude description
-	if ($exclude_term !== '' and $exclude_area == '2'){
+	if ($raw_exclude_description !== ''){
 	// explode
-	$tags = explode(rawurlencode(';') , $raw_exclude);
+	$tags = explode(rawurlencode(';') , $raw_exclude_description);
 	foreach($tags as $i =>$key) { $i >0;
-	if(!isset($exclude_part) or $exclude_part == "") { $exclude_part = ""; }
+	if(!isset($exclude_description_part) or $exclude_description_part == "") { $exclude_description_part = ""; }
 	if(!isset($key) or $key == "") { $search_string = ''; } else { $search_string = 'AND `description_enc` NOT LIKE "%'.$key.'%" '; }
-	$exclude_part = $exclude_part.$search_string;
+	$exclude_description_part = $exclude_description_part.$search_string;
 	} // ecplode
 	}
 	
+	$raw_exclude_extdescription = rawurlencode($exclude_extdescription);
 	// exclude extended description
-	if ($exclude_term !== '' and $exclude_area == '3'){
+	if ($raw_exclude_extdescription !== ''){
 	// explode
-	$tags = explode(rawurlencode(';') , $raw_exclude);
+	$tags = explode(rawurlencode(';') , $raw_exclude_extdescription);
 	foreach($tags as $i =>$key) { $i >0;
-	if(!isset($exclude_part) or $exclude_part == "") { $exclude_part = ""; }
+	if(!isset($exclude_extdescription_part) or $exclude_extdescription_part == "") { $exclude_extdescription_part = ""; }
 	if(!isset($key) or $key == "") { $search_string = ''; } else { $search_string = 'AND `descriptionextended_enc` NOT LIKE "%'.$key.'%" '; }
-	$exclude_part = $exclude_part.$search_string;
+	$exclude_extdescription_part = $exclude_extdescription_part.$search_string;
 	} // ecplode
 	}
 	
-	if(!isset($exclude_part) or $exclude_part == "") { $exclude_part = ""; }
+	if(!isset($exclude_channel_part) or $exclude_channel_part == "") { $exclude_channel_part = ""; }
+	if(!isset($exclude_title_part) or $exclude_title_part == "") { $exclude_title_part = ""; }
+	if(!isset($exclude_description_part) or $exclude_description_part == "") { $exclude_description_part = ""; }
+	if(!isset($exclude_extdescription_part) or $exclude_extdescription_part == "") { $exclude_extdescription_part = ""; }
 
 	// search all
 	if ($option == 'all' or $option == '')
 	{
-	$sql = 'SELECT * FROM `epg_data` '.$search_include.' MATCH (title_enc, e2eventservicename, description_enc, descriptionextended_enc) AGAINST ("%'.$raw_term.'%") '.$exclude_time.' '.$search_include2.' `title_enc` LIKE "%'.$raw_term.'%" '.$exclude_time.' '.$search_include2.' `e2eventservicename` LIKE "%'.$raw_term.'%" '.$exclude_time.' '.$search_include2.' `description_enc` LIKE "%'.$raw_term.'%" '.$exclude_time.' '.$search_include2.' `descriptionextended_enc` LIKE "%'.$raw_term.'%" '.$exclude_time.' ORDER BY `e2eventstart` ASC';
+	$sql = 'SELECT * FROM `epg_data` '.$search_include.' MATCH (title_enc, e2eventservicename, description_enc, descriptionextended_enc) AGAINST ("%'.$raw_term.'%") '.$exclude_time.' '.$search_include2.' `title_enc` LIKE "%'.$raw_term.'%" '.$exclude_time.' '.$search_include2.' `e2eventservicename` LIKE "%'.$raw_term.'%" '.$exclude_time.' '.$search_include2.' `description_enc` LIKE "%'.$raw_term.'%" '.$exclude_time.' '.$search_include2.' `descriptionextended_enc` LIKE "%'.$raw_term.'%" '.$exclude_channel_part.' '.$exclude_title_part.' '.$exclude_description_part.' '.$exclude_extdescription_part.' '.$exclude_time.' ORDER BY `e2eventstart` ASC';
 	
 	// count hits
-	$stmt = $dbmysqli->prepare('SELECT COUNT(*) as count_search FROM `epg_data` '.$search_include.' MATCH (title_enc, e2eventservicename, description_enc, descriptionextended_enc) AGAINST ("%'.$raw_term.'%") '.$exclude_time.' '.$search_include2.' `title_enc` LIKE "%'.$raw_term.'%" '.$exclude_time.' '.$search_include2.' `e2eventservicename` LIKE "%'.$raw_term.'%" '.$exclude_time.' '.$search_include2.' `description_enc` LIKE "%'.$raw_term.'%" '.$exclude_time.' '.$search_include2.' `descriptionextended_enc` LIKE "%'.$raw_term.'%" '.$exclude_time.' ');
+	$stmt = $dbmysqli->prepare('SELECT COUNT(*) as count_search FROM `epg_data` '.$search_include.' MATCH (title_enc, e2eventservicename, description_enc, descriptionextended_enc) AGAINST ("%'.$raw_term.'%") '.$exclude_time.' '.$search_include2.' `title_enc` LIKE "%'.$raw_term.'%" '.$exclude_time.' '.$search_include2.' `e2eventservicename` LIKE "%'.$raw_term.'%" '.$exclude_time.' '.$search_include2.' `description_enc` LIKE "%'.$raw_term.'%" '.$exclude_time.' '.$search_include2.' `descriptionextended_enc` LIKE "%'.$raw_term.'%" '.$exclude_channel_part.' '.$exclude_title_part.' '.$exclude_description_part.' '.$exclude_extdescription_part.' '.$exclude_time.' ');
 	
 	if( !is_a($stmt, 'MySQLI_Stmt') || $dbmysqli->errno > 0 )
 	throw new Exception( $dbmysqli->error, $dbmysqli->errno );
@@ -148,10 +181,10 @@ include_once("inc/header_info.php");
 	// search title
 	if ($option == 'title')
 	{
-	$sql = 'SELECT * FROM `epg_data` '.$search_include.' `title_enc` LIKE "%'.$raw_term.'%" '.$exclude_part.' '.$exclude_time.' ORDER BY `e2eventstart` ASC';
+	$sql = 'SELECT * FROM `epg_data` '.$search_include.' `title_enc` LIKE "%'.$raw_term.'%" '.$exclude_channel_part.' '.$exclude_title_part.' '.$exclude_description_part.' '.$exclude_extdescription_part.' '.$exclude_time.' ORDER BY `e2eventstart` ASC';
 	
 	// count hits
-	$stmt = $dbmysqli->prepare('SELECT COUNT(*) as count_search FROM `epg_data` '.$search_include.' `title_enc` LIKE "%'.$raw_term.'%" '.$exclude_part.' '.$exclude_time.' ');
+	$stmt = $dbmysqli->prepare('SELECT COUNT(*) as count_search FROM `epg_data` '.$search_include.' `title_enc` LIKE "%'.$raw_term.'%" '.$exclude_channel_part.' '.$exclude_title_part.' '.$exclude_description_part.' '.$exclude_extdescription_part.' '.$exclude_time.' ');
 	
 	if( !is_a($stmt, 'MySQLI_Stmt') || $dbmysqli->errno > 0 )
 	throw new Exception( $dbmysqli->error, $dbmysqli->errno );
@@ -170,10 +203,10 @@ include_once("inc/header_info.php");
 	// search description
 	if ($option == 'description')
 	{
-	$sql = 'SELECT * FROM `epg_data` '.$search_include.' `description_enc` LIKE "%'.$raw_term.'%" '.$exclude_part.' '.$exclude_time.' ORDER BY `e2eventstart` ASC';
+	$sql = 'SELECT * FROM `epg_data` '.$search_include.' `description_enc` LIKE "%'.$raw_term.'%" '.$exclude_channel_part.' '.$exclude_title_part.' '.$exclude_description_part.' '.$exclude_extdescription_part.' '.$exclude_time.' ORDER BY `e2eventstart` ASC';
 	
 	// count hits
-	$stmt = $dbmysqli->prepare('SELECT COUNT(*) as count_search FROM `epg_data` '.$search_include.' `description_enc` LIKE "%'.$raw_term.'%" '.$exclude_part.' '.$exclude_time.' ');
+	$stmt = $dbmysqli->prepare('SELECT COUNT(*) as count_search FROM `epg_data` '.$search_include.' `description_enc` LIKE "%'.$raw_term.'%" '.$exclude_channel_part.' '.$exclude_title_part.' '.$exclude_description_part.' '.$exclude_extdescription_part.' '.$exclude_time.' ');
 	
 	if( !is_a($stmt, 'MySQLI_Stmt') || $dbmysqli->errno > 0 )
 	throw new Exception( $dbmysqli->error, $dbmysqli->errno );
@@ -192,10 +225,10 @@ include_once("inc/header_info.php");
 	// search extended description
 	if ($option == 'extdescription')
 	{
-	$sql = 'SELECT * FROM `epg_data` '.$search_include.' descriptionextended_enc LIKE "%'.$raw_term.'%" '.$exclude_part.' '.$exclude_time.' ORDER BY `e2eventstart` ASC';
+	$sql = 'SELECT * FROM `epg_data` '.$search_include.' descriptionextended_enc LIKE "%'.$raw_term.'%" '.$exclude_channel_part.' '.$exclude_title_part.' '.$exclude_description_part.' '.$exclude_extdescription_part.' '.$exclude_time.' ORDER BY `e2eventstart` ASC';
 	
 	// count hits
-	$stmt = $dbmysqli->prepare('SELECT COUNT(*) as count_search FROM `epg_data` '.$search_include.' `descriptionextended_enc` LIKE "%'.$raw_term.'%" '.$exclude_part.' '.$exclude_time.' ');
+	$stmt = $dbmysqli->prepare('SELECT COUNT(*) as count_search FROM `epg_data` '.$search_include.' `descriptionextended_enc` LIKE "%'.$raw_term.'%" '.$exclude_channel_part.' '.$exclude_title_part.' '.$exclude_description_part.' '.$exclude_extdescription_part.' '.$exclude_time.' ');
 	if( !is_a($stmt, 'MySQLI_Stmt') || $dbmysqli->errno > 0 )
 	throw new Exception( $dbmysqli->error, $dbmysqli->errno );
 	$stmt->execute();
@@ -242,6 +275,8 @@ include_once("inc/header_info.php");
 	$date_end = date("l n/d/Y - g:i A", $e2eventend);
 	}
 	
+	if($obj->e2eventdescription == ""){ $obj->e2eventdescription = "No description"; }
+	if($obj->e2eventdescriptionextended == ""){ $obj->e2eventdescriptionextended = "No extended description"; }
 	if(!isset($result_list) or $result_list == "") { $result_list = ""; }
 	
 	$result_list = $result_list."
@@ -265,7 +300,7 @@ include_once("inc/header_info.php");
     }
   // Free result set
   mysqli_free_result($result);
-	}
+}
 }
 //close db
 //mysqli_close($dbmysqli);
@@ -330,8 +365,7 @@ if(typeof(EventSource) !== "undefined") {
 	if (rec_loc !== '') {
 	var record_location = '<?php echo $_REQUEST['record_location']; ?>';
 	}
-	
-    var source = new EventSource("functions/save_search.php?option=<?php echo $_REQUEST['option']; ?>&searchterm=<?php echo rawurlencode($_REQUEST['searchterm']); ?>&record_location="+record_location+"&channel_id=<?php echo $_REQUEST['channel_id']; ?>&exclude_area=<?php echo $_REQUEST['exclude_area']; ?>&exclude_term=<?php echo rawurlencode($_REQUEST['exclude_term']); ?>&rec_replay=<?php echo $_REQUEST['rec_replay']; ?>");
+    var source = new EventSource("functions/save_search.php?option=<?php echo $_REQUEST['option']; ?>&searchterm=<?php echo rawurlencode($_REQUEST['searchterm']); ?>&record_location="+record_location+"&channel_id=<?php echo $_REQUEST['channel_id']; ?>&exclude_channel=<?php echo $_REQUEST['exclude_channel']; ?>&exclude_title=<?php echo $_REQUEST['exclude_title']; ?>&exclude_description=<?php echo rawurlencode($_REQUEST['exclude_description']); ?>&exclude_extdescription=<?php echo rawurlencode($_REQUEST['exclude_extdescription']); ?>&rec_replay=<?php echo $_REQUEST['rec_replay']; ?>");
 	
     source.onmessage = function(event) {
 
@@ -361,15 +395,24 @@ if(typeof(EventSource) !== "undefined") {
 	document.getElementById("save_search_status").innerHTML = "Sorry, your browser does not support server-sent events...";
 	}
 }
-</script>
-<script type="text/javascript">
+//
 function check_channel_search() {
 	if (search_channel.checked == true) { document.getElementById("channel_id").disabled = false; }
 	if (search_channel.checked == false) { document.getElementById("channel_id").disabled = true; }
 }
 function check_exclude(){
-	if (exclude.checked == true) { document.getElementById("exclude_term").disabled = false; document.getElementById("exclude_area").disabled = false; }
-	if (exclude.checked == false) { document.getElementById("exclude_term").disabled = true; document.getElementById("exclude_area").disabled = true; }
+	
+	if (exclude_channel_checkbox.checked == true){ 
+	$("#exclude_channel").attr({ disabled:false, class:'exclude_channel_c' }); $("#status_exclude_channel").text("Channel"); } else { $("#exclude_channel").attr({ disabled:true, class:'exclude_channel_g' }); $("#status_exclude_channel").text(""); }
+
+	if (exclude_title_checkbox.checked == true){ 
+	$("#exclude_title").attr({ disabled:false, class:'exclude_title_c' }); $("#status_exclude_title").text("Title"); } else { $("#exclude_title").attr({ disabled:true, class:'exclude_title_g' }); $("#status_exclude_title").text(""); }
+	
+	if (exclude_description_checkbox.checked == true){
+	$("#exclude_description").attr({ disabled:false, class:'exclude_description_c' }); $("#status_exclude_description").text("Description"); } else { $("#exclude_description").attr({ disabled:true, class:'exclude_description_g' }); $("#status_exclude_description").text(""); }
+	
+	if (exclude_extdescription_checkbox.checked == true){
+	$("#exclude_extdescription").attr({ disabled:false, class:'exclude_extdescription_c' }); $("#status_exclude_extdescription").text("Ext. description"); } else { $("#exclude_extdescription").attr({ disabled:true, class:'exclude_extdescription_g' }); $("#status_exclude_extdescription").text(""); }
 }
 </script>
 </head>
@@ -499,22 +542,22 @@ function check_exclude(){
               <div id="radio1">
                 <label>
                 <input type="radio" name="option" value="all" id="option1_0" <?php if ($option == 'all' or $option == ''){ echo "checked"; } ?>>
-                all</label>
+                All</label>
               </div>
               <div id="radio2">
                 <label>
                 <input type="radio" name="option" value="title" id="option1_1" <?php if ($option == 'title'){ echo "checked"; } ?>>
-                title</label>
+                Title</label>
               </div>
               <div id="radio3">
                 <label>
                 <input type="radio" name="option" value="description" id="option1_2" <?php if ($option == 'description'){ echo "checked"; } ?>>
-                description</label>
+                Description</label>
               </div>
               <div id="radio4">
                 <label>
                 <input type="radio" name="option" value="extdescription" id="option1_3" <?php if ($option == 'extdescription'){ echo "checked"; } ?>>
-                extended description</label>
+                Extended description</label>
               </div>
               <div style="clear:both"></div>
             </div>
@@ -547,22 +590,10 @@ function check_exclude(){
 					} 
 					?>
                 </select>
-              </div>
-              <div style="clear:both">&nbsp;</div>
-            </div>
-            <?php 
-        	if(!isset($count_search) or $count_search == "") { $count_search = ""; }
-        	if ($count_search == '' ){ $count_search = '0'; }
-        	if ($count_search == '1' ){ $sum = 'result'; } else { $sum = 'results'; }
-        	if($searchterm == "" ) { $desc_text = ''; } else { $desc_text = 'Found <strong>'.$count_search.'</strong> '.$sum.' with this term'; }
-        	echo $desc_text;
-        	if ($searchterm !== ''){ echo $p_save_search; }
-        	?>
-            <div id="save_search_status"> </div>
-            <!-- status -->
-          </div>
-          <div class="col-md-6">
-            <label>
+                </div>
+              <div style="clear:both"></div>
+              <div class="spacer_10"></div>
+              <label>
             <input type="checkbox" name="search_channel" id="search_channel" onclick="check_channel_search()" <?php if ($search_channel == 'on'){ echo "checked"; } ?> />
             Search only at this channel</label>
             <select name="channel_id" id="channel_id" class="form-control">
@@ -590,26 +621,48 @@ function check_exclude(){
 			}
 			?>
             </select>
+            </div>
+            <div class="spacer_10"></div>
+            <?php 
+        	if(!isset($count_search) or $count_search == "") { $count_search = ""; }
+        	if ($count_search == '' ){ $count_search = '0'; }
+        	if ($count_search == '1' ){ $sum = 'result'; } else { $sum = 'results'; }
+        	if($searchterm == "" ) { $desc_text = ''; } else { $desc_text = 'Found <strong>'.$count_search.'</strong> '.$sum.' with this term'; }
+        	echo $desc_text;
+        	if ($searchterm !== ''){ echo $p_save_search; }
+        	?>
+            <div id="save_search_status"> </div>
+            <!-- status -->
           </div>
-        <div class="col-md-6">
-        <div class="spacer_5"></div>
-        <label><input id="exclude" type="checkbox" onclick="check_exclude()" <?php if ($exclude_term !== ''){ echo "checked"; } ?>>
-        Exclude Term: </label>
-        <input name="exclude_term" id="exclude_term" type="text" value="<?php if(!isset($exclude_term) or $exclude_term == "") 
-		{ $exclude_term = ""; } echo $exclude_term; ?>">
-        <select name="exclude_area" id="exclude_area">
-          <option value="1" <?php if ($exclude_area == '1'){ echo "selected"; } ?>>title</option>
-          <option value="2" <?php if ($exclude_area == '2'){ echo "selected"; } ?>>description</option>
-          <option value="3" <?php if ($exclude_area == '3'){ echo "selected"; } ?>>extended description</option>
-        </select>
-        <label><input name="rec_replay" id="rec_replay" type="checkbox" <?php if ($rec_replay == 'on'){ echo "checked"; } ?>> Set also Timer for repeating Broadcast's</label>
-        </div>
+          <div class="col-md-6">
+          Excluded term(s): 
+          <span id="status_exclude_channel"></span>
+          <span id="status_exclude_title"></span>
+          <span id="status_exclude_description"></span>
+          <span id="status_exclude_extdescription"></span>
+          <div class="spacer_5"></div>
+          <label><input id="exclude_channel_checkbox" type="checkbox" onclick="check_exclude()" <?php if ($exclude_channel !== ''){ echo "checked"; } ?>></label>
+          <input name="exclude_channel" id="exclude_channel" type="text" style="width:80%;" value="<?php if(!isset($exclude_channel) or $exclude_channel == ""){ $exclude_channel = ""; } echo $exclude_channel; ?>" placeholder="Channel">
+          <!---->
+          <div class="spacer_5"></div>
+          <label><input id="exclude_title_checkbox" type="checkbox" onclick="check_exclude()" <?php if ($exclude_title !== ''){ echo "checked"; } ?>></label>
+          <input name="exclude_title" id="exclude_title" type="text" style="width:80%;" value="<?php if(!isset($exclude_title) or $exclude_title == ""){ $exclude_title = ""; } echo $exclude_title; ?>" placeholder="Title">
+          <!---->
+          <div class="spacer_5"></div>
+          <label><input id="exclude_description_checkbox" type="checkbox" onclick="check_exclude()" <?php if ($exclude_description !== ''){ echo "checked"; } ?>></label>
+          <input name="exclude_description" id="exclude_description" type="text" style="width:80%;" value="<?php if(!isset($exclude_description) or $exclude_description == ""){ $exclude_description = ""; } echo $exclude_description; ?>" placeholder="Description">
+          <!---->
+          <div class="spacer_5"></div>
+          <label><input id="exclude_extdescription_checkbox" type="checkbox" onclick="check_exclude()" <?php if ($exclude_extdescription !== ''){ echo "checked"; } ?>></label>
+          <input name="exclude_extdescription" id="exclude_extdescription" type="text" style="width:80%;" value="<?php if(!isset($exclude_extdescription) or $exclude_extdescription == ""){ $exclude_extdescription = ""; } echo $exclude_extdescription; ?>" placeholder="Extended description">
+        <div class="spacer_10"></div>
+             <label><input name="rec_replay" id="rec_replay" type="checkbox" <?php if ($rec_replay == 'on'){ echo "checked"; } ?>> Set also Timer for repeating Broadcast's</label>
+             <div class="spacer_10"></div> 
+          </div><!--exclude-->
         </form>
       </div>
       <!-- /. ROW  -->
       <hr />
-      <div class="row"></div>
-      <!-- /. ROW  -->
       <div class="row">
         <div class="col-md-12">
           <?php if(!isset($result_list) or $result_list == "") { $result_list = ""; } else { echo utf8_encode($result_list); } ?>
