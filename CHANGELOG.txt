@@ -3,6 +3,28 @@ v1.5
 + Search function improved. Now it's possible to exclude multiple terms from broadcast channel, broadcast title, broadcast description and extended broadcast description.
 To update the SQL tables from Version 1.4 to 1.5, it's required to execute file update.php in folder /functions.
 
+Also replace following files:
+search.php
+timer.php
+setup.php
+functions/save_search.php
+functions/search_list_edit.php
+functions/search_list_inc.php
+functions/save_timer_in_db.php
+functions/timer_list_inc.php
+functions/setup_inc.php
+functions/timer_list_panel.php
+functions/start_channel_crawler_complete.php
+functions/send_zapp_request.php
+functions/send_timer_instant.php
+functions/crawler_cron.php
+functions/channelzapper.php
+functions/setup_inc.php
+functions/save_box_settings.php
+functions/update.php
+js/functions.js
+assets/css/custom.css
+
 v1.4
 
 + Timer conflicts on Receiver are shown after sending
