@@ -24,8 +24,10 @@ include("../inc/dashboard_config.php");
 	
 	$searchterm = rawurlencode($_REQUEST['searchterm']);
 	$searcharea = utf8_decode($_REQUEST['searcharea']);
-	$exclude_term = rawurlencode($_REQUEST['exclude_term']);
-	$exclude_area = $_REQUEST['exclude_area'];
+	$exclude_channel = rawurlencode($_REQUEST['exclude_channel']);
+	$exclude_title = rawurlencode($_REQUEST['exclude_title']);
+	$exclude_description = rawurlencode($_REQUEST['exclude_description']);
+	$exclude_extdescription = rawurlencode($_REQUEST['exclude_extdescription']);
 	$rec_replay = $_REQUEST['rec_replay'];
 	$channel = $_REQUEST['channel'];
 	$record_location = utf8_decode($_REQUEST['record_location']);
@@ -42,15 +44,17 @@ include("../inc/dashboard_config.php");
 	if ($searchterm == ''){ $searchterm_sql = ''; } else { $searchterm_sql = 'searchterm = "'.$searchterm.'"'; }
 	if ($searcharea == ''){ $searcharea_sql = ''; } else { $searcharea_sql = ', search_option = "'.$searcharea.'"'; }
 	
-	if ($exclude_term == ''){ $exclude_term_sql = ', exclude_term = ""'; $exclude_area = ''; } else { $exclude_term_sql = ', exclude_term = "'.$exclude_term.'"'; }
-	if ($exclude_area == ''){ $exclude_area_sql = ', exclude_area = ""'; } else { $exclude_area_sql = ', exclude_area = "'.$exclude_area.'"'; }
+	if ($exclude_channel == ''){ $exclude_channel_sql = ', exclude_channel = ""'; $exclude_channel = ''; } else { $exclude_channel_sql = ', exclude_channel = "'.$exclude_channel.'"'; }
+	if ($exclude_title == ''){ $exclude_title_sql = ', exclude_title = ""'; $exclude_title = ''; } else { $exclude_title_sql = ', exclude_title = "'.$exclude_title.'"'; }
+	if ($exclude_description == ''){ $exclude_description_sql = ', exclude_description = ""'; } else { $exclude_description_sql = ', exclude_description = "'.$exclude_description.'"'; }
+	if ($exclude_extdescription == ''){ $exclude_extdescription_sql = ', exclude_extdescription = ""'; } else { $exclude_extdescription_sql = ', exclude_extdescription = "'.$exclude_extdescription.'"'; }
 	if ($rec_replay == 'yes'){ $rec_replay_sql = ', rec_replay = "on"'; } else { $rec_replay_sql = ', rec_replay = "off"'; }
 	
 	if ($channel == ''){ $channel_sql = ''; } else { $channel_sql = ', e2eventservicereference = "'.$channel.'", e2eventservicename = "'.$e2servicename.'", servicename_enc = "'.$servicename_enc.'" '; }
 	if ($record_location == ''){ $rec_location_sql =  ''; } else { $rec_location_sql = ', e2location = "'.$record_location.'"'; }
 	if ($active == ''){ $active_sql = ''; } else { $active_sql = ', activ = "'.$active.'"'; }
 	
-	$sql = mysqli_query($dbmysqli, "UPDATE `saved_search` SET $searchterm_sql $searcharea_sql $exclude_term_sql $exclude_area_sql $rec_replay_sql $channel_sql $rec_location_sql, last_change = \"$time\" , crawled = \"0\" $active_sql WHERE id = \"$id\" ");
+	$sql = mysqli_query($dbmysqli, "UPDATE `saved_search` SET $searchterm_sql $searcharea_sql $exclude_channel_sql $exclude_title_sql $exclude_description_sql $exclude_extdescription_sql $rec_replay_sql $channel_sql $rec_location_sql, last_change = \"$time\" , crawled = \"0\" $active_sql WHERE id = \"$id\" ");
 	
 	// close db
 	mysqli_close($dbmysqli);

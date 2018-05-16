@@ -16,14 +16,14 @@ include("../inc/dashboard_config.php");
 	
 	} else {
 	
-	$zapp_request = "$url_format://$box_ip/web/zap?sRef=$e2servicereference";
+	$zapp_request = ''.$url_format.'://'.$box_ip.'/web/zap?sRef='.$e2servicereference.'';
 	$request = file_get_contents($zapp_request, false, $webrequest);
 	
 	sleep(1);
 	
 	// answer for ajax
 	echo "data: ok\n\n";
-
+	exit;
 	}
 
 ?>

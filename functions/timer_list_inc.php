@@ -69,7 +69,7 @@ $("#timerlist*").hover(function(){
 	sleep(1);
 	
 	// delete timer from receiver
-	$deleteTimer = "$url_format://$box_ip/web/timerdelete?sRef=".$e2eventservicereference."&begin=".$e2eventstart."&end=".$e2eventend."";
+	$deleteTimer = ''.$url_format.'://'.$box_ip.'/web/timerdelete?sRef='.$e2eventservicereference.'&begin='.$e2eventstart.'&end='.$e2eventend.'';
 	
 	$deleteTimer_request = file_get_contents($deleteTimer, false, $webrequest);
 	
@@ -113,20 +113,24 @@ $("#timerlist*").hover(function(){
 	$description_enc = rawurldecode($obj->description_enc);
 	$descriptionextended_enc = rawurldecode($obj->descriptionextended_enc);
 	$search_term = rawurldecode($obj->search_term);
-	$exclude_term = rawurldecode($obj->exclude_term);
-	$exclude_area = rawurldecode($obj->exclude_area);
+	$exclude_channel = rawurldecode($obj->exclude_channel);
+	$exclude_title = rawurldecode($obj->exclude_title);
+	$exclude_description = rawurldecode($obj->exclude_description);
+	$exclude_extdescription = rawurldecode($obj->exclude_extdescription);
 	$record_status = $obj->record_status;
 	$rec_replay = $obj->rec_replay;
 	$is_replay = $obj->is_replay;
 	$hidden = $obj->hide;
 	
-	if(!isset($exclude_term) or $exclude_term == "") { $exclude_term = ""; }
-	if(!isset($exclude_area) or $exclude_area == "") { $exclude_area = ""; }
-	if($exclude_area == '1'){ $exclude_area = 'title'; }
-	if($exclude_area == '2'){ $exclude_area = 'description'; }
-	if($exclude_area == '3'){ $exclude_area = 'extdescription'; }
-	
-	$exclude_term = str_replace(";", "; ", $exclude_term);
+	if(!isset($exclude_channel) or $exclude_channel == "") { $exclude_channel = ""; }
+	if(!isset($exclude_title) or $exclude_title == "") { $exclude_title = ""; }
+	if(!isset($exclude_description) or $exclude_description == "") { $exclude_description = ""; }
+	if(!isset($exclude_extdescription) or $exclude_extdescription == "") { $exclude_extdescription = ""; }
+
+	$exclude_channel = str_replace(";", "; ", $exclude_channel);
+	$exclude_title = str_replace(";", "; ", $exclude_title);
+	$exclude_description = str_replace(";", "; ", $exclude_description);
+	$exclude_extdescription = str_replace(";", "; ", $exclude_extdescription);
 	
 	if ($time_format == '1')
 	{
@@ -206,10 +210,15 @@ if ($obj->record_status == 'c_expired')
 		';
 		}
 		
-		if ($obj->exclude_term != ''){ $term_status = 'Exclude Term: '.$exclude_term.'<br>'; } else { $term_status = ''; }
-		if ($obj->exclude_area != ''){ $area_status = 'Exclude Area: '.$exclude_area.''; } else { $area_status = ''; }
-		if ($obj->rec_replay == 'on'){ $replay_status = 'Timer for Replays: '.$rec_replay.''; } else { $replay_status = ''; }
-		if ($obj->exclude_term != '' and $obj->exclude_area != '' and $obj->rec_replay == 'on'){ $spacer = ' | '; } else { $spacer = ''; }
+		if ($obj->exclude_channel != ''){ $channel_status = 'Excluded in channel: '.$exclude_channel.'<br>'; } else { $channel_status = ''; }
+		if ($obj->exclude_title != ''){ $title_status = 'Excluded in title: '.$exclude_title.'<br>'; } else { $title_status = ''; }
+		if ($obj->exclude_description != ''){ $description_status = 'Excluded in description: '.$exclude_description.'<br>'; } else { $description_status = ''; }
+		if ($obj->exclude_extdescription != ''){ $extdescription_status = 'Excluded in extended description: '.$exclude_extdescription.'<br>'; } else { $extdescription_status = ''; }
+		if($channel_status != '' or $title_status != '' or $description_status != '' or $extdescription_status != ''){
+		$show_exclude_text = "<div class=\"spacer_5\"></div><a id=\"$obj->id\" style=\"cursor:pointer;\" onclick=\"timerlist_show_exclude(this.id)\">Show excluded term(s)</a>"; } else { $show_exclude_text = ""; }
+		
+		if ($obj->rec_replay == 'on'){ $replay_status = '| Timer for Replays: '.$rec_replay.''; } else { $replay_status = ''; }
+		if ($obj->exclude_channel != '' and $obj->exclude_title != '' and $obj->exclude_description != '' and $obj->exclude_extdescription != '' and $obj->rec_replay == 'on'){ $spacer = ' | '; } else { $spacer = ''; }
 		
 		// get record location id
 		$sql = mysqli_query($dbmysqli, "SELECT * FROM `record_locations` WHERE `e2location` = '".$obj->record_location."' LIMIT 0,1");
@@ -219,17 +228,17 @@ if ($obj->record_status == 'c_expired')
 		if ($is_replay == '1'){ $replay_sign = '<i class="fa fa-repeat"></i>'; } else { $replay_sign = ''; }
 		
 		if ($hidden == '1'){ $hidden_class = 'class="opac_70"'; 
-		$hide_button = "<input id=\"timerlist_unhide_timer_btn_$obj->id\" type=\"submit\" onClick=\"timerlist_unhide_timer(this.id)\" value=\"UNHIDE TIMER\" class=\"btn btn-primary btn-sm\" title=\"unhide Timer from list\"/>"; 
+		$hide_button = "<input id=\"timerlist_unhide_timer_btn_$obj->id\" type=\"submit\" onClick=\"timerlist_unhide_timer(this.id)\" value=\"UNHIDE\" class=\"btn btn-primary btn-sm\" title=\"unhide Timer from list\"/>"; 
 		
 		} else { 
 		
 		$hidden_class = ''; 
-		$hide_button = "<input id=\"timerlist_hide_timer_btn_$obj->id\" type=\"submit\" onClick=\"timerlist_hide_timer(this.id)\" value=\"HIDE TIMER\" class=\"btn btn-primary btn-sm\" title=\"hide Timer from list\"/>";
+		$hide_button = "<input id=\"timerlist_hide_timer_btn_$obj->id\" name=\"$obj->hash\" type=\"submit\" onClick=\"timerlist_hide_timer(this.id,this.name)\" value=\"HIDE\" class=\"btn btn-primary btn-sm\" title=\"hide Timer from list\"/>";
 		}
 		
 		$timerlist = $timerlist."<div id=\"timerlist_div_outer_$obj->id\" $hidden_class>
 		<div id=\"timerlist\">
-		<div id=\"cnt_checkbox\"><input id=\"box_$obj->hash\" type=\"checkbox\" name=\"timerlist_checkbox[]\" value=\"$obj->id\" onclick=\"count_selected()\"/>
+		<div id=\"cnt_checkbox\"><input id=\"box_$obj->id\" type=\"checkbox\" name=\"timerlist_checkbox[]\" value=\"$obj->id\" onclick=\"count_selected()\"/>
 		</div>
 		<div id=\"timer_$obj->id\" style=\"cursor: pointer;\" onclick=\"timerlist_desc(this.id);\">
 		<div id=\"$time_class\">| $status | $record_status | $broadcast_time | $broadcast_date
@@ -251,14 +260,14 @@ if ($obj->record_status == 'c_expired')
 		  $descriptionextended_enc<div class=\"spacer_5\"></div>
 		  </div>
 		  <a href=\"search.php?searchterm=$title_enc&option=title\" target=\"_blank\" title=\"Search title\"><i class=\"fa fa-search fa-1x\"></i></a>
-		  Searchterm: <strong>$search_term</strong> | Searcharea: $obj->search_option | Record location: $obj->record_location 
+		  Searchterm: <strong>$search_term</strong> | Searcharea: $obj->search_option | Record location: $obj->record_location $replay_status $show_exclude_text
 		  <span id=\"timerlist_rec_location_$obj->hash\" style=\"display:none;\">$rec_location_id</span>
 		  <div class=\"spacer_5\"></div>
-		  $term_status $area_status $spacer $replay_status
+		  <div id=\"timerlist_excluded_terms_$obj->id\" style=\"display:none;\">$channel_status $spacer $title_status $spacer $description_status $spacer $extdescription_status</div>
 		  <div class=\"spacer_5\"></div>
-		  <input id=\"timerlist_send_timer_btn_$obj->hash\" name=\"$obj->id\" type=\"submit\" onClick=\"timerlist_send_timer(this.id,this.name)\" value=\"SEND TIMER\" class=\"btn btn-success btn-sm\" title=\"send Timer to Receiver\"/>
+		  <input id=\"timerlist_send_timer_btn_$obj->hash\" name=\"$obj->id\" type=\"submit\" onClick=\"timerlist_send_timer(this.id,this.name)\" value=\"SEND\" class=\"btn btn-success btn-sm\" title=\"send Timer to Receiver\"/>
 		  $hide_button
-		  <input id=\"delete_timer_btn_$obj->id\" type=\"submit\" onClick=\"timerlist_delete_timer(this.id)\" value=\"DELETE TIMER\" class=\"btn btn-danger btn-sm\" title=\"delete Timer from Receiver\"/>
+		  <input id=\"delete_timer_btn_$obj->id\" type=\"submit\" onClick=\"timerlist_delete_timer(this.id)\" value=\"DELETE\" class=\"btn btn-danger btn-sm\" title=\"delete Timer from Receiver\"/>
 		  <span class=\"del_checkbox\"><input id=\"timerlist_delete_db_$obj->id\" type=\"checkbox\"> delete also from Database</span>
 		  <span id=\"timerlist_status_$obj->id\"></span>
 		  </div>

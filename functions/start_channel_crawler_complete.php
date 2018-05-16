@@ -16,7 +16,7 @@ include("../inc/dashboard_config.php");
 	{
 	$e2servicereference = $obj->e2servicereference;
 	
-	$start_crawl_request = "$url_format://$server_ip/$script_folder/functions/channel_crawler_complete.php?channel_id=$e2servicereference";
+	$start_crawl_request = ''.$url_format.'://'.$server_ip.'/'.$script_folder.'/functions/channel_crawler_complete.php?channel_id='.$e2servicereference.'';
 	
 	$start_crawl = file_get_contents($start_crawl_request); 
 	sleep(1);	

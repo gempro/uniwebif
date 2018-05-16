@@ -188,7 +188,7 @@ if ($setting == 'install'){
 	  `descriptionextended_enc` text NOT NULL,
 	  `e2eventid` varchar(10) NOT NULL,
 	  `start_date` varchar(255) NOT NULL,
-	  `us_start_date` text NOT NULL,
+	  `us_start_date` varchar(255) NOT NULL,
 	  `start_day` varchar(2) NOT NULL,
 	  `start_month` varchar(2) NOT NULL,
 	  `start_year` varchar(4) NOT NULL,
@@ -244,8 +244,10 @@ if ($setting == 'install'){
 	  `id` int(11) NOT NULL AUTO_INCREMENT,
 	  `searchterm` varchar(255) NOT NULL,
 	  `search_option` varchar(255) NOT NULL,
-	  `exclude_term` text NOT NULL,
-	  `exclude_area` varchar(255) NOT NULL,
+	  `exclude_channel` text NOT NULL,
+	  `exclude_title` text NOT NULL,
+	  `exclude_description` text NOT NULL,
+	  `exclude_extdescription` text NOT NULL,
 	  `e2location` varchar(255) NOT NULL,
 	  `save_date` int(12) NOT NULL,
 	  `last_change` int(12) NOT NULL,
@@ -326,6 +328,10 @@ if ($setting == 'install'){
 	) ENGINE = MYISAM CHARACTER SET utf8 COLLATE utf8_general_ci;
 	");
 	
+	$query = mysqli_query($dbmysqli, "INSERT INTO `uniwebif`.`settings` (`box_ip`, `box_user`, `box_password`, `server_ip`, `script_folder`) VALUES
+	('".$receiver_ip."', '".$receiver_user."', '".$receiver_pass."', '".$server_ip."', '".$script_folder."')");
+	
+	
 	$query = mysqli_query($dbmysqli, "DROP TABLE IF EXISTS `uniwebif`.`timer`");
 	$query = mysqli_query($dbmysqli, "
 	
@@ -342,8 +348,10 @@ if ($setting == 'install'){
 	  `e2eventservicereference` varchar(255) NOT NULL,
 	  `search_term` varchar(255) NOT NULL,
 	  `search_option` varchar(255) NOT NULL,
-	  `exclude_term` varchar(255) NOT NULL,
-	  `exclude_area` varchar(255) NOT NULL,
+	  `exclude_channel` text NOT NULL,
+	  `exclude_title` text NOT NULL,
+	  `exclude_description` text NOT NULL,
+	  `exclude_extdescription` text NOT NULL,
 	  `record_location` varchar(255) NOT NULL,
 	  `e2eventstart` varchar(12) NOT NULL,
 	  `e2eventend` varchar(12) NOT NULL,
@@ -364,15 +372,15 @@ if ($setting == 'install'){
 	echo 'SQL Installation OK!';
 	
 	// get bouquets from receiver
-	$crawl_bouquet = "http://$server_ip/$script_folder/functions/bouquet_crawler.php";
+	$crawl_bouquet = 'http://'.$server_ip.'/'.$script_folder.'/functions/bouquet_crawler.php';
 	$start_crawl = file_get_contents($crawl_bouquet);
 	
 	// get record locations from receiver
-	$crawl_rec_locations = "http://$server_ip/$script_folder/functions/save_rec_locations.php";
+	$crawl_rec_locations = 'http://'.$server_ip.'/'.$script_folder.'/functions/save_rec_locations.php';
 	$start_crawl = file_get_contents($crawl_rec_locations);
 	
 	// get receiver info
-	$crawl_receiver_info = "http://$server_ip/$script_folder/functions/save_box_settings.php";
+	$crawl_receiver_info = 'http://'.$server_ip.'/'.$script_folder.'/functions/save_box_settings.php';
 	$start_crawl = file_get_contents($crawl_receiver_info);
 	
 	}

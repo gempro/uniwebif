@@ -50,7 +50,7 @@
 	$hash = $result['hash'];
 	$status = $result['status'];
 	
-	$deleteTimer = "$url_format://$box_ip/web/timerdelete?sRef=".$e2eventservicereference."&begin=".$e2eventstart."&end=".$e2eventend."";
+	$deleteTimer = ''.$url_format.'://'.$box_ip.'/web/timerdelete?sRef='.$e2eventservicereference.'&begin='.$e2eventstart.'&end='.$e2eventend.'';
 	$deleteTimer_request = file_get_contents($deleteTimer, false, $webrequest);
 	
 	$sql = mysqli_query($dbmysqli, "UPDATE `timer` SET status = 'rec_deleted' WHERE `id` = '".$key."' ");
@@ -81,7 +81,7 @@
 	$hash = $result['hash'];
 	$status = $result['status'];
 	
-	$deleteTimer = "$url_format://$box_ip/web/timerdelete?sRef=".$e2eventservicereference."&begin=".$e2eventstart."&end=".$e2eventend."";
+	$deleteTimer = ''.$url_format.'://'.$box_ip.'/web/timerdelete?sRef='.$e2eventservicereference.'&begin='.$e2eventstart.'&end='.$e2eventend.'';
 	$deleteTimer_request = file_get_contents($deleteTimer, false, $webrequest);
 	
 	if ($status == 'manual' or $status == 'sent'){
@@ -115,7 +115,7 @@
 	$e2location = $result['record_location'];
 	$hash = $result['hash'];
 	
-	$timer_request = "$url_format://$box_ip/web/timeradd?sRef=".$e2eventservicereference."&begin=".$e2eventstart."&end=".$e2eventend."&name=".$title_enc."&description=".$description_enc."&dirname=".$e2location."&afterevent=3";
+	$timer_request = ''.$url_format.'://'.$box_ip.'/web/timeradd?sRef='.$e2eventservicereference.'&begin='.$e2eventstart.'&end='.$e2eventend.'&name='.$title_enc.'&description='.$description_enc.'&dirname='.$e2location.'&afterevent=3';
 	
 	// remove " and ' from request
 	$timer_request = str_replace("%22", "%60", $timer_request);

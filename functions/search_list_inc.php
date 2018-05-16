@@ -92,31 +92,30 @@ include("../inc/dashboard_config.php");
 	$searchterm = rawurldecode($obj->searchterm);
 	$search_option = $obj->search_option;
 	$obj->search_option = str_replace("extdescription", "extended description", $obj->search_option);
-	$exclude_term = rawurldecode($obj->exclude_term);
-	$exclude_area = $obj->exclude_area;
+	$exclude_channel = rawurldecode($obj->exclude_channel);
+	$exclude_title = rawurldecode($obj->exclude_title);
+	$exclude_description = rawurldecode($obj->exclude_description);
+	$exclude_extdescription = rawurldecode($obj->exclude_extdescription);
 	$record_location = $obj->e2location;
 	$activ = $obj->activ;
 	$rec_replay = $obj->rec_replay;
 	
-	if(!isset($exclude_term) or $exclude_term == "") { $exclude_term = ""; }
-	if(!isset($exclude_area) or $exclude_area == "") { $exclude_area = ""; }
+	if(!isset($exclude_channel) or $exclude_channel == "") { $exclude_channel = ""; }
+	if(!isset($exclude_title) or $exclude_title == "") { $exclude_title = ""; }
+	if(!isset($exclude_description) or $exclude_description == "") { $exclude_description = ""; }
+	if(!isset($exclude_extdescription) or $exclude_extdescription == "") { $exclude_extdescription = ""; }
 	if(!isset($rec_replay) or $rec_replay == "") { $rec_replay = "off"; }
-	
-	if ($exclude_area == '' ){ $selected0 = 'selected'; } else { $selected0 = ''; }
-	if ($exclude_area == '1' ){ $selected1 = 'selected'; } else { $selected1 = ''; }
-	if ($exclude_area == '2' ){ $selected2 = 'selected'; } else { $selected2 = ''; }
-	if ($exclude_area == '3' ){ $selected3 = 'selected'; } else { $selected3 = ''; }
 	
 	if ($rec_replay == 'on' ){ $selected4 = 'selected'; } else { $selected4 = ''; }
 	if ($rec_replay == 'off' ){ $selected5 = 'selected'; } else { $selected5 = ''; }
 	
-	if ($search_option == 'all'){ $selected6 = 'selected'; } else { $selected6 = '';}
-	if ($search_option == 'title'){ $selected7 = 'selected'; } else { $selected7 = '';}
-	if ($search_option == 'description'){ $selected8 = 'selected'; } else { $selected8 = '';}
-	if ($search_option == 'extdescription'){ $selected9 = 'selected'; } else { $selected9 = '';}
+	if ($search_option == 'all'){ $selected6 = 'selected'; } else { $selected6 = ''; }
+	if ($search_option == 'title'){ $selected7 = 'selected'; } else { $selected7 = ''; }
+	if ($search_option == 'description'){ $selected8 = 'selected'; } else { $selected8 = ''; }
+	if ($search_option == 'extdescription'){ $selected9 = 'selected'; } else { $selected9 = ''; }
 	
-	if ($activ == 'yes'){ $selected10 = 'selected'; } else { $selected10 = '';}
-	if ($activ == 'no'){ $selected11 = 'selected'; } else { $selected11 = '';}
+	if ($activ == 'yes'){ $selected10 = 'selected'; } else { $selected10 = ''; }
+	if ($activ == 'no'){ $selected11 = 'selected'; } else { $selected11 = ''; }
 	
 	if ($activ == 'yes' ){ $as = 'success'; } else { $as = 'danger'; }
 	
@@ -141,6 +140,11 @@ include("../inc/dashboard_config.php");
 	$search_channel = 'on';
 	$channel_id = $obj->e2eventservicereference; 
 	}
+	
+	$exclude_channel_spaced = str_replace(";", "; ", $exclude_channel);
+	$exclude_title_spaced = str_replace(";", "; ", $exclude_title);
+	$exclude_description_spaced = str_replace(";", "; ", $exclude_description);
+	$exclude_extdescription_spaced = str_replace(";", "; ", $exclude_extdescription);
 	
 	// get record location id
 	$sql = mysqli_query($dbmysqli, "SELECT * FROM `record_locations` WHERE `e2location` = '".$record_location."' LIMIT 0,1");
@@ -176,25 +180,16 @@ include("../inc/dashboard_config.php");
 	  </div>
 	  <!---->
 	  <div id=\"saved_search_list_div_$obj->id\" style=\"display:none;\">
-	  <div class=\"row\">
-	  <div class=\"col-md-3\">
-			<p><input id=\"searchterm_$obj->id\" type=\"text\" value=\"$searchterm2\" class=\"search_list_term\"><p>
-			<p>Exclude Term <input id=\"exclude_term_$obj->id\" type=\"text\" value=\"$exclude_term\" class=\"search_list_term\"><p>
-		  </div>
+	  	<div class=\"row\">
+			<div class=\"col-md-3\">
+			<p><input id=\"searchterm_$obj->id\" type=\"text\" value=\"$searchterm2\" class=\"search_list_term\"></p>
+		  </div>	  
 		  <div class=\"col-md-2\">
 			<p><select id=\"searcharea_$obj->id\" class=\"search_list_area\">
 			<option value=\"all\" $selected6>all</option>
 			<option value=\"title\" $selected7>title</option>
 			<option value=\"description\" $selected8>description</option>
 			<option value=\"extdescription\" $selected9>ext. description</option>
-		  </select></p>
-		  <!---->
-		  <div class=\"spacer_5\"></div><div class=\"spacer_3\"></div>
-		  <p>Exclude Area <select id=\"exclude_area_$obj->id\" class=\"search_list_area\">
-			<option value=\"\" $selected0></option>
-			<option value=\"1\" $selected1>title</option>
-			<option value=\"2\" $selected2>description</option>
-			<option value=\"3\" $selected3>ext. description</option>
 		  </select></p>
 		  </div>
 		  <!---->
@@ -203,15 +198,11 @@ include("../inc/dashboard_config.php");
 			<option value=\"\"></option>
 			<option value=\"NULL\">All channels</option>
 			$channel_dropdown_saved_search_list</select></p>
-			<div class=\"spacer_7\"></div>
-			<p>Timer for Replays<br><select id=\"rec_replay_$obj->id\" class=\"search_list_replay\">
-			<option value=\"yes\" $selected4>yes&nbsp;&nbsp;</option>
-			<option value=\"no\" $selected5>no&nbsp;&nbsp;</option>
-		  </select></p>
 		  </div>
 		  <!---->
 		  <div class=\"col-md-2\">
-			<p><select id=\"rec_dropdown_saved_search_list_$obj->id\" value=\"$obj->e2location\" class=\"search_list_rec_location\"><option value=\"\"></option>
+			<p><select id=\"rec_dropdown_saved_search_list_$obj->id\" value=\"$obj->e2location\" class=\"search_list_rec_location\">
+			<option value=\"\"></option>
 			$rec_dropdown_saved_search_list
 			</select></p>
 		  </div>
@@ -222,13 +213,45 @@ include("../inc/dashboard_config.php");
 		  </select></p>
 		  </div>
 		  </div>
-		  <a href=\"search.php?searchterm=$obj->searchterm&option=$search_option&exclude_term=$obj->exclude_term&exclude_area=$exclude_area&record_location=$rec_location_id&search_channel=$search_channel&channel_id=$channel_id&rec_replay=$rec_replay\" target=\"_blank\" title=\"Show results\">
+		  <div class=\"row\">
+		  <div class=\"col-md-3\">
+			<p>Timer for repeating Broadcast's<br><select id=\"rec_replay_$obj->id\" class=\"search_list_replay\">
+			<option value=\"yes\" $selected4>yes&nbsp;&nbsp;</option>
+			<option value=\"no\" $selected5>no&nbsp;&nbsp;</option>
+		  </select></p>
+		  </div>
+		  <div class=\"spacer_5\"></div>
+		  </div><!-- row -->
+		<div class=\"row\">
+		<div class=\"col-md-3\">
+		  <p>Exclude channel<br><input id=\"exclude_channel_$obj->id\" type=\"text\" value=\"$exclude_channel\" title=\"$exclude_channel_spaced\" class=\"search_list_term\"></p>
+		  </div>
+		  <!---->
+		<div class=\"col-md-3\">
+		<p>Exclude title<br><input id=\"exclude_title_$obj->id\" type=\"text\" value=\"$exclude_title\" title=\"$exclude_title_spaced\" class=\"search_list_term\"></p>
+		</div>
+		  <!---->
+		  <div class=\"col-md-3\">
+		  <p>Exclude description<br><input id=\"exclude_description_$obj->id\" type=\"text\" value=\"$exclude_description\" title=\"$exclude_description_spaced\" class=\"search_list_term\"></p>
+		  </div>
+		  <!---->
+		  <div class=\"col-md-3\">
+		  <p>Exclude ext. description<br><input id=\"exclude_extdescription_$obj->id\" type=\"text\" value=\"$exclude_extdescription\" title=\"$exclude_extdescription_spaced\" class=\"search_list_term\"></p>
+		  </div>
+		  <!---->
+		  </div>
+		  <a href=\"search.php?searchterm=$obj->searchterm&option=$search_option&record_location=$rec_location_id&exclude_channel=$obj->exclude_channel&exclude_title=$obj->exclude_title&exclude_description=$obj->exclude_description&exclude_extdescription=$obj->exclude_extdescription&search_channel=$search_channel&channel_id=$channel_id&rec_replay=$rec_replay\" target=\"_blank\" title=\"Show results\">
 		  <i class=\"fa fa-search fa-1x\"></i></a>
 		<input id=\"saved_search_list_save_btn_$obj->id\" type=\"submit\" onClick=\"saved_search_list_save(this.id)\" value=\"SAVE\" class=\"btn btn-success btn-sm\">
 		<input id=\"saved_search_list_delete_btn_$obj->id\" type=\"submit\" onClick=\"saved_search_list_delete(this.id)\" value=\"DELETE\" class=\"btn btn-danger btn-sm\"/>
 		<span id=\"saved_search_list_status_$obj->id\"></span>
 		<div class=\"spacer_5\"></div>
 		</div>
+	</div>
+	<div class=\"spacer_10\"></div>
+	<!-- ROW -->
+	</div>
+	</div>
 	</div>
 	<div class=\"spacer_10\"></div>
 	<!-- ROW -->

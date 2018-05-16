@@ -13,8 +13,10 @@ include("../inc/dashboard_config.php");
 	$id = $obj->id;
 	$raw_term = $obj->searchterm;
 	$search_option = $obj->search_option;
-	$exclude_term = $obj->exclude_term;
-	$exclude_area = $obj->exclude_area;
+	$exclude_channel = $obj->exclude_channel;
+	$exclude_title = $obj->exclude_title;
+	$exclude_description = $obj->exclude_description;
+	$exclude_extdescription = $obj->exclude_extdescription;
 	$e2location = $obj->e2location;
 	$e2eventservicereference = $obj->e2eventservicereference;
 	$activ = $obj->activ;
@@ -37,59 +39,87 @@ include("../inc/dashboard_config.php");
 	$search_include2 = 'OR';
 	}
 	//
-	// exclude titel
-	if ($exclude_term !== '' and $exclude_area == '1'){ 
-	$tags = explode(rawurlencode(';') , $exclude_term);
+	
+	// exclude channel
+	if ($exclude_channel !== ''){ 
+	$tags = explode(rawurlencode(';') , $exclude_channel);
 	foreach($tags as $i =>$key) { $i > 0;
-	if(!isset($exclude_part) or $exclude_part == "") { $exclude_part = ""; }
-	if(!isset($key) or $key == "") { $search_string = ''; } else { $search_string = 'AND title_enc NOT LIKE "%'.$key.'%" '; }
-	$exclude_part = $exclude_part.$search_string;
+	if(!isset($exclude_channel_part) or $exclude_channel_part == "") { $exclude_channel_part = ""; }
+//	if(!isset($exclude_title_part) or $exclude_title_part == "") { $exclude_title_part = ""; }
+//	if(!isset($exclude_extdescription_part) or $exclude_extdescription_part == "") { $exclude_extdescription_part = ""; }
+//	if(!isset($exclude_extdescription_part) or $exclude_extdescription_part == "") { $exclude_extdescription_part = ""; }
+	if(!isset($key) or $key == "") { $search_string = ''; } else { $search_string = 'AND `servicename_enc` NOT LIKE "%'.$key.'%" '; }
+	$exclude_channel_part = $exclude_channel_part.$search_string;
 	}
 	}
+	
+	// exclude titel
+	if ($exclude_title !== ''){ 
+	$tags = explode(rawurlencode(';') , $exclude_title);
+	foreach($tags as $i =>$key) { $i > 0;
+//	if(!isset($exclude_channel_part) or $exclude_channel_part == "") { $exclude_channel_part = ""; }
+	if(!isset($exclude_title_part) or $exclude_title_part == "") { $exclude_title_part = ""; }
+//	if(!isset($exclude_extdescription_part) or $exclude_extdescription_part == "") { $exclude_extdescription_part = ""; }
+//	if(!isset($exclude_extdescription_part) or $exclude_extdescription_part == "") { $exclude_extdescription_part = ""; }
+	if(!isset($key) or $key == "") { $search_string = ''; } else { $search_string = 'AND `title_enc` NOT LIKE "%'.$key.'%" '; }
+	$exclude_title_part = $exclude_title_part.$search_string;
+	}
+	}
+	
 	// exclude description
-	if ($exclude_term !== '' and $exclude_area == '2'){ 
-	$tags = explode(rawurlencode(';') , $exclude_term);
+	if ($exclude_description !== ''){ 
+	$tags = explode(rawurlencode(';') , $exclude_description);
 	foreach($tags as $i =>$key) { $i >0;
-	if(!isset($exclude_part) or $exclude_part == "") { $exclude_part = ""; }
-	if(!isset($key) or $key == "") { $search_string = ''; } else { $search_string = 'AND description_enc NOT LIKE "%'.$key.'%" '; }
-	$exclude_part = $exclude_part.$search_string;
+//	if(!isset($exclude_channel_part) or $exclude_channel_part == "") { $exclude_channel_part = ""; }
+//	if(!isset($exclude_title_part) or $exclude_title_part == "") { $exclude_title_part = ""; }
+	if(!isset($exclude_description_part) or $exclude_description_part == "") { $exclude_description_part = ""; }
+//	if(!isset($exclude_extdescription_part) or $exclude_extdescription_part == "") { $exclude_extdescription_part = ""; }
+	if(!isset($key) or $key == "") { $search_string = ''; } else { $search_string = 'AND `description_enc` NOT LIKE "%'.$key.'%" '; }
+	$exclude_description_part = $exclude_description_part.$search_string;
 	}
 	}
+	
 	// exclude extended description
-	if ($exclude_term !== '' and $exclude_area == '3'){ 
+	if ($exclude_extdescription !== ''){ 
 	//
-	$tags = explode(rawurlencode(';') , $exclude_term);
+	$tags = explode(rawurlencode(';') , $exclude_extdescription);
 	foreach($tags as $i =>$key) { $i >0;
-	if(!isset($exclude_part) or $exclude_part == "") { $exclude_part = ""; }
-	if(!isset($key) or $key == "") { $search_string = ''; } else { $search_string = 'AND descriptionextended_enc NOT LIKE "%'.$key.'%" '; }
-	$exclude_part = $exclude_part.$search_string;
+//	if(!isset($exclude_channel_part) or $exclude_channel_part == "") { $exclude_channel_part = ""; }
+//	if(!isset($exclude_title_part) or $exclude_title_part == "") { $exclude_title_part = ""; }
+//	if(!isset($exclude_description_part) or $exclude_description_part == "") { $exclude_description_part = ""; }
+	if(!isset($exclude_extdescription_part) or $exclude_extdescription_part == "") { $exclude_extdescription_part = ""; }
+	if(!isset($key) or $key == "") { $search_string = ''; } else { $search_string = 'AND `descriptionextended_enc` NOT LIKE "%'.$key.'%" '; }
+	$exclude_extdescription_part = $exclude_extdescription_part.$search_string;
 	} //
 	}
 	
-	if(!isset($exclude_part) or $exclude_part == "") { $exclude_part = ""; }
+	if(!isset($exclude_channel_part) or $exclude_channel_part == "") { $exclude_channel_part = ""; }
+	if(!isset($exclude_title_part) or $exclude_title_part == "") { $exclude_title_part = ""; }
+	if(!isset($exclude_description_part) or $exclude_description_part == "") { $exclude_description_part = ""; }
+	if(!isset($exclude_extdescription_part) or $exclude_extdescription_part == "") { $exclude_extdescription_part = ""; }
 	
 	// search all
 	if ($search_option == 'all' or $search_option == '')
 	{
-	$sql = 'SELECT * FROM `epg_data` '.$search_include.' MATCH (title_enc, e2eventservicename, description_enc, descriptionextended_enc) AGAINST ("%'.$raw_term.'%") AND e2eventend > '.$time.' '.$search_include2.' `e2eventtitle` LIKE "%'.$raw_term.'%" AND `e2eventend` > '.$time.' '.$search_include2.' `e2eventservicename` LIKE "%'.$raw_term.'%" AND `e2eventend` > '.$time.' '.$search_include2.' `e2eventdescription` LIKE "%'.$raw_term.'%" AND `e2eventend` > '.$time.' '.$search_include2.' `e2eventdescriptionextended` LIKE "%'.$raw_term.'%" AND `e2eventend` > '.$time.' ORDER BY `e2eventstart` ASC '; 
+	$sql = 'SELECT * FROM `epg_data` '.$search_include.' MATCH (title_enc, e2eventservicename, description_enc, descriptionextended_enc) AGAINST ("%'.$raw_term.'%") AND e2eventend > '.$time.' '.$search_include2.' `e2eventtitle` LIKE "%'.$raw_term.'%" AND `e2eventend` > '.$time.' '.$search_include2.' `e2eventservicename` LIKE "%'.$raw_term.'%" AND `e2eventend` > '.$time.' '.$search_include2.' `e2eventdescription` LIKE "%'.$raw_term.'%" AND `e2eventend` > '.$time.' '.$search_include2.' `e2eventdescriptionextended` LIKE "%'.$raw_term.'%" '.$exclude_channel_part.' '.$exclude_title_part.' '.$exclude_description_part.' '.$exclude_extdescription_part.' AND `e2eventend` > '.$time.' ORDER BY `e2eventstart` ASC '; 
 	}
 	
 	// search title
 	if ($search_option == 'title')
 	{
-	$sql = 'SELECT * FROM `epg_data` '.$search_include.' `title_enc` LIKE "%'.$raw_term.'%" '.$exclude_part.' AND `e2eventend` > '.$time.' ORDER BY `e2eventstart` ASC ';
+	$sql = 'SELECT * FROM `epg_data` '.$search_include.' `title_enc` LIKE "%'.$raw_term.'%" '.$exclude_channel_part.' '.$exclude_title_part.' '.$exclude_description_part.' '.$exclude_extdescription_part.' AND `e2eventend` > '.$time.' ORDER BY `e2eventstart` ASC ';
 	}
 	
 	// search description
 	if ($search_option == 'description')
 	{
-	$sql = 'SELECT * FROM `epg_data` '.$search_include.' `description_enc` LIKE "%'.$raw_term.'%" '.$exclude_part.' AND `e2eventend` > '.$time.' ORDER BY `e2eventstart` ASC ';
+	$sql = 'SELECT * FROM `epg_data` '.$search_include.' `description_enc` LIKE "%'.$raw_term.'%" '.$exclude_channel_part.' '.$exclude_title_part.' '.$exclude_description_part.' '.$exclude_extdescription_part.' AND `e2eventend` > '.$time.' ORDER BY `e2eventstart` ASC ';
 	}
 	
 	// search extended description
 	if ($search_option == 'extdescription')
 	{
-	$sql = 'SELECT * FROM `epg_data` '.$search_include.' `descriptionextended_enc` LIKE "%'.$raw_term.'%" '.$exclude_part.' AND `e2eventend` > '.$time.' ORDER BY `e2eventstart` ASC ';
+	$sql = 'SELECT * FROM `epg_data` '.$search_include.' `descriptionextended_enc` LIKE "%'.$raw_term.'%" '.$exclude_channel_part.' '.$exclude_title_part.' '.$exclude_description_part.' '.$exclude_extdescription_part.' AND `e2eventend` > '.$time.' ORDER BY `e2eventstart` ASC ';
 	}
 
 	if ($result2 = mysqli_query($dbmysqli,$sql))
@@ -148,8 +178,8 @@ include("../inc/dashboard_config.php");
 	//
 	if($count_hash == 0){
 	
-	$sql = mysqli_query($dbmysqli, "INSERT INTO timer (e2eventtitle, title_enc, e2eventdescription, description_enc, e2eventdescriptionextended, descriptionextended_enc, e2eventservicename, servicename_enc, e2eventservicereference, search_term, search_option, exclude_term, exclude_area, record_location, e2eventstart, e2eventend, timer_request, hash, channel_hash, status, rec_replay, is_replay, hide)
-	values ('$e2eventtitle','$title_enc','$e2eventdescription','$description_enc','$e2eventdescriptionextended','$descriptionextended_enc','$e2eventservicename','$servicename_enc','$e2eventservicereference','$raw_term','$search_option','$exclude_term','$exclude_area','$e2location','$e2eventstart','$e2eventend','$timer_request','$hash','$channel_hash','waiting','$rec_replay','$is_replay','$hide')");
+	$sql = mysqli_query($dbmysqli, "INSERT INTO timer (e2eventtitle, title_enc, e2eventdescription, description_enc, e2eventdescriptionextended, descriptionextended_enc, e2eventservicename, servicename_enc, e2eventservicereference, search_term, search_option, exclude_channel, exclude_title, exclude_description, exclude_extdescription, record_location, e2eventstart, e2eventend, timer_request, hash, channel_hash, status, rec_replay, is_replay, hide)
+	values ('$e2eventtitle', '$title_enc', '$e2eventdescription', '$description_enc', '$e2eventdescriptionextended', '$descriptionextended_enc', '$e2eventservicename', '$servicename_enc', '$e2eventservicereference', '$raw_term', '$search_option', '$exclude_channel', '$exclude_title', '$exclude_description', '$exclude_extdescription', '$e2location', '$e2eventstart', '$e2eventend', '$timer_request', '$hash', '$channel_hash', 'waiting', '$rec_replay', '$is_replay', '$hide')");
 	} //
 	}
 	}

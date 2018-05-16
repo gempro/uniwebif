@@ -18,7 +18,7 @@ include("../inc/dashboard_config.php");
 	if ($power_status == 'true')
 	{
 	// turn on Receiver
-	$turn_on_request = "$url_format://$box_ip/web/powerstate?newstate=0";
+	$turn_on_request = ''.$url_format.'://'.$box_ip.'/web/powerstate?newstate=0';
 	$turn_on = file_get_contents($turn_on_request, false, $webrequest);
 	//
 	}
@@ -47,7 +47,7 @@ include("../inc/dashboard_config.php");
 	{
 	
 	// send zap request
-	$zapp_request = "$url_format://$box_ip/web/zap?sRef=$obj->e2servicereference";
+	$zapp_request = ''.$url_format.'://'.$box_ip.'/web/zap?sRef='.$obj->e2servicereference.'';
 	$request = file_get_contents($zapp_request, false, $webrequest);
 	
 	$sql = mysqli_query($dbmysqli, "DELETE FROM `epg_data` WHERE `channel_hash` = '".$obj->channel_hash."'");
@@ -66,7 +66,7 @@ if($xml->e2service->e2providername != "")
 	}
 	
 	// crawl channel
-	$start_crawl_request = "$url_format://$server_ip/$script_folder/functions/channel_crawler_complete.php?channel_id=$obj->e2servicereference";
+	$start_crawl_request = ''.$url_format.'://'.$server_ip.'/'.$script_folder.'/functions/channel_crawler_complete.php?channel_id='.$obj->e2servicereference.'';
 	$start_crawl = file_get_contents($start_crawl_request);
 	}
 	}
@@ -77,7 +77,7 @@ if($xml->e2service->e2providername != "")
 	$result2 = mysqli_fetch_assoc($sql2);
 	$start_channel = $result2['e2servicereference'];
 	
-	$zap_request = "$url_format://$box_ip/web/zap?sRef=$start_channel";
+	$zap_request = ''.$url_format.'://'.$box_ip.'/web/zap?sRef='.$start_channel.'';
 	$zap_start_channel = file_get_contents($zap_request, false, $webrequest);
 	
 	sleep(10);
@@ -106,7 +106,7 @@ if($xml->e2service->e2providername != "")
 	// powerstate after crawling
 	if ($after_crawl_action == '9'){$powerstate = ''; } else { $powerstate = $after_crawl_action; }
 	
-	$powerstate_request = "$url_format://$box_ip/web/powerstate?newstate=$powerstate";
+	$powerstate_request = ''.$url_format.'://'.$box_ip.'/web/powerstate?newstate='.$powerstate.'';
 	$send_powerstate = file_get_contents($powerstate_request, false, $webrequest);
 	
 	if(!isset($next_dummy_timer_start) or $next_dummy_timer_start == "") { $next_dummy_timer_start = ""; }
