@@ -786,6 +786,7 @@ function reload_timerlist(){
 	$("#unhide").addClass("hidden");
 	$("#show_unhide").attr("onclick", "timerlist_panel(this.id)");
 	$("#show_unhide").attr({ title:"show"});
+	$("#hidden_status").text("0");
 	$("#timerlist_inc").html(data);
 });
 }
@@ -826,6 +827,7 @@ function timerlist_panel(id){
 	if (id == 'show_unhide'){
 	//$("[id^=timerlist_div_outer_]").removeClass("hidden");
 	$("#selected_box_sum").html("");
+	$("#hidden_status").text("1");
 	
 	$(function(){
 	$.post("functions/timer_list_inc.php",
