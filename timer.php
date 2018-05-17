@@ -145,20 +145,24 @@ $(document).ready(function(){
 	$("#search_list").html(data);
 	});
 });
-// load timer panel
-function load_timer_list_panel(){
-	$.post("functions/timer_list_panel_inc.php",
-	function(data){
-	// write data in container
-	$("#timerlist_panel").html(data);
-	});
-}
 function sortby(){
 var search_list_sort = document.getElementById("sort_setting").value;
 	$.post("functions/search_list_inc.php?sort_list="+search_list_sort+"",
 	function(data){
 	// write data in container
 	$("#search_list").html(data);
+	});
+}
+//
+function load_timer_list_panel(){
+	$.post("functions/timer_list_panel_inc.php",
+	function(data){
+	var obj = JSON.parse(data);
+	var hidden_status = $("#hidden_status").text();
+	if(hidden_status == "1" || hidden_status == ""){ var action = "reload_timerlist()"; var title = "hide"; } else { var action = "timerlist_panel(this.id)"; var title = "show"; }
+	$("#timerlist_panel").html(obj[0].timer_total+" Timer in Database | <span class=\"timer_panel_info\">\
+	"+obj[0].sent_timer+" sent | "+obj[0].timer_today+" today | <a id=\"show_unhide\" onclick="+action+" title="+title+" style=\"cursor:pointer;\">\
+	"+obj[0].hidden_timer+" hidden</a> | "+obj[0].receiver_timer+" on Receiver</span>");
 	});
 }
 </script>
@@ -280,7 +284,8 @@ var search_list_sort = document.getElementById("sort_setting").value;
       <hr />
       <div class="row">
         <div class="col-md-12">
-          <h4 id="timerlist_panel"><?php echo $count_timer; echo $show_sent_timer; echo $show_timer_today; echo $show_hidden_timer; echo $receiver_timer; ?> </h4>
+          <h4 id="timerlist_panel"><?php echo $count_timer; echo $show_sent_timer; echo $show_timer_today; echo $show_hidden_timer; echo $receiver_timer; ?></h4>
+          <span id="hidden_status" class="hidden"></span>
           <div id="timerlist_main">
           <div class="timer_panel">
           <span class="timerlist_checkbox"><input id="select_all" type="checkbox" onClick="select_timer_checkbox()"></span>
