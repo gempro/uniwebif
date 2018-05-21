@@ -4,10 +4,8 @@ session_start();
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8" />
-<title>_broadcast_list_main</title>
-<script type="text/javascript">
-// hover color
+<script>
+//
 $(document).ready(function(){
     $("#channelbrowser_main*").hover(function(){
         $(this).css("background-color", "#FAFAFA");
@@ -209,5 +207,6 @@ $channelbrowser_list = $channelbrowser_list."
 //close db
 mysqli_close($dbmysqli);
 ?>
+
 </body>
 </html>
