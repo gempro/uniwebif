@@ -5,7 +5,9 @@ include("../inc/dashboard_config.php");
 	// ajax header
 	header('Content-Type: text/event-stream');
 	header('Cache-Control: no-cache');
-
+	
+	if(!isset($_REQUEST['search_id']) or $_REQUEST['search_id'] == "") { $_REQUEST['search_id'] = ""; }
+	if(!isset($_REQUEST['action']) or $_REQUEST['action'] == "") { $_REQUEST['action'] = ""; }
 	if(!isset($_REQUEST['searchterm']) or $_REQUEST['searchterm'] == "") { $_REQUEST['searchterm'] = ""; }
 	if(!isset($_REQUEST['option']) or $_REQUEST['option'] == "") { $_REQUEST['option'] = ""; }
 	if(!isset($_REQUEST['channel_id']) or $_REQUEST['channel_id'] == "") { $_REQUEST['channel_id'] = ""; }
@@ -16,6 +18,8 @@ include("../inc/dashboard_config.php");
 	if(!isset($_REQUEST['exclude_extdescription']) or $_REQUEST['exclude_extdescription'] == "") { $_REQUEST['exclude_extdescription'] = ""; }
 	if(!isset($_REQUEST['rec_replay']) or $_REQUEST['rec_replay'] == "") { $_REQUEST['rec_replay'] = "off"; }
 	
+	$search_id = $_REQUEST["search_id"];
+	$action = $_REQUEST["action"];
 	$searchterm = rawurlencode($_REQUEST["searchterm"]);
 	$search_option = $_REQUEST["option"];
 	$channel_id = $_REQUEST["channel_id"];
@@ -35,7 +39,7 @@ include("../inc/dashboard_config.php");
 	
 	if ($searchterm == ''){ 
 	
-	mysqli_close($dbmysqli); exit; 
+	exit; 
 	
 	} else {
 	
@@ -63,20 +67,31 @@ include("../inc/dashboard_config.php");
 	while ($obj = mysqli_fetch_object($result)) {	
 	{
 	//
-	if ($obj->searchterm == $searchterm and $obj->search_option == $search_option and $obj->e2location == $record_location and $obj->e2eventservicereference == $e2servicereference and $obj->exclude_channel == $exclude_channel and $obj->exclude_title == $exclude_title and $obj->exclude_description == $exclude_description and $obj->exclude_extdescription == $exclude_extdescription and $obj->rec_replay == $rec_replay){
+	if ($obj->searchterm == $searchterm and $obj->search_option == $search_option and $obj->e2location == $record_location and $obj->e2eventservicereference == $e2servicereference and $obj->exclude_channel == $exclude_channel and $obj->exclude_title == $exclude_title and $obj->exclude_description == $exclude_description and $obj->exclude_extdescription == $exclude_extdescription and $obj->rec_replay == $rec_replay and $action != 'update'){
 	
-	echo "data: save search - nok!\n\n"; exit; }
+	echo "save search - nok"; exit; }
 	}
 	}
     }
 	
 	$save_date = $time;
 	
-	//write in db
-   $sql = mysqli_query($dbmysqli, "INSERT INTO `saved_search` (searchterm, search_option, exclude_channel, exclude_title, exclude_description, exclude_extdescription, e2location, save_date, e2eventservicereference, e2eventservicename, servicename_enc, activ, rec_replay) values ('$searchterm', '$search_option', '$exclude_channel', '$exclude_title', '$exclude_description', '$exclude_extdescription',  '$record_location', '$save_date', '$e2servicereference', '$e2servicename', '$servicename_enc', 'yes', '$rec_replay')");
-	}	
-	// ajax header
-	echo "data: save search - done!\n\n";
-	//close db
+	if($action == "update")
+	{
+	$sql = mysqli_query($dbmysqli, "
+	UPDATE `saved_search` SET searchterm = '$searchterm', search_option = '$search_option', exclude_channel = '$exclude_channel', exclude_title = '$exclude_title', 
+	exclude_description = '$exclude_description', exclude_extdescription = '$exclude_extdescription', e2location = '$record_location', save_date = '$save_date',
+	e2eventservicereference = '$e2servicereference', e2eventservicename = '$e2servicename', servicename_enc = '$servicename_enc', rec_replay = '$rec_replay' 
+	WHERE `id` = '$search_id' ");
+	echo "update search - ok";
+	}
+	
+	if($action == "save")
+	{
+   $sql = mysqli_query($dbmysqli, "INSERT INTO `saved_search` (searchterm, search_option, exclude_channel, exclude_title, exclude_description, exclude_extdescription, e2location, save_date, e2eventservicereference, e2eventservicename, servicename_enc, activ, rec_replay) VALUES ('$searchterm', '$search_option', '$exclude_channel', '$exclude_title', '$exclude_description', '$exclude_extdescription',  '$record_location', '$save_date', '$e2servicereference', '$e2servicename', '$servicename_enc', 'yes', '$rec_replay')");
+	echo "save search - ok";
+   }
+   }
+//close db
 mysqli_close($dbmysqli);
 ?>

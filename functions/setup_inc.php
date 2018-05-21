@@ -215,15 +215,11 @@ if ($setting == 'install'){
 	  `channel_hash` varchar(100) NOT NULL,
 	  `timer` int(1) NOT NULL,
 	  PRIMARY KEY (`id`),
-	  FULLTEXT KEY `e2eventservicename` (`e2eventservicename`),
-	  FULLTEXT KEY `e2eventdescription` (`e2eventdescription`),
-	  FULLTEXT KEY `e2eventdescriptionextended` (`e2eventdescriptionextended`),
-	  FULLTEXT KEY `epgsearch` (`e2eventtitle`,`e2eventservicename`,`e2eventdescription`,`e2eventdescriptionextended`),
 	  FULLTEXT KEY `title_enc` (`title_enc`),
 	  FULLTEXT KEY `description_enc` (`description_enc`),
 	  FULLTEXT KEY `descriptionextended_enc` (`descriptionextended_enc`),
-	  FULLTEXT KEY `epgsearch_enc` (`title_enc`,`e2eventservicename`,`description_enc`,`descriptionextended_enc`)
-	) ENGINE = MYISAM CHARACTER SET utf8 COLLATE utf8_general_ci;
+	  FULLTEXT KEY `epgsearch_enc` (`title_enc`,`description_enc`,`descriptionextended_enc`)
+	) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 	");
 	
 	$query = mysqli_query($dbmysqli, "DROP TABLE IF EXISTS `uniwebif`.`record_locations`");

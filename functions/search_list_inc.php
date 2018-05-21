@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8" />
-<script type="text/javascript">
-// saved search list list hover
+<script>
+//
 $(document).ready(function(){
     $("#saved_search_list*").hover(function(){
 	$(this).css("background-color", "#FAFAFA");
@@ -157,7 +156,7 @@ include("../inc/dashboard_config.php");
 	  <div class=\"row\">
 		<div id=\"saved_search_list_$obj->id\" onclick=\"saved_search_list_edit(this.id);\" style=\"cursor: pointer;\">
 		  <div class=\"col-md-3\">
-			<p>Term<br>
+			<p><span style=\"color:#ccc\">Term</span><br>
 			$searchterm</p>
 		  </div>
 		  <div class=\"col-md-2\">
@@ -182,7 +181,7 @@ include("../inc/dashboard_config.php");
 	  <div id=\"saved_search_list_div_$obj->id\" style=\"display:none;\">
 	  	<div class=\"row\">
 			<div class=\"col-md-3\">
-			<p><input id=\"searchterm_$obj->id\" type=\"text\" value=\"$searchterm2\" class=\"search_list_term\"></p>
+			<p><input id=\"searchterm_$obj->id\" type=\"text\" value=\"$searchterm2\" class=\"search_list_term\" title=\"$searchterm2\"></p>
 		  </div>	  
 		  <div class=\"col-md-2\">
 			<p><select id=\"searcharea_$obj->id\" class=\"search_list_area\">
@@ -240,7 +239,7 @@ include("../inc/dashboard_config.php");
 		  </div>
 		  <!---->
 		  </div>
-		  <a href=\"search.php?searchterm=$obj->searchterm&option=$search_option&record_location=$rec_location_id&exclude_channel=$obj->exclude_channel&exclude_title=$obj->exclude_title&exclude_description=$obj->exclude_description&exclude_extdescription=$obj->exclude_extdescription&search_channel=$search_channel&channel_id=$channel_id&rec_replay=$rec_replay\" target=\"_blank\" title=\"Show results\">
+		  <a href=\"search.php?searchterm=$obj->searchterm&option=$search_option&record_location=$rec_location_id&exclude_channel=$obj->exclude_channel&exclude_title=$obj->exclude_title&exclude_description=$obj->exclude_description&exclude_extdescription=$obj->exclude_extdescription&search_channel=$search_channel&channel_id=$channel_id&rec_replay=$rec_replay&search_id=$obj->id\" target=\"_blank\" title=\"Show results\">
 		  <i class=\"fa fa-search fa-1x\"></i></a>
 		<input id=\"saved_search_list_save_btn_$obj->id\" type=\"submit\" onClick=\"saved_search_list_save(this.id)\" value=\"SAVE\" class=\"btn btn-success btn-sm\">
 		<input id=\"saved_search_list_delete_btn_$obj->id\" type=\"submit\" onClick=\"saved_search_list_delete(this.id)\" value=\"DELETE\" class=\"btn btn-danger btn-sm\"/>
@@ -260,5 +259,6 @@ include("../inc/dashboard_config.php");
 }
 if(!isset($saved_search_list) or $saved_search_list == "") { $saved_search_list = "No saved searches..<hr />"; } else { echo $saved_search_list; }
 ?>
+
 </body>
 </html>
