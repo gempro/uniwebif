@@ -330,17 +330,7 @@ include_once("inc/header_info.php");
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Uniwebif : Search in EPG || Online DEMO - Universal extern Webinterface for Enigma2 Receiver - EPG to SQL</title>
-<meta name="keywords" content="uniwebif, extern, universal, web, interface, responsive, webinterface, enigma2, linux, receiver, epg, electronic, program, guide, crawler, save, xml, epg, database, browser, epg to sql, optimized, mobile devices, smartphone, tablet," />
-<meta name="description" content="Crawl, browse and search within the EPG from your Enigma2 Linux Receiver. Save EPG data in your SQL database. Uniwebif is optimized for mobile devices like Smartphone and Tablet.." />
-<meta name="author" content="Uniwebif">
-<meta name="publisher" content="Uniwebif">
-<meta name="copyright" content="Uniwebif">
-<meta name="abstract" content="Crawl, browse and search within the EPG from your Enigma2 Linux Receiver. Save EPG in your SQL database. Uniwebif is optimized for mobile devices like Smartphone and Tablet..">
-<meta name="page-topic" content="software">
-<meta name="page-type" content="download">
-<meta name="content-language" content="en">
-<meta name="language" content="en">
+<title>Uniwebif : Search in EPG</title>
 <!-- BOOTSTRAP STYLES-->
 <link href="assets/css/bootstrap.css" rel="stylesheet" />
 <!-- FONTAWESOME STYLES-->
@@ -539,7 +529,6 @@ function check_exclude(){
       <div class="row">
         <div class="col-md-12">
           <h2>Search</h2>
-		  Note: Not all functions work in Demo. Download full Version at <a href="https://github.com/gempro/uniwebif" target="_blank">Github</a>
         </div>
       </div>
       <!--crawl channel id-->
