@@ -98,16 +98,6 @@ function broadcast_show_time(id) {
 	);
 };
 
-// broadcast list hover
-$(document).ready(function(){
-    $("#broadcast_main*").hover(function(){
-        $(this).css("background-color", "#FAFAFA");
-		//this.style.cursor = 'pointer';
-        }, function(){
-        $(this).css("background-color", "white");
-    });
-});
-
 // broadcast banner link
 $(document).ready(function() {
     $('#broadcast_banner').click(function(e) {  
