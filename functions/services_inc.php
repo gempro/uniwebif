@@ -1,3 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+//
+$(document).ready(function(){
+    $("#services_row*").hover(function(){
+        $(this).css("background-color", "#FAFAFA");
+        }, function(){
+        $(this).css("background-color", "white");
+    });
+});
+</script>
+</head>
+<body>
 <?php 
 //
 include("../inc/dashboard_config.php");
@@ -116,6 +131,7 @@ if ($xml) {
 	</div>';
 	
 	$all_services_list = $all_services_list. "
+	<div id=\"services_row\">
 	<div class=\"row\">
 	<div class=\"col-md-2\">
 	<input id=\"all_services_add_btn_$obj->id\" name=\"$obj->e2servicereference\" type=\"submit\" onClick=\"all_services_add(this.id,this.name)\" title=\"Add $obj->e2servicename to Channel list\" value=\"Add\" class=\"btn btn-xs btn-default\"/>
@@ -126,8 +142,9 @@ if ($xml) {
 	</div>
 	<div class=\"col-md-6\">$obj->e2servicename</div>
 	<div class=\"col-md-4\">$obj->e2servicereference</div>
-	<div class=\"spacer_10\"></div>
-	</div>";
+	</div>
+	</div><!--row-->
+	<div class=\"spacer_10\"></div>";
 	}
 	}
 	if(!isset($all_services_list) or $all_services_list == "") { $all_services_list = "No service list in database. Click Button to copy it from Receiver.."; }
@@ -141,3 +158,6 @@ if ($xml) {
 	}	
 }
 ?>
+
+</body>
+</html>
