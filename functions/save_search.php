@@ -80,15 +80,14 @@ include("../inc/dashboard_config.php");
 	{
 	$sql = mysqli_query($dbmysqli, "
 	UPDATE `saved_search` SET searchterm = '$searchterm', search_option = '$search_option', exclude_channel = '$exclude_channel', exclude_title = '$exclude_title', 
-	exclude_description = '$exclude_description', exclude_extdescription = '$exclude_extdescription', e2location = '$record_location', save_date = '$save_date',
-	e2eventservicereference = '$e2servicereference', e2eventservicename = '$e2servicename', servicename_enc = '$servicename_enc', rec_replay = '$rec_replay' 
-	WHERE `id` = '$search_id' ");
+	exclude_description = '$exclude_description', exclude_extdescription = '$exclude_extdescription', e2location = '$record_location', last_change = '$time', crawled = '0',
+	save_date = '$save_date', e2eventservicereference = '$e2servicereference', e2eventservicename = '$e2servicename', servicename_enc = '$servicename_enc', rec_replay = '$rec_replay' WHERE `id` = '$search_id' ");
 	echo "update search - ok";
 	}
 	
 	if($action == "save")
 	{
-   $sql = mysqli_query($dbmysqli, "INSERT INTO `saved_search` (searchterm, search_option, exclude_channel, exclude_title, exclude_description, exclude_extdescription, e2location, save_date, e2eventservicereference, e2eventservicename, servicename_enc, activ, rec_replay) VALUES ('$searchterm', '$search_option', '$exclude_channel', '$exclude_title', '$exclude_description', '$exclude_extdescription',  '$record_location', '$save_date', '$e2servicereference', '$e2servicename', '$servicename_enc', 'yes', '$rec_replay')");
+   $sql = mysqli_query($dbmysqli, "INSERT INTO `saved_search` (searchterm, search_option, exclude_channel, exclude_title, exclude_description, exclude_extdescription, e2location, save_date, e2eventservicereference, e2eventservicename, servicename_enc, activ, rec_replay) VALUES ('$searchterm', '$search_option', '$exclude_channel', '$exclude_title', '$exclude_description', '$exclude_extdescription', '$record_location', '$save_date', '$e2servicereference', '$e2servicename', '$servicename_enc', 'yes', '$rec_replay')");
 	echo "save search - ok";
    }
    }
