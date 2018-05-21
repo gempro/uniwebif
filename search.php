@@ -15,7 +15,9 @@ include_once("inc/header_info.php");
 	if(!isset($_REQUEST['exclude_description']) or $_REQUEST['exclude_description'] == "") { $_REQUEST['exclude_description'] = ""; }
 	if(!isset($_REQUEST['exclude_extdescription']) or $_REQUEST['exclude_extdescription'] == "") { $_REQUEST['exclude_extdescription'] = ""; }
 	if(!isset($_REQUEST['rec_replay']) or $_REQUEST['rec_replay'] == "") { $_REQUEST['rec_replay'] = ""; }
+	if(!isset($_REQUEST['search_id']) or $_REQUEST['search_id'] == "") { $_REQUEST['search_id'] = ""; }
 	
+	$search_id = $_REQUEST["search_id"];
 	$searchterm = trim($_POST["searchterm"]);
 	$searchterm = trim($_REQUEST["searchterm"]);
 	$searchterm = str_replace("\"", "", $searchterm);
@@ -49,8 +51,19 @@ include_once("inc/header_info.php");
 	
 	$rec_replay = $_REQUEST["rec_replay"];
 	
+	// update saved search
+	if(is_numeric($search_id)){ 
+	$sql = mysqli_query($dbmysqli, "SELECT * FROM `saved_search` WHERE `id` = '".$search_id."' ");
+	$result = mysqli_fetch_assoc($sql);
+	if($result != ""){ 
+	$update_search = '<span class="update_search"><a id="'.$search_id.'" onclick="save_search(this.id)">Update saved search</a></span>';
+	}
+	}
+	if(!isset($update_search) or $update_search == "") { $update_search = ""; }
+	// saved search update end
+	
 	// empty selected record location
-    $sql = mysqli_query($dbmysqli, "UPDATE record_locations SET selected = 0");
+    $sql = mysqli_query($dbmysqli, "UPDATE `record_locations` SET `selected` = '0' ");
 	
 	if($searchterm == "" or strlen($searchterm) < "3") {
 	
@@ -58,7 +71,14 @@ include_once("inc/header_info.php");
 
 	} else {
 	
-	$p_save_search = "<p><a href=\"#save_search\" onclick=\"save_search()\">Save this search for timer</a></p>";
+	if($search_id != ""){
+	
+	$p_save_search = "<p>".$update_search."</p>";
+	
+	} else {
+	
+	$p_save_search = '<p><span class="save_search"><a id="save" onclick="save_search(this.id)">Save this search for timer</a></span></p>';
+	}
 	
 	// empty selected channel
     $sql = mysqli_query($dbmysqli, "UPDATE `channel_list` SET `selected` = '0' ");
@@ -159,10 +179,10 @@ include_once("inc/header_info.php");
 	// search all
 	if ($option == 'all' or $option == '')
 	{
-	$sql = 'SELECT * FROM `epg_data` '.$search_include.' MATCH (title_enc, e2eventservicename, description_enc, descriptionextended_enc) AGAINST ("%'.$raw_term.'%") '.$exclude_time.' '.$search_include2.' `title_enc` LIKE "%'.$raw_term.'%" '.$exclude_time.' '.$search_include2.' `e2eventservicename` LIKE "%'.$raw_term.'%" '.$exclude_time.' '.$search_include2.' `description_enc` LIKE "%'.$raw_term.'%" '.$exclude_time.' '.$search_include2.' `descriptionextended_enc` LIKE "%'.$raw_term.'%" '.$exclude_channel_part.' '.$exclude_title_part.' '.$exclude_description_part.' '.$exclude_extdescription_part.' '.$exclude_time.' ORDER BY `e2eventstart` ASC';
+	$sql = 'SELECT * FROM `epg_data` '.$search_include.' MATCH (title_enc, description_enc, descriptionextended_enc) AGAINST ("%'.$raw_term.'%") '.$exclude_time.' '.$search_include2.' `title_enc` LIKE "%'.$raw_term.'%" '.$exclude_title_part.' '.$exclude_description_part.' '.$exclude_extdescription_part.' '.$exclude_channel_part.' '.$exclude_time.' '.$search_include2.' `description_enc` LIKE "%'.$raw_term.'%" '.$exclude_title_part.' '.$exclude_description_part.' '.$exclude_extdescription_part.' '.$exclude_channel_part.' '.$exclude_time.' '.$search_include2.' `descriptionextended_enc` LIKE "%'.$raw_term.'%" '.$exclude_title_part.' '.$exclude_description_part.' '.$exclude_extdescription_part.' '.$exclude_channel_part.' '.$exclude_time.' ORDER BY `e2eventstart` ASC';
 	
 	// count hits
-	$stmt = $dbmysqli->prepare('SELECT COUNT(*) as count_search FROM `epg_data` '.$search_include.' MATCH (title_enc, e2eventservicename, description_enc, descriptionextended_enc) AGAINST ("%'.$raw_term.'%") '.$exclude_time.' '.$search_include2.' `title_enc` LIKE "%'.$raw_term.'%" '.$exclude_time.' '.$search_include2.' `e2eventservicename` LIKE "%'.$raw_term.'%" '.$exclude_time.' '.$search_include2.' `description_enc` LIKE "%'.$raw_term.'%" '.$exclude_time.' '.$search_include2.' `descriptionextended_enc` LIKE "%'.$raw_term.'%" '.$exclude_channel_part.' '.$exclude_title_part.' '.$exclude_description_part.' '.$exclude_extdescription_part.' '.$exclude_time.' ');
+	$stmt = $dbmysqli->prepare('SELECT COUNT(*) as count_search FROM `epg_data` '.$search_include.' MATCH (title_enc, description_enc, descriptionextended_enc) AGAINST ("%'.$raw_term.'%") '.$exclude_time.' '.$search_include2.' `title_enc` LIKE "%'.$raw_term.'%" '.$exclude_title_part.' '.$exclude_description_part.' '.$exclude_extdescription_part.' '.$exclude_channel_part.' '.$exclude_time.' '.$search_include2.' `description_enc` LIKE "%'.$raw_term.'%" '.$exclude_title_part.' '.$exclude_description_part.' '.$exclude_extdescription_part.' '.$exclude_channel_part.' '.$exclude_time.' '.$search_include2.' `descriptionextended_enc` LIKE "%'.$raw_term.'%" '.$exclude_title_part.' '.$exclude_description_part.' '.$exclude_extdescription_part.' '.$exclude_channel_part.' '.$exclude_time.' ');
 	
 	if( !is_a($stmt, 'MySQLI_Stmt') || $dbmysqli->errno > 0 )
 	throw new Exception( $dbmysqli->error, $dbmysqli->errno );
@@ -289,7 +309,7 @@ include_once("inc/header_info.php");
 		<p>Start: ".$date_start."<br>
 		End: ".$date_end."<br>
 		Duration: $obj->total_min Min.<div class=\"spacer_5\"></div>
-		<input id=\"searchlist_timer_btn_$obj->hash\" type=\"submit\" onClick=\"searchlist_timer(this.id)\" value=\"SET TIMER\" class=\"btn btn-success btn-sm\" title=\"send timer instantly\"/>
+		<input id=\"searchlist_timer_btn_$obj->hash\" type=\"submit\" onClick=\"searchlist_timer(this.id)\" value=\"SET TIMER\" class=\"btn btn-success btn-sm\" title=\"send Timer to Receiver\"/>
 		<input id=\"searchlist_zap_btn_$obj->hash\" type=\"submit\" name=\"$obj->e2eventservicereference\" onClick=\"searchlist_zap(this.id,this.name)\" value=\"ZAP TO CHANNEL\" class=\"btn btn-default btn-sm\"/>
 		<span id=\"searchlist_status_zap_$obj->hash\"></span>
 		<span id=\"searchlist_status_timer_$obj->hash\"></span>
@@ -310,7 +330,17 @@ include_once("inc/header_info.php");
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Uniwebif : Search in EPG</title>
+<title>Uniwebif : Search in EPG || Online DEMO - Universal extern Webinterface for Enigma2 Receiver - EPG to SQL</title>
+<meta name="keywords" content="uniwebif, extern, universal, web, interface, responsive, webinterface, enigma2, linux, receiver, epg, electronic, program, guide, crawler, save, xml, epg, database, browser, epg to sql, optimized, mobile devices, smartphone, tablet," />
+<meta name="description" content="Crawl, browse and search within the EPG from your Enigma2 Linux Receiver. Save EPG data in your SQL database. Uniwebif is optimized for mobile devices like Smartphone and Tablet.." />
+<meta name="author" content="Uniwebif">
+<meta name="publisher" content="Uniwebif">
+<meta name="copyright" content="Uniwebif">
+<meta name="abstract" content="Crawl, browse and search within the EPG from your Enigma2 Linux Receiver. Save EPG in your SQL database. Uniwebif is optimized for mobile devices like Smartphone and Tablet..">
+<meta name="page-topic" content="software">
+<meta name="page-type" content="download">
+<meta name="content-language" content="en">
+<meta name="language" content="en">
 <!-- BOOTSTRAP STYLES-->
 <link href="assets/css/bootstrap.css" rel="stylesheet" />
 <!-- FONTAWESOME STYLES-->
@@ -353,47 +383,69 @@ animatedcollapse.ontoggle=function($, divobj, state){ //fires each time a DIV is
 //state: "block" or "none", depending on state
 }
 animatedcollapse.init()
-
-<!--
-function save_search() {
-if(typeof(EventSource) !== "undefined") {
-
+//
+function save_search(id){
+	
+	if(id == 'save'){ var action = 'save'; var search_id = ''; } else { var action = 'update'; var search_id = id; }
+	
 	var rec_loc = '<?php echo $_REQUEST['record_location']; ?>';
 	if (rec_loc == '') {
-	var record_location = document.getElementById("searchlist_record_location").value;
+	var record_location = $("#searchlist_record_location").val();
 	}
 	if (rec_loc !== '') {
 	var record_location = '<?php echo $_REQUEST['record_location']; ?>';
 	}
-    var source = new EventSource("functions/save_search.php?option=<?php echo $_REQUEST['option']; ?>&searchterm=<?php echo rawurlencode($_REQUEST['searchterm']); ?>&record_location="+record_location+"&channel_id=<?php echo $_REQUEST['channel_id']; ?>&exclude_channel=<?php echo $_REQUEST['exclude_channel']; ?>&exclude_title=<?php echo $_REQUEST['exclude_title']; ?>&exclude_description=<?php echo rawurlencode($_REQUEST['exclude_description']); ?>&exclude_extdescription=<?php echo rawurlencode($_REQUEST['exclude_extdescription']); ?>&rec_replay=<?php echo $_REQUEST['rec_replay']; ?>");
 	
-    source.onmessage = function(event) {
-
-	if (event.data == 'save search - done!') {
-	function save_search_ok () { document.getElementById("save_search_status").innerHTML = "Search was saved!";
+	$.post("functions/save_search.php",
+	{
+	search_id: search_id,
+	action: action,
+	option: '<?php echo $_REQUEST['option']; ?>', 
+	searchterm: '<?php echo $_REQUEST['searchterm']; ?>', 
+	record_location: record_location, 
+	channel_id: '<?php echo $_REQUEST['channel_id']; ?>', 
+	exclude_channel: '<?php echo $_REQUEST['exclude_channel']; ?>', 
+	exclude_title: '<?php echo $_REQUEST['exclude_title']; ?>', 
+	exclude_description: '<?php echo $_REQUEST['exclude_description']; ?>', 
+	exclude_extdescription: '<?php echo $_REQUEST['exclude_extdescription']; ?>', 
+	rec_replay: '<?php echo $_REQUEST['rec_replay']; ?>'
+	},
+	function(data){
+	// write data in container
+	if(data == 'save search - ok'){
+	function save_search_ok()
+	{
+	$("#save_search_status").html("Search was saved!");
 	animatedcollapse.show('save_search_status');
 	}
 	window.setTimeout(save_search_ok, 100);
-	this.close();
 	}
 
-	if (event.data == 'save search - nok!') {
-	function save_search_error () { document.getElementById("save_search_status").innerHTML = "<span class=\"error\">Search already in database!</span>";
+	if(data == 'save search - nok'){
+	function save_search_error()
+	{
+	$("#save_search_status").html("<span class=\"error\">Search already in database!</span>");
 	animatedcollapse.show('save_search_status');	
 	}
 	window.setTimeout(save_search_error, 100);
-	this.close();
 	}
 	
-	function reset_save_search_status () { animatedcollapse.hide('save_search_status');		
+	if(data == 'update search - ok'){
+	function update_search_ok()
+	{
+	$("#save_search_status").html("<span class=\"search_update_ok\">Search was updated!</span>");
+	animatedcollapse.show('save_search_status');	
+	}
+	window.setTimeout(update_search_ok, 100);
+	}
+	
+	function reset_save_search_status()
+	{
+	animatedcollapse.hide('save_search_status');		
 	}
 	window.setTimeout(reset_save_search_status, 2500);
-	document.getElementById("save_search_status").innerHTML = "";
-	this.close();
-	};
-	} else {
-	document.getElementById("save_search_status").innerHTML = "Sorry, your browser does not support server-sent events...";
-	}
+	$("#save_search_status").html("");
+	});
 }
 //
 function check_channel_search() {
@@ -401,7 +453,6 @@ function check_channel_search() {
 	if (search_channel.checked == false) { document.getElementById("channel_id").disabled = true; }
 }
 function check_exclude(){
-	
 	if (exclude_channel_checkbox.checked == true){ 
 	$("#exclude_channel").attr({ disabled:false, class:'exclude_channel_c' }); $("#status_exclude_channel").text("Channel"); } else { $("#exclude_channel").attr({ disabled:true, class:'exclude_channel_g' }); $("#status_exclude_channel").text(""); }
 
@@ -488,6 +539,7 @@ function check_exclude(){
       <div class="row">
         <div class="col-md-12">
           <h2>Search</h2>
+		  Note: Not all functions work in Demo. Download full Version at <a href="https://github.com/gempro/uniwebif" target="_blank">Github</a>
         </div>
       </div>
       <!--crawl channel id-->
@@ -623,6 +675,7 @@ function check_exclude(){
             </select>
             </div>
             <div class="spacer_10"></div>
+             <div class="spacer_5"></div>
             <?php 
         	if(!isset($count_search) or $count_search == "") { $count_search = ""; }
         	if ($count_search == '' ){ $count_search = '0'; }
@@ -659,13 +712,14 @@ function check_exclude(){
              <label><input name="rec_replay" id="rec_replay" type="checkbox" <?php if ($rec_replay == 'on'){ echo "checked"; } ?>> Set also Timer for repeating Broadcast's</label>
              <div class="spacer_10"></div> 
           </div><!--exclude-->
+          <input name="search_id" id="search_id" type="text" class="hidden" value="<?php if(!isset($search_id) or $search_id == ""){ $search_id = ""; } echo $search_id; ?>" placeholder="Extended description">
         </form>
       </div>
       <!-- /. ROW  -->
       <hr />
       <div class="row">
         <div class="col-md-12">
-          <?php if(!isset($result_list) or $result_list == "") { $result_list = ""; } else { echo utf8_encode($result_list); } ?>
+        <?php if(!isset($result_list) or $result_list == "") { $result_list = ""; } else { echo utf8_encode($result_list); } ?>
         </div>
       </div>
       <!-- /. ROW  -->
