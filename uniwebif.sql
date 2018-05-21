@@ -1,29 +1,3 @@
--- phpMyAdmin SQL Dump
--- version 3.3.2deb1ubuntu1
--- http://www.phpmyadmin.net
---
--- Host: localhost
--- Erstellungszeit: 16. Mai 2018 um 18:58
--- Server Version: 5.5.58
--- PHP-Version: 5.5.9-1ubuntu4.24
-
-SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-
---
--- Datenbank: `uniwebif`
---
-
--- --------------------------------------------------------
-
---
--- Tabellenstruktur für Tabelle `all_services`
---
 
 DROP TABLE IF EXISTS `all_services`;
 CREATE TABLE IF NOT EXISTS `all_services` (
@@ -35,16 +9,7 @@ CREATE TABLE IF NOT EXISTS `all_services` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
---
--- Daten für Tabelle `all_services`
---
-
-
 -- --------------------------------------------------------
-
---
--- Tabellenstruktur für Tabelle `bouquet_list`
---
 
 DROP TABLE IF EXISTS `bouquet_list`;
 CREATE TABLE IF NOT EXISTS `bouquet_list` (
@@ -56,16 +21,8 @@ CREATE TABLE IF NOT EXISTS `bouquet_list` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
---
--- Daten für Tabelle `bouquet_list`
---
-
-
 -- --------------------------------------------------------
 
---
--- Tabellenstruktur für Tabelle `box_info`
---
 
 DROP TABLE IF EXISTS `box_info`;
 CREATE TABLE IF NOT EXISTS `box_info` (
@@ -77,16 +34,8 @@ CREATE TABLE IF NOT EXISTS `box_info` (
   KEY `id` (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
---
--- Daten für Tabelle `box_info`
---
-
-
 -- --------------------------------------------------------
 
---
--- Tabellenstruktur für Tabelle `channel_list`
---
 
 DROP TABLE IF EXISTS `channel_list`;
 CREATE TABLE IF NOT EXISTS `channel_list` (
@@ -106,16 +55,8 @@ CREATE TABLE IF NOT EXISTS `channel_list` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
---
--- Daten für Tabelle `channel_list`
---
-
-
 -- --------------------------------------------------------
 
---
--- Tabellenstruktur für Tabelle `epg_data`
---
 
 DROP TABLE IF EXISTS `epg_data`;
 CREATE TABLE IF NOT EXISTS `epg_data` (
@@ -157,26 +98,14 @@ CREATE TABLE IF NOT EXISTS `epg_data` (
   `channel_hash` varchar(100) NOT NULL,
   `timer` int(1) NOT NULL,
   PRIMARY KEY (`id`),
-  FULLTEXT KEY `e2eventservicename` (`e2eventservicename`),
-  FULLTEXT KEY `e2eventdescription` (`e2eventdescription`),
-  FULLTEXT KEY `e2eventdescriptionextended` (`e2eventdescriptionextended`),
-  FULLTEXT KEY `epgsearch` (`e2eventtitle`,`e2eventservicename`,`e2eventdescription`,`e2eventdescriptionextended`),
   FULLTEXT KEY `title_enc` (`title_enc`),
   FULLTEXT KEY `description_enc` (`description_enc`),
   FULLTEXT KEY `descriptionextended_enc` (`descriptionextended_enc`),
-  FULLTEXT KEY `epgsearch_enc` (`title_enc`,`e2eventservicename`,`description_enc`,`descriptionextended_enc`)
+  FULLTEXT KEY `epgsearch_enc` (`title_enc`,`description_enc`,`descriptionextended_enc`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-
---
--- Daten für Tabelle `epg_data`
---
-
 
 -- --------------------------------------------------------
 
---
--- Tabellenstruktur für Tabelle `record_locations`
---
 
 DROP TABLE IF EXISTS `record_locations`;
 CREATE TABLE IF NOT EXISTS `record_locations` (
@@ -186,16 +115,8 @@ CREATE TABLE IF NOT EXISTS `record_locations` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
---
--- Daten für Tabelle `record_locations`
---
-
-
 -- --------------------------------------------------------
 
---
--- Tabellenstruktur für Tabelle `saved_search`
---
 
 DROP TABLE IF EXISTS `saved_search`;
 CREATE TABLE IF NOT EXISTS `saved_search` (
@@ -220,16 +141,8 @@ CREATE TABLE IF NOT EXISTS `saved_search` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
---
--- Daten für Tabelle `saved_search`
---
-
-
 -- --------------------------------------------------------
 
---
--- Tabellenstruktur für Tabelle `settings`
---
 
 DROP TABLE IF EXISTS `settings`;
 CREATE TABLE IF NOT EXISTS `settings` (
@@ -292,16 +205,8 @@ CREATE TABLE IF NOT EXISTS `settings` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
---
--- Daten für Tabelle `settings`
---
-
-
 -- --------------------------------------------------------
 
---
--- Tabellenstruktur für Tabelle `timer`
---
 
 DROP TABLE IF EXISTS `timer`;
 CREATE TABLE IF NOT EXISTS `timer` (
@@ -336,8 +241,3 @@ CREATE TABLE IF NOT EXISTS `timer` (
   `hide` int(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-
---
--- Daten für Tabelle `timer`
---
-
