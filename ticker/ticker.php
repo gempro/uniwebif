@@ -95,20 +95,16 @@ include("../inc/dashboard_config.php");
 	
 	// count timer for scroll duration
 	$ticker_time_end = $time + $ticker_time;
-	$stmt = $dbmysqli->prepare('SELECT COUNT(*) AS sum_timer FROM timer WHERE show_ticker = "1" AND e2eventstart BETWEEN "'.$time.'" AND "'.$ticker_time_end.'" '.$hidden_timer.' ');
-	if( !is_a($stmt, 'MySQLI_Stmt') || $dbmysqli->errno > 0 )
-	throw new Exception( $dbmysqli->error, $dbmysqli->errno );
-		
-	$stmt->execute();
-	$stmt->bind_result($sum_timer);
-	$stmt->fetch();
-	$stmt->close();
+	$sql = mysqli_query($dbmysqli, 'SELECT COUNT(*) FROM `timer` WHERE `show_ticker` = "1" AND `device` = "0" AND `e2eventstart` BETWEEN "'.$time.'" AND "'.$ticker_time_end.'" '.$hidden_timer.' ');
+	$result = mysqli_fetch_row($sql);
+	$sum_timer = $result[0];
+	//
 	
-	if ($sum_timer == '0'){ $ticker_list = "<div id=\"no_timer\">No timer to display..</div>"; }
+	if ($sum_timer == '0'){ $ticker_list = "<div id=\"no_timer\">No Timer to display..</div>"; }
 		
 	if ($sum_timer < '2'){ $scroll_duration = '36000000'; $show_navigate = 'display:none;'; } else { $scroll_duration = '15000'; $show_navigate = ''; }
 
-	$sql = "SELECT * FROM timer WHERE show_ticker = '1' AND e2eventstart BETWEEN '".$time."' AND '".$time_duration."' ".$hidden_timer." ";
+	$sql = "SELECT * FROM `timer` WHERE `show_ticker` = '1' AND `device` = '0' AND `e2eventstart` BETWEEN '".$time."' AND '".$time_duration."' ".$hidden_timer." ";
 	
 	if ($result = mysqli_query($dbmysqli,$sql))
 	{
@@ -188,7 +184,7 @@ if ($time_format == '1')
 	  <div id=\"timer_banner\">
 	<div id=\"row1\">
 	<div id=\"ticker_btn\">
-	<p><a href=\"#timer_info\" title=\"$title_enc\" class=\"btn btn-default btn-xs btn-block\" data-toggle=\"popover\" data-trigger=\"focus\" data-html=\"true\" data-content=\"<p>$description_enc</p> $descriptionextended_enc\">more Info</a></p>
+	<p><a href=\"javascript:show_info()\" style=\"cursor:pointer\" title=\"$title_enc\" class=\"btn btn-default btn-xs btn-block\" data-toggle=\"popover\" data-trigger=\"focus\" data-html=\"true\" data-content=\"<p>$description_enc</p> $descriptionextended_enc\">more Info</a></p>
 	</div>
 	  <center><span id=\"tickerlist_send_timer_status_$hash\"><p>
 		<input type=\"submit\" id=\"tickerlist_send_timer_btn_$hash\" onclick=\"tickerlist_send_timer(this.id)\" class=\"btn btn-xs btn-success\" title=\"set Timer instantly\" value=\"set Timer\" style=\"$show_timer_btn\">$timer_status
@@ -208,11 +204,7 @@ if ($time_format == '1')
 </li>";
 	}
   }
-// Free result set
-mysqli_free_result($result);
 }
-//close db
-mysqli_close($dbmysqli);
 ?>
 </head>
 <body>
@@ -220,7 +212,7 @@ mysqli_close($dbmysqli);
   <div class="col-md-12">
     <div id="tticker-container"> <i class="fa fa-arrow-up" id="tticker-prev" style="cursor:pointer; <?php echo $show_navigate; ?>"></i>
       <ul id="tticker">
-		<?php if(!isset($ticker_list) or $ticker_list == ""){ $ticker_list = ""; } else { echo $ticker_list; } ?>
+		<?php if(!isset($ticker_list) or $ticker_list == ""){ $ticker_list = ""; } echo $ticker_list; ?>
       </ul>
       <i class="fa fa-arrow-down" id="tticker-next" style="cursor:pointer; <?php echo $show_navigate; ?>"></i> </div>
   </div>
@@ -228,15 +220,18 @@ mysqli_close($dbmysqli);
 <!-- Bootstrap core JavaScript
     ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
-<script src="ticker/js/jquery-1.10.2.min.js"></script>
-<script src="ticker/js/bootstrap.js"></script>
+<script src="js/jquery-1.10.2.min.js"></script>
+<script src="assets/js/bootstrap.min.js"></script>
 <script src="ticker/js/jquery.mCustomScrollbar.min.js"></script>
 <script src="ticker/js/jquery.newsTicker.js"></script>
-
-<script type="text/javascript">
+<script>
 // ticker
-$(window).load(function(){
+function show_info(){
+}
+//
+$(function(){
 	$('code.language-javascript').mCustomScrollbar();
+	$('[data-toggle="popover"]').popover();
 });
 var tticker_1 = $('#tticker').newsTicker({
 	row_height: 100,
@@ -245,12 +240,15 @@ var tticker_1 = $('#tticker').newsTicker({
 	prevButton: $('#tticker-prev'),
 	nextButton: $('#tticker-next')
 });
-
-function remove_ticker_event(id) {
+//
+function remove_ticker_event(id){
 	var this_id = id.replace(/tickerlist_/g, "");
-	
-	if(typeof(EventSource) !== "undefined") {
-    var source = new EventSource("ticker/ticker.php?action=hide&hash="+this_id+"");	
+	$.post("ticker/ticker.php",
+	{
+	action: 'hide',
+	hash: this_id
+	},
+	function(data){
 	animatedcollapse.addDiv('timer_banner_div_'+this_id, 'fade=1,height=auto');
 	animatedcollapse.init();
 	animatedcollapse.hide('timer_banner_div_'+this_id);
@@ -258,30 +256,19 @@ function remove_ticker_event(id) {
 	animatedcollapse.init();
 	animatedcollapse.hide('ticker_content');
 		
-function reload_ticker()
-		{
-		$("#ticker").load('ticker/ticker.php');
-		}
-		window.setTimeout(reload_ticker, 500);
+function reload_ticker(){
+	$("#ticker").load('ticker/ticker.php');
+	}
+	window.setTimeout(reload_ticker, 500);
 		
-		this.close();
-		
-function show_ticker()
-		{
+function show_ticker(){
 		animatedcollapse.addDiv('ticker_content', 'fade=1,height=auto');
 		animatedcollapse.init();
 		animatedcollapse.show('ticker_content');
 		}
 		window.setTimeout(show_ticker, 1000);
-		
-		} else {
-    	document.getElementById("ticker_content").value = "<center>Sorry, your browser does not support server-sent events...</center>";
-	}
+	});
 }
-// tooltip
-$(document).ready(function(){
-	$('[data-toggle="popover"]').popover();   
-});
 </script>
 </body>
 </html>
