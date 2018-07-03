@@ -1,21 +1,21 @@
 ﻿<?php 
 session_start();
 //
-include("inc/dashboard_config.php");
-include_once("inc/header_info.php");
+	include("inc/dashboard_config.php");
+	include_once("inc/header_info.php");
 
-	if(!isset($_POST['searchterm']) or $_POST['searchterm'] == "") { $_POST['searchterm'] = ""; }
-	if(!isset($_REQUEST['searchterm']) or $_REQUEST['searchterm'] == "") { $_REQUEST['searchterm'] = ""; }
-	if(!isset($_REQUEST['option']) or $_REQUEST['option'] == "") { $_REQUEST['option'] = ""; }
+	if(!isset($_POST['searchterm']) or $_POST['searchterm'] == ""){ $_POST['searchterm'] = ""; }
+	if(!isset($_REQUEST['searchterm']) or $_REQUEST['searchterm'] == ""){ $_REQUEST['searchterm'] = ""; }
+	if(!isset($_REQUEST['option']) or $_REQUEST['option'] == ""){ $_REQUEST['option'] = ""; }
 	if(!isset($_REQUEST['search_channel']) or $_REQUEST['search_channel'] == ""){ $_REQUEST['search_channel'] = ""; }
-	if(!isset($_REQUEST['channel_id']) or $_REQUEST['channel_id'] == "") { $_REQUEST['channel_id'] = ""; }
-	if(!isset($_REQUEST['record_location']) or $_REQUEST['record_location'] == "") { $_REQUEST['record_location'] = ""; }
-	if(!isset($_REQUEST['exclude_channel']) or $_REQUEST['exclude_channel'] == "") { $_REQUEST['exclude_channel'] = ""; }
-	if(!isset($_REQUEST['exclude_title']) or $_REQUEST['exclude_title'] == "") { $_REQUEST['exclude_title'] = ""; }
-	if(!isset($_REQUEST['exclude_description']) or $_REQUEST['exclude_description'] == "") { $_REQUEST['exclude_description'] = ""; }
-	if(!isset($_REQUEST['exclude_extdescription']) or $_REQUEST['exclude_extdescription'] == "") { $_REQUEST['exclude_extdescription'] = ""; }
-	if(!isset($_REQUEST['rec_replay']) or $_REQUEST['rec_replay'] == "") { $_REQUEST['rec_replay'] = ""; }
-	if(!isset($_REQUEST['search_id']) or $_REQUEST['search_id'] == "") { $_REQUEST['search_id'] = ""; }
+	if(!isset($_REQUEST['channel_id']) or $_REQUEST['channel_id'] == ""){ $_REQUEST['channel_id'] = ""; }
+	if(!isset($_REQUEST['record_location']) or $_REQUEST['record_location'] == ""){ $_REQUEST['record_location'] = ""; }
+	if(!isset($_REQUEST['exclude_channel']) or $_REQUEST['exclude_channel'] == ""){ $_REQUEST['exclude_channel'] = ""; }
+	if(!isset($_REQUEST['exclude_title']) or $_REQUEST['exclude_title'] == ""){ $_REQUEST['exclude_title'] = ""; }
+	if(!isset($_REQUEST['exclude_description']) or $_REQUEST['exclude_description'] == ""){ $_REQUEST['exclude_description'] = ""; }
+	if(!isset($_REQUEST['exclude_extdescription']) or $_REQUEST['exclude_extdescription'] == ""){ $_REQUEST['exclude_extdescription'] = ""; }
+	if(!isset($_REQUEST['rec_replay']) or $_REQUEST['rec_replay'] == ""){ $_REQUEST['rec_replay'] = ""; }
+	if(!isset($_REQUEST['search_id']) or $_REQUEST['search_id'] == ""){ $_REQUEST['search_id'] = ""; }
 	
 	$search_id = $_REQUEST["search_id"];
 	$searchterm = trim($_POST["searchterm"]);
@@ -23,6 +23,7 @@ include_once("inc/header_info.php");
 	$searchterm = str_replace("\"", "", $searchterm);
 	//$searchterm = str_replace("'", "", $searchterm);
 	$searchterm = str_replace("%", "", $searchterm);
+	//$searchterm = utf8_decode($searchterm);
 	
 	$option = $_REQUEST["option"];
 	$search_channel = $_REQUEST["search_channel"];
@@ -59,13 +60,13 @@ include_once("inc/header_info.php");
 	$update_search = '<span class="update_search"><a id="'.$search_id.'" onclick="save_search(this.id)">Update saved search</a></span>';
 	}
 	}
-	if(!isset($update_search) or $update_search == "") { $update_search = ""; }
+	if(!isset($update_search) or $update_search == ""){ $update_search = ""; }
 	// saved search update end
 	
 	// empty selected record location
     $sql = mysqli_query($dbmysqli, "UPDATE `record_locations` SET `selected` = '0' ");
 	
-	if($searchterm == "" or strlen($searchterm) < "3") {
+	if($searchterm == "" or strlen($searchterm) < "3"){
 	
 	$p_save_search = "<p><strong>Please use more than 2 signs for searchterm</strong></p>";
 
@@ -77,14 +78,13 @@ include_once("inc/header_info.php");
 	
 	} else {
 	
-	$p_save_search = '<p><span class="save_search"><a id="save" onclick="save_search(this.id)">Save this search for timer</a></span></p>';
+	$p_save_search = '<p><span class="save_search"><a id="save" onclick="save_search(this.id)">Save search for Auto Timer</a></span></p>';
 	}
-	
-	// empty selected channel
-    $sql = mysqli_query($dbmysqli, "UPDATE `channel_list` SET `selected` = '0' ");
 	
 	// set selected channel in dropdown
 	if ($search_channel == 'on'){
+	// reset selected
+    $sql = mysqli_query($dbmysqli, "UPDATE `channel_list` SET `selected` = '0' ");
     // set selected
     $sql = mysqli_query($dbmysqli, "UPDATE `channel_list` SET `selected` = '1' WHERE `e2servicereference` = '".$channel_id."' ");
 	}
@@ -94,20 +94,31 @@ include_once("inc/header_info.php");
 	
 	if ($result2 = mysqli_query($dbmysqli,$sql2))
 	{
-	// Fetch one and one row
 	while ($obj = mysqli_fetch_object($result2)){
 	{
 	
-	if(!isset($rec_dropdown_broadcast) or $rec_dropdown_broadcast == "") { $rec_dropdown_broadcast = ""; }
+	if(!isset($rec_dropdown_broadcast) or $rec_dropdown_broadcast == ""){ $rec_dropdown_broadcast = ""; }
 
-	$rec_dropdown_broadcast = $rec_dropdown_broadcast."<option value=\"$obj->id\">$obj->e2location</option>"; }
+	$rec_dropdown_broadcast = $rec_dropdown_broadcast."<option value=\"$obj->id\">$obj->e2location</option>"; 
+	}
 	}
 	}
 	
-	// set record location from search options
-	if ($record_location !== ''){
-    // set selected
-    $sql = mysqli_query($dbmysqli, "UPDATE `record_locations` SET `selected` = '1' WHERE `id` = '".$record_location."' ");
+	// device dropdown
+	$sql3 = "SELECT * FROM `device_list` ORDER BY `id` ASC";
+	
+	if ($result3 = mysqli_query($dbmysqli,$sql3))
+	{
+	while ($obj = mysqli_fetch_object($result3)){
+	{
+	$id = $obj->id;
+	$device_description = utf8_decode(rawurldecode($obj->device_description));
+	
+	if(!isset($device_dropdown) or $device_dropdown == ""){ $device_dropdown = ""; }
+
+	$device_dropdown = $device_dropdown."<option value=\"$id\">$device_description</option>"; 
+	}
+	}
 	}
 	
 	if ($display_old_epg == '0'){ $exclude_time = 'AND `e2eventend` > '.$time.''; } else { $exclude_time = ''; }
@@ -182,14 +193,15 @@ include_once("inc/header_info.php");
 	$sql = 'SELECT * FROM `epg_data` '.$search_include.' MATCH (title_enc, description_enc, descriptionextended_enc) AGAINST ("%'.$raw_term.'%") '.$exclude_time.' '.$search_include2.' `title_enc` LIKE "%'.$raw_term.'%" '.$exclude_title_part.' '.$exclude_description_part.' '.$exclude_extdescription_part.' '.$exclude_channel_part.' '.$exclude_time.' '.$search_include2.' `description_enc` LIKE "%'.$raw_term.'%" '.$exclude_title_part.' '.$exclude_description_part.' '.$exclude_extdescription_part.' '.$exclude_channel_part.' '.$exclude_time.' '.$search_include2.' `descriptionextended_enc` LIKE "%'.$raw_term.'%" '.$exclude_title_part.' '.$exclude_description_part.' '.$exclude_extdescription_part.' '.$exclude_channel_part.' '.$exclude_time.' ORDER BY `e2eventstart` ASC';
 	
 	// count hits
-	$stmt = $dbmysqli->prepare('SELECT COUNT(*) as count_search FROM `epg_data` '.$search_include.' MATCH (title_enc, description_enc, descriptionextended_enc) AGAINST ("%'.$raw_term.'%") '.$exclude_time.' '.$search_include2.' `title_enc` LIKE "%'.$raw_term.'%" '.$exclude_title_part.' '.$exclude_description_part.' '.$exclude_extdescription_part.' '.$exclude_channel_part.' '.$exclude_time.' '.$search_include2.' `description_enc` LIKE "%'.$raw_term.'%" '.$exclude_title_part.' '.$exclude_description_part.' '.$exclude_extdescription_part.' '.$exclude_channel_part.' '.$exclude_time.' '.$search_include2.' `descriptionextended_enc` LIKE "%'.$raw_term.'%" '.$exclude_title_part.' '.$exclude_description_part.' '.$exclude_extdescription_part.' '.$exclude_channel_part.' '.$exclude_time.' ');
-	
-	if( !is_a($stmt, 'MySQLI_Stmt') || $dbmysqli->errno > 0 )
-	throw new Exception( $dbmysqli->error, $dbmysqli->errno );
-	$stmt->execute();
-	$stmt->bind_result($count_search);
-	$stmt->fetch();
-	$stmt->close();
+	$sql2 = mysqli_query($dbmysqli, "SELECT COUNT(*) FROM `epg_data` ".$search_include." MATCH (title_enc, description_enc, descriptionextended_enc) 
+	AGAINST ('%".$raw_term."%') ".$exclude_time." ".$search_include2." `title_enc` LIKE '%".$raw_term."%' 
+	".$exclude_title_part." ".$exclude_description_part." ".$exclude_extdescription_part." ".$exclude_channel_part." ".$exclude_time." ".$search_include2." 
+	`description_enc` LIKE '%".$raw_term."%' ".$exclude_title_part." ".$exclude_description_part." ".$exclude_extdescription_part." ".$exclude_channel_part." ".$exclude_time." 
+	".$search_include2." `descriptionextended_enc` LIKE '%".$raw_term."%' ".$exclude_title_part." ".$exclude_description_part." ".$exclude_extdescription_part." 
+	".$exclude_channel_part." ".$exclude_time." ");
+	$result = mysqli_fetch_row($sql2);
+	$count_search = $result[0];
+	//
 	if ($count_search > 1000)
 	{
 	echo "There are more than 1000 results for this search.<br>Please define term more exactly. There is the risk that the process crash..<br>";
@@ -204,14 +216,10 @@ include_once("inc/header_info.php");
 	$sql = 'SELECT * FROM `epg_data` '.$search_include.' `title_enc` LIKE "%'.$raw_term.'%" '.$exclude_channel_part.' '.$exclude_title_part.' '.$exclude_description_part.' '.$exclude_extdescription_part.' '.$exclude_time.' ORDER BY `e2eventstart` ASC';
 	
 	// count hits
-	$stmt = $dbmysqli->prepare('SELECT COUNT(*) as count_search FROM `epg_data` '.$search_include.' `title_enc` LIKE "%'.$raw_term.'%" '.$exclude_channel_part.' '.$exclude_title_part.' '.$exclude_description_part.' '.$exclude_extdescription_part.' '.$exclude_time.' ');
-	
-	if( !is_a($stmt, 'MySQLI_Stmt') || $dbmysqli->errno > 0 )
-	throw new Exception( $dbmysqli->error, $dbmysqli->errno );
-	$stmt->execute();
-	$stmt->bind_result($count_search);
-	$stmt->fetch();
-	$stmt->close();
+	$sql2 = mysqli_query($dbmysqli, 'SELECT COUNT(*) FROM `epg_data` '.$search_include.' `title_enc` LIKE "%'.$raw_term.'%" '.$exclude_channel_part.' '.$exclude_title_part.' '.$exclude_description_part.' '.$exclude_extdescription_part.' '.$exclude_time.'');
+	$result = mysqli_fetch_row($sql2);
+	$count_search = $result[0];
+	//
 	if ($count_search > 1000)
 	{
 	echo "There are more than 1000 results for this search.<br>Please define term more exactly. There is the risk that the process crash..<br>";
@@ -226,14 +234,10 @@ include_once("inc/header_info.php");
 	$sql = 'SELECT * FROM `epg_data` '.$search_include.' `description_enc` LIKE "%'.$raw_term.'%" '.$exclude_channel_part.' '.$exclude_title_part.' '.$exclude_description_part.' '.$exclude_extdescription_part.' '.$exclude_time.' ORDER BY `e2eventstart` ASC';
 	
 	// count hits
-	$stmt = $dbmysqli->prepare('SELECT COUNT(*) as count_search FROM `epg_data` '.$search_include.' `description_enc` LIKE "%'.$raw_term.'%" '.$exclude_channel_part.' '.$exclude_title_part.' '.$exclude_description_part.' '.$exclude_extdescription_part.' '.$exclude_time.' ');
-	
-	if( !is_a($stmt, 'MySQLI_Stmt') || $dbmysqli->errno > 0 )
-	throw new Exception( $dbmysqli->error, $dbmysqli->errno );
-	$stmt->execute();
-	$stmt->bind_result($count_search);
-	$stmt->fetch();
-	$stmt->close();
+	$sql2 = mysqli_query($dbmysqli, 'SELECT COUNT(*) FROM `epg_data` '.$search_include.' `description_enc` LIKE "%'.$raw_term.'%" '.$exclude_channel_part.' '.$exclude_title_part.' '.$exclude_description_part.' '.$exclude_extdescription_part.' '.$exclude_time.' ');
+	$result = mysqli_fetch_row($sql2);
+	$count_search = $result[0];
+	//
 	if ($count_search > 1000)
 	{
 	echo "There are more than 1000 results for this search.<br>Please define term more exactly. There is the risk that the process crash..<br>";
@@ -248,13 +252,10 @@ include_once("inc/header_info.php");
 	$sql = 'SELECT * FROM `epg_data` '.$search_include.' descriptionextended_enc LIKE "%'.$raw_term.'%" '.$exclude_channel_part.' '.$exclude_title_part.' '.$exclude_description_part.' '.$exclude_extdescription_part.' '.$exclude_time.' ORDER BY `e2eventstart` ASC';
 	
 	// count hits
-	$stmt = $dbmysqli->prepare('SELECT COUNT(*) as count_search FROM `epg_data` '.$search_include.' `descriptionextended_enc` LIKE "%'.$raw_term.'%" '.$exclude_channel_part.' '.$exclude_title_part.' '.$exclude_description_part.' '.$exclude_extdescription_part.' '.$exclude_time.' ');
-	if( !is_a($stmt, 'MySQLI_Stmt') || $dbmysqli->errno > 0 )
-	throw new Exception( $dbmysqli->error, $dbmysqli->errno );
-	$stmt->execute();
-	$stmt->bind_result($count_search);
-	$stmt->fetch();
-	$stmt->close();
+	$sql2 = mysqli_query($dbmysqli, 'SELECT COUNT(*) FROM `epg_data` '.$search_include.' `descriptionextended_enc` LIKE "%'.$raw_term.'%" '.$exclude_channel_part.' '.$exclude_title_part.' '.$exclude_description_part.' '.$exclude_extdescription_part.' '.$exclude_time.' ');
+	$result = mysqli_fetch_row($sql2);
+	$count_search = $result[0];
+	//
 	if ($count_search > 1000)
 	{
 	echo "There are more than 1000 results for this search.<br>Please define term more exactly. There is the risk that the process crash..<br>";
@@ -265,7 +266,6 @@ include_once("inc/header_info.php");
 	
 	if ($result = mysqli_query($dbmysqli,$sql))
 	{
-	// Fetch one and one row
 	while ($obj = mysqli_fetch_object($result)) {
     {
 	
@@ -299,31 +299,38 @@ include_once("inc/header_info.php");
 	if($obj->e2eventdescriptionextended == ""){ $obj->e2eventdescriptionextended = "No extended description"; }
 	if(!isset($result_list) or $result_list == "") { $result_list = ""; }
 	
+	if(!isset($device_dropdown) or $device_dropdown == ""){ $device_dropdown = ""; }
+	
 	$result_list = $result_list."
-		<div id=\"search_result_header\"><a href=\"search.php?searchterm=$raw_term&option=$option&search_channel=on&channel_id=".$obj->e2eventservicereference."\" target=\"_blank\" class=\"links\" title=\"Search the term only on this channel\"><strong>$obj->e2eventservicename</strong></a>
+		<div id=\"search_result_header\"><a href=\"search.php?searchterm=$raw_term&option=$option&search_channel=on&channel_id=$obj->e2eventservicereference\" target=\"_blank\" class=\"links\" title=\"Search the term only on this channel\"><strong>$obj->e2eventservicename</strong></a>
 		| $obj->e2eventtitle | Description: $obj->e2eventdescription</div>
 		<div class=\"spacer_10\"></div>
 		Extended description:
 		<div class=\"spacer_10\"></div>
 		<p>$obj->e2eventdescriptionextended</p>
-		<p>Start: ".$date_start."<br>
-		End: ".$date_end."<br>
+		<p>Start: $date_start<br>
+		End: $date_end<br>
 		Duration: $obj->total_min Min.<div class=\"spacer_5\"></div>
 		<input id=\"searchlist_timer_btn_$obj->hash\" type=\"submit\" onClick=\"searchlist_timer(this.id)\" value=\"SET TIMER\" class=\"btn btn-success btn-sm\" title=\"send Timer to Receiver\"/>
 		<input id=\"searchlist_zap_btn_$obj->hash\" type=\"submit\" name=\"$obj->e2eventservicereference\" onClick=\"searchlist_zap(this.id,this.name)\" value=\"ZAP TO CHANNEL\" class=\"btn btn-default btn-sm\"/>
 		<span id=\"searchlist_status_zap_$obj->hash\"></span>
 		<span id=\"searchlist_status_timer_$obj->hash\"></span>
 		<div class=\"spacer_10\"></div>
-		<span>Record location: </span><select id=\"searchlist_record_location_$obj->hash\" class=\"rec_location_dropdown\">$rec_dropdown_broadcast</select>
+		<span>Receiver: </span>
+		<select id=\"searchlist_device_dropdown_$obj->hash\" class=\"device_dropdown\" onchange=\"searchlist_change_device(this.id)\">
+		<option value=\"0\">default</option>
+		$device_dropdown
+		</select>
+		<div class=\"spacer_10\"></div>
+		<span>Record location: </span>
+		<select id=\"rec_location_searchlist_$obj->hash\" class=\"rec_location_dropdown\">
+		$rec_dropdown_broadcast
+		</select>
 		<hr>";
 		}
     }
-  // Free result set
-  mysqli_free_result($result);
 }
 }
-//close db
-//mysqli_close($dbmysqli);
 ?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -345,9 +352,9 @@ include_once("inc/header_info.php");
 <meta name="theme-color" content="#ffffff">
 <!-- GOOGLE FONTS-->
 <!--<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css' />-->
-<script type="text/javascript" src="js/jquery.min.js"></script>
-<script type="text/javascript" src="js/ie_sse.js"></script>
+<script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
 <script type="text/javascript" src="js/functions.js"></script>
+<script type="text/javascript" src="js/pace.min.js"></script>
 <script type="text/javascript" src="js/animatedcollapse.js">
 /***********************************************
 * Animated Collapsible DIV v2.4- (c) Dynamic Drive DHTML code library (www.dynamicdrive.com)
@@ -373,11 +380,10 @@ animatedcollapse.ontoggle=function($, divobj, state){ //fires each time a DIV is
 //state: "block" or "none", depending on state
 }
 animatedcollapse.init()
-//
+
 function save_search(id){
-	
+
 	if(id == 'save'){ var action = 'save'; var search_id = ''; } else { var action = 'update'; var search_id = id; }
-	
 	var rec_loc = '<?php echo $_REQUEST['record_location']; ?>';
 	if (rec_loc == '') {
 	var record_location = $("#searchlist_record_location").val();
@@ -385,7 +391,6 @@ function save_search(id){
 	if (rec_loc !== '') {
 	var record_location = '<?php echo $_REQUEST['record_location']; ?>';
 	}
-	
 	$.post("functions/save_search.php",
 	{
 	search_id: search_id,
@@ -401,8 +406,7 @@ function save_search(id){
 	rec_replay: '<?php echo $_REQUEST['rec_replay']; ?>'
 	},
 	function(data){
-	// write data in container
-	if(data == 'save search - ok'){
+	if(data == 'data:save done'){
 	function save_search_ok()
 	{
 	$("#save_search_status").html("Search was saved!");
@@ -411,7 +415,7 @@ function save_search(id){
 	window.setTimeout(save_search_ok, 100);
 	}
 
-	if(data == 'save search - nok'){
+	if(data == 'data:save nok'){
 	function save_search_error()
 	{
 	$("#save_search_status").html("<span class=\"error\">Search already in database!</span>");
@@ -420,7 +424,7 @@ function save_search(id){
 	window.setTimeout(save_search_error, 100);
 	}
 	
-	if(data == 'update search - ok'){
+	if(data == 'data:update done'){
 	function update_search_ok()
 	{
 	$("#save_search_status").html("<span class=\"search_update_ok\">Search was updated!</span>");
@@ -438,22 +442,26 @@ function save_search(id){
 	});
 }
 //
-function check_channel_search() {
+function check_channel_search(){
 	if (search_channel.checked == true) { document.getElementById("channel_id").disabled = false; }
 	if (search_channel.checked == false) { document.getElementById("channel_id").disabled = true; }
 }
 function check_exclude(){
-	if (exclude_channel_checkbox.checked == true){ 
-	$("#exclude_channel").attr({ disabled:false, class:'exclude_channel_c' }); $("#status_exclude_channel").text("Channel"); } else { $("#exclude_channel").attr({ disabled:true, class:'exclude_channel_g' }); $("#status_exclude_channel").text(""); }
+	if (exclude_channel_checkbox.checked == true){
+	$("#status_exclude_channel").fadeIn();
+	$("#exclude_channel").attr({ disabled:false, class:'exclude_channel_c' }); $("#status_exclude_channel").text("Channel"); } else { $("#exclude_channel").attr({ disabled:true, class:'exclude_channel_g' }); $("#status_exclude_channel").fadeOut(); $("#status_exclude_channel").text(""); }
 
-	if (exclude_title_checkbox.checked == true){ 
-	$("#exclude_title").attr({ disabled:false, class:'exclude_title_c' }); $("#status_exclude_title").text("Title"); } else { $("#exclude_title").attr({ disabled:true, class:'exclude_title_g' }); $("#status_exclude_title").text(""); }
+	if (exclude_title_checkbox.checked == true){
+	$("#status_exclude_title").fadeIn();
+	$("#exclude_title").attr({ disabled:false, class:'exclude_title_c' }); $("#status_exclude_title").text("Title"); } else { $("#exclude_title").attr({ disabled:true, class:'exclude_title_g' }); $("#status_exclude_title").fadeOut(); $("#status_exclude_title").text(""); }
 	
 	if (exclude_description_checkbox.checked == true){
-	$("#exclude_description").attr({ disabled:false, class:'exclude_description_c' }); $("#status_exclude_description").text("Description"); } else { $("#exclude_description").attr({ disabled:true, class:'exclude_description_g' }); $("#status_exclude_description").text(""); }
+	$("#status_exclude_description").fadeIn();
+	$("#exclude_description").attr({ disabled:false, class:'exclude_description_c' }); $("#status_exclude_description").text("Description"); } else { $("#exclude_description").attr({ disabled:true, class:'exclude_description_g' }); $("#status_exclude_description").fadeOut(); $("#status_exclude_description").text(""); }
 	
 	if (exclude_extdescription_checkbox.checked == true){
-	$("#exclude_extdescription").attr({ disabled:false, class:'exclude_extdescription_c' }); $("#status_exclude_extdescription").text("Ext. description"); } else { $("#exclude_extdescription").attr({ disabled:true, class:'exclude_extdescription_g' }); $("#status_exclude_extdescription").text(""); }
+	$("#status_exclude_extdescription").fadeIn();
+	$("#exclude_extdescription").attr({ disabled:false, class:'exclude_extdescription_c' }); $("#status_exclude_extdescription").text("Ext. description"); } else { $("#exclude_extdescription").attr({ disabled:true, class:'exclude_extdescription_g' }); $("#status_exclude_extdescription").fadeOut(); $("#status_exclude_extdescription").text(""); }
 }
 </script>
 </head>
@@ -520,8 +528,8 @@ function check_exclude(){
   <div id="page-wrapper">
   <div class="row">
   <div class="col-md-12">
-  <div id="statusbar_cnt_outer" class="statusbar_cnt_outer">
-  <div id="statusbar_cnt"></div>
+  <div id="statusbar_outer" class="statusbar_outer">
+  <div id="statusbar_cnt">&nbsp;</div>
   </div>
   </div>
   </div><!-- /. ROW  -->
@@ -720,7 +728,7 @@ function check_exclude(){
 <!-- /. WRAPPER  -->
 <!-- SCRIPTS -AT THE BOTOM TO REDUCE THE LOAD TIME-->
 <!-- JQUERY SCRIPTS -->
-<script src="assets/js/jquery-1.10.2.js"></script>
+<!--<script src="assets/js/jquery-1.10.2.js"></script>-->
 <!-- BOOTSTRAP SCRIPTS -->
 <script src="assets/js/bootstrap.min.js"></script>
 <!-- METISMENU SCRIPTS -->
@@ -728,12 +736,9 @@ function check_exclude(){
 <!-- CUSTOM SCRIPTS -->
 <script src="assets/js/custom.js"></script>
 <script>
-$(document).ready(function(){
+$(function(){
    var statusbar = '<?php if(!isset($_SESSION["statusbar"]) or $_SESSION["statusbar"] == "") { $_SESSION["statusbar"] = ""; } echo $_SESSION["statusbar"]; ?>';
-   if (statusbar == '1'){
-   $("#statusbar_cnt_outer").removeClass("statusbar_cnt_outer"); 
-   $("#statusbar_cnt").html("&nbsp;");
-   }
+   if (statusbar == '1'){ $("#statusbar_outer").removeClass("statusbar_outer"); }
 });
 </script>
 </body>

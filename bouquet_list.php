@@ -11,7 +11,7 @@ include_once("inc/header_info.php");
 	{
 	while ($obj = mysqli_fetch_object($result)) {
 	{
-	if ($obj->crawl == "1")
+	if($obj->crawl == "1")
 	{
 	$checked_bouquet = "checked";
 	}
@@ -25,16 +25,13 @@ include_once("inc/header_info.php");
 	$obj->e2servicereference = utf8_encode($obj->e2servicereference);
 	
 	$bouquet_list = $bouquet_list."
-	<p class=\"help-block\"><label><input id=\"$obj->id\" name=\"crawl_bouquet[]\" type=\"checkbox\" onClick=\"save_bouquet_settings(this.id)\" $checked_bouquet>
+	<p class=\"help-block\"><label><input id=\"$obj->id\" name=\"crawl_bouquet[]\" type=\"checkbox\" onClick=\"select_bouquet(this.id)\" $checked_bouquet>
 	# $obj->e2servicename</label>&nbsp;<span id=\"save_bouquet_settings_status_$obj->id\"></span></p>
 	<input class=\"form-control\" value=\"$obj->e2servicereference\" readonly=\"readonly\"/>
 	<div class=\"spacer_20\"></div>";
 	}
     }
-  // Free result set
-  mysqli_free_result($result);
-}
-
+	}
 ?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -56,9 +53,9 @@ include_once("inc/header_info.php");
 <meta name="theme-color" content="#ffffff">
 <!-- GOOGLE FONTS-->
 <!--<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css' />-->
-<script type="text/javascript" src="js/jquery.min.js"></script>
-<script type="text/javascript" src="js/ie_sse.js"></script>
+<script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
 <script type="text/javascript" src="js/functions.js"></script>
+<script type="text/javascript" src="js/pace.min.js"></script>
 <script type="text/javascript" src="js/animatedcollapse.js">
 /***********************************************
 * Animated Collapsible DIV v2.4- (c) Dynamic Drive DHTML code library (www.dynamicdrive.com)
@@ -150,8 +147,8 @@ animatedcollapse.init()
   <div id="page-wrapper">
   <div class="row">
   <div class="col-md-12">
-  <div id="statusbar_cnt_outer" class="statusbar_cnt_outer">
-  <div id="statusbar_cnt"></div>
+  <div id="statusbar_outer" class="statusbar_outer">
+  <div id="statusbar_cnt">&nbsp;</div>
   </div>
   </div>
   </div><!-- /. ROW  -->
@@ -241,7 +238,7 @@ animatedcollapse.init()
 <!-- /. WRAPPER  -->
 <!-- SCRIPTS -AT THE BOTOM TO REDUCE THE LOAD TIME-->
 <!-- JQUERY SCRIPTS -->
-<script src="assets/js/jquery-1.10.2.js"></script>
+<!--<script src="assets/js/jquery-1.10.2.js"></script>-->
 <!-- BOOTSTRAP SCRIPTS -->
 <script src="assets/js/bootstrap.min.js"></script>
 <!-- METISMENU SCRIPTS -->
@@ -249,12 +246,9 @@ animatedcollapse.init()
 <!-- CUSTOM SCRIPTS -->
 <script src="assets/js/custom.js"></script>
 <script>
-$(document).ready(function(){
+$(function(){
    var statusbar = '<?php if(!isset($_SESSION["statusbar"]) or $_SESSION["statusbar"] == "") { $_SESSION["statusbar"] = ""; } echo $_SESSION["statusbar"]; ?>';
-   if (statusbar == '1'){
-   $("#statusbar_cnt_outer").removeClass("statusbar_cnt_outer"); 
-   $("#statusbar_cnt").html("&nbsp;");
-   }
+   if (statusbar == '1'){ $("#statusbar_outer").removeClass("statusbar_outer"); }
 });
 </script>
 </body>

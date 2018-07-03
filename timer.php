@@ -5,23 +5,18 @@ include("inc/dashboard_config.php");
 include_once("inc/header_info.php");
 
 	// count timer
-	$stmt = $dbmysqli->prepare('SELECT COUNT(*) as count_timer FROM `timer` WHERE `expired` = "0" ');
-	if( !is_a($stmt, 'MySQLI_Stmt') || $dbmysqli->errno > 0 )
-	throw new Exception( $dbmysqli->error, $dbmysqli->errno );
-	$stmt->execute();
-	$stmt->bind_result($count_timer);
-	$stmt->fetch();
-	$stmt->close();
+	$sql = mysqli_query($dbmysqli, 'SELECT COUNT(*) FROM `timer` WHERE `expired` = "0" ');
+	$result = mysqli_fetch_row($sql);
+	$count_timer = $result[0];
+	//
 	$count_timer = $count_timer.' Timer in Database';
 	
 	// sent timer
-	$stmt = $dbmysqli->prepare('SELECT COUNT(*) as sent_timer FROM `timer` WHERE `expired` = "0" AND `status` = "sent" OR `expired` = "0" AND `status` = "manual" ');
-	if( !is_a($stmt, 'MySQLI_Stmt') || $dbmysqli->errno > 0 )
-	throw new Exception( $dbmysqli->error, $dbmysqli->errno );
-	$stmt->execute();
-	$stmt->bind_result($sent_timer);
-	$stmt->fetch();
-	$stmt->close();
+	$sql = mysqli_query($dbmysqli, 'SELECT COUNT(*) FROM `timer` WHERE `expired` = "0" AND `status` = "sent" OR `expired` = "0" AND `status` = "manual"');
+	$result = mysqli_fetch_row($sql);
+	$sent_timer = $result[0];
+	//
+	
 	if ($sent_timer > 0){ 
 	$show_sent_timer = ' | <span class="timer_panel_info">'.$sent_timer.' sent | </span>'; 
 	} else { $show_sent_timer = ' | <span class="timer_panel_info">0 sent | </span>';
@@ -32,49 +27,33 @@ include_once("inc/header_info.php");
 	$end = date("d.m.Y, 23:59", $time);
 	$start_time = strtotime($start);
 	$end_time = strtotime($end);
-	$stmt = $dbmysqli->prepare('SELECT COUNT(*) as timer_today FROM `timer` WHERE `e2eventstart` BETWEEN "'.$start_time.'" AND "'.$end_time.'" AND `expired` = "0" ');
-	if( !is_a($stmt, 'MySQLI_Stmt') || $dbmysqli->errno > 0 )
-	throw new Exception( $dbmysqli->error, $dbmysqli->errno );
-	$stmt->execute();
-	$stmt->bind_result($timer_today);
-	$stmt->fetch();
-	$stmt->close();
+	
+	$sql = mysqli_query($dbmysqli, 'SELECT COUNT(*) FROM `timer` WHERE `e2eventstart` BETWEEN "'.$start_time.'" AND "'.$end_time.'" AND `expired` = "0" ');
+	$result = mysqli_fetch_row($sql);
+	$timer_today = $result[0];
+	//
 	if ($sent_timer > 0){
 	$show_timer_today = ' <span class="timer_panel_info">'.$timer_today.' today | </span>'; 
 	} else { $show_timer_today = ' <span class="timer_panel_info">0 today | </span>'; 
 	}
 	
 	// hidden timer
-	$stmt = $dbmysqli->prepare('SELECT COUNT(*) as hidden_timer FROM `timer` WHERE `expired` = "0" AND `hide` = "1" ');
-	if( !is_a($stmt, 'MySQLI_Stmt') || $dbmysqli->errno > 0 )
-	throw new Exception( $dbmysqli->error, $dbmysqli->errno );
-	$stmt->execute();
-	$stmt->bind_result($hidden_timer);
-	$stmt->fetch();
-	$stmt->close();
+	$sql = mysqli_query($dbmysqli, 'SELECT COUNT(*) FROM `timer` WHERE `expired` = "0" AND `hide` = "1" ');
+	$result = mysqli_fetch_row($sql);
+	$hidden_timer = $result[0];
+	//
 	if ($hidden_timer > 0){ 
 	$show_hidden_timer = ' <span class="timer_panel_info">
-	<a id="show_unhide" onclick="timerlist_panel(this.id)" title="show" style="cursor:pointer;">'.$hidden_timer.' hidden</a></span>'; 
+	<a id="show_unhide" onclick="timerlist_panel(this.id)" title="show" style="cursor:pointer;">'.$hidden_timer.' hidden</a> </span>'; 
 	} else { 
 	$show_hidden_timer = '<span class="timer_panel_info"> 0 hidden</span>';
 	}
 	
-	// count saved search
-	$stmt = $dbmysqli->prepare('SELECT COUNT(*) as count_saved_search FROM `saved_search` ');
-	if( !is_a($stmt, 'MySQLI_Stmt') || $dbmysqli->errno > 0 )
-	throw new Exception( $dbmysqli->error, $dbmysqli->errno );
-	$stmt->execute();
-	$stmt->bind_result($count_saved_search);
-	$stmt->fetch();
-	$stmt->close();
-	$count_saved_search = '('.$count_saved_search.')';
-	
 	// timer on receiver
-	$xmlfile = ''.$url_format.'://'.$box_ip.'/web/timerlist';
+	$xmlfile = $url_format.'://'.$box_ip.'/web/timerlist';
 	$getTimer = file_get_contents($xmlfile, false, $webrequest);
 	$sum = preg_match_all("#<e2timerlist>(.*?)</e2timerlist>#si", $getTimer, $match_sum);
 	$timer_summary = preg_match_all("#<e2timer>(.*?)</e2timer>#si", $match_sum[0][0]);
-	
 	$receiver_timer = ' <span class="timer_panel_info">| '.$timer_summary.' on Receiver</span>';
 	
 ?>
@@ -98,9 +77,9 @@ include_once("inc/header_info.php");
 <meta name="theme-color" content="#ffffff">
 <!-- GOOGLE FONTS-->
 <!--<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css' />-->
-<script type="text/javascript" src="js/jquery.min.js"></script>
-<script type="text/javascript" src="js/ie_sse.js"></script>
+<script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
 <script type="text/javascript" src="js/functions.js"></script>
+<script type="text/javascript" src="js/pace.min.js"></script>
 <script type="text/javascript" src="js/animatedcollapse.js">
 /***********************************************
 * Animated Collapsible DIV v2.4- (c) Dynamic Drive DHTML code library (www.dynamicdrive.com)
@@ -132,16 +111,26 @@ animatedcollapse.ontoggle=function($, divobj, state){ //fires each time a DIV is
 animatedcollapse.init()
 </script>
 <script>
-// load timerlist
-$(document).ready(function(){
+// timerlist
+$(function(){
 	$.post("functions/timer_list_inc.php",
 	function(data){
 	$("#timerlist_inc").html(data);
 	});
-// display channel list
+	// saved search panel
+	$.post("functions/search_list_panel.php",
+	function(data){
+	var obj = JSON.parse(data)
+	$("#saved_search_panel").html("<span class=\"timer_panel_info\">"+obj[0].summary_total+"\
+	<a style=\"cursor:pointer\" onclick=\"javascript:$('html, body').animate({ scrollTop: ($(saved_search_row).offset().top)}, 'slow');\">\
+	Saved Search</a> for Auto Timer</span>");
+	//
+	$("#saved_search_panel2").html(obj[0].summary_total+" Saved Search for Auto Timer | <span class=\"timer_panel_info\">\
+	<span class=\"saved_search_panel_info\">"+obj[0].activ+" activ | "+obj[0].inactiv+" inactiv | </span>");
+	});
+	// saved search list
 	$.post("functions/search_list_inc.php",
 	function(data){
-	// write data in container
 	$("#search_list").html(data);
 	});
 });
@@ -149,7 +138,6 @@ function sortby(){
 var search_list_sort = document.getElementById("sort_setting").value;
 	$.post("functions/search_list_inc.php?sort_list="+search_list_sort+"",
 	function(data){
-	// write data in container
 	$("#search_list").html(data);
 	});
 }
@@ -158,11 +146,29 @@ function load_timer_list_panel(){
 	$.post("functions/timer_list_panel_inc.php",
 	function(data){
 	var obj = JSON.parse(data);
-	var hidden_status = $("#hidden_status").text();
-	if(hidden_status == "1" || hidden_status == ""){ var action = "reload_timerlist()"; var title = "hide"; } else { var action = "timerlist_panel(this.id)"; var title = "show"; }
+	// hidden timer
+	if(obj[0].hidden_timer > '0'){
 	$("#timerlist_panel").html(obj[0].timer_total+" Timer in Database | <span class=\"timer_panel_info\">\
-	"+obj[0].sent_timer+" sent | "+obj[0].timer_today+" today | <a id=\"show_unhide\" onclick="+action+" title="+title+" style=\"cursor:pointer;\">\
+	"+obj[0].sent_timer+" sent | "+obj[0].timer_today+" today | <a id=\"show_unhide\" onclick=\"timerlist_panel(this.id)\" title=\"show\" style=\"cursor:pointer;\">\
 	"+obj[0].hidden_timer+" hidden</a> | "+obj[0].receiver_timer+" on Receiver</span>");
+	}
+	// no hidden timer
+	if(obj[0].hidden_timer == '0'){
+	$("#timerlist_panel").html(obj[0].timer_total+" Timer in Database | <span class=\"timer_panel_info\">\
+	"+obj[0].sent_timer+" sent | "+obj[0].timer_today+" today | "+obj[0].hidden_timer+" hidden | "+obj[0].receiver_timer+" on Receiver</span>");
+	}
+	});
+}
+function reload_saved_search_panel(){
+	$.post("functions/search_list_panel.php",
+	function(data){
+	var obj = JSON.parse(data)
+	$("#saved_search_panel").html("<span class=\"timer_panel_info\">"+obj[0].summary_total+"\
+	<a style=\"cursor:pointer\" onclick=\"javascript:$('html, body').animate({ scrollTop: ($(saved_search_row).offset().top)}, 'slow');\">\
+	Saved Search</a> for Auto Timer</span>");
+	//
+	$("#saved_search_panel2").html(obj[0].summary_total+" Saved Search for Auto Timer | <span class=\"timer_panel_info\">\
+	<span class=\"saved_search_panel_info\">"+obj[0].activ+" activ | "+obj[0].inactiv+" inactiv | </span>");
 	});
 }
 </script>
@@ -230,8 +236,8 @@ function load_timer_list_panel(){
   <div id="page-wrapper">
   <div class="row">
   <div class="col-md-12">
-  <div id="statusbar_cnt_outer" class="statusbar_cnt_outer">
-  <div id="statusbar_cnt"></div>
+  <div id="statusbar_outer" class="statusbar_outer">
+  <div id="statusbar_cnt">&nbsp;</div>
   </div>
   </div>
   </div><!-- /. ROW  -->
@@ -284,7 +290,12 @@ function load_timer_list_panel(){
       <hr />
       <div class="row">
         <div class="col-md-12">
-          <h4 id="timerlist_panel"><?php echo $count_timer; echo $show_sent_timer; echo $show_timer_today; echo $show_hidden_timer; echo $receiver_timer; ?></h4>
+          <h4><span id="timerlist_panel">
+		  <?php echo $count_timer; echo $show_sent_timer; echo $show_timer_today; echo $show_hidden_timer; echo $receiver_timer; ?>
+          </span>
+          <div class="spacer_5"></div>
+          <span id="saved_search_panel"></span>
+          </h4>
           <span id="hidden_status" class="hidden"></span>
           <div id="timerlist_main">
           <div class="timer_panel">
@@ -307,15 +318,17 @@ function load_timer_list_panel(){
         </div>
         <!---->
       </div>
+      <a id="saved_search_row"></a>
       <!-- /. ROW  -->
-      <hr />
+      <hr/>
       <div class="row">
         <div class="col-md-12">
-          <h4>Saved Search <?php echo $count_saved_search; ?>
-          <select name="select" id="sort_setting" class="sort_setting" onChange="sortby()">
+          <h4><span id="saved_search_panel2"></span>
+            <select name="select" id="sort_setting" class="sort_setting" onChange="sortby()">
               <option value="id" <?php if($search_list_sort == 'id'){ echo 'selected'; } ?>>sort standard</option>
               <option value="searchterm" <?php if($search_list_sort == 'searchterm'){ echo 'selected'; } ?>>sort by term</option>
-            </select></h4>
+            </select>
+          </h4>
           <div id="search_list"></div>
         </div>
       </div>
@@ -328,7 +341,7 @@ function load_timer_list_panel(){
 <!-- /. WRAPPER  -->
 <!-- SCRIPTS -AT THE BOTOM TO REDUCE THE LOAD TIME-->
 <!-- JQUERY SCRIPTS -->
-<script src="assets/js/jquery-1.10.2.js"></script>
+<!--<script src="assets/js/jquery-1.10.2.js"></script>-->
 <!-- BOOTSTRAP SCRIPTS -->
 <script src="assets/js/bootstrap.min.js"></script>
 <!-- METISMENU SCRIPTS -->
@@ -336,12 +349,9 @@ function load_timer_list_panel(){
 <!-- CUSTOM SCRIPTS -->
 <script src="assets/js/custom.js"></script>
 <script>
-$(document).ready(function(){
+$(function(){
    var statusbar = '<?php if(!isset($_SESSION["statusbar"]) or $_SESSION["statusbar"] == "") { $_SESSION["statusbar"] = ""; } echo $_SESSION["statusbar"]; ?>';
-   if (statusbar == '1'){
-   $("#statusbar_cnt_outer").removeClass("statusbar_cnt_outer"); 
-   $("#statusbar_cnt").html("&nbsp;");
-   }
+   if (statusbar == '1'){ $("#statusbar_outer").removeClass("statusbar_outer"); }
 });
 </script>
 </body>

@@ -16,18 +16,14 @@ include_once("inc/header_info.php");
 	
 	// count timer for display ticker
 	$ticker_time_end = $time + $ticker_time;
-	$stmt = $dbmysqli->prepare('SELECT COUNT(*) AS sum_timer FROM `timer` WHERE `show_ticker` = "1" AND `e2eventstart` BETWEEN "'.$time.'" AND "'.$ticker_time_end.'" ');
-	if( !is_a($stmt, 'MySQLI_Stmt') || $dbmysqli->errno > 0 )
-	throw new Exception( $dbmysqli->error, $dbmysqli->errno );
-		
-	$stmt->execute();
-	$stmt->bind_result($sum_timer);
-	$stmt->fetch();
-	$stmt->close();
+
+	$sql = mysqli_query($dbmysqli, 'SELECT COUNT(*) FROM `timer` WHERE `show_ticker` = "1" AND `e2eventstart` BETWEEN "'.$time.'" AND "'.$ticker_time_end.'" ');
+	$result = mysqli_fetch_row($sql);
+	$sum_timer = $result[0];
 		
 	if ($sum_timer == '0'){ $activate_ticker = "no"; } else { $activate_ticker = 'yes'; }
 	
-	//percent for latest epg
+	// percent for latest epg
 	$time_now = time();
 	
 	if(!isset($last_entry['e2eventstart']) or $last_entry['e2eventstart'] == "") { $last_entry['e2eventstart'] = ""; 
@@ -49,47 +45,51 @@ include_once("inc/header_info.php");
 	
 	$percent_latest = round($percent,1);
 	
-	if ($percent_latest > 30)
+	$pb1_status = 'primary';
+	
+	if($percent_latest > 30)
 	{
 	$pb1_status = 'primary';
 	}
-	if ($percent_latest < 30)
+	if($percent_latest < 30)
 	{
 	$pb1_status = 'warning';
 	}
-	if ($percent_latest < 10)
+	if($percent_latest < 10)
 	{
 	$pb1_status = 'danger';
 	}
 	
-	if ($percent_latest < 5 ){ $progressbar2 = '<div class="progress progress-striped active">
+	if($percent_latest < 5 ){ $progressbar2 = '<div class="progress progress-striped active">
 	<div class="progress-bar progress-bar-'.$pb1_status.'" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: '.$percent_latest.'%"></div>
-	&nbsp;'.$percent_latest.' %</div>'; } 
+	&nbsp;'.$percent_latest.' %</div>'; 
 	
-	else { $progressbar2 = '<div class="progress progress-striped active">
+	} else { 
+	
+	$progressbar2 = '<div class="progress progress-striped active">
 	<div class="progress-bar progress-bar-'.$pb1_status.'" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: '.$percent_latest.'%">'.$percent_latest.' %</div></div>'; }
 
 //
-function DiskSpace() {
-	function getByte($bytes) {
+function DiskSpace(){
+	function getByte($bytes){
 	$symbol = "Bytes";
-	if ($bytes > 1024) {
-		$symbol = " KB";
-		$bytes /= 1024;
+	if($bytes > 1024){
+	$symbol = " KB";
+	$bytes /= 1024;
 	}
-	if ($bytes > 1024) {
-		$symbol = " MB";
-		$bytes /= 1024;
+	if($bytes > 1024){
+	$symbol = " MB";
+	$bytes /= 1024;
 	}
-	if ($bytes > 1024) {
-		$symbol = " GB";
-		$bytes /= 1024;
+	if($bytes > 1024){
+	$symbol = " GB";
+	$bytes /= 1024;
 	}
 	$bytes = round($bytes, 2);
 	return $bytes.$symbol;
 	}
-	function getFreespace($path) {
-	if (preg_match("#^(https?|ftps?)://#si", $path)) {
+	function getFreespace($path){
+	if(preg_match("#^(https?|ftps?)://#si", $path)) {
 	return false;
 	}
 	$freeBytes = disk_free_space($path);
@@ -114,8 +114,9 @@ function DiskSpace() {
 	getFreespace(".");
 }
 
-function DatabaseSpace() {
-include("inc/dashboard_config.php");
+function DatabaseSpace(){
+
+	include("inc/dashboard_config.php");
 
 	$total = 0;
 	$sql = "Show Table Status";
@@ -129,26 +130,22 @@ include("inc/dashboard_config.php");
 	$total += $summary;
 	}
     }
-  // Free result set
-  mysqli_free_result($result);
 }
-//close db
-mysqli_close($dbmysqli);
 
-function getDatabaseByte($bytes) {
+function getDatabaseByte($bytes){
 	
 	$symbol = "Bytes";
-	if ($bytes > 1024) {
-		$symbol = " KB";
-		$bytes /= 1024;
+	if ($bytes > 1024){
+	$symbol = " KB";
+	$bytes /= 1024;
 	}
-	if ($bytes > 1024) {
-		$symbol = " MB";
-		$bytes /= 1024;
+	if($bytes > 1024){
+	$symbol = " MB";
+	$bytes /= 1024;
 	}
-	if ($bytes > 1024) {
-		$symbol = " GB";
-		$bytes /= 1024;
+	if($bytes > 1024){
+	$symbol = " GB";
+	$bytes /= 1024;
 	}
 	$bytes = round($bytes, 2);
 	return $bytes.$symbol;
@@ -158,19 +155,16 @@ function getDatabaseByte($bytes) {
 	
 	// count all epg entries
 	include("inc/dashboard_config.php");
-	$stmt = $dbmysqli->prepare('SELECT COUNT(*) AS count_all_epg FROM `epg_data`');
-	if( !is_a($stmt, 'MySQLI_Stmt') || $dbmysqli->errno > 0 )
-	throw new Exception( $dbmysqli->error, $dbmysqli->errno );
-	
-	$stmt->execute();
-	$stmt->bind_result($count_all_epg);
-	$stmt->fetch();
-	$stmt->close();
+
+	$sql = mysqli_query($dbmysqli, 'SELECT COUNT(*) FROM `epg_data`');
+	$result = mysqli_fetch_row($sql);
+	$count_all_epg = $result[0];
 	
 	echo "<div class=\"alert alert-info text-center\"> <i class=\"fa fa-bar-chart-o fa-5x\"></i>";
 	echo "<h3>".getByte($totalBytes)."</h3>
 	<div class=\"spacer_10\"></div>EPG Entries total: <strong>$count_all_epg</strong></div>
-	"; }
+	"; 
+}
 ?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -192,9 +186,9 @@ function getDatabaseByte($bytes) {
 <meta name="theme-color" content="#ffffff">
 <!-- GOOGLE FONTS-->
 <!--<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css' />-->
-<script type="text/javascript" src="js/jquery.min.js"></script>
-<script type="text/javascript" src="js/ie_sse.js"></script>
+<script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
 <script type="text/javascript" src="js/functions.js"></script>
+<script type="text/javascript" src="js/pace.min.js"></script>
 <script type="text/javascript" src="js/animatedcollapse.js">
 /***********************************************
 * Animated Collapsible DIV v2.4- (c) Dynamic Drive DHTML code library (www.dynamicdrive.com)
@@ -395,8 +389,8 @@ $(function(){
   <div id="page-wrapper">
   <div class="row">
   <div class="col-md-12">
-  <div id="statusbar_cnt_outer" class="statusbar_cnt_outer">
-  <div id="statusbar_cnt"></div>
+  <div id="statusbar_outer" class="statusbar_outer">
+  <div id="statusbar_cnt">&nbsp;</div>
   </div>
   </div>
   </div><!-- /. ROW  -->
@@ -688,7 +682,7 @@ $(function(){
 <!-- /. WRAPPER  -->
 <!-- SCRIPTS -AT THE BOTOM TO REDUCE THE LOAD TIME-->
 <!-- JQUERY SCRIPTS -->
-<script src="assets/js/jquery-1.10.2.js"></script>
+<!--<script src="assets/js/jquery-1.10.2.js"></script>-->
 <!-- BOOTSTRAP SCRIPTS -->
 <script src="assets/js/bootstrap.min.js"></script>
 <!-- METISMENU SCRIPTS -->
@@ -696,12 +690,9 @@ $(function(){
 <!-- CUSTOM SCRIPTS -->
 <script src="assets/js/custom.js"></script>
 <script>
-$(document).ready(function(){
+$(function(){
    var statusbar = '<?php if(!isset($_SESSION["statusbar"]) or $_SESSION["statusbar"] == "") { $_SESSION["statusbar"] = ""; } echo $_SESSION["statusbar"]; ?>';
-   if (statusbar == '1'){
-   $("#statusbar_cnt_outer").removeClass("statusbar_cnt_outer"); 
-   $("#statusbar_cnt").html("&nbsp;");
-   }
+   if (statusbar == '1'){ $("#statusbar_outer").removeClass("statusbar_outer"); }
 });
 </script>
 </body>

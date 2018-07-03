@@ -24,9 +24,9 @@ include_once("inc/header_info.php");
 <meta name="theme-color" content="#ffffff">
 <!-- GOOGLE FONTS-->
 <!--<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css' />-->
-<script type="text/javascript" src="js/jquery.min.js"></script>
-<script type="text/javascript" src="js/ie_sse.js"></script>
+<script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
 <script type="text/javascript" src="js/functions.js"></script>
+<script type="text/javascript" src="js/pace.min.js"></script>
 <script type="text/javascript" src="js/animatedcollapse.js">
 /***********************************************
 * Animated Collapsible DIV v2.4- (c) Dynamic Drive DHTML code library (www.dynamicdrive.com)
@@ -128,8 +128,8 @@ $(window).load(function() {
   <div id="page-wrapper">
   <div class="row">
   <div class="col-md-12">
-  <div id="statusbar_cnt_outer" class="statusbar_cnt_outer">
-  <div id="statusbar_cnt"></div>
+  <div id="statusbar_outer" class="statusbar_outer">
+  <div id="statusbar_cnt">&nbsp;</div>
   </div>
   </div>
   </div><!-- /. ROW  -->
@@ -180,7 +180,7 @@ $(window).load(function() {
       </div>
       <!--div_channelzapper-->
       <hr />
-      <input type="submit" onClick="all_services_crawl()" value="Get Services from Receiver" class="btn btn-default"/>
+      <input type="submit" onClick="get_all_services()" value="Get Services from Receiver" class="btn btn-default"/>
       <span id="all_services_status_crawl"></span>
       <hr />
       <div class="row">
@@ -192,10 +192,8 @@ $(window).load(function() {
         </div>
       </div>
       <!-- /. ROW  -->
-      <hr />
-      <!-- /. ROW  -->
       <div class="row">
-        <div class="col-md-12"></div>
+      <div class="col-md-12"></div>
       </div>
       <!-- /. ROW  -->
     </div>
@@ -206,7 +204,7 @@ $(window).load(function() {
 <!-- /. WRAPPER  -->
 <!-- SCRIPTS -AT THE BOTOM TO REDUCE THE LOAD TIME-->
 <!-- JQUERY SCRIPTS -->
-<script src="assets/js/jquery-1.10.2.js"></script>
+<!--<script src="assets/js/jquery-1.10.2.js"></script>-->
 <!-- BOOTSTRAP SCRIPTS -->
 <script src="assets/js/bootstrap.min.js"></script>
 <!-- METISMENU SCRIPTS -->
@@ -214,12 +212,9 @@ $(window).load(function() {
 <!-- CUSTOM SCRIPTS -->
 <script src="assets/js/custom.js"></script>
 <script>
-$(document).ready(function(){
+$(function(){
    var statusbar = '<?php if(!isset($_SESSION["statusbar"]) or $_SESSION["statusbar"] == "") { $_SESSION["statusbar"] = ""; } echo $_SESSION["statusbar"]; ?>';
-   if (statusbar == '1'){
-   $("#statusbar_cnt_outer").removeClass("statusbar_cnt_outer"); 
-   $("#statusbar_cnt").html("&nbsp;");
-   }
+   if (statusbar == '1'){ $("#statusbar_outer").removeClass("statusbar_outer"); }
 });
 </script>
 </body>

@@ -30,15 +30,11 @@ include_once("inc/header_info.php");
 	$cz_wait_time = $settings['cz_wait_time'];
 	
 	// calculate work time
-	$stmt = $dbmysqli->prepare('SELECT COUNT(*) AS sum_zap_channels FROM `channel_list` WHERE `zap` = "1" ');
-	if( !is_a($stmt, 'MySQLI_Stmt') || $dbmysqli->errno > 0 )
-	throw new Exception( $dbmysqli->error, $dbmysqli->errno );
-	
-	$stmt->execute();
-	$stmt->bind_result($sum_zap_channels);
-	$stmt->fetch();
-	$stmt->close();	
-	$cz_worktime = $sum_zap_channels*$cz_wait_time+10;
+	$sql = mysqli_query($dbmysqli, 'SELECT COUNT(*) FROM `channel_list` WHERE `zap` = "1" ');
+	$result = mysqli_fetch_row($sql);
+	$sum_zap_channels = $result[0];
+	//
+	$cz_worktime = $sum_zap_channels * $cz_wait_time + 10;
 	
 	// read device info
 	$sql2 = mysqli_query($dbmysqli, "SELECT * FROM `box_info`");
@@ -68,9 +64,9 @@ include_once("inc/header_info.php");
 <meta name="theme-color" content="#ffffff">
 <!-- GOOGLE FONTS-->
 <!--<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css' />-->
-<script type="text/javascript" src="js/jquery.min.js"></script>
-<script type="text/javascript" src="js/ie_sse.js"></script>
+<script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
 <script type="text/javascript" src="js/functions.js"></script>
+<script type="text/javascript" src="js/pace.min.js"></script>
 <script type="text/javascript" src="js/animatedcollapse.js">
 /***********************************************
 * Animated Collapsible DIV v2.4- (c) Dynamic Drive DHTML code library (www.dynamicdrive.com)
@@ -101,12 +97,22 @@ animatedcollapse.init();
 //
 $(function(){
    $("#display_time_format").val("<?php if (!isset($time_format) or $time_format == ""){ $time_format = '2'; } echo $time_format; ?>");
+// device list
+$.post("functions/device_list_inc.php",
+	{
+	action: 'show'
+	},
+	function(data){
+	$("#device_list").html(data);
+	});
 });
 </script>
 </head>
 <body>
 <a id="top"></a>
-<div id="scroll_top" class="scroll_top"><a href="#" title="to top"><script>document.write("<i class=\"glyphicon glyphicon-circle-arrow-up fa-"+scrolltop_btn_size+"x\"></i>");</script></a></div>
+<div id="scroll_top" class="scroll_top"><a href="#" title="to top">
+  <script>document.write("<i class=\"glyphicon glyphicon-circle-arrow-up fa-"+scrolltop_btn_size+"x\"></i>");</script>
+  </a></div>
 <div id="wrapper">
   <div class="navbar navbar-inverse navbar-fixed-top">
     <div class="adjust-nav">
@@ -165,13 +171,14 @@ $(function(){
   </nav>
   <!-- /. NAV SIDE  -->
   <div id="page-wrapper">
-  <div class="row">
-  <div class="col-md-12">
-  <div id="statusbar_cnt_outer" class="statusbar_cnt_outer">
-  <div id="statusbar_cnt"></div>
-  </div>
-  </div>
-  </div><!-- /. ROW  -->
+    <div class="row">
+      <div class="col-md-12">
+      <div id="statusbar_outer" class="statusbar_outer">
+      <div id="statusbar_cnt">&nbsp;</div>
+      </div>
+      </div>
+    </div>
+    <!-- /. ROW  -->
     <div id="page-inner">
       <div class="row">
         <div class="col-md-12">
@@ -240,7 +247,7 @@ $(function(){
           <div class="spacer_80"></div>
           <a onclick="save_box_settings(); save_settings(); animatedcollapse.show('save_box_settings_status')" class="btn btn-success btn-lg btn-block">SAVE SETTINGS</a>
           <div id="save_box_settings_status"></div>
-          <div id="save_box_info"><a onclick="save_rec_locations(); animatedcollapse.show('save_box_info_status')" class="btn btn-primary btn-lg btn-block" title="Copy bouquets and record locations to database">Copy Receiver data</a></div>
+          <div id="save_box_info"><a onclick="get_receiver_data(); animatedcollapse.show('save_box_info_status')" class="btn btn-primary btn-lg btn-block" title="Copy bouquets and record locations to database">Copy Receiver data</a></div>
           <div id="save_box_info_status">
             <div id="save_bouquet_data_status"></div>
           </div>
@@ -292,7 +299,7 @@ $(function(){
 			?>
             <div class="spacer_5"></div>
             Next crawling:
-			<?php // time format 1
+            <?php // time format 1
 			if ($settings['time_format'] == '1'){ $next_crawling = date("d.m.Y - H:i", $settings['crawler_timestamp']); }
 			// time format 2
 			if ($settings['time_format'] == '2'){ $next_crawling = date("n/d/Y - g:i A", $settings['crawler_timestamp']); }
@@ -302,7 +309,7 @@ $(function(){
             When crawling finished, change to this channel
             <div class="spacer_5"></div>
             <select name="channel_id" id="channel_id" class="form-control">
-            <?php 
+              <?php 
             // get channels			
 			$sql = "SELECT * FROM channel_list ORDER BY e2servicename ASC";
 			if ($result = mysqli_query($dbmysqli,$sql))
@@ -321,25 +328,25 @@ $(function(){
             <div class="spacer_10"></div>
             Switch Receiver after crawling
             <select id="after_crawl_action">
-            <option value="0" <?php if ($settings['after_crawl_action'] == '0'){ echo "selected"; } ?>>Standby</option>
-            <option value="1" <?php if ($settings['after_crawl_action'] == '1'){ echo "selected"; } ?>>Deep Standby</option>
-            <option value="9" <?php if ($settings['after_crawl_action'] == '9'){ echo "selected"; } ?>>Nothing</option>
+              <option value="0" <?php if ($settings['after_crawl_action'] == '0'){ echo "selected"; } ?>>Standby</option>
+              <option value="1" <?php if ($settings['after_crawl_action'] == '1'){ echo "selected"; } ?>>Deep Standby</option>
+              <option value="9" <?php if ($settings['after_crawl_action'] == '9'){ echo "selected"; } ?>>Nothing</option>
             </select>
             <div class="spacer_10"></div>
             <h5>Channel Zapper</h5>
-          <input type="checkbox" name="" id="cz_activate" onclick="" <?php if ($settings['cz_activate'] == '1'){ echo "checked"; } ?> />
-          <strong>Activate</strong> automatic Channel Zapper
-          <div class="spacer_10"></div>
-          Wait on channel (in seconds)
-          <input name="textfield" type="text" id="cz_wait_time" size="2" maxlength="2" value="<?php echo $settings['cz_wait_time']?>" >
-          <div class="spacer_10"></div>
-          Set time when Channel Zapper should start
-          <div class="spacer_5"></div>
-          Hour:
-          <input type="text" id="cz_hour" size="2" maxlength="2" value="<?php echo $cz_hh; ?>">
-          Minute:
-          <input type="text" id="cz_minute" size="2" maxlength="2" value="<?php echo $cz_mm; ?>">
-          <?php 
+            <input type="checkbox" name="" id="cz_activate" onclick="" <?php if ($settings['cz_activate'] == '1'){ echo "checked"; } ?> />
+            <strong>Activate</strong> automatic Channel Zapper
+            <div class="spacer_10"></div>
+            Wait on channel (in seconds)
+            <input name="textfield" type="text" id="cz_wait_time" size="2" maxlength="2" value="<?php echo $settings['cz_wait_time']?>" >
+            <div class="spacer_10"></div>
+            Set time when Channel Zapper should start
+            <div class="spacer_5"></div>
+            Hour:
+            <input type="text" id="cz_hour" size="2" maxlength="2" value="<?php echo $cz_hh; ?>">
+            Minute:
+            <input type="text" id="cz_minute" size="2" maxlength="2" value="<?php echo $cz_mm; ?>">
+            <?php 
 		  //
 		  if ($time_format == '2'){
 		  if(date('A', $cz_timestamp) == 'AM'){ $selected2 = 'selected'; } else { $selected2 = ''; }
@@ -351,23 +358,24 @@ $(function(){
 		  </select>';
 		  }
 		  ?>
-          <div class="spacer_10"></div>
-          Repeat zapping
-          <select id="cz_repeat">
-            <option value="daily" <?php if ($settings['cz_repeat'] == 'daily'){ echo "selected"; } ?>>every day</option>
-            <option value="daily_3" <?php if ($settings['cz_repeat'] == 'daily_3'){ echo "selected"; } ?>>every 3 days</option>
-            <option value="daily_5" <?php if ($settings['cz_repeat'] == 'daily_5'){ echo "selected"; } ?>>every 5 days</option>
-            <option value="daily_7" <?php if ($settings['cz_repeat'] == 'daily_7'){ echo "selected"; } ?>>every 7 days</option>
-          </select>
-          <div class="spacer_10"></div>
-          <p>Next zapping:
-            <?php 
+            <div class="spacer_10"></div>
+            Repeat zapping
+            <select id="cz_repeat">
+              <option value="daily" <?php if ($settings['cz_repeat'] == 'daily'){ echo "selected"; } ?>>every day</option>
+              <option value="daily_3" <?php if ($settings['cz_repeat'] == 'daily_3'){ echo "selected"; } ?>>every 3 days</option>
+              <option value="daily_5" <?php if ($settings['cz_repeat'] == 'daily_5'){ echo "selected"; } ?>>every 5 days</option>
+              <option value="daily_7" <?php if ($settings['cz_repeat'] == 'daily_7'){ echo "selected"; } ?>>every 7 days</option>
+            </select>
+            <div class="spacer_10"></div>
+            <p>Next zapping:
+              <?php 
 			// time format 1
 			if(!isset($next_day) or $next_day == "") { $next_day = ""; } else { $next_day = $next_day; }
 			if ($settings['time_format'] == '1'){ $next_day = date("d.m.Y - H:i", $settings['cz_timestamp']); }
 			// time format 2
 			if ($settings['time_format'] == '2'){ $next_day = date("n/d/Y - g:i A", $settings['cz_timestamp']); } echo $next_day; ?>
-            <div>Duration from zapping about: <i class="fa fa-clock-o"></i> <?php echo round($cz_worktime/60,0); ?> min</div></p>
+            <div>Duration from zapping about: <i class="fa fa-clock-o"></i> <?php echo round($cz_worktime/60,0); ?> min</div>
+            </p>
           </div>
         </div>
         <div class="col-md-4">
@@ -460,12 +468,12 @@ $(function(){
             <option value="86400" <?php if ($settings['del_time'] == '86400'){ echo "selected"; } ?>>24 hours</option>
           </select>
           <div class="spacer_10"></div>
-            Connect to Receiver with 
-            <select id="url_format">
+          Connect to Receiver with
+          <select id="url_format">
             <option value="http" <?php if ($settings['url_format'] == 'http'){ echo "selected"; } ?>>http</option>
             <option value="https" <?php if ($settings['url_format'] == 'https'){ echo "selected"; } ?>>https</option>
-            </select>
-          </div>
+          </select>
+        </div>
         <!-- row -->
         <div class="col-md-4">
           <h5>Timer Settings</h5>
@@ -476,13 +484,11 @@ $(function(){
           <input type="checkbox" id="hide_old_timer" onclick="" <?php if ($settings['hide_old_timer'] == '1'){ echo "checked"; } ?> />
           Hide expired timer in timerlist
           <div class="spacer_10"></div>
-          
           <input type="checkbox" id="show_hidden_ticker" onclick="" <?php if ($settings['show_hidden_ticker'] == '1'){ echo "checked"; } ?> />
           Show hidden timer in Ticker on Startpage
           <div class="spacer_10"></div>
-          
           <input type="checkbox" id="delete_old_timer" onclick="" <?php if ($settings['delete_old_timer'] == '1'){ echo "checked"; } ?> />
-          Delete expired timer from database 
+          Delete expired timer from database
           <div class="spacer_10"></div>
           <input type="checkbox" id="delete_receiver_timer" onclick="" <?php if ($settings['delete_receiver_timer'] == '1'){ echo "checked"; } ?> />
           Delete expired timer from Receiver
@@ -506,9 +512,78 @@ $(function(){
           <a onclick="save_settings();" class="btn btn-success btn-lg btn-block">SAVE SETTINGS</a>
           <div id="save_settings_status"></div>
         </div>
-        <div class="col-md-4"> </div>
       </div>
       <!-- /. ROW  -->
+      <hr />
+      <div class="row">
+        <div class="col-md-12">
+          <h5>Add Receiver</h5>
+        </div>
+        <div class="col-md-2">
+          <p>Description</p>
+          <input id="device_description" class="" type="text" maxlength="17">
+        </div>
+        <!--col 2-->
+        <div class="col-md-2">
+          <p>IP Adress</p>
+          <input id="device_ip" class="" type="text">
+        </div>
+        <!--col 2-->
+        <div class="col-md-2">
+          <p>Username</p>
+          <input id="device_user" class="" type="text">
+        </div>
+        <!--col 2-->
+        <div class="col-md-2">
+          <p>Password</p>
+          <input id="device_password" class="" type="password">
+        </div>
+        <!--col 2-->
+        </div><!-- row-->
+        <div class="spacer_10"></div>
+        <div class="row">
+        <div class="col-md-2">
+          <p>Record location</p>
+          <input id="device_record_location" class="" type="text" placeholder="/media/hdd/">
+        </div>
+        <!--col 2-->
+        <div class="col-md-2">
+          <p>Color for Timerlist</p>
+          <select id="device_color" style="width: 100%;">
+          <option value="#DDDDDD">default</option>
+            <option value="#000000">black</option>
+            <option value="#428BCA">blue</option>
+            <option value="#999999">dark grey</option>
+            <option value="#5CB85C">green</option>
+            <option value="#F0AD4E">orange</option>
+            <option value="#D9534F">red</option>
+            <option value="#FFFF00">yellow</option>
+          </select>
+        </div>
+        <div class="col-md-2">
+        <p>Url format</p>
+        <select id="device_url_format">
+        <option value="http">http</option>
+        <option value="https">https</option>
+        </select>
+        </div>
+        <div class="col-md-2">
+          <div class="spacer_20"></div>
+          <div class="spacer_5"></div>
+          <input id="add" name="add" type="button" class="btn btn-success btn-sm" value="Add device" onclick="device_list(this.id,this.name)">
+          <span id="device_list_status"></span>
+          </div>
+        <!--col 2-->
+      </div>
+      <hr>
+      <!--row-->
+      <div class="row">
+        <div class="col-md-12"> <span id="device_list"></span>
+          <div class="spacer_30"></div>
+        </div>
+        <!--col-->
+      </div>
+      <!--row-->
     </div>
     <!-- /. PAGE INNER  -->
   </div>
@@ -517,7 +592,7 @@ $(function(){
 <!-- /. WRAPPER  -->
 <!-- SCRIPTS -AT THE BOTOM TO REDUCE THE LOAD TIME-->
 <!-- JQUERY SCRIPTS -->
-<script src="assets/js/jquery-1.10.2.js"></script>
+<!--<script src="assets/js/jquery-1.10.2.js"></script>-->
 <!-- BOOTSTRAP SCRIPTS -->
 <script src="assets/js/bootstrap.min.js"></script>
 <!-- METISMENU SCRIPTS -->
@@ -525,12 +600,9 @@ $(function(){
 <!-- CUSTOM SCRIPTS -->
 <script src="assets/js/custom.js"></script>
 <script>
-$(document).ready(function(){
+$(function(){
    var statusbar = '<?php if(!isset($_SESSION["statusbar"]) or $_SESSION["statusbar"] == "") { $_SESSION["statusbar"] = ""; } echo $_SESSION["statusbar"]; ?>';
-   if (statusbar == '1'){
-   $("#statusbar_cnt_outer").removeClass("statusbar_cnt_outer"); 
-   $("#statusbar_cnt").html("&nbsp;");
-   }
+   if (statusbar == '1'){ $("#statusbar_outer").removeClass("statusbar_outer"); }
 });
 </script>
 </body>
