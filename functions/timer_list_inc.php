@@ -1,19 +1,3 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="utf-8" />
-<script type="text/javascript">
-// timerlist hover
-$(document).ready(function(){
-$("#timerlist*").hover(function(){
-	$(this).css("background-color", "#FAFAFA");
-	}, function(){
-	$(this).css("background-color", "white");
-});
-});
-</script>
-</head>
-<body>
 <?php 
 //
 	include("../inc/dashboard_config.php");
@@ -30,29 +14,92 @@ $("#timerlist*").hover(function(){
 	header('Cache-Control: no-cache');
 	
 	// hide single timer
-	if ($action == 'hide'){
+	if($action == 'hide'){
 	$timer_id = $_REQUEST['timer_id'];
+	// track keywords
+	$sql = mysqli_query($dbmysqli, "SELECT * FROM `timer` WHERE `id` = '".$timer_id."' ");
+	$result = mysqli_fetch_assoc($sql);
+	$title = strtolower($result['e2eventtitle']);
+	$description = strtolower($result['e2eventdescription']);
+	$descriptionextended = strtolower($result['e2eventdescriptionextended']);
+	$search_term = strtolower($result['search_term']);
+	
+	$total_string = ($title.$description.$descriptionextended);
+
+	$total_string = explode(' ',$total_string);
+	foreach ($total_string as $key => $word){
+	if(strlen($word) == 4 or strlen($word) > 4){ $words[] = $word; }
+	}
+	$count = array_count_values($words);
+	array_multisort($count,SORT_DESC);
+	
+	$i = 1;
+	foreach ($count as $keyword => $value){
+	if($value == 3 or $value > 3){
+	$i++;
+	$summary_title = substr_count($title, $keyword);
+	$summary_description = substr_count($description, $keyword);
+	$summary_extdescription = substr_count($descriptionextended, $keyword);
+	$summary_total = $summary_title + $summary_description + $summary_extdescription;
+	
+	$keyword_lower = strtolower($keyword);
+
+	$string_hash = hash('md4',$keyword_lower.$search_term.$summary_title.$summary_description.$summary_extdescription);
+
+	$sql = mysqli_query($dbmysqli, "SELECT COUNT(*) FROM `keywords` WHERE `hash` = '".$string_hash."' ");
+	$result = mysqli_fetch_row($sql);
+	$summary = $result[0];
+	
+	if($summary < 1){
+	$sql = mysqli_query($dbmysqli, "INSERT INTO `keywords` (
+	`searchterm`, 
+	`word`, 
+	`sum_total`, 
+	`sum_title`, 
+	`sum_description`, 
+	`sum_extdescription`, 
+	`hash`, 
+	`timestamp`) VALUES (
+	'".$search_term."', 
+	'".$keyword_lower."', 
+	'".$summary_total."', 
+	'".$summary_title."', 
+	'".$summary_description."', 
+	'".$summary_extdescription."', 
+	'".$string_hash."', 
+	'".$time."' )");
+	
+	} else {
+	
+	$sql = mysqli_query($dbmysqli, "UPDATE `keywords` SET `counter` = `counter` + 1 WHERE `hash` = '".$string_hash."' ");
+	}
+	}
+	}
+	//
+	// hide
 	$sql =  mysqli_query($dbmysqli, "UPDATE `timer` SET `hide` = '1' WHERE `id` = '".$timer_id."' ");
-	echo "data:hided\n\n";
+	echo "data:hided";
 	exit;
 	}
 	
 	// unhide single timer
-	if ($action == 'unhide'){
+	if($action == 'unhide'){
 	sleep(1);
 	$timer_id = $_REQUEST['timer_id'];
 	$sql =  mysqli_query($dbmysqli, "UPDATE `timer` SET `hide` = '0' WHERE `id` = '".$timer_id."' ");
-	echo "data:unhided\n\n";
+	echo "data:unhided";
 	exit;
 	}
 
-	if ($action == 'delete'){
+	if($action == 'delete'){
 	if(!isset($_REQUEST['delete_from_box']) or $_REQUEST['delete_from_box'] == "") { $_REQUEST['delete_from_box'] = ""; }
 	if(!isset($_REQUEST['delete_from_db']) or $_REQUEST['delete_from_db'] == "") { $_REQUEST['delete_from_db'] = ""; }
+	if(!isset($_REQUEST['device']) or $_REQUEST['device'] == "") { $_REQUEST['device'] = ""; }
 	
 	$timer_id = $_REQUEST['timer_id'];
 	$delete_from_db = $_REQUEST['delete_from_db'];
-
+	$device = $_REQUEST['device'];
+	
 	// unmark timer
 	$sql = mysqli_query($dbmysqli, "SELECT * FROM `timer` WHERE `id` = '".$timer_id."' ");
 	$result = mysqli_fetch_assoc($sql);
@@ -61,20 +108,43 @@ $("#timerlist*").hover(function(){
 	$e2eventstart = $result['e2eventstart'];
 	$e2eventend = $result['e2eventend'];
 	$status = $result['status'];
+	if($device == ""){ $device = $result['device']; }
 	
-	if ($status == 'manual' or $status == 'sent'){
-	$sql = mysqli_query($dbmysqli, "UPDATE `epg_data` SET timer = '0' WHERE `hash` = '".$result['hash']."' ");
+	if($status == 'manual' or $status == 'sent'){
+	$sql = mysqli_query($dbmysqli, "UPDATE `epg_data` SET `timer` = '0' WHERE `hash` = '".$result['hash']."' ");
 	}
 
 	sleep(1);
 	
-	// delete timer from receiver
-	$deleteTimer = ''.$url_format.'://'.$box_ip.'/web/timerdelete?sRef='.$e2eventservicereference.'&begin='.$e2eventstart.'&end='.$e2eventend.'';
+	// delete timer from different device
+	if($device != "0"){
+	$sql2 = mysqli_query($dbmysqli, "SELECT * FROM `device_list` WHERE `id` = '".$device."' ");
+	$result2 = mysqli_fetch_assoc($sql2);
+	$device_description = $result2['device_description'];
+	$box_ip = $result2['device_ip'];
+	$box_user = $result2['device_user'];
+	$box_password = $result2['device_user'];
 	
-	$deleteTimer_request = file_get_contents($deleteTimer, false, $webrequest);
+	$webrequest = stream_context_create(array (
+	'http' => array (
+	'header' => 'Authorization: Basic ' . base64_encode("$box_user:$box_password"),
+	'ssl' =>array (
+	'verify_peer' => false,
+	'verify_peer_name' => false,
+	))
+	));
+	$deleteTimer = $url_format.'://'.$box_ip.'/web/timerdelete?sRef='.$e2eventservicereference.'&begin='.$e2eventstart.'&end='.$e2eventend.'';
+	$deleteTimer_request = @file_get_contents($deleteTimer, false, $webrequest);
+	} // delete timer from different device
+	
+	else {
+	
+	// delete from default receiver
+	$deleteTimer = $url_format.'://'.$box_ip.'/web/timerdelete?sRef='.$e2eventservicereference.'&begin='.$e2eventstart.'&end='.$e2eventend.'';
+	$deleteTimer_request = @file_get_contents($deleteTimer, false, $webrequest);
+	}
 	
 	$sql = mysqli_query($dbmysqli, "UPDATE `timer` SET `status` = 'waiting' WHERE `id` = '".$timer_id."' ");
-	//
 	}
 	
 	// delete timer from database
@@ -82,24 +152,39 @@ $("#timerlist*").hover(function(){
 	{
 	$sql = mysqli_query($dbmysqli, "DELETE FROM `timer` WHERE `id` = '".$timer_id."' ");
 	//
-	echo "data:deleted_db\n\n";
+	echo "data:deleted_db";
 	exit;
 	
 	} else {
 	
-	echo "data:deleted\n\n";
+	echo "data:deleted";
 	exit;
 	}
 	}
 	
 	// unhide
 	if ($action == 'unhide'){
+	
 	$sql = "SELECT * FROM `timer` WHERE `expired` = '0' ORDER BY `e2eventstart` ASC, `record_status` ASC"; 
 	
 	} else {
 	
 	$sql = "SELECT * FROM `timer` WHERE `expired` = '0' AND `hide` = '0' ORDER BY `e2eventstart` ASC, `record_status` ASC";
 	}
+	
+	// device dropdown
+	$sql4 = "SELECT * FROM `device_list` ORDER BY `id` ASC";
+	if ($result4 = mysqli_query($dbmysqli,$sql4))
+	{
+	while ($obj4 = mysqli_fetch_object($result4)){
+	{
+	$id = $obj4->id;
+	$device_description = rawurldecode($obj4->device_description);
+	if(!isset($device_dropdown) or $device_dropdown == ""){ $device_dropdown = ""; }
+	$device_dropdown = $device_dropdown."<option name=\"$device_description\" value=\"$id\">$device_description</option>"; 
+	}
+	}
+	} // device dropdown
 
 	if ($result = mysqli_query($dbmysqli,$sql))
 	{
@@ -121,6 +206,8 @@ $("#timerlist*").hover(function(){
 	$rec_replay = $obj->rec_replay;
 	$is_replay = $obj->is_replay;
 	$hidden = $obj->hide;
+	$device_no = $obj->device;
+	$search_id = $obj->search_id;
 	
 	if(!isset($exclude_channel) or $exclude_channel == "") { $exclude_channel = ""; }
 	if(!isset($exclude_title) or $exclude_title == "") { $exclude_title = ""; }
@@ -210,10 +297,10 @@ if ($obj->record_status == 'c_expired')
 		';
 		}
 		
-		if ($obj->exclude_channel != ''){ $channel_status = 'Excluded in channel: '.$exclude_channel.'<br>'; } else { $channel_status = ''; }
-		if ($obj->exclude_title != ''){ $title_status = 'Excluded in title: '.$exclude_title.'<br>'; } else { $title_status = ''; }
-		if ($obj->exclude_description != ''){ $description_status = 'Excluded in description: '.$exclude_description.'<br>'; } else { $description_status = ''; }
-		if ($obj->exclude_extdescription != ''){ $extdescription_status = 'Excluded in extended description: '.$exclude_extdescription.'<br>'; } else { $extdescription_status = ''; }
+		if ($obj->exclude_channel != ''){ $channel_status = 'Excluded in <strong>channel</strong>: '.$exclude_channel.'<br>'; } else { $channel_status = ''; }
+		if ($obj->exclude_title != ''){ $title_status = 'Excluded in <strong>title</strong>: '.$exclude_title.'<br>'; } else { $title_status = ''; }
+		if ($obj->exclude_description != ''){ $description_status = 'Excluded in <strong>description</strong>: '.$exclude_description.'<br>'; } else { $description_status = ''; }
+		if ($obj->exclude_extdescription != ''){ $extdescription_status = 'Excluded in <strong>extended description</strong>: '.$exclude_extdescription.'<br>'; } else { $extdescription_status = ''; }
 		if($channel_status != '' or $title_status != '' or $description_status != '' or $extdescription_status != ''){
 		$show_exclude_text = "<div class=\"spacer_5\"></div><a id=\"$obj->id\" style=\"cursor:pointer;\" onclick=\"timerlist_show_exclude(this.id)\">Show excluded term(s)</a>"; } else { $show_exclude_text = ""; }
 		
@@ -221,23 +308,40 @@ if ($obj->record_status == 'c_expired')
 		if ($obj->exclude_channel != '' and $obj->exclude_title != '' and $obj->exclude_description != '' and $obj->exclude_extdescription != '' and $obj->rec_replay == 'on'){ $spacer = ' | '; } else { $spacer = ''; }
 		
 		// get record location id
-		$sql = mysqli_query($dbmysqli, "SELECT * FROM `record_locations` WHERE `e2location` = '".$obj->record_location."' LIMIT 0,1");
-		$result2 = mysqli_fetch_assoc($sql);
+		$sql2 = mysqli_query($dbmysqli, "SELECT * FROM `record_locations` WHERE `e2location` = '".$obj->record_location."' LIMIT 0,1");
+		$result2 = mysqli_fetch_assoc($sql2);
 		$rec_location_id = $result2['id'];
+		
+		// get device
+		if($obj->device != "0"){ 
+		$sql3 = mysqli_query($dbmysqli, "SELECT * FROM `device_list` WHERE `id` = '".$obj->device."' ");
+		$result3 = mysqli_fetch_assoc($sql3);
+		$device_name = rawurldecode($result3['device_description']);
+		$device_color = $result3['device_color'];
+		} else {
+		$device_name = "default"; 
+		$device_color = "#DDDDDD";
+		}
 		
 		if ($is_replay == '1'){ $replay_sign = '<i class="fa fa-repeat"></i>'; } else { $replay_sign = ''; }
 		
 		if ($hidden == '1'){ $hidden_class = 'class="opac_70"'; 
-		$hide_button = "<input id=\"timerlist_unhide_timer_btn_$obj->id\" type=\"submit\" onClick=\"timerlist_unhide_timer(this.id)\" value=\"UNHIDE\" class=\"btn btn-primary btn-sm\" title=\"unhide Timer from list\"/>"; 
+		$hide_button = "<input id=\"timerlist_unhide_timer_btn_$obj->id\" name=\"null\" type=\"submit\" onClick=\"timerlist_unhide_timer(this.id,this.name)\" value=\"UNHIDE\" class=\"btn btn-primary btn-sm\" title=\"unhide Timer from list\"/>"; 
 		
 		} else { 
 		
 		$hidden_class = ''; 
-		$hide_button = "<input id=\"timerlist_hide_timer_btn_$obj->id\" name=\"$obj->hash\" type=\"submit\" onClick=\"timerlist_hide_timer(this.id,this.name)\" value=\"HIDE\" class=\"btn btn-primary btn-sm\" title=\"hide Timer from list\"/>";
+		$hide_button = "<input id=\"timerlist_hide_timer_btn_$obj->id\" name=\"hide_$obj->hash\" type=\"submit\" onClick=\"timerlist_hide_timer(this.id,this.name)\" value=\"HIDE\" class=\"btn btn-primary btn-sm\" title=\"hide Timer from list\"/>";
 		}
 		
+		if(!isset($device_dropdown) or $device_dropdown == ""){ $device_dropdown = ""; }
+		
+		if($search_term != ""){
+		$scroll_search = "<strong>$search_term</strong> <i id=\"sid_$search_id\" onclick=\"scroll_saved_search(this.id)\" class=\"fa fa-edit fa-1x\" style=\"cursor:pointer\" title=\"Edit saved search\"></i>";
+		} else { $scroll_search = ""; }
+		
 		$timerlist = $timerlist."<div id=\"timerlist_div_outer_$obj->id\" $hidden_class>
-		<div id=\"timerlist\">
+		<div id=\"timerlist\" style=\"border: 1px solid $device_color !important;\">
 		<div id=\"cnt_checkbox\"><input id=\"box_$obj->id\" type=\"checkbox\" name=\"timerlist_checkbox[]\" value=\"$obj->id\" onclick=\"count_selected()\"/>
 		</div>
 		<div id=\"timer_$obj->id\" style=\"cursor: pointer;\" onclick=\"timerlist_desc(this.id);\">
@@ -260,10 +364,21 @@ if ($obj->record_status == 'c_expired')
 		  $descriptionextended_enc<div class=\"spacer_5\"></div>
 		  </div>
 		  <a href=\"search.php?searchterm=$title_enc&option=title\" target=\"_blank\" title=\"Search title\"><i class=\"fa fa-search fa-1x\"></i></a>
-		  Searchterm: <strong>$search_term</strong> | Searcharea: $obj->search_option | Record location: $obj->record_location $replay_status $show_exclude_text
-		  <span id=\"timerlist_rec_location_$obj->hash\" style=\"display:none;\">$rec_location_id</span>
+		  Searchterm: $scroll_search | Searcharea: $obj->search_option | Record location: $obj->record_location | Receiver: <span id=\"device_name_$obj->id\">$device_name</span> $replay_status $show_exclude_text
+		  <input id=\"timerlist_device_no_$obj->id\" type=\"hidden\" value=\"$device_no\">
+		  <span id=\"timerlist_rec_location_$obj->hash\" style=\"display:none;\">$rec_location_id</span>  
+		<div class=\"spacer_5\"></div>
+		<span>Receiver: </span>
+		<select id=\"timerlist_device_dropdown_$obj->id\" onChange=\"change_timerlist_device(this.id)\">
+		<option selected disabled>$device_name</option>
+		<option name=\"default\" value=\"0\">default</option>
+		$device_dropdown
+		</select>
+		<div class=\"spacer_5\"></div>
+		  <div id=\"timerlist_excluded_terms_$obj->id\" style=\"display:none;\">
+		  $channel_status $spacer $title_status $spacer $description_status $spacer $extdescription_status
 		  <div class=\"spacer_5\"></div>
-		  <div id=\"timerlist_excluded_terms_$obj->id\" style=\"display:none;\">$channel_status $spacer $title_status $spacer $description_status $spacer $extdescription_status</div>
+		  </div>
 		  <div class=\"spacer_5\"></div>
 		  <input id=\"timerlist_send_timer_btn_$obj->hash\" name=\"$obj->id\" type=\"submit\" onClick=\"timerlist_send_timer(this.id,this.name)\" value=\"SEND\" class=\"btn btn-success btn-sm\" title=\"send Timer to Receiver\"/>
 		  $hide_button
@@ -275,9 +390,23 @@ if ($obj->record_status == 'c_expired')
 		</div>";
 		}
 	}
-	if(!isset($timerlist) or $timerlist == "") { $timerlist = "No timer present.."; }
-	
-	echo $timerlist;
 ?>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<script type="text/javascript">
+// timerlist hover
+$(document).ready(function(){
+$("#timerlist*").hover(function(){
+	$(this).css("background-color", "#FAFAFA");
+	}, function(){
+	$(this).css("background-color", "white");
+});
+});
+</script>
+</head>
+<body>
+<?php if(!isset($timerlist) or $timerlist == "") { $timerlist = "No timer present.."; } echo $timerlist;  ?>
 </body>
 </html>

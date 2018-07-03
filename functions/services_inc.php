@@ -48,40 +48,38 @@ if (mysqli_num_rows($sql2) < 1) {
 
 	$sql = mysqli_query($dbmysqli, "INSERT INTO `channel_list` (e2servicename, servicename_enc, e2servicereference, e2providername, channel_hash) values ('$e2servicename', '$servicename_enc', '$e2servicereference', '-', '$channel_hash')");
 	
-	echo "data: <i class='glyphicon glyphicon-ok green'></i>\n\n"; 
+	echo "<i class='glyphicon glyphicon-ok green'></i>"; 
 	
 	} else { 
 	
-	echo "data: <i class='glyphicon glyphicon-ok gray'></i>\n\n"; 
+	echo "<i class='glyphicon glyphicon-ok gray'></i>"; 
 	
 	}
-	// close db
-	mysqli_close($dbmysqli);
 	
 	exit; 
 }
 	
-if ($action == 'crawl' ){
+if ($action == 'crawl'){
 	
 	$sql = mysqli_query($dbmysqli, "TRUNCATE `all_services`");
 	
-	$xmlfile = ''.$url_format.'://'.$box_ip.'/web/getservices?sRef=1:7:1:0:0:0:0:0:0:0:%20ORDER%20BY%20name';
+	$xmlfile = $url_format.'://'.$box_ip.'/web/getservices?sRef=1:7:1:0:0:0:0:0:0:0:%20ORDER%20BY%20name';
 	
-	$get_services_request = file_get_contents($xmlfile, false, $webrequest);
+	$get_services_request = @file_get_contents($xmlfile, false, $webrequest);
 	
 	$xml = simplexml_load_string(preg_replace('/[^\x{0009}\x{000a}\x{000d}\x{0020}-\x{D7FF}\x{E000}-\x{FFFD}]+/u', ' ', $get_services_request));
 	
-if ($xml) {
-	for ($i = 0; $i <= $i; $i++) {
+if ($xml){
+	for ($i = 0; $i <= $i; $i++){
 
 	if(!isset($xml->e2service[$i]->e2servicereference) or $xml->e2service[$i]->e2servicereference == ""){ $xml->e2service[$i]->e2servicereference = "";	}
 
-	if($xml->e2service[$i]->e2servicereference == "" ) {
+	if($xml->e2service[$i]->e2servicereference == ""){
 	
 	// answer for ajax
 	header('Content-Type: text/event-stream');
 	header('Cache-Control: no-cache');
-	echo "data: done!\n\n";
+	echo "error";
 	exit;
 	
 	} else {
@@ -95,30 +93,23 @@ if ($xml) {
 	$e2servicereference = str_replace(" ", "%20", $e2servicereference); //important
 	$e2servicereference = str_replace("\"", "%22", $e2servicereference); //important
 	
-	$sql = mysqli_query($dbmysqli, "INSERT INTO `all_services` (e2servicename, servicename_enc, e2servicereference) values ('$e2servicename', '$servicename_enc', '$e2servicereference')"); }
+	$sql = mysqli_query($dbmysqli, "INSERT INTO `all_services` (e2servicename, servicename_enc, e2servicereference) values ('$e2servicename', '$servicename_enc', '$e2servicereference')");
 	}
-	}	
-	// close db
-	mysqli_close($dbmysqli);
+	}
+	}
 	
-	//
 	} else {
 	
-	// count all epg entries
-	$stmt = $dbmysqli->prepare('SELECT COUNT(*) AS summary_services FROM `all_services`');
-	if( !is_a($stmt, 'MySQLI_Stmt') || $dbmysqli->errno > 0 )
-	throw new Exception( $dbmysqli->error, $dbmysqli->errno );
-	
-	$stmt->execute();
-	$stmt->bind_result($summary_services);
-	$stmt->fetch();
-	$stmt->close();
+	// count services
+	$sql = mysqli_query($dbmysqli, 'SELECT COUNT(*) FROM `all_services`');
+	$result = mysqli_fetch_row($sql);
+	$summary_services = $result[0];
+	//
 	
 	$sql = "SELECT * FROM `all_services`";
 	
 	if ($result = mysqli_query($dbmysqli,$sql))
 	{
-	// Fetch one and one row
 	while ($obj = mysqli_fetch_object($result)) {
 	{
 	
@@ -152,9 +143,6 @@ if ($xml) {
 	if(!isset($services_total) or $services_total == "") { $services_total = ""; }
 	
 	echo utf8_encode($services_total.$all_services_list);
-	
-	// Free result set
-	mysqli_free_result($result);
 	}	
 }
 ?>

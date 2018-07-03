@@ -4,21 +4,20 @@ include("../inc/dashboard_config.php");
 
 	$channel_id = $_REQUEST["channel_id"];
 	
-	$xmlfile = ''.$url_format.'://'.$box_ip.'/web/epgservice?sRef='.$channel_id.'';
+	$xmlfile = $url_format.'://'.$box_ip.'/web/epgservice?sRef='.$channel_id.'';
 	
-	$getEPG_request = file_get_contents($xmlfile, false, $webrequest);
+	$getEPG_request = @file_get_contents($xmlfile, false, $webrequest);
 	
 	$xml = simplexml_load_string(preg_replace('/[^\x{0009}\x{000a}\x{000d}\x{0020}-\x{D7FF}\x{E000}-\x{FFFD}]+/u', ' ', $getEPG_request));
 
-if ($xml) {
+if($xml){
 
-    for ($i = 0; $i <= $epg_entries_per_channel; $i++) {
+	for($i = 0; $i <= $epg_entries_per_channel; $i++){
 
-	///////////////////////////////////////////////
 	if(!isset($xml->e2event[$i]->e2eventtitle) or $xml->e2event[$i]->e2eventtitle == ""){ $xml->e2event[$i]->e2eventtitle = ""; }
 	
 	// if no title dont write in database
-	if($xml->e2event[$i]->e2eventtitle == "" ) {
+	if($xml->e2event[$i]->e2eventtitle == "" ){
 	
 	} else {
 	
@@ -101,18 +100,16 @@ if ($xml) {
 	}
 	}
 	// latest entry
-	$sql = mysqli_query($dbmysqli, "SELECT `e2eventend` FROM `epg_data` WHERE `channel_hash` = '$channel_hash' ORDER BY `e2eventend` DESC LIMIT 0 , 1");
+	$sql = mysqli_query($dbmysqli, "SELECT `e2eventend` FROM `epg_data` WHERE `channel_hash` = '".$channel_hash."' ORDER BY `e2eventend` DESC LIMIT 0 , 1");
 	$result = mysqli_fetch_assoc($sql);
 	$last_epg = $result['e2eventend'];
 	
 	// last crawl / last entry
-	$sql = mysqli_query($dbmysqli, "UPDATE `channel_list` SET `last_crawl` = '$time', `last_epg` = '$last_epg' WHERE `channel_hash` = '$channel_hash' ");
+	$sql = mysqli_query($dbmysqli, "UPDATE `channel_list` SET `last_crawl` = '".$time."', `last_epg` = '".$last_epg."' WHERE `channel_hash` = '".$channel_hash."' ");
 	
 	// update last epg timestamp // settings
 	$sql = mysqli_query($dbmysqli, "SELECT `e2eventend` FROM `epg_data` ORDER BY `e2eventend` DESC LIMIT 0 , 1");
 	$result = mysqli_fetch_assoc($sql);
-	$sql = mysqli_query($dbmysqli, "UPDATE `settings` SET `last_epg` = '$last_epg' WHERE `id` = '0' ");
+	$sql = mysqli_query($dbmysqli, "UPDATE `settings` SET `last_epg` = '".$last_epg."' WHERE `id` = '0' ");
 	
-	// close db
-	mysqli_close($dbmysqli);
 ?>

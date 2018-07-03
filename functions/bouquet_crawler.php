@@ -2,18 +2,14 @@
 //
 include("../inc/dashboard_config.php");
 
-header('Content-Type: text/event-stream');
-header('Cache-Control: no-cache');
-
-$sql = mysqli_query($dbmysqli, "TRUNCATE `bouquet_list`");
+	header('Content-Type: text/event-stream');
+	header('Cache-Control: no-cache');
 	
-$xmlfile = ''.$url_format.'://'.$box_ip.'/web/getservices';
-
-$get_bouquet_request = file_get_contents($xmlfile, false, $webrequest);
-
-///$xml = simplexml_load_string($get_bouquet_request);
-
-$xml = simplexml_load_string(preg_replace('/[^\x{0009}\x{000a}\x{000d}\x{0020}-\x{D7FF}\x{E000}-\x{FFFD}]+/u', ' ', $get_bouquet_request));
+	$sql = mysqli_query($dbmysqli, "TRUNCATE `bouquet_list`");
+		
+	$xmlfile = $url_format.'://'.$box_ip.'/web/getservices';
+	$get_bouquet_request = @file_get_contents($xmlfile, false, $webrequest);
+	$xml = simplexml_load_string(preg_replace('/[^\x{0009}\x{000a}\x{000d}\x{0020}-\x{D7FF}\x{E000}-\x{FFFD}]+/u', ' ', $get_bouquet_request));
 	
 if ($xml) {
 	for ($i = 0; $i <= $i; $i++) {
@@ -42,8 +38,5 @@ if ($xml) {
 	}
 	}
 	// answer for ajax
-	echo "data: ok\n\n";
-	
-	// close db
-	mysqli_close($dbmysqli);
+	echo "data:ok";
 ?>

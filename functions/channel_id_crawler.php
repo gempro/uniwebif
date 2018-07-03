@@ -2,33 +2,29 @@
 //
 include("../inc/dashboard_config.php");
 
+	sleep(1);
+
 	$sql = mysqli_query($dbmysqli, "TRUNCATE `channel_list`");
 
 	$sql = "SELECT * FROM `bouquet_list` WHERE `crawl` = '1' ";
 	
 	if ($result = mysqli_query($dbmysqli,$sql))
 	{
-	
-	// Fetch one and one row
-	while ($obj = mysqli_fetch_object($result)) {	
+	while ($obj = mysqli_fetch_object($result)){	
 	{
-	
-	$sRef = $obj->e2servicereference;
 
-	$xmlfile = ''.$url_format.'://'.$box_ip.'/web/getservices?sRef='.$sRef.'';
-	
-	$channel_ID_request = file_get_contents($xmlfile, false, $webrequest);
-	
+	$xmlfile = $url_format.'://'.$box_ip.'/web/getservices?sRef='.$obj->e2servicereference.'';
+	$channel_ID_request = @file_get_contents($xmlfile, false, $webrequest);
 	$xml = simplexml_load_string($channel_ID_request);
 	
-	if ($xml) {
+	if($xml){
 	
-	for ($i = 0; $i <= $channel_entries; $i++) {
+	for ($i = 0; $i <= $channel_entries; $i++){
 
 	if(!isset($xml->e2service[$i]->e2servicename) or $xml->e2service[$i]->e2servicename == ""){ $xml->e2service[$i]->e2servicename = ""; }
 	
 	// if no channel name
-	if($xml->e2service[$i]->e2servicename == "" ) {
+	if($xml->e2service[$i]->e2servicename == ""){
 	
 	} else {
 	
@@ -36,9 +32,6 @@ include("../inc/dashboard_config.php");
 	$e2servicename = utf8_decode($xml->e2service[$i]->e2servicename);
 	$e2servicereference = $xml->e2service[$i]->e2servicereference;
 	$servicename_enc = rawurlencode($xml->e2service[$i]->e2servicename);
-	
-	// remove special chars
-	//$e2servicename = str_replace("Š", " ", $e2servicename);
 	
 	// channel hash
 	$channel_hash = hash('md4',$e2servicename);
@@ -50,13 +43,15 @@ include("../inc/dashboard_config.php");
 	header('Content-Type: text/event-stream');
 	header('Cache-Control: no-cache');	
 	
-	if ($e2servicereference == '' )
+	if(!isset($e2servicereference) or $e2servicereference == ""){ $e2servicereference = ""; }
+	
+	if($e2servicereference == '')
 	{ 
-	echo "data: error\n\n"; 
+	echo "data:error"; 
 	
 	} else { 
 	
-	echo "data: Channel ID crawling - done!\n\n";
+	echo "data:done";
 	}
 	
 	// delete channel duplicates

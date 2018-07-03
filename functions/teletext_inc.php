@@ -40,7 +40,7 @@ include("../inc/dashboard_config.php");
 	if ($string[$i] == '9'){ $xmlfile = ''.$url_format.'://'.$box_ip.'/web/remotecontrol?command=10'; }
 	if ($string[$i] == '0'){ $xmlfile = ''.$url_format.'://'.$box_ip.'/web/remotecontrol?command=11'; }
 	
-	$sendTeletext_request = file_get_contents($xmlfile, false, $webrequest);
+	$sendTeletext_request = @file_get_contents($xmlfile, false, $webrequest);
 	
 	$xml = simplexml_load_string($sendTeletext_request);
 	
@@ -57,7 +57,7 @@ include("../inc/dashboard_config.php");
 	if ($browse == 'underpage_backward'){ $xmlfile = ''.$url_format.'://'.$box_ip.'/web/remotecontrol?command=105'; }
 	if ($browse == 'underpage_forward'){ $xmlfile = ''.$url_format.'://'.$box_ip.'/web/remotecontrol?command=106'; }
 	
-	$sendTeletext_request = file_get_contents($xmlfile, false, $webrequest);
+	$sendTeletext_request = @file_get_contents($xmlfile, false, $webrequest);
 	
 	$xml = simplexml_load_string($sendTeletext_request);
 	
@@ -75,21 +75,21 @@ include("../inc/dashboard_config.php");
 	//
 	if ($control == 'restart'){
 	
-	$xmlfile = ''.$url_format.'://'.$box_ip.'/web/remotecontrol?command=174'; 
-	$sendTeletext_request = file_get_contents($xmlfile, false, $webrequest);
+	$xmlfile = $url_format.'://'.$box_ip.'/web/remotecontrol?command=174'; 
+	$sendTeletext_request = @file_get_contents($xmlfile, false, $webrequest);
 	$xml = simplexml_load_string($sendTeletext_request);
 	
 	sleep(2);
 	
-	$xmlfile = ''.$url_format.'://'.$box_ip.'/web/remotecontrol?command=388';
-	$sendTeletext_request = file_get_contents($xmlfile, false, $webrequest);
+	$xmlfile = $url_format.'://'.$box_ip.'/web/remotecontrol?command=388';
+	$sendTeletext_request = @file_get_contents($xmlfile, false, $webrequest);
 	$xml = simplexml_load_string($sendTeletext_request);
 	
 	sleep(3);
 	}
 	//
 	
-	$sendTeletext_request = file_get_contents($xmlfile, false, $webrequest);
+	$sendTeletext_request = @file_get_contents($xmlfile, false, $webrequest);
 	
 	$xml = simplexml_load_string($sendTeletext_request);
 	

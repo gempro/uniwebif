@@ -1,7 +1,8 @@
 <?php 
 //
-sleep(1);
 include("../inc/dashboard_config.php");
+
+	sleep(1);
 
 	// ajax header
  	header('Content-Type: text/event-stream');
@@ -20,17 +21,14 @@ include("../inc/dashboard_config.php");
 	
 	if(!isset($custom_bouquet_url) or $custom_bouquet_url == "" or !isset($custom_bouquet_title) or $custom_bouquet_title == ""){
 	
-	echo "data: data missed\n\n"; 
+	echo "data missed"; 
 	
 	} else {
 	
-	$sql = mysqli_query($dbmysqli, "INSERT INTO `bouquet_list` (e2servicereference, e2servicename, selected, crawl) values ('$custom_bouquet_url', '$custom_bouquet_title', '0', '0')");
-	
-	// close db
-	mysqli_close($dbmysqli);
+	$sql = mysqli_query($dbmysqli, "INSERT INTO `bouquet_list` (`e2servicereference`, `e2servicename`, `selected`, `crawl`) VALUES ('$custom_bouquet_url', '$custom_bouquet_title', '0', '0')");
 	
 	// answer for ajax
-	echo "data: Bouquet saved\n\n";
+	echo "Bouquet successfully saved.."; 
 
 }
 ?>

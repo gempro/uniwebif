@@ -6,7 +6,6 @@ include("../inc/dashboard_config.php");
  	header('Content-Type: text/event-stream');
 	header('Cache-Control: no-cache');
 
-	// recieve data
 	if(!isset($_REQUEST['box_ip']) or $_REQUEST['box_ip'] == ""){ $_REQUEST['box_ip'] = ""; }
 	if(!isset($_REQUEST['box_user']) or $_REQUEST['box_user'] == ""){ $_REQUEST['box_user'] = ""; }
 	if(!isset($_REQUEST['box_password']) or $_REQUEST['box_password'] == ""){ $_REQUEST['box_password'] = ""; }	
@@ -21,9 +20,9 @@ include("../inc/dashboard_config.php");
 	if(!isset($_REQUEST['box_password']) or $_REQUEST['box_password'] == ""){ $set_box_password = $box_password; }
 
 	// check xml
-	$xmlfile = ''.$url_format.'://'.$set_box_ip.'/web/about';
+	$xmlfile = $url_format.'://'.$set_box_ip.'/web/about';
 	
-	$check_conn = file_get_contents($xmlfile, false, $webrequest);
+	$check_conn = @file_get_contents($xmlfile, false, $webrequest);
 	
 	$xml = simplexml_load_string($check_conn);
 	
@@ -39,7 +38,7 @@ include("../inc/dashboard_config.php");
 	
 	if(!isset($set_box_ip) or $set_box_ip == "" or !isset($set_box_user) or $set_box_user == "" or !isset($set_box_password) or $set_box_password == "") 
 	{ 
-	echo "data: data missed\n\n"; 
+	echo "data: data missed"; 
 	
 	} else {
 	
@@ -47,13 +46,9 @@ include("../inc/dashboard_config.php");
 	
 	$sql = mysqli_query($dbmysqli, "TRUNCATE `box_info`");
 	
-	$sql = mysqli_query($dbmysqli, "INSERT INTO `box_info` (e2enigmaversion, e2imageversion, e2webifversion, e2model) values ('$e2enigmaversion', '$e2imageversion', '$e2webifversion', '$e2model')");
-	
-	// close db
-	mysqli_close($dbmysqli);
+	$sql = mysqli_query($dbmysqli, "INSERT INTO `box_info` (`e2enigmaversion`, `e2imageversion`, `e2webifversion`, `e2model`) VALUES ('$e2enigmaversion', '$e2imageversion', '$e2webifversion', '$e2model')");
 	
 	// answer for ajax
-	echo "data: settings ok $conn\n\n";
-
+	echo "data: settings ok $conn";
 	}
 ?>

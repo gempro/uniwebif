@@ -18,23 +18,52 @@ include("../inc/dashboard_config.php");
 	mysqli_close($dbmysqli);
 	
 	// answer for ajax
-	echo "data: done!\n\n";
+	echo "data:done";
 	
 	} else {
 	
 	$searchterm = rawurlencode($_REQUEST['searchterm']);
 	$searcharea = utf8_decode($_REQUEST['searcharea']);
-	$exclude_channel = rawurlencode($_REQUEST['exclude_channel']);
-	$exclude_title = rawurlencode($_REQUEST['exclude_title']);
-	$exclude_description = rawurlencode($_REQUEST['exclude_description']);
-	$exclude_extdescription = rawurlencode($_REQUEST['exclude_extdescription']);
+	$exclude_channel = strtolower($_REQUEST["exclude_channel"]);
+	$exclude_channel = rawurlencode($exclude_channel);
+	$exclude_title = strtolower($_REQUEST["exclude_title"]);
+	$exclude_title = rawurlencode($exclude_title);
+	$exclude_description = strtolower($_REQUEST["exclude_description"]);
+	$exclude_description = rawurlencode($exclude_description);
+	$exclude_extdescription = strtolower($_REQUEST["exclude_extdescription"]);
+	$exclude_extdescription = rawurlencode($exclude_extdescription);
 	$rec_replay = $_REQUEST['rec_replay'];
 	$channel = $_REQUEST['channel'];
 	$record_location = utf8_decode($_REQUEST['record_location']);
 	$active = $_REQUEST['active'];
 	
+	// sort excluded
+	// channel
+	$terms = $exclude_channel;
+	$sorted_channel = explode("%3B", $terms); 
+	sort($sorted_channel, SORT_STRING); 
+	$exclude_channel = implode("%3B", $sorted_channel);
+	
+	// title
+	$terms = $exclude_title;
+	$sorted_title = explode("%3B", $terms); 
+	sort($sorted_title, SORT_STRING); 
+	$exclude_title = implode("%3B", $sorted_title);
+	
+	// description
+	$terms = $exclude_description;
+	$sorted_description = explode("%3B", $terms); 
+	sort($sorted_description, SORT_STRING); 
+	$exclude_description = implode("%3B", $sorted_description);
+	
+	// extended description
+	$terms = $exclude_extdescription;
+	$sorted_extdescription = explode("%3B", $terms); 
+	sort($sorted_extdescription, SORT_STRING); 
+	$exclude_extdescription = implode("%3B", $sorted_extdescription);
+	
 	// get channel name
-	$sql = mysqli_query($dbmysqli, "SELECT e2servicename, servicename_enc FROM `channel_list` WHERE `e2servicereference` = '$channel' ");
+	$sql = mysqli_query($dbmysqli, "SELECT `e2servicename`, `servicename_enc` FROM `channel_list` WHERE `e2servicereference` = '$channel' ");
 	$result = mysqli_fetch_assoc($sql);
 	
 	$e2servicename = $result['e2servicename'];
@@ -56,10 +85,7 @@ include("../inc/dashboard_config.php");
 	
 	$sql = mysqli_query($dbmysqli, "UPDATE `saved_search` SET $searchterm_sql $searcharea_sql $exclude_channel_sql $exclude_title_sql $exclude_description_sql $exclude_extdescription_sql $rec_replay_sql $channel_sql $rec_location_sql, last_change = '$time', crawled = '0' $active_sql WHERE `id` = '$id' ");
 	
-	// close db
-	mysqli_close($dbmysqli);
-	
 	// answer for ajax
-	echo "data: done!\n\n";
+	echo "data:done";
 }
 ?>

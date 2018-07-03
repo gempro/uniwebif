@@ -2,6 +2,8 @@
 //
 include("../inc/dashboard_config.php");
 
+	sleep(1);
+
 	// ajax header
  	header('Content-Type: text/event-stream');
 	header('Cache-Control: no-cache');
@@ -25,10 +27,10 @@ include("../inc/dashboard_config.php");
 	$channel_name = $_REQUEST['channel_name'];
 	$service_reference = $_REQUEST['service_reference'];
 	
-	if ($action == 'add')
+	if($action == 'add')
 	{
 	
-	if ($channel_name == '' or $service_reference == ''){ echo "data: error\n\n"; exit; }
+	if ($channel_name == '' or $service_reference == ''){ echo "data:error"; exit; }
 	
 	$servicename_enc = rawurlencode($channel_name);
 	$channel_name = utf8_decode($channel_name);
@@ -43,6 +45,5 @@ include("../inc/dashboard_config.php");
 	
 	if(!isset($set_zap) or $set_zap == ""){ $sql = mysqli_query($dbmysqli, "UPDATE `channel_list` SET `crawl` = '".$set_crawl."' WHERE `id` = '".$channel_id."'"); $color = '#5CB85C'; }
 	
-	sleep(1);
-	echo "data:\n\n"; 
+	echo "data:done";
 ?>

@@ -2,14 +2,14 @@
 session_start();
 ?>
 <!DOCTYPE html>
+<html>
 <head>
 <script>
-//
-$(document).ready(function(){
+$(function(){
     $("#primetime_main*").hover(function(){
-        $(this).css("background-color", "#FAFAFA");
-        }, function(){
-        $(this).css("background-color", "white");
+    $(this).css("background-color", "#FAFAFA");
+    }, function(){
+    $(this).css("background-color", "white");
     });
 });
 </script>
@@ -24,29 +24,29 @@ include("../inc/dashboard_config.php");
 	$action = $_REQUEST['action'];
 	
 // set
-if ($action == 'set'){
+if($action == 'set'){
 	
 	$timestamp = time();
 	$hour = $_REQUEST['hour'];
 	$minute = $_REQUEST['minute'];
 	$ampm = $_REQUEST['ampm'];
 	
-	if ($ampm !== '0'){
-	if ($ampm == 'PM'){  
-	if ($hour == '12'){ $hour = $hour - 12; }
+	if($ampm !== '0'){
+	if($ampm == 'PM'){  
+	if($hour == '12'){ $hour = $hour - 12; }
 	}
-	if ($ampm == 'AM'){
-	if ($hour == '12'){ $hour = $hour + 12; }
+	if($ampm == 'AM'){
+	if($hour == '12'){ $hour = $hour + 12; }
 	}
 	}
 	
 	$date_start = date("d.m.Y, ".$hour.":".$minute."",$timestamp);
 	$time_start = strtotime($date_start);
 	
-	if ($ampm !== '0'){
+	if($ampm !== '0'){
 	//
-	if ($ampm == 'AM'){ $time_start - 43200; }
-	if ($ampm == 'PM'){ $time_start = $time_start + 43200; }
+	if($ampm == 'AM'){ $time_start - 43200; }
+	if($ampm == 'PM'){ $time_start = $time_start + 43200; }
 	}
 	
 	$sql = mysqli_query($dbmysqli, "UPDATE `settings` SET `primetime` = '$time_start' WHERE `id` = '0' ");
@@ -58,7 +58,7 @@ if ($action == 'set'){
 //
 
 // show
-if ($action == 'show'){
+if($action == 'show'){
 
 	$time = $_REQUEST['time'];
 	
@@ -77,14 +77,14 @@ if ($action == 'show'){
 	$primetime_start = strtotime($date) - $dur_down_primetime;
 	$primetime_end = strtotime($date) + $dur_up_primetime;
 	
-	if ($time == 'day_forward' or $time == 'day_backward' ){
+	if($time == 'day_forward' or $time == 'day_backward' ){
 	
-	if ($time == 'day_forward')
+	if($time == 'day_forward')
 	{
 	$summary = $_SESSION["sum_primetime_days"] +1;
 	}
 	
-	if ($time == 'day_backward')
+	if($time == 'day_backward')
 	{
 	$summary = $_SESSION["sum_primetime_days"] -1;
 	}
@@ -98,7 +98,7 @@ if ($action == 'show'){
 	$time_end = $timestamp_forward_end;
 	
 	// time info
-	if ($time_format == '1')
+	if($time_format == '1')
 	{
 	// time format 1
 	$date_from_day = date("l, d.m", $time_start);
@@ -117,23 +117,38 @@ if ($action == 'show'){
 	
 	if ($result = mysqli_query($dbmysqli,$sql))
 	{
-	// Fetch one and one row
 	while ($obj = mysqli_fetch_object($result)) {	
 	{
 	if(!isset($rec_dropdown_primetime) or $rec_dropdown_primetime == "") { $rec_dropdown_primetime = ""; } else { $rec_dropdown_primetime = $rec_dropdown_primetime; }
 	$rec_dropdown_primetime = $rec_dropdown_primetime."<option value=\"$obj->id\">$obj->e2location</option>"; }
 	}
 	}
+	
+	// device dropdown
+	$sql2 = "SELECT * FROM `device_list` ORDER BY `id` ASC";
+	
+	if ($result2 = mysqli_query($dbmysqli,$sql2))
+	{
+	// Fetch one and one row
+	while ($obj = mysqli_fetch_object($result2)){
+	{
+	$id = $obj->id;
+	$device_description = rawurldecode($obj->device_description);
+	
+	if(!isset($device_dropdown) or $device_dropdown == ""){ $device_dropdown = ""; }
+
+	$device_dropdown = $device_dropdown."<option value=\"$id\">$device_description</option>"; 
+	}
+	}
+	} // device
 		
-	if ($time == 'today' ){ $time_start = $primetime_start; $time_end = $primetime_end; unset($_SESSION['sum_primetime_days']); // session_destroy(); 
+	if($time == 'today' ){ $time_start = $primetime_start; $time_end = $primetime_end; unset($_SESSION['sum_primetime_days']); // session_destroy(); 
 	}
 	
 	$sql = "SELECT * FROM `epg_data` WHERE e2eventstart BETWEEN '$time_start' and '$time_end' ORDER BY e2eventstart ASC";
 	
-	if ($result = mysqli_query($dbmysqli,$sql))
+	if($result = mysqli_query($dbmysqli,$sql))
 	{
-	
-	// Fetch one and one row
 	while ($obj = mysqli_fetch_object($result)) {
 	
 	if(!isset($primetime_list) or $primetime_list == "") { $primetime_list = ""; }
@@ -143,42 +158,39 @@ if ($action == 'show'){
 	$description_enc = rawurldecode($obj->description_enc);
 	$descriptionextended_enc = rawurldecode($obj->descriptionextended_enc);
 	
-	if ($time_format == '1')
+	if($time_format == '1')
 	{
 	// time format 1
 	$e2eventstart = $obj->e2eventstart;
 	$date_start = date("l, d.m.Y", $e2eventstart);
-	
 	$e2eventend = $obj->e2eventend;
 	$primetime_time = date("H:i", $e2eventstart).' - '.date("H:i", $e2eventend);
-	
 	$td_spacer = 'cnt_time';
 	}
 	
-	if ($time_format == '2')
+	if($time_format == '2')
 	{
 	// time format 2
 	$e2eventstart = $obj->e2eventstart;
 	$date_start = date("l n/d/Y", $e2eventstart);
-	
 	$e2eventend = $obj->e2eventend;
 	$date_end = date("l n/d/Y - g:i A", $e2eventend);
-	
 	$primetime_time = date("g:i A", $e2eventstart).' - '.date("g:i A", $e2eventend);
-	
 	$td_spacer = 'cnt_time_2';
 	}
 	
-	if ($streaming_symbol == '1' ){ $stream_broadcast = '<a href="'.$url_format.'://'.$box_user.':'.$box_password.'@'.$box_ip.'/web/stream.m3u?ref='.$obj->e2eventservicereference.'" title="Stream"><i class="fa fa-desktop fa-1x"></i></a>'; 
+	if($streaming_symbol == '1'){ $stream_broadcast = '<a href="'.$url_format.'://'.$box_user.':'.$box_password.'@'.$box_ip.'/web/stream.m3u?ref='.$obj->e2eventservicereference.'" title="Stream"><i class="fa fa-desktop fa-1x"></i></a>'; 
 	} else { 
 	$stream_broadcast = ''; }
 	
-	if ($imdb_symbol == '1' ){ $imdb_broadcast = '<a href="https://www.imdb.com/find?ref_=nv_sr_fn&q='.$title_enc.'" target="_blank" title="Info on IMDb"><i class="fa fa-info-circle fa-1x"></i></a>'; 
+	if($imdb_symbol == '1'){ $imdb_broadcast = '<a href="https://www.imdb.com/find?ref_=nv_sr_fn&q='.$title_enc.'" target="_blank" title="Info on IMDb"><i class="fa fa-info-circle fa-1x"></i></a>'; 
 	} else { 
 	$imdb_broadcast = ''; }
 	
 	// mark existing timer
-	if ($obj->timer == '1'){ $timer = "timer"; } else { $timer = ""; }
+	if($obj->timer == '1'){ $timer = "timer"; } else { $timer = ""; }
+	
+	if(!isset($device_dropdown) or $device_dropdown == ""){ $device_dropdown = ""; }
 
 	$primetime_list = $primetime_list."
 		<div id=\"primetime_main\">
@@ -210,8 +222,16 @@ if ($action == 'show'){
   <div style=\"clear:both\"></div>
   </div>
   <div class=\"spacer_5\"></div>
-  <span>Record location: </span><select id=\"rec_location_primetime_$obj->hash\" class=\"rec_location_dropdown\">$rec_dropdown_primetime</select>
-  <div class=\"spacer_5\"></div>
+  <span>Receiver: </span>
+  <select id=\"primetime_device_dropdown_$obj->hash\" class=\"device_dropdown\" onchange=\"primetime_change_device(this.id)\">
+  <option value=\"0\">default</option>
+  $device_dropdown
+  </select>
+  <div class=\"spacer_10\"></div>
+  <span>Record location: </span>
+  <select id=\"rec_location_primetime_$obj->hash\" class=\"rec_location_dropdown\">
+  $rec_dropdown_primetime
+  </select>
   </div>
   </div>
   <div class=\"spacer_10\"></div>"; 
@@ -220,12 +240,6 @@ if ($action == 'show'){
   if(!isset($primetime_list) or $primetime_list == "") { $primetime_list = "No data for this day"; }
   
   echo $primetime_list;
-	
-  // Free result set
-  mysqli_free_result($result);
-
-//close db
-mysqli_close($dbmysqli);
 }
 ?>
 

@@ -3,52 +3,34 @@
 	include("../inc/dashboard_config.php");
 	
 	// count timer
-	$stmt = $dbmysqli->prepare('SELECT COUNT(*) as count_timer FROM `timer` WHERE `expired` = "0" ');
-	if( !is_a($stmt, 'MySQLI_Stmt') || $dbmysqli->errno > 0 )
-	throw new Exception( $dbmysqli->error, $dbmysqli->errno );
-	$stmt->execute();
-	$stmt->bind_result($count_timer);
-	$stmt->fetch();
-	$stmt->close();
+	$sql = mysqli_query($dbmysqli, 'SELECT COUNT(*) FROM `timer` WHERE `expired` = "0" ');
+	$result = mysqli_fetch_row($sql);
+	$count_timer = $result[0];
 	
 	// sent timer
-	$stmt = $dbmysqli->prepare('SELECT COUNT(*) as sent_timer FROM `timer` WHERE `expired` = "0" AND `status` = "sent" OR `expired` = "0" AND `status` = "manual" ');
-	if( !is_a($stmt, 'MySQLI_Stmt') || $dbmysqli->errno > 0 )
-	throw new Exception( $dbmysqli->error, $dbmysqli->errno );
-	$stmt->execute();
-	$stmt->bind_result($sent_timer);
-	$stmt->fetch();
-	$stmt->close();
+	$sql = mysqli_query($dbmysqli, 'SELECT COUNT(*) FROM `timer` WHERE `expired` = "0" AND `status` = "sent" OR `expired` = "0" AND `status` = "manual" ');
+	$result = mysqli_fetch_row($sql);
+	$sent_timer = $result[0];
 	
 	// timer today
 	$start = date("d.m.Y, 00:00", $time);
 	$end = date("d.m.Y, 23:59", $time);
 	$start_time = strtotime($start);
 	$end_time = strtotime($end);
-	$stmt = $dbmysqli->prepare('SELECT COUNT(*) as timer_today FROM `timer` WHERE `e2eventstart` BETWEEN "'.$start_time.'" AND "'.$end_time.'" AND `expired` = "0" ');
-	if( !is_a($stmt, 'MySQLI_Stmt') || $dbmysqli->errno > 0 )
-	throw new Exception( $dbmysqli->error, $dbmysqli->errno );
-	$stmt->execute();
-	$stmt->bind_result($timer_today);
-	$stmt->fetch();
-	$stmt->close();
+	$sql = mysqli_query($dbmysqli, 'SELECT COUNT(*) FROM `timer` WHERE `e2eventstart` BETWEEN "'.$start_time.'" AND "'.$end_time.'" AND `expired` = "0" ');
+	$result = mysqli_fetch_row($sql);
+	$timer_today = $result[0];
 	
 	// hidden timer
-	$stmt = $dbmysqli->prepare('SELECT COUNT(*) as hidden_timer FROM `timer` WHERE `expired` = "0" AND `hide` = "1" ');
-	if( !is_a($stmt, 'MySQLI_Stmt') || $dbmysqli->errno > 0 )
-	throw new Exception( $dbmysqli->error, $dbmysqli->errno );
-	$stmt->execute();
-	$stmt->bind_result($hidden_timer);
-	$stmt->fetch();
-	$stmt->close();
+	$sql = mysqli_query($dbmysqli, 'SELECT COUNT(*) FROM `timer` WHERE `expired` = "0" AND `hide` = "1" ');
+	$result = mysqli_fetch_row($sql);
+	$hidden_timer = $result[0];
 	
 	// timer on receiver
 	$xmlfile = ''.$url_format.'://'.$box_ip.'/web/timerlist';
-	$getTimer = file_get_contents($xmlfile, false, $webrequest);
+	$getTimer = @file_get_contents($xmlfile, false, $webrequest);
 	$sum = preg_match_all("#<e2timerlist>(.*?)</e2timerlist>#si", $getTimer, $match_sum);
 	$timer_summary = preg_match_all("#<e2timer>(.*?)</e2timer>#si", $match_sum[0][0]);
-	
-	$json = array();
 	
 	echo '
 	[{"timer_total":"'.$count_timer.'",

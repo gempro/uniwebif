@@ -68,8 +68,8 @@ if ($setting == 'receiver'){
 	'verify_peer_name' => false,
 	))
 	));
-	$request = 'http://'.$receiver_ip.'/web/powerstate';
-	$status = file_get_contents($request, false, $webrequest);
+	$request = $url_format.'://'.$receiver_ip.'/web/powerstate';
+	$status = @file_get_contents($request, false, $webrequest);
 	
 	if ($status == TRUE){
 	
@@ -105,7 +105,7 @@ if ($setting == 'install'){
 	
 	$query = mysqli_query($dbmysqli, "CREATE USER 'uniwebif'@'localhost' IDENTIFIED BY 'uniwebif'");
 	$query = mysqli_query($dbmysqli, "DROP TABLE IF EXISTS `uniwebif`");
-	$query = mysqli_query($dbmysqli, "CREATE DATABASE IF NOT EXISTS `uniwebif` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci");
+	$query = mysqli_query($dbmysqli, "CREATE DATABASE IF NOT EXISTS `uniwebif` DEFAULT CHARACTER SET utf8");
 	$query = mysqli_query($dbmysqli, "GRANT ALL PRIVILEGES ON `uniwebif` . * TO 'uniwebif'@'localhost'");
 	
 	$query = mysqli_query($dbmysqli, "DROP TABLE IF EXISTS `uniwebif`.`all_services`");
@@ -123,7 +123,7 @@ if ($setting == 'install'){
 	  `e2servicereference` varchar(255) NOT NULL,
 	  `channel_hash` varchar(100) NOT NULL,
 	  PRIMARY KEY (`id`)
-	) ENGINE = MYISAM CHARACTER SET utf8 COLLATE utf8_general_ci;
+	) ENGINE = MYISAM  DEFAULT CHARSET=utf8;
 	");
 	
 	$query = mysqli_query($dbmysqli, "DROP TABLE IF EXISTS `uniwebif`.`bouquet_list`");
@@ -136,7 +136,7 @@ if ($setting == 'install'){
 	  `selected` int(1) NOT NULL DEFAULT '0',
 	  `crawl` int(1) NOT NULL DEFAULT '0',
 	  PRIMARY KEY (`id`)
-	) ENGINE = MYISAM CHARACTER SET utf8 COLLATE utf8_general_ci;
+	) ENGINE = MYISAM  DEFAULT CHARSET=utf8;
 	");
 	
 	$query = mysqli_query($dbmysqli, "DROP TABLE IF EXISTS `uniwebif`.`box_info`");
@@ -149,7 +149,7 @@ if ($setting == 'install'){
 	  `e2webifversion` varchar(255) NOT NULL,
 	  `e2model` varchar(255) NOT NULL,
 	  KEY `id` (`id`)
-	) ENGINE = MYISAM CHARACTER SET utf8 COLLATE utf8_general_ci;
+	) ENGINE = MYISAM  DEFAULT CHARSET=utf8;
 	");
 	
 	$query = mysqli_query($dbmysqli, "DROP TABLE IF EXISTS `uniwebif`.`channel_list`");
@@ -170,8 +170,28 @@ if ($setting == 'install'){
 	  `last_crawl` int(12) NOT NULL,
 	  `last_epg` int(12) NOT NULL,
 	  PRIMARY KEY (`id`)
-	) ENGINE = MYISAM CHARACTER SET utf8 COLLATE utf8_general_ci;
+	) ENGINE = MYISAM  DEFAULT CHARSET=utf8;
 	");
+	
+	
+	
+	$query = mysqli_query($dbmysqli, "DROP TABLE IF EXISTS `uniwebif`.`device_list`");
+	$query = mysqli_query($dbmysqli, "
+	
+	CREATE TABLE IF NOT EXISTS `device_list` (
+	  `id` int(11) NOT NULL AUTO_INCREMENT,
+	  `device_description` varchar(255) NOT NULL,
+	  `device_ip` varchar(255) NOT NULL,
+	  `device_user` varchar(255) NOT NULL,
+	  `device_password` varchar(255) NOT NULL,
+	  `device_record_location` varchar(255) NOT NULL,
+	  `device_color` varchar(255) NOT NULL,
+	  KEY `id` (`id`)
+	) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+	");
+	
+	
+	
 	
 	$query = mysqli_query($dbmysqli, "DROP TABLE IF EXISTS `uniwebif`.`epg_data`");
 	$query = mysqli_query($dbmysqli, "
@@ -219,7 +239,7 @@ if ($setting == 'install'){
 	  FULLTEXT KEY `description_enc` (`description_enc`),
 	  FULLTEXT KEY `descriptionextended_enc` (`descriptionextended_enc`),
 	  FULLTEXT KEY `epgsearch_enc` (`title_enc`,`description_enc`,`descriptionextended_enc`)
-	) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+	) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 	");
 	
 	$query = mysqli_query($dbmysqli, "DROP TABLE IF EXISTS `uniwebif`.`record_locations`");
@@ -230,7 +250,7 @@ if ($setting == 'install'){
 	  `e2location` varchar(255) NOT NULL,
 	  `selected` int(1) NOT NULL DEFAULT '0',
 	  PRIMARY KEY (`id`)
-	) ENGINE = MYISAM CHARACTER SET utf8 COLLATE utf8_general_ci;
+	) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 	");
 	
 	$query = mysqli_query($dbmysqli, "DROP TABLE IF EXISTS `uniwebif`.`saved_search`");
@@ -256,7 +276,7 @@ if ($setting == 'install'){
 	  `action` varchar(255) NOT NULL,
 	  `rec_replay` varchar(255) NOT NULL DEFAULT 'off',
 	  PRIMARY KEY (`id`)
-	) ENGINE = MYISAM CHARACTER SET utf8 COLLATE utf8_general_ci;
+	) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 	");
 	
 
@@ -321,7 +341,7 @@ if ($setting == 'install'){
 	  `dur_up_primetime` int(5) NOT NULL DEFAULT '7200',
 	  `current_git_push` int(12) NOT NULL DEFAULT '0',
 	  PRIMARY KEY (`id`)
-	) ENGINE = MYISAM CHARACTER SET utf8 COLLATE utf8_general_ci;
+	) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 	");
 	
 	$query = mysqli_query($dbmysqli, "INSERT INTO `uniwebif`.`settings` (`box_ip`, `box_user`, `box_password`, `server_ip`, `script_folder`) VALUES
@@ -361,23 +381,25 @@ if ($setting == 'install'){
 	  `is_replay` int(1) NOT NULL,
 	  `expired` int(1) NOT NULL DEFAULT '0',
 	  `hide` int(1) NOT NULL DEFAULT '0',
+	  `device` int(4) NOT NULL,
+	  `search_id` int(4) NOT NULL,
 	  PRIMARY KEY (`id`)
-	) ENGINE = MYISAM CHARACTER SET utf8 COLLATE utf8_general_ci;
+	) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 	");
 	
 	echo 'SQL Installation OK!';
 	
 	// get bouquets from receiver
-	$crawl_bouquet = 'http://'.$server_ip.'/'.$script_folder.'/functions/bouquet_crawler.php';
-	$start_crawl = file_get_contents($crawl_bouquet);
+	$crawl_bouquet = $url_format.'://'.$server_ip.'/'.$script_folder.'/functions/bouquet_crawler.php';
+	$start_crawl = @file_get_contents($crawl_bouquet);
 	
 	// get record locations from receiver
-	$crawl_rec_locations = 'http://'.$server_ip.'/'.$script_folder.'/functions/save_rec_locations.php';
-	$start_crawl = file_get_contents($crawl_rec_locations);
+	$crawl_rec_locations = $url_format.'://'.$server_ip.'/'.$script_folder.'/functions/save_rec_locations.php';
+	$start_crawl = @file_get_contents($crawl_rec_locations);
 	
 	// get receiver info
-	$crawl_receiver_info = 'http://'.$server_ip.'/'.$script_folder.'/functions/save_box_settings.php';
-	$start_crawl = file_get_contents($crawl_receiver_info);
+	$crawl_receiver_info = $url_format.'://'.$server_ip.'/'.$script_folder.'/functions/save_box_settings.php';
+	$start_crawl = @file_get_contents($crawl_receiver_info);
 	
 	}
 ?>

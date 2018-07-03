@@ -7,7 +7,6 @@ include("../inc/dashboard_config.php");
 	
 	if ($result1 = mysqli_query($dbmysqli,$sql))
 	{
-	// Fetch one and one row
 	while ($obj = mysqli_fetch_object($result1)) {
 	{
 	$id = $obj->id;
@@ -51,7 +50,7 @@ include("../inc/dashboard_config.php");
 	}
 	
 	// exclude titel
-	if ($exclude_title !== ''){ 
+	if ($exclude_title !== ''){
 	$tags = explode(rawurlencode(';') , $exclude_title);
 	foreach($tags as $i =>$key) { $i > 0;
 	if(!isset($exclude_title_part) or $exclude_title_part == "") { $exclude_title_part = ""; }
@@ -61,7 +60,7 @@ include("../inc/dashboard_config.php");
 	}
 	
 	// exclude description
-	if ($exclude_description !== ''){ 
+	if ($exclude_description !== ''){
 	$tags = explode(rawurlencode(';') , $exclude_description);
 	foreach($tags as $i =>$key) { $i >0;
 	if(!isset($exclude_description_part) or $exclude_description_part == "") { $exclude_description_part = ""; }
@@ -71,14 +70,13 @@ include("../inc/dashboard_config.php");
 	}
 	
 	// exclude extended description
-	if ($exclude_extdescription !== ''){ 
-	//
+	if ($exclude_extdescription !== ''){
 	$tags = explode(rawurlencode(';') , $exclude_extdescription);
 	foreach($tags as $i =>$key) { $i >0;
 	if(!isset($exclude_extdescription_part) or $exclude_extdescription_part == "") { $exclude_extdescription_part = ""; }
 	if(!isset($key) or $key == "") { $search_string = ''; } else { $search_string = 'AND `descriptionextended_enc` NOT LIKE "%'.$key.'%" '; }
 	$exclude_extdescription_part = $exclude_extdescription_part.$search_string;
-	} //
+	}
 	}
 	
 	if(!isset($exclude_channel_part) or $exclude_channel_part == "") { $exclude_channel_part = ""; }
@@ -112,7 +110,6 @@ include("../inc/dashboard_config.php");
 
 	if ($result2 = mysqli_query($dbmysqli,$sql))
 	{
-	// Fetch one and one row
 	while ($obj = mysqli_fetch_object($result2)) {	
 	{
 	$e2eventtitle = $obj->e2eventtitle;
@@ -143,41 +140,30 @@ include("../inc/dashboard_config.php");
 	$timer_request = str_replace("%27", "%60", $timer_request);
 	
 	// check if timer exist for replay record
-	$stmt = $dbmysqli->prepare('SELECT COUNT(*) AS count_replay FROM `timer` WHERE `title_enc` = "'.$title_enc.'" AND `description_enc` = "'.$description_enc.'" ');
-	if( !is_a($stmt, 'MySQLI_Stmt') || $dbmysqli->errno > 0 )
-	throw new Exception( $dbmysqli->error, $dbmysqli->errno );
-	$stmt->execute();
-	$stmt->bind_result($count_replay);
-	$stmt->fetch();
-	$stmt->close();
+	$sql = mysqli_query($dbmysqli, 'SELECT COUNT(*) FROM `timer` WHERE `title_enc` = "'.$title_enc.'" AND `description_enc` = "'.$description_enc.'" ');
+	$result = mysqli_fetch_row($sql);
+	$count_replay = $result[0];
 	if($count_replay > 0){ $is_replay = '1'; } else { $is_replay = '0'; }
 	if($rec_replay == 'on'){ $rec_replay = 'on'; } else { $rec_replay = 'off'; }
 	if($rec_replay == 'off' and $is_replay == '1'){ $hide = '1'; } else { $hide = '0'; }
-	//
 	
 	// dont write ident timer in db
-	$stmt = $dbmysqli->prepare('SELECT COUNT(*) AS count_hash FROM `timer` WHERE `hash` = "'.$hash.'" ');
-	if( !is_a($stmt, 'MySQLI_Stmt') || $dbmysqli->errno > 0 )
-	throw new Exception( $dbmysqli->error, $dbmysqli->errno );
-	$stmt->execute();
-	$stmt->bind_result($count_hash);
-	$stmt->fetch();
-	$stmt->close();
-	//
+	$sql = mysqli_query($dbmysqli, 'SELECT COUNT(*) FROM `timer` WHERE `hash` = "'.$hash.'" ');
+	$result = mysqli_fetch_row($sql);
+	$count_hash = $result[0];
+
 	if($count_hash == 0){
-	
-	$sql = mysqli_query($dbmysqli, "INSERT INTO timer (e2eventtitle, title_enc, e2eventdescription, description_enc, e2eventdescriptionextended, descriptionextended_enc, e2eventservicename, servicename_enc, e2eventservicereference, search_term, search_option, exclude_channel, exclude_title, exclude_description, exclude_extdescription, record_location, e2eventstart, e2eventend, timer_request, hash, channel_hash, status, rec_replay, is_replay, hide)
-	values ('$e2eventtitle', '$title_enc', '$e2eventdescription', '$description_enc', '$e2eventdescriptionextended', '$descriptionextended_enc', '$e2eventservicename', '$servicename_enc', '$e2eventservicereference', '$raw_term', '$search_option', '$exclude_channel', '$exclude_title', '$exclude_description', '$exclude_extdescription', '$e2location', '$e2eventstart', '$e2eventend', '$timer_request', '$hash', '$channel_hash', 'waiting', '$rec_replay', '$is_replay', '$hide')");
-	} //
+	$sql = mysqli_query($dbmysqli, "INSERT INTO timer (e2eventtitle, title_enc, e2eventdescription, description_enc, e2eventdescriptionextended, descriptionextended_enc, e2eventservicename, servicename_enc, e2eventservicereference, search_term, search_option, exclude_channel, exclude_title, exclude_description, exclude_extdescription, record_location, e2eventstart, e2eventend, timer_request, hash, channel_hash, status, rec_replay, is_replay, hide, search_id)
+	values ('$e2eventtitle', '$title_enc', '$e2eventdescription', '$description_enc', '$e2eventdescriptionextended', '$descriptionextended_enc', '$e2eventservicename', '$servicename_enc', '$e2eventservicereference', '$raw_term', '$search_option', '$exclude_channel', '$exclude_title', '$exclude_description', '$exclude_extdescription', '$e2location', '$e2eventstart', '$e2eventend', '$timer_request', '$hash', '$channel_hash', 'waiting', '$rec_replay', '$is_replay', '$hide', '$id')");
 	}
 	}
 	}
-//	}
+	}
 	}
 	}
 	}
 	// check record status
-	$sql = "SELECT * FROM `timer`";
+	$sql = "SELECT * FROM `timer` WHERE `record_status` NOT LIKE 'c_expired' ";
 	
 	if ($result3 = mysqli_query($dbmysqli,$sql))
 	{
@@ -213,8 +199,6 @@ include("../inc/dashboard_config.php");
 	// answer for ajax
 	header('Content-Type: text/event-stream');
 	header('Cache-Control: no-cache');
-	echo "data: Timer from saved search, written in database!\n\n";
-	
-//close db
-mysqli_close($dbmysqli);
+	echo "data:done";
+
 ?>

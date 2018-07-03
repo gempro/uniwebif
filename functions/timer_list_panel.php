@@ -49,14 +49,38 @@
 	$e2eventend = $result['e2eventend'];
 	$hash = $result['hash'];
 	$status = $result['status'];
+	$device = $result['device'];
 	
-	$deleteTimer = ''.$url_format.'://'.$box_ip.'/web/timerdelete?sRef='.$e2eventservicereference.'&begin='.$e2eventstart.'&end='.$e2eventend.'';
-	$deleteTimer_request = file_get_contents($deleteTimer, false, $webrequest);
+	// delete timer from different device
+	if($device != "0"){
+	$sql2 = mysqli_query($dbmysqli, "SELECT * FROM `device_list` WHERE `id` = '".$device."' ");
+	$result2 = mysqli_fetch_assoc($sql2);
+	$device_box_ip = $result2['device_ip'];
+	$device_box_user = $result2['device_user'];
+	$device_box_password = $result2['device_password'];
+	$device_url_format = $result2['url_format'];
+	$device_webrequest = stream_context_create(array (
+	'http' => array (
+	'header' => 'Authorization: Basic ' . base64_encode("$device_box_user:$device_box_password"),
+	'ssl' =>array (
+	'verify_peer' => false,
+	'verify_peer_name' => false,
+	))
+	));
+	$device_deleteTimer = $device_url_format.'://'.$device_box_ip.'/web/timerdelete?sRef='.$e2eventservicereference.'&begin='.$e2eventstart.'&end='.$e2eventend.'';
+	$device_deleteTimer_request = @file_get_contents($device_deleteTimer, false, $device_webrequest);
+	} // delete timer from different device
 	
-	$sql = mysqli_query($dbmysqli, "UPDATE `timer` SET status = 'rec_deleted' WHERE `id` = '".$key."' ");
+	else {
 	
-	if ($status == 'manual' or $status == 'sent'){
-	$sql2 = mysqli_query($dbmysqli, "UPDATE `epg_data` SET timer = '0' WHERE `hash` = '".$hash."' ");
+	$deleteTimer = $url_format.'://'.$box_ip.'/web/timerdelete?sRef='.$e2eventservicereference.'&begin='.$e2eventstart.'&end='.$e2eventend.'';
+	$deleteTimer_request = @file_get_contents($deleteTimer, false, $webrequest);
+	} //default receiver
+	
+	$sql = mysqli_query($dbmysqli, "UPDATE `timer` SET `status` = 'rec_deleted', `conflict` = '0' WHERE `id` = '".$key."' ");
+	
+	if($status == 'manual' or $status == 'sent'){
+	$sql2 = mysqli_query($dbmysqli, "UPDATE `epg_data` SET `timer` = '0' WHERE `hash` = '".$hash."' ");
 	}
 	}
 	sleep(1);
@@ -80,29 +104,52 @@
 	$e2eventend = $result['e2eventend'];
 	$hash = $result['hash'];
 	$status = $result['status'];
+	$device = $result['device'];
 	
-	$deleteTimer = ''.$url_format.'://'.$box_ip.'/web/timerdelete?sRef='.$e2eventservicereference.'&begin='.$e2eventstart.'&end='.$e2eventend.'';
-	$deleteTimer_request = file_get_contents($deleteTimer, false, $webrequest);
+	// delete timer from different device
+	if($device != "0"){
+	$sql3 = mysqli_query($dbmysqli, "SELECT * FROM `device_list` WHERE `id` = '".$device."' ");
+	$result3 = mysqli_fetch_assoc($sql3);
+	$device_box_ip = $result3['device_ip'];
+	$device_box_user = $result3['device_user'];
+	$device_box_password = $result3['device_password'];
+	$device_url_format = $result3['url_format'];
+	$device_webrequest = stream_context_create(array (
+	'http' => array (
+	'header' => 'Authorization: Basic ' . base64_encode("$device_box_user:$device_box_password"),
+	'ssl' =>array (
+	'verify_peer' => false,
+	'verify_peer_name' => false,
+	))
+	));
+	$device_deleteTimer = $device_url_format.'://'.$device_box_ip.'/web/timerdelete?sRef='.$e2eventservicereference.'&begin='.$e2eventstart.'&end='.$e2eventend.'';
+	$device_deleteTimer_request = @file_get_contents($device_deleteTimer, false, $device_webrequest);
+	} // delete timer from different device
 	
-	if ($status == 'manual' or $status == 'sent'){
-	$sql2 = mysqli_query($dbmysqli, "UPDATE `epg_data` SET timer = '0' WHERE `hash` = '".$hash."' ");
+	else {
+	
+	$deleteTimer = $url_format.'://'.$box_ip.'/web/timerdelete?sRef='.$e2eventservicereference.'&begin='.$e2eventstart.'&end='.$e2eventend.'';
+	$deleteTimer_request = @file_get_contents($deleteTimer, false, $webrequest);
+	} // default receiver
+	
+	if($status == 'manual' or $status == 'sent'){
+	$sql4 = mysqli_query($dbmysqli, "UPDATE `epg_data` SET timer = '0' WHERE `hash` = '".$hash."' ");
 	}
 	
-	$sql3 = mysqli_query($dbmysqli, "DELETE FROM `timer` WHERE `id` = '".$key."' ");
+	$sql5 = mysqli_query($dbmysqli, "DELETE FROM `timer` WHERE `id` = '".$key."' ");
 	}
 	sleep(1);
 	echo 'delete_both_done';
 	}
 	
 	// send
-	if ($panel_action == 'send')
+	if($panel_action == 'send')
 	{
 	$tags = explode(';' , $timer_id);
 	foreach($tags as $i =>$key)
 	{ 
 	$i > 0;
 	if(!isset($key) or $key == ""){ $key = ""; }
-	$del_string = "OR `id` = '".$key."' ";
 	
 	$sql = mysqli_query($dbmysqli, "SELECT * FROM `timer` WHERE `id` = '".$key."' ");
 	$result = mysqli_fetch_assoc($sql);
@@ -114,21 +161,58 @@
 	$description_enc = $result['description_enc'];
 	$e2location = $result['record_location'];
 	$hash = $result['hash'];
+	$device = $result['device'];
 	
-	$timer_request = ''.$url_format.'://'.$box_ip.'/web/timeradd?sRef='.$e2eventservicereference.'&begin='.$e2eventstart.'&end='.$e2eventend.'&name='.$title_enc.'&description='.$description_enc.'&dirname='.$e2location.'&afterevent=3';
+	// send timer to different device
+	if($device != "0"){
+	$sql6 = mysqli_query($dbmysqli, "SELECT * FROM `device_list` WHERE `id` = '".$device."' ");
+	$result6 = mysqli_fetch_assoc($sql6);
+	$device_box_ip = $result6['device_ip'];
+	$device_box_user = $result6['device_user'];
+	$device_box_password = $result6['device_password'];
+	$device_url_format = $result6['device_password'];
+	$device_webrequest = stream_context_create(array (
+	'http' => array (
+	'header' => 'Authorization: Basic ' . base64_encode("$device_box_user:$device_box_password"),
+	'ssl' =>array (
+	'verify_peer' => false,
+	'verify_peer_name' => false,
+	))
+	));
+	$device_timer_request = $device_url_format.'://'.$device_box_ip.'/web/timeradd?sRef='.$e2eventservicereference.'&begin='.$e2eventstart.'&end='.$e2eventend.'&name='.$title_enc.'&description='.$description_enc.'&dirname='.$e2location.'&afterevent=3';
+	$device_timer_request = str_replace("%22", "%60", $device_timer_request);
+	$device_timer_request = str_replace("%27", "%60", $device_timer_request);	
+	$device_send_timer_request = @file_get_contents($device_timer_request, false, $device_webrequest);
+	
+	// detect conflict
+	$xml = simplexml_load_string($device_send_timer_request);
+	$timer_status = $xml->e2state;
+	if(preg_match("/\btrue\b/i", $timer_status)){ $timer_status = ""; $timer_conflict = "0"; } else { $timer_conflict = "1"; }
+	
+	} // send timer to different device
+	
+	else {
+	
+	$timer_request = $url_format.'://'.$box_ip.'/web/timeradd?sRef='.$e2eventservicereference.'&begin='.$e2eventstart.'&end='.$e2eventend.'&name='.$title_enc.'&description='.$description_enc.'&dirname='.$e2location.'&afterevent=3';
 	
 	// remove " and ' from request
 	$timer_request = str_replace("%22", "%60", $timer_request);
 	$timer_request = str_replace("%27", "%60", $timer_request);
 	
-	$send_timer_request = file_get_contents($timer_request, false, $webrequest);
+	$send_timer_request = @file_get_contents($timer_request, false, $webrequest);
 	
-	$sql = mysqli_query($dbmysqli, "UPDATE `timer` SET `status` = 'manual' WHERE `id` = '".$key."' ");
+	// detect conflict
+	$xml = simplexml_load_string($send_timer_request);
+	$timer_status = $xml->e2state;
+	if(preg_match("/\btrue\b/i", $timer_status)){ $timer_status = ""; $timer_conflict = "0"; } else { $timer_conflict = "1"; }
+	
+	} // send timer to default receiver
+	
+	$sql = mysqli_query($dbmysqli, "UPDATE `timer` SET `status` = 'manual', `conflict` = '".$timer_conflict."' WHERE `id` = '".$key."' ");
 	
 	$sql = mysqli_query($dbmysqli, "UPDATE epg_data SET `timer` = '1' WHERE `hash` = '".$hash."' ");
-	
-	sleep(0.5);
 	}
+	sleep(1);
 	echo 'send_done';
 	}
 	

@@ -1,7 +1,8 @@
 <?php 
 //
-sleep(1);
 include("../inc/dashboard_config.php");
+
+	sleep(1);
 
 	// ajax header
  	header('Content-Type: text/event-stream');
@@ -16,17 +17,14 @@ include("../inc/dashboard_config.php");
 	
 	if(!isset($crawl_bouquet) or $crawl_bouquet == "" or !isset($bouquet_id) or $bouquet_id == "") 
 	{ 
-	echo "data: data missed\n\n"; 
+	echo "data:error"; 
 	
 	} else { 
 	
 	$sql = mysqli_query($dbmysqli, "UPDATE `bouquet_list` SET `crawl` = '$crawl_bouquet' WHERE `id` = '$bouquet_id' ");
 	
-	// close db
-	mysqli_close($dbmysqli);
-	
 	// answer for ajax
-	echo "data: \n\n";
+	echo "data:done";
 
 }
 ?>

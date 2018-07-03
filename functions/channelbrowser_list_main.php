@@ -5,12 +5,11 @@ session_start();
 <html>
 <head>
 <script>
-//
-$(document).ready(function(){
+$(function(){
     $("#channelbrowser_main*").hover(function(){
-        $(this).css("background-color", "#FAFAFA");
-        }, function(){
-        $(this).css("background-color", "white");
+    $(this).css("background-color", "#FAFAFA");
+    }, function(){
+    $(this).css("background-color", "white");
     });
 });
 </script>
@@ -89,15 +88,31 @@ include("../inc/dashboard_config.php");
 	$sql = "SELECT * FROM `record_locations` ORDER BY id ASC";
 	if ($result2 = mysqli_query($dbmysqli,$sql))
 	{
-	// Fetch one and one row
 	while ($obj = mysqli_fetch_object($result2)) {	
 	{
 	if(!isset($rec_dropdown_channelbrowser) or $rec_dropdown_channelbrowser == "") { $rec_dropdown_channelbrowser = ""; }
 	$rec_dropdown_channelbrowser = $rec_dropdown_channelbrowser."<option value=\"$obj->id\">$obj->e2location</option>"; }
 	}
 	}
-	//
-	if ($time == 'cb_now_today' ){ $time_start = $today_start; $time_end = $today_end; unset($_SESSION['sum_channelbrowser_days']);  //session_destroy(); 
+	
+	// device dropdown
+	$sql2 = "SELECT * FROM `device_list` ORDER BY `id` ASC";
+	
+	if ($result2 = mysqli_query($dbmysqli,$sql2))
+	{
+	while ($obj = mysqli_fetch_object($result2)){
+	{
+	$id = $obj->id;
+	$device_description = rawurldecode($obj->device_description);
+	
+	if(!isset($device_dropdown) or $device_dropdown == ""){ $device_dropdown = ""; }
+
+	$device_dropdown = $device_dropdown."<option value=\"$id\">$device_description</option>"; 
+	}
+	}
+	} // device
+	
+	if($time == 'cb_now_today'){ $time_start = $today_start; $time_end = $today_end; unset($_SESSION['sum_channelbrowser_days']);  //session_destroy(); 
 	}
 	
 	if(!isset($time_start) or $time_start == "") { $time_start = $cb_time_start; }
@@ -107,8 +122,6 @@ include("../inc/dashboard_config.php");
 
 	if ($result = mysqli_query($dbmysqli,$sql))
 	{
-	
-	// Fetch one and one row
 	while ($obj = mysqli_fetch_object($result)) {
 	
 	if(!isset($channelbrowser_list) or $channelbrowser_list == "") { $channelbrowser_list = ""; }
@@ -123,10 +136,8 @@ include("../inc/dashboard_config.php");
 	// time format 1
 	$e2eventstart = $obj->e2eventstart;
 	$date_start = date("l, d.m.Y", $e2eventstart);
-	
 	$e2eventend = $obj->e2eventend;
 	$broadcast_time = date("H:i", $e2eventstart).' - '.date("H:i", $e2eventend);
-	
 	$td_spacer = 'cnt_time';
 	}
 	
@@ -135,12 +146,9 @@ include("../inc/dashboard_config.php");
 	// time format 2
 	$e2eventstart = $obj->e2eventstart;
 	$date_start = date("l n/d/Y", $e2eventstart);
-	
 	$e2eventend = $obj->e2eventend;
 	$date_end = date("l n/d/Y - g:i A", $e2eventend);
-	
 	$broadcast_time = date("g:i A", $e2eventstart).' - '.date("g:i A", $e2eventend);
-	
 	$td_spacer = 'cnt_time_2';
 	}
 	
@@ -157,6 +165,8 @@ include("../inc/dashboard_config.php");
 	
 	//
 	$rand = substr(str_shuffle(str_repeat('0123456789',3)),0,3);
+	
+	if(!isset($device_dropdown) or $device_dropdown == ""){ $device_dropdown = ""; }
 
 $channelbrowser_list = $channelbrowser_list."
 		<div id=\"channelbrowser_main\">
@@ -190,8 +200,14 @@ $channelbrowser_list = $channelbrowser_list."
   <div style=\"clear:both\"></div>
   </div>
   <div class=\"spacer_5\"></div>
-  <span>Record location: </span><select id=\"rec_location_channelbrowser_$rand$obj->hash\" class=\"rec_location_dropdown\">$rec_dropdown_channelbrowser</select>
-  <div class=\"spacer_5\"></div>
+  <span>Receiver: </span>
+  <select id=\"channelbrowser_device_dropdown_$rand$obj->hash\" class=\"device_dropdown\" onchange=\"channelbrowser_change_device(this.id)\">
+  <option value=\"0\">default</option>
+  $device_dropdown
+  </select>
+  <div class=\"spacer_10\"></div>
+  <span>Record location: </span>
+  <select id=\"rec_location_channelbrowser_$rand$obj->hash\" class=\"rec_location_dropdown\">$rec_dropdown_channelbrowser</select>
   </div>
   </div>
   <div class=\"spacer_10\"></div>";
@@ -200,12 +216,7 @@ $channelbrowser_list = $channelbrowser_list."
 	if(!isset($channelbrowser_list) or $channelbrowser_list == "") { $channelbrowser_list = "No data for this day"; }
 	
 	echo $channelbrowser_list;
-	
-  // Free result
-  mysqli_free_result($result);
 
-//close db
-mysqli_close($dbmysqli);
 ?>
 
 </body>

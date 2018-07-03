@@ -14,9 +14,9 @@ include("../inc/dashboard_config.php");
 	// delete before crawling
 	$sql = mysqli_query($dbmysqli, "DELETE FROM `epg_data` WHERE `channel_hash` = '".$channel_hash."' ");
 	
-	$xmlfile = ''.$url_format.'://'.$box_ip.'/web/epgservice?sRef='.$e2servicereference.'';
+	$xmlfile = $url_format.'://'.$box_ip.'/web/epgservice?sRef='.$e2servicereference.'';
 	
-	$getEPG_request = file_get_contents($xmlfile, false, $webrequest);
+	$getEPG_request = @file_get_contents($xmlfile, false, $webrequest);
 	
 	$xml = simplexml_load_string(preg_replace('/[^\x{0009}\x{000a}\x{000d}\x{0020}-\x{D7FF}\x{E000}-\x{FFFD}]+/u', ' ', $getEPG_request));
 
@@ -129,12 +129,9 @@ if ($xml) {
 	// set epg crawler not working
 	$sql = mysqli_query($dbmysqli, "UPDATE `settings` SET `epg_crawler_activ` = '0' ");
 	
-	// close db
-	mysqli_close($dbmysqli);
-	
 	// answer for ajax
 	header('Content-Type: text/event-stream');
 	header('Cache-Control: no-cache');
-	echo "data: channel crawl - done!\n\n";
+	echo "data:done";
 
 ?>

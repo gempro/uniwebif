@@ -3,8 +3,8 @@
 include("../inc/dashboard_config.php");
 
 // update timestamp
-	$res = mysqli_query($dbmysqli, "SELECT * FROM `settings` WHERE id = '0' ");
-	$result = mysqli_fetch_assoc($res);
+	$sql = mysqli_query($dbmysqli, "SELECT * FROM `settings` WHERE id = '0' ");
+	$result = mysqli_fetch_assoc($sql);
 	
 	$cz_wait_time = $result['cz_wait_time'];
 	$cz_repeat = $result['cz_repeat'];
@@ -44,14 +44,18 @@ include("../inc/dashboard_config.php");
 	$sql = mysqli_query($dbmysqli, "UPDATE `settings` SET `cz_timestamp` = '".$cz_timestamp."' WHERE id = '0' ");
 
 	// calculate work time
-	$stmt = $dbmysqli->prepare("SELECT COUNT(*) AS sum_zap_channels FROM `channel_list` WHERE zap = '1' ");
-	if( !is_a($stmt, "MySQLI_Stmt") || $dbmysqli->errno > 0 )
-	throw new Exception( $dbmysqli->error, $dbmysqli->errno );
-	
-	$stmt->execute();
-	$stmt->bind_result($sum_zap_channels);
-	$stmt->fetch();
-	$stmt->close();
+//	$stmt = $dbmysqli->prepare("SELECT COUNT(*) AS sum_zap_channels FROM `channel_list` WHERE zap = '1' ");
+//	if( !is_a($stmt, "MySQLI_Stmt") || $dbmysqli->errno > 0 )
+//	throw new Exception( $dbmysqli->error, $dbmysqli->errno );
+//	$stmt->execute();
+//	$stmt->bind_result($sum_zap_channels);
+//	$stmt->fetch();
+//	$stmt->close();
+	//
+	$sql = mysqli_query($dbmysqli, 'SELECT COUNT(*) FROM `channel_list` WHERE zap = "1" ');
+	$result = mysqli_fetch_row($sql);
+	$sum_zap_channels = $result[0];
+	//
 	
 	$cz_worktime = $sum_zap_channels * $cz_wait_time + 10;
 	
@@ -62,9 +66,9 @@ include("../inc/dashboard_config.php");
 	$sleeptime = $result['cz_wait_time'];
 	
 	// check power status
-	$xmlfile = ''.$url_format.'://'.$box_ip.'/web/powerstate';
+	$xmlfile = $url_format.'://'.$box_ip.'/web/powerstate';
 
-	$power_command = file_get_contents($xmlfile, false, $webrequest);
+	$power_command = @file_get_contents($xmlfile, false, $webrequest);
 
 	$xml = simplexml_load_string($power_command);
 
@@ -74,11 +78,11 @@ include("../inc/dashboard_config.php");
 	
 	$power_status = preg_replace('/\s+/', '', $power_status);
 	
-	if ($power_status == 'true')
+	if($power_status == 'true')
 	{
 	// turn on Receiver
-	$turn_on_request = ''.$url_format.'://'.$box_ip.'/web/powerstate?newstate=0';
-	$turn_on = file_get_contents($turn_on_request, false, $webrequest);
+	$turn_on_request = $url_format.'://'.$box_ip.'/web/powerstate?newstate=0';
+	$turn_on = @file_get_contents($turn_on_request, false, $webrequest);
 	//
 	}	
 
@@ -91,14 +95,14 @@ include("../inc/dashboard_config.php");
 	{
 	$e2servicereference = $obj->e2servicereference;
 	
-	$zap_request = ''.url_format.'://'.$box_ip.'/web/zap?sRef='.$e2servicereference.'';
-	$zap_channel = file_get_contents($zap_request, false, $webrequest);
+	$zap_request = $url_format.'://'.$box_ip.'/web/zap?sRef='.$e2servicereference.'';
+	$zap_channel = @file_get_contents($zap_request, false, $webrequest);
 	
 	sleep($cz_sleeptime);
 	
 	//save provider from channel in db
-	$xmlfile = ''.$url_format.'://'.$box_ip.'/web/getcurrent';
-	$request = file_get_contents($xmlfile, false, $webrequest);
+	$xmlfile = $url_format.'://'.$box_ip.'/web/getcurrent';
+	$request = @file_get_contents($xmlfile, false, $webrequest);
 	$xml = simplexml_load_string($request);
 	
 if($xml->e2service->e2providername != "") 
@@ -106,7 +110,6 @@ if($xml->e2service->e2providername != "")
 	$e2providername = $xml->e2service->e2providername;
 	$sql = mysqli_query($dbmysqli, "UPDATE `channel_list` SET `e2providername` = '$e2providername' WHERE `e2servicereference` = '".$obj->e2servicereference."' ");
 	}
-	
 	//
 	}
     }
@@ -116,20 +119,17 @@ if($xml->e2service->e2providername != "")
 	$result = mysqli_fetch_assoc($res);
 	$start_channel = $result['e2servicereference'];
 	
-	$zap_request = ''.$url_format.'://'.$box_ip.'/web/zap?sRef='.$start_channel.'';
-	$zap_start_channel = file_get_contents($zap_request, false, $webrequest);
+	$zap_request = $url_format.'://'.$box_ip.'/web/zap?sRef='.$start_channel.'';
+	$zap_start_channel = @file_get_contents($zap_request, false, $webrequest);
 	
 	sleep(10);
 	
 	// turn off Receiver
-	$turn_off_request = ''.$url_format.'://'.$box_ip.'/web/powerstate?newstate=0';
-	$turn_off = file_get_contents($turn_off_request, false, $webrequest);
-
-	//close db
-	mysqli_close($dbmysqli);
+	$turn_off_request = $url_format.'://'.$box_ip.'/web/powerstate?newstate=0';
+	$turn_off = @file_get_contents($turn_off_request, false, $webrequest);
 
 	// answer for ajax
 	header('Content-Type: text/event-stream');
 	header('Cache-Control: no-cache');
-	echo "data: all channels zapped - done!\n\n";
+	echo "data:done";
 ?>
