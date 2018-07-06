@@ -177,7 +177,7 @@ session_start();
 	$query = mysqli_query($dbmysqli, "DROP TABLE IF EXISTS `uniwebif`.`device_list`");
 	$query = mysqli_query($dbmysqli, "
 	
-	CREATE TABLE IF NOT EXISTS `device_list` (
+	CREATE TABLE IF NOT EXISTS `uniwebif`.`device_list` (
 	  `id` int(11) NOT NULL AUTO_INCREMENT,
 	  `device_description` varchar(255) NOT NULL,
 	  `device_ip` varchar(255) NOT NULL,
