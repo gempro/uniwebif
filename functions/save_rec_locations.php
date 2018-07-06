@@ -6,9 +6,10 @@
 	header('Content-Type: text/event-stream');
 	header('Cache-Control: no-cache');
 	
+	if(!isset($_REQUEST['device']) or $_REQUEST['device'] == "") { $_REQUEST['device'] = ""; }
 	$device = $_REQUEST['device'];
 	
-	if($device == "0"){
+	if($device == "0" or $device == ""){
 	$sql = mysqli_query($dbmysqli, "TRUNCATE `record_locations`");
 	
 	// get locations
