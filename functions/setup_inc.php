@@ -22,7 +22,7 @@ session_start();
 	
 	sleep(1);
 	
-if ($setting == 'sql'){
+	if ($setting == 'sql'){
 	
 	if ($sql_host == ''){ echo 'SQL Host is missing<br>'; }
 	if ($sql_user == ''){ echo 'SQL User is missing<br>'; }
@@ -49,7 +49,7 @@ if ($setting == 'sql'){
 	}
 	
 	// receiver
-if ($setting == 'receiver'){
+	if($setting == 'receiver'){
 	$receiver_ip = $_REQUEST['receiver_ip'];
 	$receiver_user = $_REQUEST['receiver_user'];
 	$receiver_pass = $_REQUEST['receiver_pass'];
@@ -68,10 +68,10 @@ if ($setting == 'receiver'){
 	'verify_peer_name' => false,
 	))
 	));
-	$request = $url_format.'://'.$receiver_ip.'/web/powerstate';
+	$request = 'http://'.$receiver_ip.'/web/powerstate';
 	$status = @file_get_contents($request, false, $webrequest);
 	
-	if ($status == TRUE){
+	if($status == TRUE){
 	
 	echo 'Connection OK!';
 	
@@ -86,7 +86,7 @@ if ($setting == 'receiver'){
 	}
 	
 
-if ($setting == 'install'){
+	if($setting == 'install'){
 	
 	$sql_host = $_SESSION["sql_host"];
 	$sql_user = $_SESSION["sql_user"];
@@ -173,8 +173,6 @@ if ($setting == 'install'){
 	) ENGINE = MYISAM  DEFAULT CHARSET=utf8;
 	");
 	
-	
-	
 	$query = mysqli_query($dbmysqli, "DROP TABLE IF EXISTS `uniwebif`.`device_list`");
 	$query = mysqli_query($dbmysqli, "
 	
@@ -189,9 +187,6 @@ if ($setting == 'install'){
 	  KEY `id` (`id`)
 	) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
 	");
-	
-	
-	
 	
 	$query = mysqli_query($dbmysqli, "DROP TABLE IF EXISTS `uniwebif`.`epg_data`");
 	$query = mysqli_query($dbmysqli, "
