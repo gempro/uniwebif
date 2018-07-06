@@ -178,14 +178,25 @@ session_start();
 	$query = mysqli_query($dbmysqli, "
 	
 	CREATE TABLE IF NOT EXISTS `uniwebif`.`device_list` (
-	  `id` int(11) NOT NULL AUTO_INCREMENT,
-	  `device_description` varchar(255) NOT NULL,
-	  `device_ip` varchar(255) NOT NULL,
-	  `device_user` varchar(255) NOT NULL,
-	  `device_password` varchar(255) NOT NULL,
-	  `device_record_location` varchar(255) NOT NULL,
-	  `device_color` varchar(255) NOT NULL,
-	  KEY `id` (`id`)
+	`id` int(11) NOT NULL AUTO_INCREMENT,
+	`device_description` varchar(255) NOT NULL,
+	`device_ip` varchar(255) NOT NULL,
+	`device_user` varchar(255) NOT NULL,
+	`device_password` varchar(255) NOT NULL,
+	`device_record_location` varchar(255) NOT NULL,
+	`device_color` varchar(255) NOT NULL,
+	`url_format` varchar(255) NOT NULL,
+	`rec_location0` varchar(255) NOT NULL,
+	`rec_location1` varchar(255) NOT NULL,
+	`rec_location2` varchar(255) NOT NULL,
+	`rec_location3` varchar(255) NOT NULL,
+	`rec_location4` varchar(255) NOT NULL,
+	`rec_location5` varchar(255) NOT NULL,
+	`rec_location6` varchar(255) NOT NULL,
+	`rec_location7` varchar(255) NOT NULL,
+	`rec_location8` varchar(255) NOT NULL,
+	`rec_location9` varchar(255) NOT NULL,
+	KEY `id` (`id`)
 	) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
 	");
 	
@@ -238,6 +249,22 @@ session_start();
 	) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 	");
 	
+	$query = mysqli_query($dbmysqli, "CREATE TABLE IF NOT EXISTS `uniwebif`.`keywords` (
+	`id` int(11) NOT NULL AUTO_INCREMENT,
+	`searchterm` varchar(255) NOT NULL,
+	`word` varchar(255) NOT NULL,
+	`sum_total` int(4) NOT NULL,
+	`sum_title` int(4) NOT NULL,
+	`sum_description` int(4) NOT NULL,
+	`sum_extdescription` int(4) NOT NULL,
+	`hash` varchar(255) NOT NULL,
+	`timestamp` int(11) NOT NULL DEFAULT '1',
+	`activ` int(1) NOT NULL DEFAULT '1',
+	`counter` int(4) NOT NULL DEFAULT '0',
+	PRIMARY KEY (`id`)
+	) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+	");
+
 	$query = mysqli_query($dbmysqli, "DROP TABLE IF EXISTS `uniwebif`.`record_locations`");
 	$query = mysqli_query($dbmysqli, "
 	
