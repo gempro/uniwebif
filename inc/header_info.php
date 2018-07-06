@@ -4,8 +4,8 @@ include_once("inc/dashboard_config.php");
 
 	// epg info header
 	// select oldest entry
-	$query = mysqli_query($dbmysqli, "SELECT e2eventservicename, e2eventstart FROM `epg_data` ORDER BY e2eventstart ASC LIMIT 0 , 1");
-	$first_entry = mysqli_fetch_assoc($query);
+	$sql = mysqli_query($dbmysqli, "SELECT `e2eventservicename`, `e2eventstart` FROM `epg_data` ORDER BY `e2eventstart` ASC LIMIT 0 , 1");
+	$first_entry = mysqli_fetch_assoc($sql);
 	
 	if ($time_format == '1')
 	{
@@ -19,8 +19,8 @@ include_once("inc/dashboard_config.php");
 	}
 	
 	// select latest entry
-	$query = mysqli_query($dbmysqli, "SELECT e2eventservicename, e2eventstart FROM `epg_data` ORDER BY e2eventstart DESC LIMIT 0 , 1");
-	$last_entry = mysqli_fetch_assoc($query);
+	$sql = mysqli_query($dbmysqli, "SELECT `e2eventservicename`, `e2eventstart` FROM `epg_data` ORDER BY `e2eventstart` DESC LIMIT 0 , 1");
+	$last_entry = mysqli_fetch_assoc($sql);
 	
 	if ($time_format == '1')
 	{
@@ -33,6 +33,9 @@ include_once("inc/dashboard_config.php");
 	$date_latest = date("n/d/Y g:i A", $last_entry['e2eventstart']);
 	}
 	
+	if(!isset($date_first) or $date_first == "") { $date_first = ""; }
+	if(!isset($date_latest) or $date_latest == "") { $date_latest = ""; }
+	
 	if ($date_first == '' or $date_first == '01.01.1970 01:00' or $date_first == '1/01/1970 1:00 AM'){ $date_first = 'no data'; }
 	if ($date_latest == '' or $date_latest == '01.01.1970 01:00' or $date_latest == '1/01/1970 1:00 AM'){ $date_latest = 'no data'; }
 	if ($first_entry['e2eventservicename'] == ''){ $first_entry['e2eventservicename'] = 'no data'; }	
@@ -40,5 +43,6 @@ include_once("inc/dashboard_config.php");
 	
 	if ($time_format == '1'){ $header_date = date("D, d.m.Y", $time); }
 	if ($time_format == '2'){ $header_date = date("D, n/d/Y", $time); }
+	if ($time_format == ''){ $header_date = date("D, n/d/Y", $time); }
 
 ?>
