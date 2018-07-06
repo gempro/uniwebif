@@ -4,6 +4,7 @@ session_start();
 	if(!isset($_REQUEST['setting']) or $_REQUEST['setting'] == "") { $_REQUEST['setting'] = ""; }
 	
 	$setting = $_REQUEST['setting'];
+	$url_format = "http";
 	
 	if(!isset($_REQUEST['sql_host']) or $_REQUEST['sql_host'] == "") { $_REQUEST['sql_host'] = ""; }
 	if(!isset($_REQUEST['sql_user']) or $_REQUEST['sql_user'] == "") { $_REQUEST['sql_user'] = ""; }
@@ -22,10 +23,10 @@ session_start();
 	
 	sleep(1);
 	
-	if ($setting == 'sql'){
+	if($setting == 'sql'){
 	
-	if ($sql_host == ''){ echo 'SQL Host is missing<br>'; }
-	if ($sql_user == ''){ echo 'SQL User is missing<br>'; }
+	if($sql_host == ''){ echo 'SQL Host is missing<br>'; }
+	if($sql_user == ''){ echo 'SQL User is missing<br>'; }
 	
 	if($sql_host != '' and $sql_user != '')
 	{ 
@@ -54,9 +55,9 @@ session_start();
 	$receiver_user = $_REQUEST['receiver_user'];
 	$receiver_pass = $_REQUEST['receiver_pass'];
 	
-	if ($receiver_ip == ''){ echo 'Receiver IP missing<br>'; }
-	if ($receiver_user == ''){ echo 'Receiver User missing<br>'; }
-	if ($receiver_pass == ''){ echo 'Receiver Password missing<br>'; }
+	if($receiver_ip == ''){ echo 'Receiver IP missing<br>'; }
+	if($receiver_user == ''){ echo 'Receiver User missing<br>'; }
+	if($receiver_pass == ''){ echo 'Receiver Password missing<br>'; }
 	
 	if($receiver_ip != '' and $receiver_user != '' and $receiver_pass != '')
 	{
@@ -68,7 +69,7 @@ session_start();
 	'verify_peer_name' => false,
 	))
 	));
-	$request = 'http://'.$receiver_ip.'/web/powerstate';
+	$request = $url_format.'://'.$receiver_ip.'/web/powerstate';
 	$status = @file_get_contents($request, false, $webrequest);
 	
 	if($status == TRUE){
