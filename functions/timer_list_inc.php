@@ -305,7 +305,7 @@ if ($obj->record_status == 'c_expired')
 		$show_exclude_text = "<div class=\"spacer_5\"></div><a id=\"$obj->id\" style=\"cursor:pointer;\" onclick=\"timerlist_show_exclude(this.id)\">Show excluded term(s)</a>"; } else { $show_exclude_text = ""; }
 		
 		if ($obj->rec_replay == 'on'){ $replay_status = '| Timer for Replays: '.$rec_replay.''; } else { $replay_status = ''; }
-		if ($obj->exclude_channel != '' and $obj->exclude_title != '' and $obj->exclude_description != '' and $obj->exclude_extdescription != '' and $obj->rec_replay == 'on'){ $spacer = ' | '; } else { $spacer = ''; }
+		$spacer = '';
 		
 		// get record location id
 		$sql2 = mysqli_query($dbmysqli, "SELECT * FROM `record_locations` WHERE `e2location` = '".$obj->record_location."' LIMIT 0,1");
