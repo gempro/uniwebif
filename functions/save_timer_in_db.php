@@ -5,7 +5,7 @@ include("../inc/dashboard_config.php");
 
 	$sql = "SELECT * FROM `saved_search` WHERE `crawled` = '0' and `activ` = 'yes' ";
 	
-	if ($result1 = mysqli_query($dbmysqli,$sql))
+	if($result1 = mysqli_query($dbmysqli,$sql))
 	{
 	while ($obj = mysqli_fetch_object($result1)) {
 	{
@@ -22,10 +22,10 @@ include("../inc/dashboard_config.php");
 	$rec_replay = $obj->rec_replay;
 
 	// update last crawl
-	$sql = mysqli_query($dbmysqli, "UPDATE `saved_search` SET `last_crawl` = '".$time."', crawled = '1' WHERE `id` = ".$id." ");
+	$sql = mysqli_query($dbmysqli, "UPDATE `saved_search` SET `last_crawl` = '".$time."', `crawled` = '1' WHERE `id` = ".$id." ");
 	
 	// search only in selected channel
-	if ($e2eventservicereference !== 'NULL'){
+	if($e2eventservicereference !== 'NULL'){
 	
 	$search_include = 'WHERE e2eventservicereference = "'.$e2eventservicereference.'" AND'; 
 	$search_include2 = 'OR e2eventservicereference = "'.$e2eventservicereference.'" AND';
@@ -40,49 +40,44 @@ include("../inc/dashboard_config.php");
 	$exclude_time = 'AND `e2eventend` > '.$time.'';
 	
 	// exclude channel
-	if ($exclude_channel !== ''){ 
+	if($exclude_channel !== ''){ 
 	$tags = explode(rawurlencode(';') , $exclude_channel);
 	foreach($tags as $i =>$key) { $i > 0;
 	if(!isset($exclude_channel_part) or $exclude_channel_part == "") { $exclude_channel_part = ""; }
 	if(!isset($key) or $key == "") { $search_string = ''; } else { $search_string = 'AND `servicename_enc` NOT LIKE "%'.$key.'%" '; }
 	$exclude_channel_part = $exclude_channel_part.$search_string;
 	}
-	}
+	} else { $exclude_channel_part = ""; }
 	
-	// exclude titel
-	if ($exclude_title !== ''){
+	// exclude title
+	if($exclude_title !== ''){
 	$tags = explode(rawurlencode(';') , $exclude_title);
 	foreach($tags as $i =>$key) { $i > 0;
 	if(!isset($exclude_title_part) or $exclude_title_part == "") { $exclude_title_part = ""; }
 	if(!isset($key) or $key == "") { $search_string = ''; } else { $search_string = 'AND `title_enc` NOT LIKE "%'.$key.'%" '; }
 	$exclude_title_part = $exclude_title_part.$search_string;
 	}
-	}
+	} else { $exclude_title_part = ""; }
 	
 	// exclude description
-	if ($exclude_description !== ''){
+	if($exclude_description !== ''){
 	$tags = explode(rawurlencode(';') , $exclude_description);
 	foreach($tags as $i =>$key) { $i >0;
 	if(!isset($exclude_description_part) or $exclude_description_part == "") { $exclude_description_part = ""; }
 	if(!isset($key) or $key == "") { $search_string = ''; } else { $search_string = 'AND `description_enc` NOT LIKE "%'.$key.'%" '; }
 	$exclude_description_part = $exclude_description_part.$search_string;
 	}
-	}
+	} else { $exclude_description_part = ""; }
 	
 	// exclude extended description
-	if ($exclude_extdescription !== ''){
+	if($exclude_extdescription !== ''){
 	$tags = explode(rawurlencode(';') , $exclude_extdescription);
 	foreach($tags as $i =>$key) { $i >0;
 	if(!isset($exclude_extdescription_part) or $exclude_extdescription_part == "") { $exclude_extdescription_part = ""; }
 	if(!isset($key) or $key == "") { $search_string = ''; } else { $search_string = 'AND `descriptionextended_enc` NOT LIKE "%'.$key.'%" '; }
 	$exclude_extdescription_part = $exclude_extdescription_part.$search_string;
 	}
-	}
-	
-	if(!isset($exclude_channel_part) or $exclude_channel_part == "") { $exclude_channel_part = ""; }
-	if(!isset($exclude_title_part) or $exclude_title_part == "") { $exclude_title_part = ""; }
-	if(!isset($exclude_description_part) or $exclude_description_part == "") { $exclude_description_part = ""; }
-	if(!isset($exclude_extdescription_part) or $exclude_extdescription_part == "") { $exclude_extdescription_part = ""; }
+	} else { $exclude_extdescription_part = ""; }
 	
 	// search all
 	if ($search_option == 'all' or $search_option == '')
@@ -91,24 +86,24 @@ include("../inc/dashboard_config.php");
 	}
 	
 	// search title
-	if ($search_option == 'title')
+	if($search_option == 'title')
 	{
 	$sql = 'SELECT * FROM `epg_data` '.$search_include.' `title_enc` LIKE "%'.$raw_term.'%" '.$exclude_channel_part.' '.$exclude_title_part.' '.$exclude_description_part.' '.$exclude_extdescription_part.' '.$exclude_time.' ORDER BY `e2eventstart` ASC';
 	}
 	
 	// search description
-	if ($search_option == 'description')
+	if($search_option == 'description')
 	{
 	$sql = 'SELECT * FROM `epg_data` '.$search_include.' `description_enc` LIKE "%'.$raw_term.'%" '.$exclude_channel_part.' '.$exclude_title_part.' '.$exclude_description_part.' '.$exclude_extdescription_part.' '.$exclude_time.' ORDER BY `e2eventstart` ASC';
 	}
 	
 	// search extended description
-	if ($search_option == 'extdescription')
+	if($search_option == 'extdescription')
 	{
-	$sql = 'SELECT * FROM `epg_data` '.$search_include.' descriptionextended_enc LIKE "%'.$raw_term.'%" '.$exclude_channel_part.' '.$exclude_title_part.' '.$exclude_description_part.' '.$exclude_extdescription_part.' '.$exclude_time.' ORDER BY `e2eventstart` ASC';
+	$sql = 'SELECT * FROM `epg_data` '.$search_include.' `descriptionextended_enc` LIKE "%'.$raw_term.'%" '.$exclude_channel_part.' '.$exclude_title_part.' '.$exclude_description_part.' '.$exclude_extdescription_part.' '.$exclude_time.' ORDER BY `e2eventstart` ASC';
 	}
 
-	if ($result2 = mysqli_query($dbmysqli,$sql))
+	if($result2 = mysqli_query($dbmysqli,$sql))
 	{
 	while ($obj = mysqli_fetch_object($result2)) {	
 	{
@@ -165,7 +160,7 @@ include("../inc/dashboard_config.php");
 	// check record status
 	$sql = "SELECT * FROM `timer` WHERE `record_status` NOT LIKE 'c_expired' ";
 	
-	if ($result3 = mysqli_query($dbmysqli,$sql))
+	if($result3 = mysqli_query($dbmysqli,$sql))
 	{
 	while ($obj = mysqli_fetch_object($result3)) {
 	{
@@ -173,15 +168,15 @@ include("../inc/dashboard_config.php");
 	$rec_replay = $obj->rec_replay;
 	$is_replay = $obj->is_replay;
 	
-	if ($time > $obj->e2eventstart and $time < $obj->e2eventend )
+	if($time > $obj->e2eventstart and $time < $obj->e2eventend )
 	{
 	$record_status = 'a_recording'; }
 	
-	if ($time < $obj->e2eventstart and $time < $obj->e2eventend)
+	if($time < $obj->e2eventstart and $time < $obj->e2eventend)
 	{
 	$record_status = 'b_incoming'; }
 	
-	if ($time > $obj->e2eventend)
+	if($time > $obj->e2eventend)
 	{
 	$record_status = 'c_expired'; }
 
