@@ -17,7 +17,9 @@ $(document).ready(function(){
 //
 include("../inc/dashboard_config.php");
 
-	header('Cache-Control: no-cache');	
+	header('Cache-Control: no-cache');
+	
+	sleep(1);
 	
 	if(!isset($_REQUEST['record_location']) or $_REQUEST['record_location'] == ""){ $_REQUEST['record_location'] = ""; }
 	if(!isset($_REQUEST['action']) or $_REQUEST['action'] == ""){ $_REQUEST['action'] = ""; }
@@ -120,7 +122,7 @@ if($xml){
 	$e2filesize = $xml->e2movie[$i]->e2filesize;
 	$filespace = $filespace + $e2filesize;
 	
-	if ($time_format == '1')
+	if($time_format == '1')
 	{
 	// time format 1
 	$record_date = date("d.m.Y - H:i |", "".$e2time."");
@@ -129,7 +131,7 @@ if($xml){
 	if ($day_today == $today_record){ $sum_today = $sum_today +1; }
 	}
 	
-	if ($time_format == '2')
+	if($time_format == '2')
 	{
 	// time format 2
 	$record_date = date("n/d/Y - g:i A |", "".$e2time."");
