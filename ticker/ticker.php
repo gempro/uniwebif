@@ -83,7 +83,7 @@ include("../inc/dashboard_config.php");
 	if(!isset($_REQUEST["hash"]) or $_REQUEST["hash"] == "") { $hash = ""; } else { $hash = $_REQUEST["hash"]; }
 	
 	if ($action == 'hide'){ 
-	$sql = mysqli_query($dbmysqli, "UPDATE timer set show_ticker = '0' WHERE hash = '".$hash."' ");
+	$sql = mysqli_query($dbmysqli, "UPDATE `timer` SET `show_ticker` = '0' WHERE `hash` = '".$hash."' ");
 	exit;
 	}
 	
@@ -104,12 +104,10 @@ include("../inc/dashboard_config.php");
 		
 	if ($sum_timer < '2'){ $scroll_duration = '36000000'; $show_navigate = 'display:none;'; } else { $scroll_duration = '15000'; $show_navigate = ''; }
 
-	$sql = "SELECT * FROM `timer` WHERE `show_ticker` = '1' AND `device` = '0' AND `e2eventstart` BETWEEN '".$time."' AND '".$time_duration."' ".$hidden_timer." ";
+	$sql = "SELECT * FROM `timer` WHERE `show_ticker` = '1' AND `device` = '0' AND `e2eventstart` BETWEEN '".$time."' AND '".$time_duration."' ".$hidden_timer." ORDER BY `e2eventstart` ASC";
 	
 	if ($result = mysqli_query($dbmysqli,$sql))
 	{
-	
-	// Fetch one and one row
 	while ($obj = mysqli_fetch_object($result)) {
     	
 	{
