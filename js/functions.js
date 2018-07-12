@@ -665,8 +665,6 @@ function timerlist_delete_timer(id){
 	}
 	window.setTimeout(hide_timerlist_div_outer, 1000);
 	}
-	//$("#box_"+this_id+"").attr({name:'null'});
-	//$("#box_"+this_id+"").attr({id:'null'});
 	load_timer_list_panel();
 	});
 }
@@ -948,6 +946,7 @@ function record_list_desc(id){
 function reload_rec_location(){
 	
 	var device = $("#select_device").val();
+	$("#rec_folder_status").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
 	$.post("functions/save_rec_locations.php",
 	{
 	device: device
