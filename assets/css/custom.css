@@ -37,7 +37,7 @@ body {
 	padding-bottom: 15px;
 	padding-right: 30px;
 }
-.statusbar_cnt_outer {
+.statusbar_outer {
 	display:none;
 }
 #statusbar {
@@ -55,6 +55,8 @@ body {
 	max-width: 10%
 	height: auto;
 	float: left;
+	text-align: right;
+	padding-right: 5px;
 }
 #div_crawl_complete {
 	background-color: #EFEFEF;
@@ -139,6 +141,17 @@ body {
 	border-radius: 4px 4px 4px 4px;
 	padding: 15px;
 	margin-bottom: 5px;
+}
+.panel-close {
+	color: #000;
+	cursor: pointer;
+	font-size: 18px;
+	font-weight: 700;
+	line-height: 1;
+	text-shadow: 0 1px 0 #fff;
+	filter: alpha(opacity=20);
+	opacity: .2;
+	float: right;
 }
 #send_timer_status {
 	height: auto;
@@ -561,7 +574,7 @@ display:none;
 	height: auto;
 	padding: 5px;
 	border-collapse: collapse !important;
-	border: 1px solid #ddd !important;
+	/*border: 1px solid #ddd !important;*/
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
@@ -645,8 +658,8 @@ display:none;
 #record_list_main #cnt_title {
 	width: auto;
 	height: auto;
-	min-width:60%;
-	max-width:60%;
+	min-width:70%;
+	max-width:70%;
 	float: left;
 }
 /* For small screen */    
@@ -669,7 +682,7 @@ display:none;
 	float: left;
 }
 #search_result_header .links {
-color:#000;
+	color:#000;
 }
 #saved_search_list {
 	width: 100%;
@@ -692,7 +705,7 @@ color:#000;
 /* For small screen */    
 @media (max-width: 768px) {
 .search_list_term {
-	width:auto;
+	width:100%;
 }
 }
 @media (min-width: 900px) {
@@ -712,7 +725,10 @@ color:#000;
 	width:100%;
 }
 .search_list_active {
-	width:100%;
+	width:75%;
+}
+.search_list_replay {
+	width:30%;
 }
 }
 @media (max-width: 768px) {
@@ -797,6 +813,72 @@ color:#000;
 .exclude_extdescription_text {
 	color: #0000CC;
 }
+/* search list excludes */
+.exclude_channel {
+	color: #000;
+	cursor: pointer;
+}
+.exclude_channel_field {
+	border: thin solid #000;
+}
+.exclude_title {
+	color: #F0AD4E;
+	cursor: pointer;
+}
+.exclude_title_field {
+	border: thin solid #F0AD4E;
+}
+.exclude_description {
+	color: #5CB85C;
+	cursor: pointer;
+}
+.exclude_description_field {
+	border: thin solid #5CB85C;
+}
+.exclude_extdescription {
+	color: #0000CC;
+	cursor: pointer;
+}
+.exclude_extdescription_field {
+	border: thin solid #0000CC;
+}
+#channel_ul ul {
+	font-size: small;
+	border: thin solid #000;
+}
+#title_ul ul {
+	font-size: small;
+	border: thin solid #F0AD4E;
+}
+#description_ul ul {
+	font-size: small;
+	border: thin solid #5CB85C;
+}
+#extdescription_ul ul {
+	font-size: small;
+	border: thin solid #0000CC;
+}
+.crawl-info {
+	color:#000;
+	cursor:default;
+	font-size:10px;
+	font-weight:700;
+	line-height:1;
+	text-shadow:0 1px 0 #fff;
+	filter:alpha(opacity=20);
+	opacity:.2;
+	float:right;
+	padding-top: 20px;
+	padding-right: 5px;
+}
+.crawl-info:focus, .crawl-info:hover {
+	color:#000;
+	text-decoration:none;
+	cursor:default;
+	text-shadow:0 1px 0 #fff;
+	filter:alpha(opacity=20);
+	opacity:.2
+}
 .highlight_e2eventtitle {
 	color: #000;
 	background-color:#FFFF00;
@@ -822,7 +904,7 @@ color:#000;
 }
 .nav-header {
 	min-height:75px;
-	background-color:#8B7BFF;
+	background-color:#428BCA;
 	color:#FFFFFF;
 }
 .warning {
@@ -833,6 +915,12 @@ color:#000;
 }
 .green {
 	color:#5CB85C;
+}
+.blue {
+	color:#428BCA;
+}
+.red {
+	color:#FF0000;
 }
 .gray {
 	color:#CCCCCC;
@@ -860,7 +948,20 @@ color:#000;
 	text-decoration:underline;
 }
 .rec_location_dropdown {
+	min-width:25%;
 	max-width:90%;
+}
+.device_dropdown {
+	min-width:15%;
+	max-width:30%;
+}
+@media (max-width: 400px) {
+.rec_location_dropdown {
+	min-width:90%;
+}
+.device_dropdown {
+	min-width:90%;
+}
 }
 .sort_setting {
 	font-size: 0.7em;
@@ -1274,6 +1375,26 @@ textarea.form-control {
 	border-radius: 0px;
 	-webkit-border-radius:  0px;
 	-moz-border-radius: 0px;
+}
+.pace {
+  -webkit-pointer-events: none;
+  pointer-events: none;
+
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+}
+.pace-inactive {
+  display: none;
+}
+.pace .pace-progress {
+	position: fixed;
+	z-index: 2000;
+	top: 0;
+	right: 100%;
+	width: 100%;
+	height: 2px;
+	background-color: #428BCA;
 }
 /*==============================================
     MEDIA QUERIES     
