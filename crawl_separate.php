@@ -130,6 +130,7 @@ animatedcollapse.init()
       </div>
       <!--crawl channel id-->
       <div id="div_crawl_channel_id">
+      <span class="panel-close" onclick="animatedcollapse.hide('div_crawl_channel_id')"><span aria-hidden="true">x</span></span>
         <h1>Crawl channel ID's</h1>
         <input type="submit" class="btn btn-success" id="crawl_channel_id_btn" value="Click to confirm" onclick="animatedcollapse.show('crawl_channel_id_status'); crawl_channel_id();">
         <div id="crawl_channel_id_status"><img src="images/loading.gif" width="16" height="16" align="absmiddle"> </div>
@@ -138,6 +139,7 @@ animatedcollapse.init()
       <!--div_crawl_complete-->
       <!--crawl complete-->
       <div id="div_crawl_complete">
+      <span class="panel-close" onclick="animatedcollapse.hide('div_crawl_complete')"><span aria-hidden="true">x</span></span>
         <h1>Crawl EPG from channels</h1>
         <input type="submit" class="btn btn-success" id="crawl_complete_btn" value="Click to confirm" onclick="animatedcollapse.show('crawl_complete_status'); crawl_complete();">
         <div id="crawl_complete_status"><img src="images/loading.gif" width="16" height="16" align="absmiddle"> </div>
@@ -146,6 +148,7 @@ animatedcollapse.init()
       <!--div_crawl_complete-->
       <!--crawl mysearch id-->
       <div id="div_crawl_search">
+      <span class="panel-close" onclick="animatedcollapse.hide('div_crawl_search')"><span aria-hidden="true">x</span></span>
         <h1>Crawl search - Write timer in database</h1>
         <input type="submit" class="btn btn-success" id="crawl_search_btn" value="Click to confirm" onclick="animatedcollapse.show('crawl_search_status'); crawl_saved_search();">
         <div id="crawl_search_status"><img src="images/loading.gif" width="16" height="16" align="absmiddle"> </div>
@@ -154,6 +157,7 @@ animatedcollapse.init()
       <!--div_mysearch-->
       <!--send timer-->
       <div id="div_send_timer">
+      <span class="panel-close" onclick="animatedcollapse.hide('div_send_timer')"><span aria-hidden="true">x</span></span>
         <h1>Send timer from database to Receiver</h1>
         <input type="submit" class="btn btn-success" id="send_timer_btn" value="Click to confirm" onclick="animatedcollapse.show('send_timer_status'); send_timer();">
         <div id="send_timer_status"><img src="images/loading.gif" width="16" height="16" align="absmiddle"> </div>
@@ -162,6 +166,7 @@ animatedcollapse.init()
       <!--send timer-->
       <!--channelzapper-->
       <div id="div_start_channelzapper">
+      <span class="panel-close" onclick="animatedcollapse.hide('div_start_channelzapper')"><span aria-hidden="true">x</span></span>
         <h1>Start Channel Zapper</h1>
         <input type="submit" class="btn btn-success" id="start_channelzapper_btn" value="Click to confirm" onclick="animatedcollapse.show('channelzapper_status'); start_channelzapper();">
         <div id="channelzapper_status"><img src="images/loading.gif" width="16" height="16" align="absmiddle"> </div>

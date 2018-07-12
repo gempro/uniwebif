@@ -82,7 +82,7 @@ session_start();
 	}
 	
 	// set selected channel in dropdown
-	if ($search_channel == 'on'){
+	if($search_channel == 'on'){
 	// reset selected
     $sql = mysqli_query($dbmysqli, "UPDATE `channel_list` SET `selected` = '0' ");
     // set selected
@@ -92,7 +92,7 @@ session_start();
 	// record location in dropdown / result list
 	$sql2 = "SELECT * FROM `record_locations` ORDER BY `id` ASC";
 	
-	if ($result2 = mysqli_query($dbmysqli,$sql2))
+	if($result2 = mysqli_query($dbmysqli,$sql2))
 	{
 	while ($obj = mysqli_fetch_object($result2)){
 	{
@@ -107,7 +107,7 @@ session_start();
 	// device dropdown
 	$sql3 = "SELECT * FROM `device_list` ORDER BY `id` ASC";
 	
-	if ($result3 = mysqli_query($dbmysqli,$sql3))
+	if($result3 = mysqli_query($dbmysqli,$sql3))
 	{
 	while ($obj = mysqli_fetch_object($result3)){
 	{
@@ -124,7 +124,7 @@ session_start();
 	if ($display_old_epg == '0'){ $exclude_time = 'AND `e2eventend` > '.$time.''; } else { $exclude_time = ''; }
 
 	// search only selected channel
-	if ($channel_id !== ''){ 
+	if($channel_id !== ''){ 
 	$search_include = 'WHERE `e2eventservicereference` = "'.$channel_id.'" AND'; 
 	$search_include2 = 'OR `e2eventservicereference` = "'.$channel_id.'" AND'; 
 	} else { 
@@ -137,55 +137,51 @@ session_start();
 	$raw_exclude_channel = rawurlencode($exclude_channel);
 	// exclude titel
 	if ($raw_exclude_channel !== ''){
-	// explode
 	$tags = explode(rawurlencode(';') , $raw_exclude_channel);
 	foreach($tags as $i =>$key) { $i >0;
 	if(!isset($exclude_channel_part) or $exclude_channel_part == "") { $exclude_channel_part = ""; }
 	if(!isset($key) or $key == "") { $search_string = ''; } else { $search_string = 'AND `servicename_enc` NOT LIKE "%'.$key.'%" '; }
 	$exclude_channel_part = $exclude_channel_part.$search_string;
-	} // ecplode 	
-	}
+	}	
+	} else { $exclude_channel_part = ""; }
 	
 	$raw_exclude_title = rawurlencode($exclude_title);
 	// exclude titel
 	if ($raw_exclude_title !== ''){
-	// explode
 	$tags = explode(rawurlencode(';') , $raw_exclude_title);
 	foreach($tags as $i =>$key) { $i >0;
 	if(!isset($exclude_title_part) or $exclude_title_part == "") { $exclude_title_part = ""; }
 	if(!isset($key) or $key == "") { $search_string = ''; } else { $search_string = 'AND `title_enc` NOT LIKE "%'.$key.'%" '; }
 	$exclude_title_part = $exclude_title_part.$search_string;
-	} // ecplode 	
 	}
+	} else { $exclude_title_part = ""; }
 	
 	$raw_exclude_description = rawurlencode($exclude_description);
 	// exclude description
-	if ($raw_exclude_description !== ''){
-	// explode
+	if($raw_exclude_description !== ''){
 	$tags = explode(rawurlencode(';') , $raw_exclude_description);
 	foreach($tags as $i =>$key) { $i >0;
 	if(!isset($exclude_description_part) or $exclude_description_part == "") { $exclude_description_part = ""; }
 	if(!isset($key) or $key == "") { $search_string = ''; } else { $search_string = 'AND `description_enc` NOT LIKE "%'.$key.'%" '; }
 	$exclude_description_part = $exclude_description_part.$search_string;
-	} // ecplode
 	}
+	} else { $exclude_description_part = ""; }
 	
 	$raw_exclude_extdescription = rawurlencode($exclude_extdescription);
 	// exclude extended description
 	if ($raw_exclude_extdescription !== ''){
-	// explode
 	$tags = explode(rawurlencode(';') , $raw_exclude_extdescription);
 	foreach($tags as $i =>$key) { $i >0;
 	if(!isset($exclude_extdescription_part) or $exclude_extdescription_part == "") { $exclude_extdescription_part = ""; }
 	if(!isset($key) or $key == "") { $search_string = ''; } else { $search_string = 'AND `descriptionextended_enc` NOT LIKE "%'.$key.'%" '; }
 	$exclude_extdescription_part = $exclude_extdescription_part.$search_string;
-	} // ecplode
 	}
+	} else { $exclude_extdescription_part = ""; }
 	
-	if(!isset($exclude_channel_part) or $exclude_channel_part == "") { $exclude_channel_part = ""; }
-	if(!isset($exclude_title_part) or $exclude_title_part == "") { $exclude_title_part = ""; }
-	if(!isset($exclude_description_part) or $exclude_description_part == "") { $exclude_description_part = ""; }
-	if(!isset($exclude_extdescription_part) or $exclude_extdescription_part == "") { $exclude_extdescription_part = ""; }
+//	if(!isset($exclude_channel_part) or $exclude_channel_part == "") { $exclude_channel_part = ""; }
+//	if(!isset($exclude_title_part) or $exclude_title_part == "") { $exclude_title_part = ""; }
+//	if(!isset($exclude_description_part) or $exclude_description_part == "") { $exclude_description_part = ""; }
+//	if(!isset($exclude_extdescription_part) or $exclude_extdescription_part == "") { $exclude_extdescription_part = ""; }
 
 	// search all
 	if ($option == 'all' or $option == '')
@@ -541,6 +537,7 @@ function check_exclude(){
       </div>
       <!--crawl channel id-->
       <div id="div_crawl_channel_id">
+      <span class="panel-close" onclick="animatedcollapse.hide('div_crawl_channel_id')"><span aria-hidden="true">x</span></span>
         <h1>Crawl channel ID's</h1>
         <input type="submit" class="btn btn-success" id="crawl_channel_id_btn" value="Click to confirm" onclick="animatedcollapse.show('crawl_channel_id_status'); crawl_channel_id();">
         <div id="crawl_channel_id_status"><img src="images/loading.gif" width="16" height="16" align="absmiddle"> </div>
@@ -549,6 +546,7 @@ function check_exclude(){
       <!--div_crawl_complete-->
       <!--crawl complete-->
       <div id="div_crawl_complete">
+      <span class="panel-close" onclick="animatedcollapse.hide('div_crawl_complete')"><span aria-hidden="true">x</span></span>
         <h1>Crawl EPG from channels</h1>
         <input type="submit" class="btn btn-success" id="crawl_complete_btn" value="Click to confirm" onclick="animatedcollapse.show('crawl_complete_status'); crawl_complete();">
         <div id="crawl_complete_status"><img src="images/loading.gif" width="16" height="16" align="absmiddle"> </div>
@@ -557,6 +555,7 @@ function check_exclude(){
       <!--div_crawl_complete-->
       <!--crawl mysearch id-->
       <div id="div_crawl_search">
+      <span class="panel-close" onclick="animatedcollapse.hide('div_crawl_search')"><span aria-hidden="true">x</span></span>
         <h1>Crawl search - Write timer in database</h1>
         <input type="submit" class="btn btn-success" id="crawl_search_btn" value="Click to confirm" onclick="animatedcollapse.show('crawl_search_status'); crawl_saved_search();">
         <div id="crawl_search_status"><img src="images/loading.gif" width="16" height="16" align="absmiddle"> </div>
@@ -565,6 +564,7 @@ function check_exclude(){
       <!--div_mysearch-->
       <!--send timer-->
       <div id="div_send_timer">
+      <span class="panel-close" onclick="animatedcollapse.hide('div_send_timer')"><span aria-hidden="true">x</span></span>
         <h1>Send timer from database to Receiver</h1>
         <input type="submit" class="btn btn-success" id="send_timer_btn" value="Click to confirm" onclick="animatedcollapse.show('send_timer_status'); send_timer();">
         <div id="send_timer_status"><img src="images/loading.gif" width="16" height="16" align="absmiddle"> </div>
@@ -573,6 +573,7 @@ function check_exclude(){
       <!--send timer-->
       <!--channelzapper-->
       <div id="div_start_channelzapper">
+      <span class="panel-close" onclick="animatedcollapse.hide('div_start_channelzapper')"><span aria-hidden="true">x</span></span>
         <h1>Start Channel Zapper</h1>
         <input type="submit" class="btn btn-success" id="start_channelzapper_btn" value="Click to confirm" onclick="animatedcollapse.show('channelzapper_status'); start_channelzapper();">
         <div id="channelzapper_status"><img src="images/loading.gif" width="16" height="16" align="absmiddle"> </div>
