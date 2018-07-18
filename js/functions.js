@@ -670,7 +670,7 @@ function timerlist_delete_timer(id){
 }
 
 // timerlist send timer
-function timerlist_send_timer(id,name){
+function timerlist_send_timerx(id,name){
 	
 	var this_id = id.replace(/timerlist_send_timer_btn_/g, "");
 	var record_location = $("#timerlist_rec_location_"+this_id).text();
@@ -690,6 +690,44 @@ function timerlist_send_timer(id,name){
 	load_timer_list_panel();
 	});
 }
+
+
+
+// neu
+function timerlist_send_timer(id,name){
+	
+	var this_id = id.replace(/timerlist_send_timer_btn_/g, "");
+	var record_location = $("#timerlist_rec_location_"+this_id).text();
+	var device = $("#timerlist_device_no_"+name).val();
+	
+	$("#timerlist_status_"+name).html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
+	$.post("functions/send_timer_instant.php",
+	{
+	location: 'timerlist',
+	hash: this_id,
+	record_location: record_location,
+	device: device
+	},
+	function(data){
+	var obj = JSON.parse(data);
+	//
+	if(obj[0].conflict == '0'){
+	$("#timerlist_status_"+name).html(obj[0].timer_html);
+	$("#tl_glyphicon_status_"+name+"").attr({style:"color:#5CB85C", title:"sent"});
+	}
+	if(obj[0].conflict == '1'){
+	$("#timerlist_status_"+name).html(obj[0].timer_html);
+	$("#tl_glyphicon_status_"+name+"").attr({style:"color:#F0AD4E", title:"Conflict on Receiver"});
+	}
+	load_timer_list_panel();
+	});
+}
+
+
+
+
+
+
 
 //
 function change_timerlist_device(id){
@@ -1000,11 +1038,26 @@ function delete_record(id,name){
 	animatedcollapse.addDiv('record_entry_'+name, 'fade=1,height=auto');
 	animatedcollapse.init()
 	animatedcollapse.hide('record_entry_'+name);
+	record_list_panel(device);
 	}
 	);
 	} else {
     return;
 }
+}
+
+// record list panel
+function record_list_panel(device){
+	var record_location = $("#rec_location").val();
+	$.post("functions/record_list_panel.php",
+	{
+	device: device,
+	record_location: record_location
+	},
+	function(data){
+	var obj = JSON.parse(data);
+	$("#record_info").html("Records in folder: <strong>"+obj[0].files_summary+"</strong> | Today recorded: "+obj[0].today_summary+" | Diskspace used: "+obj[0].discspace_used+"");
+	});
 }
 
 // saved search list list hover
