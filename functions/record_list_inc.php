@@ -106,9 +106,8 @@ if($xml){
 	for ($i = 0; $i <= 500; $i++){
 	
 	if(!isset($xml->e2movie[$i]->e2servicereference) or $xml->e2movie[$i]->e2servicereference == ""){ $xml->e2movie[$i]->e2servicereference = ""; }
-	
-	// if no data 
-	if($xml->e2movie[$i]->e2servicereference != "" ){
+	 
+	if($xml->e2movie[$i]->e2servicereference != ""){
 	
 	// define line
 	$e2servicereference = rawurlencode($xml->e2movie[$i]->e2servicereference);
@@ -128,7 +127,7 @@ if($xml){
 	$record_date = date("d.m.Y - H:i |", "".$e2time."");
 	$day_today = date("d.m.Y", "".$time."");
 	$today_record = date("d.m.Y", "".$e2time."");
-	if ($day_today == $today_record){ $sum_today = $sum_today +1; }
+	if($day_today == $today_record){ $sum_today = $sum_today +1; }
 	}
 	
 	if($time_format == '2')
@@ -140,15 +139,17 @@ if($xml){
 	if($day_today == $today_record){ $sum_today = $sum_today +1; }
 	}
 	
-	//
 	$record_filesize = formatBytes("".$e2filesize."");
 	$record_hash = hash('md4',$e2filename);
 	
 	if(!isset($record_list) or $record_list == ""){ $record_list = ""; }
 	
 	$imdb_broadcast = '';
-	if($imdb_symbol == '1'){ $imdb_broadcast = '<a href="https://www.imdb.com/find?ref_=nv_sr_fn&q='.$e2title.'" target="_blank" title="Info on IMDb">
-	<i class="fa fa-info-circle fa-1x"></i></a>'; }
+	if($imdb_symbol == '1')
+	{ 
+	$imdb_broadcast = '<a href="https://www.imdb.com/find?ref_=nv_sr_fn&q='.$e2title.'" target="_blank" title="Info on IMDb">
+	<i class="fa fa-info-circle fa-1x"></i></a>';
+	}
 	
 	$record_list = $record_list."
 	<div id=\"record_entry_$i\">
@@ -185,14 +186,14 @@ if($xml){
 	}
 	}
 	}
-	if(!isset($record_list) or $record_list == "") { $record_list = "No files to display.."; }
+	if(!isset($record_list) or $record_list == ""){ $record_list = "No files to display.."; }
 	
 	$filespace_total = formatBytes("".$filespace."");
 	
 	if($filespace == "0") { $filespace_total = "0 kB"; }
 	
-	echo 'Records in folder: <strong>'.$files_summary.'</strong> | Today recorded: '.$sum_today.' | Diskspace used: '.$filespace_total.' <div class="spacer_20">
-	</div>'.$record_list;
+	echo '<span id="record_info">Records in folder: <strong>'.$files_summary.'</strong> | Today recorded: '.$sum_today.' | Diskspace used: '.$filespace_total.'</span>
+	<div class="spacer_20"></div>'.$record_list;
 ?>
 </body>
 </html>
