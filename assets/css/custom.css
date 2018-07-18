@@ -934,6 +934,9 @@ display:none;
 .timer {
 	font-weight: bold;
 }
+.timer_conflict {
+	color: #F0AD4E;
+}
 .sr_channel {
 	font-weight: bold;
 	cursor:pointer;
