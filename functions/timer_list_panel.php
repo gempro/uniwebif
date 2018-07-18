@@ -9,7 +9,7 @@
 	$timer_id = $_REQUEST['timer_id'];
 		
 	// delete from db
-	if ($panel_action == 'delete_db')
+	if($panel_action == 'delete_db')
 	{
 	$tags = explode(';' , $timer_id);
 	foreach($tags as $i =>$key)
@@ -22,7 +22,7 @@
 	$hash = $result['hash'];
 	$status = $result['status'];
 	
-	if ($status == 'manual' or $status == 'sent'){
+	if($status == 'manual' or $status == 'sent'){
 	$sql2 = mysqli_query($dbmysqli, "UPDATE `epg_data` SET timer = '0' WHERE `hash` = '".$hash."' ");
 	}
 	
@@ -88,7 +88,7 @@
 	}
 	
 	// delete both
-	if ($panel_action == 'delete_both')
+	if($panel_action == 'delete_both')
 	{
 	$tags = explode(';' , $timer_id);
 	foreach($tags as $i =>$key)
@@ -170,7 +170,7 @@
 	$device_box_ip = $result6['device_ip'];
 	$device_box_user = $result6['device_user'];
 	$device_box_password = $result6['device_password'];
-	$device_url_format = $result6['device_password'];
+	$device_url_format = $result6['url_format'];
 	$device_webrequest = stream_context_create(array (
 	'http' => array (
 	'header' => 'Authorization: Basic ' . base64_encode("$device_box_user:$device_box_password"),
@@ -186,8 +186,8 @@
 	
 	// detect conflict
 	$xml = simplexml_load_string($device_send_timer_request);
-	$timer_status = $xml->e2state;
-	if(preg_match("/\btrue\b/i", $timer_status)){ $timer_status = ""; $timer_conflict = "0"; } else { $timer_conflict = "1"; }
+	$device_timer_status = $xml->e2state;
+	if(preg_match("/\btrue\b/i", $device_timer_status)){ $device_timer_status = ""; $timer_conflict = "0"; } else { $timer_conflict = "1"; }
 	
 	} // send timer to different device
 	
@@ -217,7 +217,7 @@
 	}
 	
 	// hide
-	if ($panel_action == 'hide')
+	if($panel_action == 'hide')
 	{
 	$tags = explode(';' , $timer_id);
 	foreach($tags as $i =>$key)
@@ -231,16 +231,15 @@
 	}
 	
 	// unhide
-	if ($panel_action == 'unhide')
+	if($panel_action == 'unhide')
 	{
-	// explode
 	$tags = explode(';' , $timer_id);
 	foreach($tags as $i =>$key)
 	{ 
 	$i > 0;
 	if(!isset($key) or $key == ""){ $key = ""; }
 	$sql = mysqli_query($dbmysqli, "UPDATE `timer` SET `hide` = '0' WHERE `id` = '".$key."' ");
-	} // explode for i
+	}
 	sleep(1);
 	echo 'unhide_done';
 	}
