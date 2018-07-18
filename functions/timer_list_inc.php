@@ -148,7 +148,7 @@
 	}
 	
 	// delete timer from database
-	if ($delete_from_db == '1')
+	if($delete_from_db == '1')
 	{
 	$sql = mysqli_query($dbmysqli, "DELETE FROM `timer` WHERE `id` = '".$timer_id."' ");
 	//
@@ -163,7 +163,7 @@
 	}
 	
 	// unhide
-	if ($action == 'unhide'){
+	if($action == 'unhide'){
 	
 	$sql = "SELECT * FROM `timer` WHERE `expired` = '0' ORDER BY `e2eventstart` ASC, `record_status` ASC"; 
 	
@@ -186,7 +186,7 @@
 	}
 	} // device dropdown
 
-	if ($result = mysqli_query($dbmysqli,$sql))
+	if($result = mysqli_query($dbmysqli,$sql))
 	{
 	// Fetch one and one row
 	while ($obj = mysqli_fetch_object($result)) {
@@ -208,6 +208,7 @@
 	$hidden = $obj->hide;
 	$device_no = $obj->device;
 	$search_id = $obj->search_id;
+	$timer_conflict = $obj->conflict;
 	
 	if(!isset($exclude_channel) or $exclude_channel == "") { $exclude_channel = ""; }
 	if(!isset($exclude_title) or $exclude_title == "") { $exclude_title = ""; }
@@ -219,7 +220,7 @@
 	$exclude_description = str_replace(";", "; ", $exclude_description);
 	$exclude_extdescription = str_replace(";", "; ", $exclude_extdescription);
 	
-	if ($time_format == '1')
+	if($time_format == '1')
 	{
 	// time format 1
 	$e2eventstart = $obj->e2eventstart;
@@ -231,7 +232,7 @@
 	$time_class = 'cnt_time';
 	}
 	
-	if ($time_format == '2')
+	if($time_format == '2')
 	{
 	// time format 2
 	$e2eventstart = $obj->e2eventstart;
@@ -244,7 +245,7 @@
 	}
 	//
 
-if ($obj->status == 'waiting')
+if($obj->status == 'waiting')
 		{
 		$status = '
 		<i id="tl_glyphicon_status_m_'.$obj->id.'" class="fa fa-search fa-1x" style="color:#000" title="Automatic search"></i> | 
@@ -252,7 +253,7 @@ if ($obj->status == 'waiting')
 		';
 		}
 		
-if ($obj->status == 'rec_deleted')
+if($obj->status == 'rec_deleted')
 		{
 		$status = '
 		<i id="tl_glyphicon_status_m_'.$obj->id.'" class="fa fa-hand-o-up fa-1x" style="color:#000" title="manual"></i> | 
@@ -260,51 +261,65 @@ if ($obj->status == 'rec_deleted')
 		';
 		}
 		
-if ($obj->status == 'sent')
+if($obj->status == 'sent')
 		{
 		$status = '
 		<i id="tl_glyphicon_status_m_'.$obj->id.'" class="fa fa-search fa-1x" style="color:#000" title="Automatic search"></i> | 
 		<i id="tl_glyphicon_status_'.$obj->id.'" class="glyphicon glyphicon-export" style="color:#5CB85C" title="sent"></i>
 		';
+		if($timer_conflict == "1")
+		{
+		$status = '
+		<i id="tl_glyphicon_status_m_'.$obj->id.'" class="fa fa-search fa-1x" style="color:#000" title="Automatic search"></i> | 
+		<i id="tl_glyphicon_status_'.$obj->id.'" class="glyphicon glyphicon-export" style="color:#F0AD4E" title="Conflict on Receiver"></i>
+		';
+		}
 		}
 				
-if ($obj->status == 'manual')
+if($obj->status == 'manual')
 		{
 		$status = '
 		<i id="tl_glyphicon_status_m_'.$obj->id.'" class="fa fa-hand-o-up fa-1x" style="color:#000" title="manual"></i> | 
 		<i id="tl_glyphicon_status_'.$obj->id.'" class="glyphicon glyphicon-export" style="color:#5CB85C" title="sent"></i>
 		';
+		if($timer_conflict == "1")
+		{
+		$status = '
+		<i id="tl_glyphicon_status_m_'.$obj->id.'" class="fa fa-search fa-1x" style="color:#000" title="Automatic search"></i> | 
+		<i id="tl_glyphicon_status_'.$obj->id.'" class="glyphicon glyphicon-export" style="color:#F0AD4E" title="Conflict on Receiver"></i>
+		';
+		}
 		}
 				
-if ($obj->record_status == 'a_recording')
+if($obj->record_status == 'a_recording')
 		{
 		$record_status = '
 		<i class="glyphicon glyphicon-transfer" style="color:#428BCA" title="now running"></i>
 		';
 		}
 				
-if ($obj->record_status == 'b_incoming')
+if($obj->record_status == 'b_incoming')
 		{
 		$record_status = '
 		<i class="glyphicon glyphicon-time" style="color:#428BCA" title="incoming event"></i>
 		';
 		}
 				
-if ($obj->record_status == 'c_expired')
+if($obj->record_status == 'c_expired')
 		{
 		$record_status = '
 		<i class="glyphicon glyphicon-time" style="color:#F0AD4E" title="expired event"></i>
 		';
 		}
 		
-		if ($obj->exclude_channel != ''){ $channel_status = 'Excluded in <strong>channel</strong>: '.$exclude_channel.'<br>'; } else { $channel_status = ''; }
-		if ($obj->exclude_title != ''){ $title_status = 'Excluded in <strong>title</strong>: '.$exclude_title.'<br>'; } else { $title_status = ''; }
-		if ($obj->exclude_description != ''){ $description_status = 'Excluded in <strong>description</strong>: '.$exclude_description.'<br>'; } else { $description_status = ''; }
-		if ($obj->exclude_extdescription != ''){ $extdescription_status = 'Excluded in <strong>extended description</strong>: '.$exclude_extdescription.'<br>'; } else { $extdescription_status = ''; }
+		if($obj->exclude_channel != ''){ $channel_status = 'Excluded in <strong>channel</strong>: '.$exclude_channel.'<br>'; } else { $channel_status = ''; }
+		if($obj->exclude_title != ''){ $title_status = 'Excluded in <strong>title</strong>: '.$exclude_title.'<br>'; } else { $title_status = ''; }
+		if($obj->exclude_description != ''){ $description_status = 'Excluded in <strong>description</strong>: '.$exclude_description.'<br>'; } else { $description_status = ''; }
+		if($obj->exclude_extdescription != ''){ $extdescription_status = 'Excluded in <strong>extended description</strong>: '.$exclude_extdescription.'<br>'; } else { $extdescription_status = ''; }
 		if($channel_status != '' or $title_status != '' or $description_status != '' or $extdescription_status != ''){
 		$show_exclude_text = "<div class=\"spacer_5\"></div><a id=\"$obj->id\" style=\"cursor:pointer;\" onclick=\"timerlist_show_exclude(this.id)\">Show excluded term(s)</a>"; } else { $show_exclude_text = ""; }
 		
-		if ($obj->rec_replay == 'on'){ $replay_status = '| Timer for Replays: '.$rec_replay.''; } else { $replay_status = ''; }
+		if($obj->rec_replay == 'on'){ $replay_status = '| Timer for Replays: '.$rec_replay.''; } else { $replay_status = ''; }
 		$spacer = '';
 		
 		// get record location id
@@ -323,9 +338,9 @@ if ($obj->record_status == 'c_expired')
 		$device_color = "#DDDDDD";
 		}
 		
-		if ($is_replay == '1'){ $replay_sign = '<i class="fa fa-repeat"></i>'; } else { $replay_sign = ''; }
+		if($is_replay == '1'){ $replay_sign = '<i class="fa fa-repeat"></i>'; } else { $replay_sign = ''; }
 		
-		if ($hidden == '1'){ $hidden_class = 'class="opac_70"'; 
+		if($hidden == '1'){ $hidden_class = 'class="opac_70"'; 
 		$hide_button = "<input id=\"timerlist_unhide_timer_btn_$obj->id\" name=\"null\" type=\"submit\" onClick=\"timerlist_unhide_timer(this.id,this.name)\" value=\"UNHIDE\" class=\"btn btn-primary btn-sm\" title=\"unhide Timer from list\"/>"; 
 		
 		} else { 

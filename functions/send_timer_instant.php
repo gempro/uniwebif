@@ -2,10 +2,10 @@
 //
 include("../inc/dashboard_config.php");
 
-	if(!isset($_REQUEST['hash']) or $_REQUEST['hash'] == "") { $_REQUEST['hash'] = ""; }
-	if(!isset($_REQUEST['record_location']) or $_REQUEST['record_location'] == "") { $_REQUEST['record_location'] = ""; }
-	if(!isset($_REQUEST['device']) or $_REQUEST['device'] == "") { $_REQUEST['device'] = ""; }
-	if(!isset($_REQUEST['location']) or $_REQUEST['location'] == "") { $_REQUEST['location'] = ""; }
+	if(!isset($_REQUEST['hash']) or $_REQUEST['hash'] == ""){ $_REQUEST['hash'] = ""; }
+	if(!isset($_REQUEST['record_location']) or $_REQUEST['record_location'] == ""){ $_REQUEST['record_location'] = ""; }
+	if(!isset($_REQUEST['device']) or $_REQUEST['device'] == ""){ $_REQUEST['device'] = ""; }
+	if(!isset($_REQUEST['location']) or $_REQUEST['location'] == ""){ $_REQUEST['location'] = ""; }
 	
 	$hash = $_REQUEST["hash"];
 	$record_location = $_REQUEST["record_location"];
@@ -56,7 +56,6 @@ include("../inc/dashboard_config.php");
 	$rec_replay = $result['rec_replay'];
 	}
 	
-	
 	if($device == "0"){
 	// get record location
 	$sql = mysqli_query($dbmysqli, "SELECT `e2location` FROM `record_locations` WHERE `id` = '".$record_location."' ");
@@ -93,14 +92,14 @@ include("../inc/dashboard_config.php");
 	$get_timer_status = @file_get_contents($timer_request, false, $webrequest);
 	$xml = simplexml_load_string($get_timer_status);
 	$timer_status = $xml->e2state;
-	if($timer_status == "TRUE" || $timer_status == "True" || $timer_status == "true")
+	if(preg_match("/\btrue\b/i", $timer_status))
 	{
 	$timer_status = ""; 
 	$timer_conflict = "0";
 	
 	} else { 
 	
-	$timer_status = " - <span class=\"error\">Conflict on Receiver</span>";
+	$timer_status = " - <span class=\"timer_conflict\">Conflict on Receiver</span>";
 	$timer_conflict = "1";
 	}
 	
@@ -134,12 +133,13 @@ include("../inc/dashboard_config.php");
 	$get_timer_status = @file_get_contents($timer_request, false, $webrequest);
 	$xml = simplexml_load_string($get_timer_status);
 	$timer_status = $xml->e2state;
+	
 	if($timer_status == "TRUE" || $timer_status == "True" || $timer_status == "true"){ $timer_status = ""; 
 	$timer_conflict = "0";
 	
 	} else { 
 	
-	$timer_status = " - <span class=\"error\">Conflict on Receiver</span>"; 
+	$timer_status = " - <span class=\"timer_conflict\">Conflict on Receiver</span>"; 
 	$timer_conflict = "1";
 	}
 	
@@ -168,12 +168,12 @@ include("../inc/dashboard_config.php");
 
 	// set timer status
 	if($location == 'timerlist' and $device == $current_device){
-	$sql = mysqli_query($dbmysqli, "UPDATE `timer` SET `status` = 'manual', `conflict` = '$timer_conflict' WHERE `hash` = '$hash' ");
+	$sql = mysqli_query($dbmysqli, "UPDATE `timer` SET `status` = 'manual', `conflict` = '".$timer_conflict."' WHERE `hash` = '".$hash."' ");
 	} 
 	
 	// create copy if device is different
 	if($location == "timerlist" and $device != $current_device){
-	$sql = mysqli_query($dbmysqli, "SELECT COUNT(*) FROM `timer` WHERE `hash` = '$hash' AND `device` = '$device' ");
+	$sql = mysqli_query($dbmysqli, "SELECT COUNT(*) FROM `timer` WHERE `hash` = '".$hash."' AND `device` = '".$device."' ");
 	$summary = mysqli_fetch_row($sql);
 	if($summary[0] < 1){
 	$sql = mysqli_query($dbmysqli, "INSERT INTO `timer` (
@@ -287,16 +287,28 @@ include("../inc/dashboard_config.php");
 	//
 	
 	$same_timer_time = $same_timer_time - 1;
-	if ($same_timer_time > 0){ $same_timer_msg = '(<strong>'.$same_timer_time.'</strong> within the period)'; } else { $same_timer_msg = ""; }
+	if($same_timer_time > 0){ $same_timer_msg = '(<strong>'.$same_timer_time.'</strong> within the period)'; } else { $same_timer_msg = ""; }
 	}
 
 	// answer for ajax
 	header('Content-Type: text/event-stream');
 	header('Cache-Control: no-cache');
 	
-	if ($location == 'ticker'){ 
+	if($location == 'ticker'){ 
 	echo "<i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i>\n\n";
+	
 	} else {
+	
+	if($location == 'timerlist')
+	{
+	if($device == "0" and $same_timer_time > 0){ $same_timer_msg = "(<strong>".$same_timer_time."</strong> within the period)"; } else { $same_timer_msg = ""; }
+	if($timer_conflict == "1"){ $timer_status = ' - <span class=\"timer_conflict\">Conflict on Receiver</span>'; } else { $timer_status = ""; }
+	echo '
+	[{"conflict":"'.$timer_conflict.'",
+	"timer_html":"<i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i> Timer sent '.$same_timer_msg.' '.$timer_status.'\r"}]';
+	exit;
+	}
+	
 	echo "<i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i> Timer sent $same_timer_msg $timer_status\n\n";
 	}
 }
