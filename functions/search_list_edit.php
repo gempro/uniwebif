@@ -12,10 +12,8 @@ include("../inc/dashboard_config.php");
 	$id = $_REQUEST['id'];
 	$action = $_REQUEST['action'];	
 	
-	if ($action == 'delete'){
+	if($action == 'delete'){
 	$sql = mysqli_query($dbmysqli, "DELETE FROM `saved_search` WHERE `id` = '$id' ");
-	
-	mysqli_close($dbmysqli);
 	
 	// answer for ajax
 	echo "data:done";
@@ -69,23 +67,31 @@ include("../inc/dashboard_config.php");
 	$e2servicename = $result['e2servicename'];
 	$servicename_enc = $result['servicename_enc'];
 	
-	if ($channel == 'NULL'){ $e2servicename = 'NULL'; }
-	if ($searchterm == ''){ $searchterm_sql = ''; } else { $searchterm_sql = 'searchterm = "'.$searchterm.'"'; }
-	if ($searcharea == ''){ $searcharea_sql = ''; } else { $searcharea_sql = ', search_option = "'.$searcharea.'"'; }
+	if($channel == 'NULL'){ $e2servicename = 'NULL'; }
+	if($searchterm == ''){ $searchterm_sql = ''; } else { $searchterm_sql = 'searchterm = "'.$searchterm.'"'; }
+	if($searcharea == ''){ $searcharea_sql = ''; } else { $searcharea_sql = ', search_option = "'.$searcharea.'"'; }
 	
-	if ($exclude_channel == ''){ $exclude_channel_sql = ', exclude_channel = ""'; $exclude_channel = ''; } else { $exclude_channel_sql = ', exclude_channel = "'.$exclude_channel.'"'; }
-	if ($exclude_title == ''){ $exclude_title_sql = ', exclude_title = ""'; $exclude_title = ''; } else { $exclude_title_sql = ', exclude_title = "'.$exclude_title.'"'; }
-	if ($exclude_description == ''){ $exclude_description_sql = ', exclude_description = ""'; } else { $exclude_description_sql = ', exclude_description = "'.$exclude_description.'"'; }
-	if ($exclude_extdescription == ''){ $exclude_extdescription_sql = ', exclude_extdescription = ""'; } else { $exclude_extdescription_sql = ', exclude_extdescription = "'.$exclude_extdescription.'"'; }
-	if ($rec_replay == 'yes'){ $rec_replay_sql = ', rec_replay = "on"'; } else { $rec_replay_sql = ', rec_replay = "off"'; }
+	if($exclude_channel == ''){ $exclude_channel_sql = ', exclude_channel = ""'; $exclude_channel = ''; } else { $exclude_channel_sql = ', exclude_channel = "'.$exclude_channel.'"'; }
+	if($exclude_title == ''){ $exclude_title_sql = ', exclude_title = ""'; $exclude_title = ''; } else { $exclude_title_sql = ', exclude_title = "'.$exclude_title.'"'; }
+	if($exclude_description == ''){ $exclude_description_sql = ', exclude_description = ""'; } else { $exclude_description_sql = ', exclude_description = "'.$exclude_description.'"'; }
+	if($exclude_extdescription == ''){ $exclude_extdescription_sql = ', exclude_extdescription = ""'; } else { $exclude_extdescription_sql = ', exclude_extdescription = "'.$exclude_extdescription.'"'; }
+	if($rec_replay == 'yes'){ $rec_replay_sql = ', rec_replay = "on"'; } else { $rec_replay_sql = ', rec_replay = "off"'; }
 	
-	if ($channel == ''){ $channel_sql = ''; } else { $channel_sql = ', e2eventservicereference = "'.$channel.'", e2eventservicename = "'.$e2servicename.'", servicename_enc = "'.$servicename_enc.'" '; }
-	if ($record_location == ''){ $rec_location_sql =  ''; } else { $rec_location_sql = ', e2location = "'.$record_location.'"'; }
-	if ($active == ''){ $active_sql = ''; } else { $active_sql = ', activ = "'.$active.'"'; }
+	if($channel == ''){ $channel_sql = ''; } else { $channel_sql = ', e2eventservicereference = "'.$channel.'", e2eventservicename = "'.$e2servicename.'", servicename_enc = "'.$servicename_enc.'" '; }
+	if($record_location == ''){ $rec_location_sql =  ''; } else { $rec_location_sql = ', e2location = "'.$record_location.'"'; }
+	if($active == ''){ $active_sql = ''; } else { $active_sql = ', activ = "'.$active.'"'; }
 	
 	$sql = mysqli_query($dbmysqli, "UPDATE `saved_search` SET $searchterm_sql $searcharea_sql $exclude_channel_sql $exclude_title_sql $exclude_description_sql $exclude_extdescription_sql $rec_replay_sql $channel_sql $rec_location_sql, last_change = '$time', crawled = '0' $active_sql WHERE `id` = '$id' ");
 	
 	// answer for ajax
-	echo "data:done";
+	if($time_format == "1")
+	{
+	$last_change = date("d.m - H:i", $time);
+	}
+	if($time_format == "2" or $time_format == "")
+	{
+	$last_change = date("n/d - g:i A", $time);
+	}
+	echo '[{"last_change":"'.$last_change.'\r"}]';
 }
 ?>

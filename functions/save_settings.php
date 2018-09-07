@@ -28,6 +28,7 @@ include("../inc/dashboard_config.php");
 	$hide_old_timer = $_REQUEST['hide_old_timer'];
 	$delete_old_timer = $_REQUEST['delete_old_timer'];
 	$delete_receiver_timer = $_REQUEST['delete_receiver_timer'];
+	$delete_further_receiver_timer = $_REQUEST['delete_further_receiver_timer'];
 	$dummy_timer = $_REQUEST['dummy_timer'];
 	$after_crawl_action = $_REQUEST['after_crawl_action'];
 	$delete_old_epg = $_REQUEST['delete_old_epg'];
@@ -42,27 +43,26 @@ include("../inc/dashboard_config.php");
 	$cz_repeat = $_REQUEST['cz_repeat'];
 	$cz_am_pm = $_REQUEST['cz_am_pm'];
 	$cz_start_channel = $_REQUEST['cz_start_channel'];
+	$del_m3u = $_REQUEST['del_m3u'];
 	
-	if ($crawler_am_pm == '0'){ $crawler_am_pm = ''; }
+	if($crawler_am_pm == '0'){ $crawler_am_pm = ''; }
 	
-	if (!is_numeric($cz_wait_time)) { $cz_wait_time = '30'; }
-	if (!is_numeric($cz_hour) or $cz_hour > 23) { $cz_hour = '12'; }
-	if (!is_numeric($cz_minute) or $cz_minute > 59) { $cz_minute = '00'; }
+	if(!is_numeric($cz_wait_time)){ $cz_wait_time = '30'; }
+	if(!is_numeric($cz_hour) or $cz_hour > 23){ $cz_hour = '12'; }
+	if(!is_numeric($cz_minute) or $cz_minute > 59){ $cz_minute = '00'; }
 
-//	if ($cz_am_pm == 'AM'){ $cz_am_pm = 'AM'; }
-//	if ($cz_am_pm == 'PM'){ $cz_am_pm = 'PM'; }
-	if ($cz_am_pm == '0'){ $cz_am_pm = ''; }
+	if($cz_am_pm == '0'){ $cz_am_pm = ''; }
 	
 	$date_for_cz = date("d.m.Y ");
 	$cz_start = $date_for_cz.$cz_hour.':'.$cz_minute.$cz_am_pm;
-	if (strtotime($cz_start) > $time){ $cz_timestamp = strtotime($cz_start); } else { $cz_timestamp = strtotime($cz_start) + 86400; }
+	if(strtotime($cz_start) > $time){ $cz_timestamp = strtotime($cz_start); } else { $cz_timestamp = strtotime($cz_start) + 86400; }
 
-	if (!is_numeric($crawler_hour) or $crawler_hour > 23) { $crawler_hour = '12'; }
-	if (!is_numeric($crawler_minute) or $crawler_minute > 59) { $crawler_minute = '00'; }
+	if(!is_numeric($crawler_hour) or $crawler_hour > 23) { $crawler_hour = '12'; }
+	if(!is_numeric($crawler_minute) or $crawler_minute > 59) { $crawler_minute = '00'; }
 
 	$date_for_crawler = date("d.m.Y ");
 	$crawler_start = $date_for_crawler.$crawler_hour.':'.$crawler_minute.$crawler_am_pm;
-	if (strtotime($crawler_start) > $time){ $crawler_timestamp = strtotime($crawler_start); } else { $crawler_timestamp = strtotime($crawler_start) + 86400; }
+	if(strtotime($crawler_start) > $time){ $crawler_timestamp = strtotime($crawler_start); } else { $crawler_timestamp = strtotime($crawler_start) + 86400; }
 	
 	if(!isset($epg_entries_per_channel) or $epg_entries_per_channel == "" or !isset($channel_entries) or $channel_entries == "") 
 	{ 
@@ -96,6 +96,7 @@ include("../inc/dashboard_config.php");
 	hide_old_timer = '$hide_old_timer', 
 	delete_old_timer = '$delete_old_timer', 
 	delete_receiver_timer = '$delete_receiver_timer', 
+	delete_further_receiver_timer = '$delete_further_receiver_timer', 
 	dummy_timer = '$dummy_timer', 
 	after_crawl_action = '$after_crawl_action', 
 	delete_old_epg = '$delete_old_epg', 
@@ -109,18 +110,24 @@ include("../inc/dashboard_config.php");
 	cz_hour = '$cz_hour', 
 	cz_minute = '$cz_minute', 
 	cz_am_pm = '$cz_am_pm', 
-	cz_start_channel = '$cz_start_channel', 
-	cz_timestamp = '$cz_timestamp' WHERE id = 0");
+	cz_start_channel = '$cz_start_channel',
+	del_m3u = '$del_m3u', 
+	cz_timestamp = '$cz_timestamp' WHERE `id` = '0' ");
 	
 	$sql = mysqli_query($dbmysqli, "UPDATE `channel_list` SET `zap_start` = '0' ");
 	$sql = mysqli_query($dbmysqli, "UPDATE `channel_list` SET `zap_start` = '1' WHERE `e2servicereference` = '$cz_start_channel' ");
 	
-	// close db
-	mysqli_close($dbmysqli);
+	if($hide_old_timer == '0')
+	{
+	$sql = mysqli_query($dbmysqli, "UPDATE `timer` SET `expired` = '0' WHERE `e2eventend` < '$time' AND `expired` = '1' ");
+	}
+	if($hide_old_timer == '1')
+	{
+	$sql = mysqli_query($dbmysqli, "UPDATE `timer` SET `expired` = '1' WHERE `e2eventend` < '$time' AND `expired` NOT LIKE '1' ");
+	}
 	
 	sleep(1);
 	
-	//
 	echo "ok";
 
 	}

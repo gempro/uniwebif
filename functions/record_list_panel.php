@@ -54,9 +54,10 @@ if($xml){
 	
 	if(!isset($xml->e2movie[$i]->e2servicereference) or $xml->e2movie[$i]->e2servicereference == ""){ $xml->e2movie[$i]->e2servicereference = ""; }
 	
-	if($xml->e2movie[$i]->e2servicereference != "" ){
+	if($xml->e2movie[$i]->e2servicereference != "")
+	{
 	$e2filesize = $xml->e2movie[$i]->e2filesize;
-	$filespace = $filespace + $e2filesize;
+	$filespace = (''.$filespace.'') + (''.$e2filesize.'');
 	$record_filesize = formatBytes("".$e2filesize."");
 	$files_summary = $i+1;
 	}
@@ -64,7 +65,7 @@ if($xml){
 	}
 	
 	$filespace_total = formatBytes("".$filespace."");
-	if($filespace == "0") { $filespace_total = "0 kB"; }
+	if($filespace == "0"){ $filespace_total = "0 kB"; }
 	
 	// panel
 	echo '

@@ -37,8 +37,8 @@ include("../inc/dashboard_config.php");
 	$channel_hash = hash('md4',$channel_name);
 	$service_reference = $_REQUEST['service_reference'];
 	
-	$sql = mysqli_query($dbmysqli, "INSERT INTO `channel_list` (e2servicename, servicename_enc, e2servicereference, selected, crawl, zap, channel_hash) 
-	values ('".$channel_name."', '".$servicename_enc."', '".$service_reference."', '0', '1', '1', '".$channel_hash."') ");
+	$sql = mysqli_query($dbmysqli, "INSERT INTO `channel_list` (e2servicename, servicename_enc, e2servicereference, e2providername, selected, crawl, zap, channel_hash) 
+	values ('".$channel_name."', '".$servicename_enc."', '".$service_reference."', '-', '0', '1', '1', '".$channel_hash."') ");
 	}
 	
 	if(!isset($set_crawl) or $set_crawl == ""){ $sql = mysqli_query($dbmysqli, "UPDATE `channel_list` SET `zap` = '".$set_zap."' WHERE `id` = '".$channel_id."'"); $color = '#428BCA'; }

@@ -302,7 +302,6 @@ session_start();
 	) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 	");
 	
-
 	$query = mysqli_query($dbmysqli, "DROP TABLE IF EXISTS `uniwebif`.`settings`");
 	$query = mysqli_query($dbmysqli, "
 	
@@ -340,6 +339,7 @@ session_start();
 	  `hide_old_timer` int(1) NOT NULL DEFAULT '1',
 	  `delete_old_timer` int(1) NOT NULL DEFAULT '1',
 	  `delete_receiver_timer` int(1) NOT NULL DEFAULT '0',
+	  `delete_further_receiver_timer` int(1) NOT NULL DEFAULT '0',
 	  `dummy_timer` int(1) NOT NULL DEFAULT '0',
 	  `dummy_timer_time` int(12) NOT NULL,
 	  `dummy_timer_current` int(12) NOT NULL,
@@ -362,6 +362,8 @@ session_start();
 	  `primetime` int(12) NOT NULL DEFAULT '0',
 	  `dur_down_primetime` int(4) NOT NULL DEFAULT '0',
 	  `dur_up_primetime` int(5) NOT NULL DEFAULT '7200',
+	  `del_m3u` int(1) NOT NULL DEFAULT '0',
+	  `del_m3u_time` int(12) NOT NULL DEFAULT '0',
 	  `current_git_push` int(12) NOT NULL DEFAULT '0',
 	  PRIMARY KEY (`id`)
 	) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -369,7 +371,6 @@ session_start();
 	
 	$query = mysqli_query($dbmysqli, "INSERT INTO `uniwebif`.`settings` (`box_ip`, `box_user`, `box_password`, `server_ip`, `script_folder`) VALUES
 	('".$receiver_ip."', '".$receiver_user."', '".$receiver_pass."', '".$server_ip."', '".$script_folder."')");
-	
 	
 	$query = mysqli_query($dbmysqli, "DROP TABLE IF EXISTS `uniwebif`.`timer`");
 	$query = mysqli_query($dbmysqli, "
@@ -394,7 +395,7 @@ session_start();
 	  `record_location` varchar(255) NOT NULL,
 	  `e2eventstart` varchar(12) NOT NULL,
 	  `e2eventend` varchar(12) NOT NULL,
-	  `timer_request` varchar(255) NOT NULL,
+	  `timer_request` text NOT NULL,
 	  `hash` varchar(50) NOT NULL,
 	  `channel_hash` varchar(100) NOT NULL,
 	  `status` varchar(255) NOT NULL,
@@ -406,6 +407,7 @@ session_start();
 	  `hide` int(1) NOT NULL DEFAULT '0',
 	  `device` int(4) NOT NULL,
 	  `search_id` int(4) NOT NULL,
+	  `conflict` int(1) NOT NULL,
 	  PRIMARY KEY (`id`)
 	) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 	");

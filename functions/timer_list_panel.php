@@ -23,7 +23,7 @@
 	$status = $result['status'];
 	
 	if($status == 'manual' or $status == 'sent'){
-	$sql2 = mysqli_query($dbmysqli, "UPDATE `epg_data` SET timer = '0' WHERE `hash` = '".$hash."' ");
+	$sql2 = mysqli_query($dbmysqli, "UPDATE `epg_data` SET `timer` = '0' WHERE `hash` = '".$hash."' ");
 	}
 	
 	$sql3 = mysqli_query($dbmysqli, "DELETE FROM `timer` WHERE `id` = '".$key."' ");
@@ -133,7 +133,7 @@
 	} // default receiver
 	
 	if($status == 'manual' or $status == 'sent'){
-	$sql4 = mysqli_query($dbmysqli, "UPDATE `epg_data` SET timer = '0' WHERE `hash` = '".$hash."' ");
+	$sql4 = mysqli_query($dbmysqli, "UPDATE `epg_data` SET `timer` = '0' WHERE `hash` = '".$hash."' ");
 	}
 	
 	$sql5 = mysqli_query($dbmysqli, "DELETE FROM `timer` WHERE `id` = '".$key."' ");
@@ -187,7 +187,7 @@
 	// detect conflict
 	$xml = simplexml_load_string($device_send_timer_request);
 	$device_timer_status = $xml->e2state;
-	if(preg_match("/\btrue\b/i", $device_timer_status)){ $device_timer_status = ""; $timer_conflict = "0"; } else { $timer_conflict = "1"; }
+	if(preg_match("/\btrue\b/i", $device_timer_status)){ $timer_conflict = "0"; } else { $timer_conflict = "1"; }
 	
 	} // send timer to different device
 	
@@ -204,16 +204,21 @@
 	// detect conflict
 	$xml = simplexml_load_string($send_timer_request);
 	$timer_status = $xml->e2state;
-	if(preg_match("/\btrue\b/i", $timer_status)){ $timer_status = ""; $timer_conflict = "0"; } else { $timer_conflict = "1"; }
+	if(preg_match("/\btrue\b/i", $timer_status)){ $timer_conflict = "0"; } else { $timer_conflict = "1"; }
 	
 	} // send timer to default receiver
 	
 	$sql = mysqli_query($dbmysqli, "UPDATE `timer` SET `status` = 'manual', `conflict` = '".$timer_conflict."' WHERE `id` = '".$key."' ");
+	$sql = mysqli_query($dbmysqli, "UPDATE `epg_data` SET `timer` = '1' WHERE `hash` = '".$hash."' ");
 	
-	$sql = mysqli_query($dbmysqli, "UPDATE epg_data SET `timer` = '1' WHERE `hash` = '".$hash."' ");
-	}
+	$str1 = ""; $str2 = ""; $str3 = "";
+	$obj[$i] = array("id" => $key, "conflict" => $timer_conflict);
+	if($i == 0){ $str1 = "["; }
+	if($i == count($tags)-1){ $str3 = "]"; } else { $str2 = ","; }
+	$json = json_encode($obj[$i]);
+	echo $str1.$json.$str2.$str3;
+	}	
 	sleep(1);
-	echo 'send_done';
 	}
 	
 	// hide
@@ -231,7 +236,7 @@
 	}
 	
 	// unhide
-	if($panel_action == 'unhide')
+	if($panel_action == 'panel_unhide')
 	{
 	$tags = explode(';' , $timer_id);
 	foreach($tags as $i =>$key)
@@ -243,5 +248,4 @@
 	sleep(1);
 	echo 'unhide_done';
 	}
-
 ?>

@@ -66,8 +66,8 @@ include("../inc/dashboard_config.php");
 	
 	$time_start = $timestamp_forward_start;
 	$time_end = $timestamp_forward_end;
-
-	// time info
+	
+	//
 	if ($time_format == '1')
 	{
 	// time format 1
@@ -85,7 +85,7 @@ include("../inc/dashboard_config.php");
 	}	
 	}
 	// get record locations
-	$sql = "SELECT * FROM `record_locations` ORDER BY id ASC";
+	$sql = "SELECT * FROM `record_locations` ORDER BY `id` ASC";
 	if ($result2 = mysqli_query($dbmysqli,$sql))
 	{
 	while ($obj = mysqli_fetch_object($result2)) {	
@@ -145,18 +145,20 @@ include("../inc/dashboard_config.php");
 	{
 	// time format 2
 	$e2eventstart = $obj->e2eventstart;
-	$date_start = date("l n/d/Y", $e2eventstart);
+	$date_start = date("l, n/d/Y", $e2eventstart);
 	$e2eventend = $obj->e2eventend;
-	$date_end = date("l n/d/Y - g:i A", $e2eventend);
+	$date_end = date("l, n/d/Y - g:i A", $e2eventend);
 	$broadcast_time = date("g:i A", $e2eventstart).' - '.date("g:i A", $e2eventend);
 	$td_spacer = 'cnt_time_2';
 	}
 	
-	if ($streaming_symbol == '1' ){ $stream_broadcast = '<a href="'.$url_format.'://'.$box_user.':'.$box_password.'@'.$box_ip.'/web/stream.m3u?ref='.$obj->e2eventservicereference.'" title="Stream"><i class="fa fa-desktop fa-1x"></i></a>'; 
+	if($streaming_symbol == '1'){ $stream_broadcast = '<a href="'.$url_format.'://'.$box_user.':'.$box_password.'@'.$box_ip.'/web/stream.m3u?ref='.$obj->e2eventservicereference.'" title="Stream">
+	<i class="fa fa-desktop fa-1x"></i></a>'; 
 	} else { 
 	$stream_broadcast = ''; }
 	
-	if ($imdb_symbol == '1' ){ $imdb_broadcast = '<a href="https://www.imdb.com/find?ref_=nv_sr_fn&q='.$title_enc.'" target="_blank" title="Info on IMDb"><i class="fa fa-info-circle fa-1x"></i></a>'; 
+	if($imdb_symbol == '1'){ $imdb_broadcast = '<a href="https://www.imdb.com/find?ref_=nv_sr_fn&q='.$title_enc.'" target="_blank" title="Info on IMDb">
+	<i class="fa fa-info-circle fa-1x"></i></a>'; 
 	} else { 
 	$imdb_broadcast = ''; }
 	

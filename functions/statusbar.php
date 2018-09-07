@@ -8,9 +8,10 @@ include("../inc/dashboard_config.php");
 	header('Cache-Control: no-cache');
 	
 	//
-	if(!ini_get('allow_url_fopen')){
-	echo '[{"statusbar":"0"}]';
-	$_SESSION["statusbar"] = "0";
+	if(!ini_get('allow_url_fopen'))
+	{
+	echo '[{"statusbar":"2"}]';
+	$_SESSION["statusbar"] = "2";
 	exit;
 	}
 
@@ -19,22 +20,22 @@ include("../inc/dashboard_config.php");
 	$getstatus_request = @file_get_contents($xmlfile, false, $webrequest);
 	$xml = simplexml_load_string($getstatus_request);
 	
-	if($xml === FALSE){
-	echo '[{"statusbar":"0"}]';
-	$_SESSION["statusbar"] = "0";
+	if($xml === FALSE)
+	{
+	echo '[{"statusbar":"3"}]';
+	$_SESSION["statusbar"] = "3";
 	exit;
 	}
-	
-	//$json = array();
 
 if ($xml){
 
 	if(!isset($xml->e2service->e2servicereference) or $xml->e2service->e2servicereference == ""){ $xml->e2service->e2servicereference = ""; }
 	
 	// if no data on channel
-	if($xml->e2service->e2servicereference == ""){
-	echo '[{"statusbar":"0"}]';
-	$_SESSION["statusbar"] = "0";
+	if($xml->e2service->e2servicereference == "")
+	{
+	echo '[{"statusbar":"4"}]';
+	$_SESSION["statusbar"] = "4";
 	exit;
 	
 	} else {
@@ -53,23 +54,27 @@ if ($xml){
 	$time_complete = round($e2eventduration/60,0);
 	$time_remaining = round($e2eventremaining/60,0);
 	
-	if(strlen($e2eventname) > "70" ){
+	if(strlen($e2eventname) > "70" )
+	{
 	$e2eventname = substr($e2eventname, 0, 70);
 	$e2eventname = $e2eventname . '...';
 	}
 	
-	if ($e2eventname == ""){
+	if($e2eventname == ""){
 	$e2eventname = ' No EPG available ';
 	}
 	
-	if ($xml->e2service->e2videowidth == "N/A"){
-	echo '[{"statusbar":"0\r"}]';
-	$_SESSION["statusbar"] = "0";
+	if($e2videowidth == "N/A" and $e2eventname == "")
+	{
+	echo '[{"statusbar":"5"}]';
+	$_SESSION["statusbar"] = "5";
 	exit;
 	
 	} else {
 	
 	$channel_name = str_replace(" ", "+", $e2eventservicename);
+	if($e2videowidth == "N/A"){ $e2videowidth = ""; } else { $e2videowidth = $e2videowidth.'p x '; } 
+	if($e2videoheight == "N/A"){ $e2videoheight = ""; } else { $e2videoheight = $e2videoheight.'p'; }
 	//$stream_url = "$url_format://$box_user:$box_password@$box_ip/web/stream.m3u?ref=$e2servicereference&name=$channel_name";
 	$stream_url = "$url_format://$box_ip/web/stream.m3u?ref=$e2servicereference&name=$channel_name";
 	

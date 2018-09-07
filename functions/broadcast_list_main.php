@@ -23,6 +23,7 @@ include("../inc/dashboard_config.php");
 	$time = $_REQUEST['time'];
 	
 	if(!isset($time) or $time == ""){ echo "time data missed"; }
+	if(!isset($_SESSION["browse_timestamp"]) or $_SESSION["browse_timestamp"] == ""){ $_SESSION["browse_timestamp"] = time(); }
 	
 	if($time == 'now_today'){ $_SESSION["browse_timestamp"] = time(); }
 	
@@ -48,11 +49,10 @@ include("../inc/dashboard_config.php");
 	$_SESSION["browse_timestamp"] = strtotime($set_time) + $dur_down_broadcast;
 	}
 	
-	//
 	$time_start = $_SESSION["browse_timestamp"] - $dur_down_broadcast;
 	$time_end = $_SESSION["browse_timestamp"] + $dur_up_broadcast;
 	
-	// time info
+	//
 	if($time_format == '1')
 	{
 	// time format 1
@@ -122,21 +122,21 @@ include("../inc/dashboard_config.php");
 	{
 	// time format 2
 	$e2eventstart = $obj->e2eventstart;
-	$date_start = date("l n/d/Y", $e2eventstart);
+	$date_start = date("l, n/d/Y", $e2eventstart);
 	$e2eventend = $obj->e2eventend;
-	$date_end = date("l n/d/Y - g:i A", $e2eventend);
+	$date_end = date("l, n/d/Y - g:i A", $e2eventend);
 	$broadcast_time = date("g:i A", $e2eventstart).' - '.date("g:i A", $e2eventend);
 	$td_spacer = 'cnt_time_2';
 	}
 	
-	if($streaming_symbol == '1' ){
+	if($streaming_symbol == '1'){
 	$stream_broadcast = '<a href="'.$url_format.'://'.$box_user.':'.$box_password.'@'.$box_ip.'/web/stream.m3u?ref='.$obj->e2eventservicereference.'" title="Stream">
 	<i class="fa fa-desktop fa-1x"></i></a>'; 
 	} else { 
 	$stream_broadcast = '';
 	}
 	
-	if($imdb_symbol == '1' ){
+	if($imdb_symbol == '1'){
 	$imdb_broadcast = '<a href="https://www.imdb.com/find?ref_=nv_sr_fn&q='.$title_enc.'" target="_blank" title="Info on IMDb">
 	<i class="fa fa-info-circle fa-1x"></i></a>'; 
 	} else { 

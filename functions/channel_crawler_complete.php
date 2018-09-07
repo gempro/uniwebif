@@ -16,11 +16,8 @@ if($xml){
 
 	if(!isset($xml->e2event[$i]->e2eventtitle) or $xml->e2event[$i]->e2eventtitle == ""){ $xml->e2event[$i]->e2eventtitle = ""; }
 	
-	// if no title dont write in database
-	if($xml->e2event[$i]->e2eventtitle == "" ){
-	
-	} else {
-	
+	if($xml->e2event[$i]->e2eventtitle != "")
+	{
 	// define search line
 	$e2eventtitle = utf8_decode($xml->e2event[$i]->e2eventtitle);
 	$title_enc = rawurlencode($xml->e2event[$i]->e2eventtitle);
@@ -69,7 +66,7 @@ if($xml){
 	$us_end_date = date("m/d/Y H:i A", $e2eventend);
 	
 	// mark hd channels
-	if (preg_match("/\bHD\b/i", $e2eventservicename)) {
+	if(preg_match("/\bHD\b/i", $e2eventservicename)){
 	$hd_channel = 'yes';
 	} else {
 	$hd_channel = 'no';
@@ -91,6 +88,7 @@ if($xml){
 	
 	// channel hash
 	$channel_hash = hash('md4',$e2eventservicename);
+	if(!isset($channel_hash) or $channel_hash == ""){ $channel_hash = ""; }
 	
 	$sql = mysqli_query($dbmysqli, "
 	INSERT INTO `epg_data` (e2eventtitle, title_enc, e2eventservicename, servicename_enc, e2eventdescription, description_enc, e2eventdescriptionextended, descriptionextended_enc, e2eventid, start_date, us_start_date, start_day, start_month, start_year, start_hour, start_minute, start_weekday, end_date, us_end_date, end_day, end_month, end_year, end_hour, end_minute, end_weekday, total_min, e2eventstart, e2eventend, e2eventduration, e2eventcurrenttime, e2eventservicereference, hd_channel, crawler_time, hash, channel_hash)
@@ -99,6 +97,9 @@ if($xml){
 	}
 	}
 	}
+	
+	if(!isset($channel_hash) or $channel_hash == ""){ $channel_hash = ""; }
+	
 	// latest entry
 	$sql = mysqli_query($dbmysqli, "SELECT `e2eventend` FROM `epg_data` WHERE `channel_hash` = '".$channel_hash."' ORDER BY `e2eventend` DESC LIMIT 0 , 1");
 	$result = mysqli_fetch_assoc($sql);

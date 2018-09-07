@@ -97,7 +97,7 @@ if($action == 'show'){
 	$time_start = $timestamp_forward_start;
 	$time_end = $timestamp_forward_end;
 	
-	// time info
+	//
 	if($time_format == '1')
 	{
 	// time format 1
@@ -113,7 +113,7 @@ if($action == 'show'){
 	}
 	
 	// get record locations
-	$sql = "SELECT * FROM `record_locations` ORDER BY id ASC";
+	$sql = "SELECT * FROM `record_locations` ORDER BY `id` ASC";
 	
 	if ($result = mysqli_query($dbmysqli,$sql))
 	{
@@ -145,7 +145,7 @@ if($action == 'show'){
 	if($time == 'today' ){ $time_start = $primetime_start; $time_end = $primetime_end; unset($_SESSION['sum_primetime_days']); // session_destroy(); 
 	}
 	
-	$sql = "SELECT * FROM `epg_data` WHERE e2eventstart BETWEEN '$time_start' and '$time_end' ORDER BY e2eventstart ASC";
+	$sql = "SELECT * FROM `epg_data` WHERE `e2eventstart` BETWEEN '$time_start' and '$time_end' ORDER BY `e2eventstart` ASC";
 	
 	if($result = mysqli_query($dbmysqli,$sql))
 	{
@@ -172,18 +172,20 @@ if($action == 'show'){
 	{
 	// time format 2
 	$e2eventstart = $obj->e2eventstart;
-	$date_start = date("l n/d/Y", $e2eventstart);
+	$date_start = date("l, n/d/Y", $e2eventstart);
 	$e2eventend = $obj->e2eventend;
-	$date_end = date("l n/d/Y - g:i A", $e2eventend);
+	$date_end = date("l, n/d/Y - g:i A", $e2eventend);
 	$primetime_time = date("g:i A", $e2eventstart).' - '.date("g:i A", $e2eventend);
 	$td_spacer = 'cnt_time_2';
 	}
 	
-	if($streaming_symbol == '1'){ $stream_broadcast = '<a href="'.$url_format.'://'.$box_user.':'.$box_password.'@'.$box_ip.'/web/stream.m3u?ref='.$obj->e2eventservicereference.'" title="Stream"><i class="fa fa-desktop fa-1x"></i></a>'; 
+	if($streaming_symbol == '1'){ $stream_broadcast = '<a href="'.$url_format.'://'.$box_user.':'.$box_password.'@'.$box_ip.'/web/stream.m3u?ref='.$obj->e2eventservicereference.'" title="Stream">
+	<i class="fa fa-desktop fa-1x"></i></a>'; 
 	} else { 
 	$stream_broadcast = ''; }
 	
-	if($imdb_symbol == '1'){ $imdb_broadcast = '<a href="https://www.imdb.com/find?ref_=nv_sr_fn&q='.$title_enc.'" target="_blank" title="Info on IMDb"><i class="fa fa-info-circle fa-1x"></i></a>'; 
+	if($imdb_symbol == '1'){ $imdb_broadcast = '<a href="https://www.imdb.com/find?ref_=nv_sr_fn&q='.$title_enc.'" target="_blank" title="Info on IMDb">
+	<i class="fa fa-info-circle fa-1x"></i></a>'; 
 	} else { 
 	$imdb_broadcast = ''; }
 	

@@ -119,7 +119,7 @@ if($xml){
 	$e2length = $xml->e2movie[$i]->e2length;
 	$e2filename = rawurldecode($xml->e2movie[$i]->e2filename);
 	$e2filesize = $xml->e2movie[$i]->e2filesize;
-	$filespace = $filespace + $e2filesize;
+	$filespace = (''.$filespace.'') + (''.$e2filesize.'');
 	
 	if($time_format == '1')
 	{

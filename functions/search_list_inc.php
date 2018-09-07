@@ -48,8 +48,8 @@ include("../inc/dashboard_config.php");
 	$sortby = $sort_list;
 	}
 	
-	if ($sortby == 'id'){ $sortby1 = 'DESC'; }
-	if ($sortby == 'searchterm'){ $sortby1 = 'ASC'; }
+	if($sortby == 'id'){ $sortby1 = 'DESC'; }
+	if($sortby == 'searchterm'){ $sortby1 = 'ASC'; }
 	
 	// get record locations
 	$sql2 = "SELECT * FROM `record_locations` ORDER BY `id` ASC";
@@ -116,7 +116,8 @@ include("../inc/dashboard_config.php");
 	
 	if($obj->e2eventservicename == 'NULL'){ $servicename_enc = 'All Channels'; }
 		
-	if(strlen($searchterm) > "25" ) {
+	if(strlen($searchterm) > "25" )
+	{
 	$searchterm = substr($searchterm, 0, 25);
 	$searchterm = $searchterm . '...';
 	$searchterm2 = rawurldecode($obj->searchterm);
@@ -125,7 +126,7 @@ include("../inc/dashboard_config.php");
 	$searchterm2 = $searchterm;
 	}
 	
-	if ($obj->e2eventservicereference == 'NULL')
+	if($obj->e2eventservicereference == 'NULL')
 	{
 	$search_channel = '';
 	$channel_id = '';
@@ -141,13 +142,13 @@ include("../inc/dashboard_config.php");
 	if($search_option == "description"){ $search_option_desc = "Description"; }
 	if($search_option == "extdescription"){ $search_option_desc = "Extended description"; }
 	
-	if($time_format == "1" or $time_format == "")
+	if($time_format == "1")
 	{
 	$last_change = date("d.m - H:i", $obj->last_change);
 	$last_crawl = date("d.m - H:i", $obj->last_crawl);
 	//
-	if($last_change == "01.01 01:00"){ $last_change = ""; }
-	if($last_crawl == "01.01 01:00"){ $last_crawl = ""; }
+	if($last_change == "01.01 - 01:00"){ $last_change = "not changed"; }
+	if($last_crawl == "01.01 - 01:00"){ $last_crawl = "not crawled"; }
 	}
 	
 	if($time_format == "2" or $time_format == "")
@@ -155,8 +156,8 @@ include("../inc/dashboard_config.php");
 	$last_change = date("n/d - g:i A", $obj->last_change);
 	$last_crawl = date("n/d - g:i A", $obj->last_crawl);
 	//
-	if($last_change == "1/01 1:00 AM"){ $last_change = ""; }
-	if($last_crawl == "1/01 1:00 AM"){ $last_crawl = ""; }
+	if($last_change == "1/01 - 1:00 AM"){ $last_change = "not changed"; }
+	if($last_crawl == "1/01 - 1:00 AM"){ $last_crawl = "not crawled"; }
 	}
 	
 	// get record location id
@@ -271,16 +272,17 @@ include("../inc/dashboard_config.php");
 		  <i class=\"fa fa-search fa-1x\"></i></a>
 		<input id=\"saved_search_list_save_btn_$obj->id\" type=\"submit\" onClick=\"saved_search_list_save(this.id)\" value=\"SAVE\" class=\"btn btn-success btn-sm\">
 		<input id=\"saved_search_list_delete_btn_$obj->id\" type=\"submit\" onClick=\"saved_search_list_delete(this.id)\" value=\"DELETE\" class=\"btn btn-danger btn-sm\"/>
+		<span id=\"saved_search_list_scroll_timer_$obj->id\"></span>
 		<span id=\"saved_search_list_status_$obj->id\"></span>
-		<div class=\"crawl-info\"><span aria-hidden=\"true\">Last change: $last_change | Last crawl: $last_crawl</span></div>
+		<div class=\"crawl-info\"><span aria-hidden=\"true\">Last change: <span id=\"last_change_$obj->id\">$last_change</span> | Last crawl: $last_crawl</span></div>
 		<div class=\"spacer_5\"></div>
 		</div>
 	</div>
 	<!-- ROW -->
 	</div>
 	</div>
-	</div>
 	<div class=\"spacer_10\"></div>
+	</div>
 	";
 	}
 }
