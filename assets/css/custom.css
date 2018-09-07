@@ -211,13 +211,11 @@ body {
 	width: auto;
 	float: left;
 	padding-right: 15px;
-
 }
 #radio-group #radio3 {
 	width: auto;
 	float: left;
 	padding-right: 15px;
-
 }
 #radio-group #radio4 {
 	width: auto;
@@ -227,7 +225,6 @@ body {
 #btn-group {
 	width: auto;
 	height:auto;
-	
 }
 #btn-group #btn1 {
 	width: auto;
@@ -252,7 +249,6 @@ body {
 	width: 100%;
 	height: auto;
 }
-
 #broadcast-tab-button-group #row1 {
 	width: auto;
 	float: left;
@@ -408,7 +404,6 @@ display:none;
 /* For small screen */    
 @media (max-width: 768px) {
 #broadcast_main #cnt_title {
-	font-weight: bold;
     width: 100%;
 	min-width:100%;
 	height: auto;
@@ -461,7 +456,6 @@ display:none;
 /* For small screen */    
 @media (max-width: 768px) {
 #primetime_main #cnt_title {
-	font-weight: bold;
     width: 100%;
 	min-width:100%;
 	height: auto;
@@ -539,7 +533,6 @@ display:none;
 /* For small screen */    
 @media (max-width: 768px) {
 #channelbrowser_main #cnt_title {
-	font-weight: bold;
     width: 100%;
 	min-width:100%;
 	height: auto;
@@ -616,7 +609,6 @@ display:none;
 	float: left;
 }
 #timerlist #cnt_title {
-	font-weight: bold;
     width: 100%;
 	min-width:100%;
 	height: auto;
@@ -759,8 +751,8 @@ display:none;
 	cursor:pointer;
 }
 .search_update_ok {
-	color: #F0AD4E;
-	}
+	color: #428bca;
+}
 .search_id {
 	color: #ccc;
 	cursor: default;
@@ -924,6 +916,9 @@ display:none;
 }
 .gray {
 	color:#CCCCCC;
+}
+.orange {
+	color:#F0AD4E;
 }
 .basic-input {
 	border: thin solid #ccc;
@@ -1228,7 +1223,6 @@ fieldset[disabled] .form-control-sm {
 textarea.form-control {
   height: auto;
 }
-
 /*==============================================
     MENU STYLES    
 =============================================*/
@@ -1335,7 +1329,6 @@ textarea.form-control {
 /*==============================================
     DASHBOARD STYLES     
     =============================================*/
-
 .bg-color-blue {
 	background-color: #9A86EB;
 	color: #fff;
@@ -1373,6 +1366,12 @@ textarea.form-control {
 	border-radius: 0px;
 	-webkit-border-radius:  0px;
 	-moz-border-radius: 0px;
+}
+.nav-btn-a {
+	margin-right: 4px;
+}
+.nav-btn-b {
+	margin-left: 4px;
 }
 .progress {
 	border-radius: 0px;
