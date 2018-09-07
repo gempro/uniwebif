@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Erstellungszeit: 03. Jul 2018 um 18:27
+-- Erstellungszeit: 07. Sep 2018 um 15:31
 -- Server Version: 5.5.38
 -- PHP-Version: 5.4.45-0+deb7u6
 
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS `all_services` (
   `e2servicereference` varchar(255) NOT NULL,
   `channel_hash` varchar(100) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1471 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1484 ;
 
 -- --------------------------------------------------------
 
@@ -90,7 +90,7 @@ CREATE TABLE IF NOT EXISTS `channel_list` (
   `last_crawl` int(12) NOT NULL DEFAULT '0',
   `last_epg` int(12) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=127 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=129 ;
 
 -- --------------------------------------------------------
 
@@ -119,7 +119,7 @@ CREATE TABLE IF NOT EXISTS `device_list` (
   `rec_location8` varchar(255) NOT NULL,
   `rec_location9` varchar(255) NOT NULL,
   KEY `id` (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
 
 -- --------------------------------------------------------
 
@@ -135,7 +135,7 @@ CREATE TABLE IF NOT EXISTS `epg_data` (
   `e2eventservicename` varchar(255) NOT NULL,
   `servicename_enc` varchar(255) NOT NULL,
   `e2eventdescription` varchar(255) NOT NULL,
-  `description_enc` varchar(255) NOT NULL,
+  `description_enc` text NOT NULL,
   `e2eventdescriptionextended` text NOT NULL,
   `descriptionextended_enc` text NOT NULL,
   `e2eventid` varchar(10) NOT NULL,
@@ -160,7 +160,7 @@ CREATE TABLE IF NOT EXISTS `epg_data` (
   `e2eventend` varchar(12) NOT NULL,
   `e2eventduration` varchar(5) NOT NULL,
   `e2eventcurrenttime` varchar(10) NOT NULL,
-  `e2eventservicereference` varchar(255) NOT NULL,
+  `e2eventservicereference` text NOT NULL,
   `hd_channel` varchar(3) NOT NULL,
   `crawler_time` varchar(10) NOT NULL,
   `hash` varchar(50) NOT NULL,
@@ -171,7 +171,7 @@ CREATE TABLE IF NOT EXISTS `epg_data` (
   FULLTEXT KEY `description_enc` (`description_enc`),
   FULLTEXT KEY `descriptionextended_enc` (`descriptionextended_enc`),
   FULLTEXT KEY `epgsearch_enc` (`title_enc`,`description_enc`,`descriptionextended_enc`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=854837 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=20138 ;
 
 -- --------------------------------------------------------
 
@@ -193,7 +193,7 @@ CREATE TABLE IF NOT EXISTS `keywords` (
   `activ` int(1) NOT NULL DEFAULT '1',
   `counter` int(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=35 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=65 ;
 
 -- --------------------------------------------------------
 
@@ -207,7 +207,7 @@ CREATE TABLE IF NOT EXISTS `record_locations` (
   `e2location` varchar(255) NOT NULL,
   `selected` int(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=5 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
 
 -- --------------------------------------------------------
 
@@ -236,7 +236,7 @@ CREATE TABLE IF NOT EXISTS `saved_search` (
   `action` varchar(255) NOT NULL,
   `rec_replay` varchar(255) NOT NULL DEFAULT 'off',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=64 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=79 ;
 
 -- --------------------------------------------------------
 
@@ -278,6 +278,7 @@ CREATE TABLE IF NOT EXISTS `settings` (
   `hide_old_timer` int(1) NOT NULL DEFAULT '1',
   `delete_old_timer` int(1) NOT NULL DEFAULT '0',
   `delete_receiver_timer` int(1) NOT NULL DEFAULT '0',
+  `delete_further_receiver_timer` int(1) NOT NULL DEFAULT '0',
   `dummy_timer` int(1) NOT NULL DEFAULT '0',
   `dummy_timer_time` int(12) NOT NULL,
   `dummy_timer_current` int(12) NOT NULL,
@@ -301,6 +302,8 @@ CREATE TABLE IF NOT EXISTS `settings` (
   `primetime` int(12) NOT NULL DEFAULT '0',
   `dur_down_primetime` int(4) NOT NULL DEFAULT '600',
   `dur_up_primetime` int(5) NOT NULL DEFAULT '7200',
+  `del_m3u` int(1) NOT NULL DEFAULT '0',
+  `del_m3u_time` int(12) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
@@ -331,7 +334,7 @@ CREATE TABLE IF NOT EXISTS `timer` (
   `record_location` varchar(255) NOT NULL,
   `e2eventstart` varchar(12) NOT NULL,
   `e2eventend` varchar(12) NOT NULL,
-  `timer_request` varchar(255) NOT NULL,
+  `timer_request` text NOT NULL,
   `hash` varchar(50) NOT NULL,
   `channel_hash` varchar(100) NOT NULL,
   `status` varchar(255) NOT NULL,
@@ -345,7 +348,7 @@ CREATE TABLE IF NOT EXISTS `timer` (
   `search_id` int(4) NOT NULL,
   `conflict` int(1) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1359 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=229 ;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
