@@ -35,6 +35,7 @@
 	$after_crawl_action = $result['after_crawl_action'];
 	$delete_old_timer = $result['delete_old_timer'];
 	$delete_receiver_timer = $result['delete_receiver_timer'];
+	$delete_further_receiver_timer = $result['delete_further_receiver_timer'];
 	$dummy_timer = $result['dummy_timer'];
 	$dummy_timer_time = $result['dummy_timer_time'];
 	$dummy_timer_current = $result['dummy_timer_current'];
@@ -57,6 +58,8 @@
 	$primetime = $result['primetime'];
 	$dur_down_primetime = $result['dur_down_primetime'];
 	$dur_up_primetime = $result['dur_up_primetime'];
+	$del_m3u = $result['del_m3u'];
+	$del_m3u_time = $result['del_m3u_time'];
 
 	// Webrequest
 	$webrequest = stream_context_create(array (

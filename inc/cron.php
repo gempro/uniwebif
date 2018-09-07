@@ -14,15 +14,16 @@
 	
 	// start search crawler / save timer in db
 	$last_crawl_time = $settings["last_search_crawl"];
-	$time_to_crawl = $last_crawl_time + 0;
-	
-	if($settings["search_crawler"] == '1'){
-	if($time_to_crawl < $time){
-	
+	//$time_to_crawl = $last_crawl_time + 0;
+	if($settings["search_crawler"] == '1')
+	{
+	if($last_crawl_time < $time)
+	{
 	$save_timer_in_db = file_get_contents(''.$url_format.'://'.$server_ip.'/'.$script_folder.'/functions/save_timer_in_db.php');
 	$sql = mysqli_query($dbmysqli, "UPDATE `settings` SET `last_search_crawl` = '$time'");
 	}
 	}
+	
 	// hide expired timer from database
 	if($settings["hide_old_timer"] == '1')
 	{
@@ -43,6 +44,34 @@
 	$delete_receiver_timer = file_get_contents($delete_timer_request, false, $webrequest);
 	}
 	
+	// delete expired timer from additional receiver
+	if($settings["delete_further_receiver_timer"] == "1")
+	{
+	$sql = "SELECT * FROM `device_list`";
+	if ($result = mysqli_query($dbmysqli,$sql))
+	{
+	while ($obj = mysqli_fetch_object($result)){	
+	{
+	$device_ip = $obj->device_ip;
+	$device_user = $obj->device_user;
+	$device_password = $obj->device_password;
+	$device_url_format = $obj->url_format;
+	$device_webrequest = stream_context_create(array (
+	'http' => array (
+	'header' => 'Authorization: Basic ' . base64_encode("$device_user:$device_password"),
+	'ssl' =>array (
+	'verify_peer' => false,
+	'verify_peer_name' => false,
+	))
+	));
+	$delete_device_timer_request = $device_url_format.'://'.$device_ip.'/web/timercleanup?cleanup=true';
+	$delete_device_receiver_timer = file_get_contents($delete_device_timer_request, false, $device_webrequest);
+	sleep(1);
+	}
+    }
+	}
+	}
+	
 	// delete duplicate timer
 	//$sql = mysqli_query($dbmysqli, "DELETE FROM timer USING timer, timer AS Dup WHERE NOT timer.id = Dup.id AND timer.id > Dup.id AND timer.timer_request = Dup.timer_request");
 	
@@ -56,8 +85,9 @@
 	$delete_epg = mysqli_query($dbmysqli, "DELETE FROM `epg_data` WHERE `e2eventstart` < '$time_to_delete'");
 	}
 	
-	if($settings["search_crawler"] == '0'){
-	// update record status
+	// update record status if search crawler is deactivated
+	if($settings["search_crawler"] == '0')
+	{
 	$check_timer = "SELECT * FROM `timer` WHERE `record_status` NOT LIKE 'c_expired' ";
 	
 	if($result = mysqli_query($dbmysqli,$check_timer))
@@ -93,7 +123,6 @@
 	// start epg crawler
 	if($settings["epg_crawler"] == '1' and $settings["crawler_timestamp"] < $time)
 	{
-	
 	$sql = mysqli_query($dbmysqli, "UPDATE `settings` SET `epg_crawler_activ` = '1'");
 	
 	// dummy timer
@@ -113,11 +142,17 @@
 	if($settings["cz_activate"] == '1')
 	{				
 	$cz_timestamp = $settings["cz_timestamp"];
-	
 	if($cz_timestamp < $time)
 	{
 	$channel_zapper = $url_format.'://'.$server_ip.'/'.$script_folder.'/functions/channelzapper.php';
 	$start_zapping = file_get_contents($channel_zapper);
 	}
-}
+	}
+	
+	// delete m3u
+	if($settings["del_m3u"] == '1' and $settings["del_m3u_time"] < $time)
+	{
+	$delete_m3u = $url_format.'://'.$server_ip.'/'.$script_folder.'/functions/create_m3u.php?action=delete';
+	$delete_request = file_get_contents($delete_m3u);
+	}
 ?>
