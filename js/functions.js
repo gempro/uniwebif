@@ -172,44 +172,100 @@ if (document.querySelector('html').clientWidth < 830){
 }
 
 // statusbar
-if(document.querySelector('html').clientWidth > 1200){
 $(function(){
-	statusbar_loop(); 
+		   
+	statusbar_loop();
 	function statusbar_loop(){
 	$.post("functions/statusbar.php?t="+(new Date().getTime()),
 	function(data){
 	var obj = JSON.parse(data);
 	var stream_url = decodeURIComponent(obj[0].stream_url);
+	var e2servicereference = decodeURIComponent(obj[0].e2servicereference);
 	var e2eventname = decodeURIComponent(obj[0].e2eventname);
 	var e2eventservicename = decodeURIComponent(obj[0].e2eventservicename);
 	var e2eventdescriptionextended = decodeURIComponent(obj[0].e2eventdescriptionextended);
+	
+	if (document.querySelector('html').clientWidth > 550){
 	$("#statusbar_cnt").html("\
 	<div id=\"statusbar\">\
 	<div id=\"row1\">\
 	<a href=\""+stream_url+"\" title=\"Stream\">\
 	<i class=\"fa fa-desktop fa-1x\"></i></a>\
-	"+e2eventname+" | +"+obj[0].time_remaining+" of "+obj[0].time_complete+" min | <strong>"+e2eventservicename+"</strong></div>\
-	<div id=\"row2\">"+obj[0].e2videowidth+"p x "+obj[0].e2videoheight+"p</div>\
+	<a onclick=\"modal.open();\" title=\"Show EPG\" style=\"cursor:pointer;\"><i class=\"fa fa-list-alt fa-1x\"></i></a> "+e2eventname+"\
+	| +"+obj[0].time_remaining+" of "+obj[0].time_complete+" min | <input type=\"text\" id=\"sb_service\" value=\""+e2servicereference+"\" style=\"display:none;\">\
+	<strong>"+e2eventservicename+"</strong></div>\
+	<div id=\"row2\">"+obj[0].e2videowidth+" "+obj[0].e2videoheight+"</div>\
 	<div style=\"clear:both\"></div>\
 	</div>");
+	} else {
+	$("#statusbar_cnt").html("\
+	<div id=\"statusbar\">\
+	<div id=\"row1\">\
+	<a href=\""+stream_url+"\" title=\"Stream\">\
+	<i class=\"fa fa-desktop fa-1x\"></i></a>\
+	<a onclick=\"modal.open();\" title=\"Show EPG\" style=\"cursor:pointer;\"><i class=\"fa fa-list-alt fa-1x\"></i></a> "+e2eventname+"\
+	| <input type=\"text\" id=\"sb_service\" value=\""+e2servicereference+"\" style=\"display:none;\">\
+	<strong>"+e2eventservicename+"</strong></div>\
+	<div style=\"clear:both\"></div>\
+	</div>");
+	}
+	
 	if(obj[0].statusbar == "1"){
 	animatedcollapse.addDiv('statusbar_outer', 'fade=1,height=auto');
 	animatedcollapse.init()
 	animatedcollapse.show('statusbar_outer');
 	}
-	if(obj[0].statusbar == "0"){
+	if(obj[0].statusbar != "1"){
 	$("#statusbar_cnt").html("&nbsp;");
 	animatedcollapse.addDiv('statusbar_outer', 'fade=1,height=auto');
 	animatedcollapse.init()
 	animatedcollapse.hide('statusbar_outer');
 	}
-	if(obj[0].statusbar == "0"){ $("#statusbar_cnt").html("&nbsp;"); }
 	function reload_statusbar(){
 	statusbar_loop(); } window.setTimeout(reload_statusbar, 60000);
 	});
 	}
 });
-}
+
+// statusbar modal
+$(function(){
+		   
+	var modal = new RModal(document.getElementById('modal'), {
+	beforeOpen: function(next) {
+	var e2servicereference = $("#sb_service").val();
+	$.post("functions/modal_info.php",
+	{
+	e2servicereference: e2servicereference
+	},
+	function(data){
+	$('#epgframe').animate({scrollTop : 0},800);
+	$("#epgframe").html(data);
+	next();
+	});
+	},
+	afterOpen: function() {
+	//console.log('opened');
+	},
+	beforeClose: function(next) {
+	//console.log('beforeClose');
+	next();
+	},
+	afterClose: function() {
+	//console.log('closed');
+	}
+	});
+	document.getElementById('modal').addEventListener('click', function(e) {
+    if( e.target !== e.currentTarget ) {
+	e.stopPropagation();
+	return;
+    }
+    modal.close();
+	}, false);
+	document.addEventListener('keydown', function(ev) {
+	modal.keydown(ev);
+	}, false);
+	window.modal = modal;
+});
 
 // send timer broadcast list main
 function broadcast_timer(id){
@@ -343,7 +399,10 @@ function channel_crawler_zap(id,name){
 // display all channels
 function show_all(){
 	$("#crawl_separate_list").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\"> EPG data is loading, this could take some time..");
-	$.post("functions/channel_crawler_separate_inc.php?channel=all",
+	$.post("functions/channel_crawler_separate_inc.php",
+	{
+	channel: 'all'
+	},
 	function(data){
 	$("#crawl_separate_list").html(data);
 	});
@@ -356,7 +415,10 @@ function show_panel(){
 function show_single_data(){
 	var channel = $("#channel_id").val();
 	$("#crawl_separate_list").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
-	$.post("functions/channel_crawler_separate_inc.php?channel="+channel+"",
+	$.post("functions/channel_crawler_separate_inc.php",
+	{
+	channel: channel
+	},
 	function(data){
 	$("#crawl_separate_list").html(data);
 	});
@@ -670,30 +732,6 @@ function timerlist_delete_timer(id){
 }
 
 // timerlist send timer
-function timerlist_send_timerx(id,name){
-	
-	var this_id = id.replace(/timerlist_send_timer_btn_/g, "");
-	var record_location = $("#timerlist_rec_location_"+this_id).text();
-	var device = $("#timerlist_device_no_"+name).val();
-
-	$("#timerlist_status_"+name).html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
-	$.post("functions/send_timer_instant.php",
-	{
-	location: 'timerlist',
-	hash: this_id,
-	record_location: record_location,
-	device: device
-	},
-	function(data){
-	$("#timerlist_status_"+name).html(data);
-	$("#tl_glyphicon_status_"+name+"").attr({style:"color:#5CB85C", title:"sent"});
-	load_timer_list_panel();
-	});
-}
-
-
-
-// neu
 function timerlist_send_timer(id,name){
 	
 	var this_id = id.replace(/timerlist_send_timer_btn_/g, "");
@@ -722,12 +760,6 @@ function timerlist_send_timer(id,name){
 	load_timer_list_panel();
 	});
 }
-
-
-
-
-
-
 
 //
 function change_timerlist_device(id){
@@ -826,7 +858,7 @@ function reload_timerlist(){
 	$.post("functions/timer_list_inc.php",
 	function(data){
 	$("#selected_box_sum").html("");
-	$("#unhide").addClass("hidden");
+	$("#panel_unhide").fadeOut();
 	$("#show_unhide").attr("onclick", "timerlist_panel(this.id)");
 	$("#show_unhide").attr({ title:"show"});
 	$("#hidden_status").text("0");
@@ -863,7 +895,7 @@ function timerlist_panel(id){
 	$("#del_buttons").toggle();
 	return;
 	}
-	if (id == 'send' || id == 'delete_db' || id == 'delete_rec' || id == 'delete_both' || id == 'hide' || id == 'unhide'){
+	if (id == 'send' || id == 'delete_db' || id == 'delete_rec' || id == 'delete_both' || id == 'hide' || id == 'panel_unhide'){
 	if (checked == 0){ return; }
 	}
 	
@@ -877,7 +909,7 @@ function timerlist_panel(id){
 	action: 'unhide'
 	},
 function(data){
-	$("#unhide").removeClass("hidden");
+	$("#panel_unhide").fadeIn();
 	$("#select_all").prop("checked", false);
 	$("#show_unhide").attr("onclick", "reload_timerlist()");
 	$("#show_unhide").attr({ title:"hide"});
@@ -896,16 +928,28 @@ function(data){
 	timer_id: selected_timer
 	},
 	function(data){
+	
 	$("#panel_action_status").html("<i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i>");
 	$("#selected_box_sum").html("");
 	
-	if (data == 'send_done'){
+	if (id == 'send'){
+	var obj = JSON.parse(data);
+	for ($i = 0; $i <= obj.length-1; $i++)
+ 	{
+	var t_id = obj[$i]["id"];
+	var t_conflict = obj[$i]["conflict"];
+	if (t_conflict == '0'){ var color = 'color:#5CB85C'; var title = 'sent'; }
+	if (t_conflict == '1'){ var color = 'color:#F0AD4E'; var title = 'Conflict on Receiver'; }
+	$("#tl_glyphicon_status_"+t_id).attr({style:color, title:title});
+	$("#box_"+t_id).prop("checked", false);
+	}
+	
 	$("#panel_action_status").fadeOut(2000);
-	$("input[name='timerlist_checkbox[]']:checked").each(function ()
-	{
-	$("#tl_glyphicon_status_"+$(this).val()+"").attr({style:"color:#5CB85C", title:"sent"});
-	$("[id^=box]").prop("checked", false);
-	});
+//	$("input[name='timerlist_checkbox[]']:checked").each(function ()
+//	{
+//	$("#tl_glyphicon_status_"+$(this).val()+"").attr({style:"color:#5CB85C", title:"sent"});
+//	$("[id^=box]").prop("checked", false);
+//	});
 	$("#select_all").prop("checked", false);
 	load_timer_list_panel();
 	}
@@ -1079,14 +1123,16 @@ function saved_search_list_edit(id){
 }
 
 // scroll saved search
-function scroll_saved_search(id){
+function scroll_saved_search(id,timer){
 	var this_id = id.replace(/sid_/g, "");
+	var timer_id = timer.replace(/timer_scroll_/g, "");
 	if($("#search_list_div_"+this_id).length == 0){ return(alert("Saved search not found")); }
 	$('html, body').animate({ scrollTop: ($("#search_list_div_"+this_id).offset().top -70)}, 'slow');
 	animatedcollapse.addDiv('saved_search_list_div_'+this_id, 'fade=1,height=auto');
 	animatedcollapse.init()
 	animatedcollapse.show('saved_search_list_div_'+this_id);
 	show_all_exclude_fields(this_id);
+	$("#saved_search_list_scroll_timer_"+this_id).html("<input type=\"submit\" onClick=\"$('html, body').animate({scrollTop : ($(timer_"+timer_id+").offset().top-70)},800)\" value=\"BACK\" title=\"Back to timer\" class=\"btn btn-default btn-sm\"/>");
 }
 
 // edit saved search list
@@ -1121,6 +1167,8 @@ function saved_search_list_save(id){
 	active: active
 	},
 	function(data){
+	var obj = JSON.parse(data);
+	$("#last_change_"+this_id).html(obj[0]["last_change"]);
 	$("#saved_search_list_status_"+this_id).html("<i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i>");
 	reload_saved_search_panel();
 	});
@@ -1467,6 +1515,7 @@ function save_settings(){
 	if($("#hide_old_timer").is(':checked')){ var hide_old_timer = '1'; } else { var hide_old_timer = '0'; }
 	if($("#delete_old_timer").is(':checked')){ var delete_old_timer = '1'; } else { var delete_old_timer = '0'; }
 	if($("#delete_receiver_timer").is(':checked')){ var delete_receiver_timer = '1'; } else { var delete_receiver_timer = '0'; }
+	if($("#delete_further_receiver_timer").is(':checked')){ var delete_further_receiver_timer = '1'; } else { var delete_further_receiver_timer = '0'; }
 	if($("#dummy_timer").is(':checked')){ var dummy_timer = '1'; } else { var dummy_timer = '0'; }
 
 	var start_epg_crawler = $("#start_epg_crawler").val();
@@ -1475,6 +1524,7 @@ function save_settings(){
 	if($("#delete_old_epg").is(':checked')){ var delete_old_epg = '1'; } else { var delete_old_epg = '0'; }
 
 	var url_format = $("#url_format").val();
+	if($("#del_m3u").is(':checked')){ var del_m3u = '1'; } else { var del_m3u = '0'; }
 	var del_time = $("#del_time").val();
 	var extra_rec_time = $("#extra_rec_time").val();
 
@@ -1518,10 +1568,12 @@ function save_settings(){
 	hide_old_timer: hide_old_timer,
 	delete_old_timer: delete_old_timer,
 	delete_receiver_timer: delete_receiver_timer,
+	delete_further_receiver_timer: delete_further_receiver_timer,
 	dummy_timer: dummy_timer,
 	after_crawl_action: after_crawl_action,
 	delete_old_epg: delete_old_epg,
 	url_format: url_format,
+	del_m3u: del_m3u,
 	del_time: del_time,
 	reload_progressbar: reload_progressbar,
 	extra_rec_time: extra_rec_time,
