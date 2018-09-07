@@ -16,8 +16,7 @@ include_once("inc/header_info.php");
 	$result = mysqli_fetch_row($sql);
 	$sent_timer = $result[0];
 	//
-	
-	if ($sent_timer > 0){ 
+	if($sent_timer > 0){ 
 	$show_sent_timer = ' | <span class="timer_panel_info">'.$sent_timer.' sent | </span>'; 
 	} else { $show_sent_timer = ' | <span class="timer_panel_info">0 sent | </span>';
 	}
@@ -32,7 +31,7 @@ include_once("inc/header_info.php");
 	$result = mysqli_fetch_row($sql);
 	$timer_today = $result[0];
 	//
-	if ($sent_timer > 0){
+	if($sent_timer > 0){
 	$show_timer_today = ' <span class="timer_panel_info">'.$timer_today.' today | </span>'; 
 	} else { $show_timer_today = ' <span class="timer_panel_info">0 today | </span>'; 
 	}
@@ -42,7 +41,7 @@ include_once("inc/header_info.php");
 	$result = mysqli_fetch_row($sql);
 	$hidden_timer = $result[0];
 	//
-	if ($hidden_timer > 0){ 
+	if($hidden_timer > 0){ 
 	$show_hidden_timer = ' <span class="timer_panel_info">
 	<a id="show_unhide" onclick="timerlist_panel(this.id)" title="show" style="cursor:pointer;">'.$hidden_timer.' hidden</a> </span>'; 
 	} else { 
@@ -69,6 +68,8 @@ include_once("inc/header_info.php");
 <link href="assets/css/font-awesome.css" rel="stylesheet" />
 <!-- CUSTOM STYLES-->
 <link href="assets/css/custom.css" rel="stylesheet" />
+<link href="assets/css/rmodal-no-bootstrap.css" rel="stylesheet" />
+<!-- favicon -->
 <link rel="apple-touch-icon" sizes="180x180" href="images/icon/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="images/icon/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="images/icon/favicon-16x16.png">
@@ -134,6 +135,7 @@ $(function(){
 	$("#search_list").html(data);
 	});
 });
+//
 function sortby(){
 var search_list_sort = document.getElementById("sort_setting").value;
 	$.post("functions/search_list_inc.php?sort_list="+search_list_sort+"",
@@ -143,13 +145,18 @@ var search_list_sort = document.getElementById("sort_setting").value;
 }
 //
 function load_timer_list_panel(){
+	
+	var list_hidden_status = $("#show_unhide").attr("title");
+	if(list_hidden_status == 'hide'){ var list_hidden_status = '1'; } else { var list_hidden_status = '0'; }
+	if(list_hidden_status == '1'){ var action = 'reload_timerlist()'; var title = 'hide'; } else { var action = 'timerlist_panel(this.id)'; var title = 'show'; }
+	
 	$.post("functions/timer_list_panel_inc.php",
 	function(data){
 	var obj = JSON.parse(data);
 	// hidden timer
 	if(obj[0].hidden_timer > '0'){
 	$("#timerlist_panel").html(obj[0].timer_total+" Timer in Database | <span class=\"timer_panel_info\">\
-	"+obj[0].sent_timer+" sent | "+obj[0].timer_today+" today | <a id=\"show_unhide\" onclick=\"timerlist_panel(this.id)\" title=\"show\" style=\"cursor:pointer;\">\
+	"+obj[0].sent_timer+" sent | "+obj[0].timer_today+" today | <a id=\"show_unhide\" onclick=\""+action+"\" title=\""+title+"\" style=\"cursor:pointer;\">\
 	"+obj[0].hidden_timer+" hidden</a> | "+obj[0].receiver_timer+" on Receiver</span>");
 	}
 	// no hidden timer
@@ -159,6 +166,7 @@ function load_timer_list_panel(){
 	}
 	});
 }
+//
 function reload_saved_search_panel(){
 	$.post("functions/search_list_panel.php",
 	function(data){
@@ -176,6 +184,23 @@ function reload_saved_search_panel(){
 <body>
 <a id="top"></a>
 <div id="scroll_top" class="scroll_top"><a href="#" title="to top"><script>document.write("<i class=\"glyphicon glyphicon-circle-arrow-up fa-"+scrolltop_btn_size+"x\"></i>");</script></a></div>
+<!--statusbar modal -->
+ <span id="showModal"></span>
+  <div id="modal" class="modal">
+    <div class="modal-dialog animated">
+    <div class="modal-content">
+      <div class="modal-header">EPG</div>
+      <div class="modal-body">
+        <div id="epgframe"></div>
+        <hr>
+        <div align="right">
+        <button class="btn btn-default" type="button" onclick="modal.close();">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--statusbar modal -->
 <div id="wrapper">
   <div class="navbar navbar-inverse navbar-fixed-top">
     <div class="adjust-nav">
@@ -242,6 +267,11 @@ function reload_saved_search_panel(){
   </div>
   </div><!-- /. ROW  -->
     <div id="page-inner">
+    <div class="row">
+    <div id="cookie_js" class="col-md-12" style="color:#FF0000;">
+    <noscript>To use all functions of the website, it's required to activate JavaScript.</noscript>
+    </div>
+    </div>
       <div class="row">
         <div class="col-md-12">
           <h2>Timer</h2>
@@ -313,7 +343,7 @@ function reload_saved_search_panel(){
           <input id="delete_db" type="button" class="btn btn-default btn-xs" value="from Database" onClick="timerlist_panel(this.id)">
           <input id="delete_both" type="button" class="btn btn-default btn-xs" value="both" onClick="timerlist_panel(this.id)">
           </span>
-          <input id="unhide" type="button" class="btn btn-default btn-xs hidden" value="unhide" title="unhide selected" onClick="timerlist_panel(this.id)">
+          <input id="panel_unhide" type="button" class="btn btn-default btn-xs" style="display:none;" value="unhide" title="unhide selected" onClick="timerlist_panel(this.id)">
           <span id="selected_box_sum"></span>
           <span id="panel_action_status"></span>
           </div>
@@ -345,18 +375,22 @@ function reload_saved_search_panel(){
 </div>
 <!-- /. WRAPPER  -->
 <!-- SCRIPTS -AT THE BOTOM TO REDUCE THE LOAD TIME-->
-<!-- JQUERY SCRIPTS -->
-<!--<script src="assets/js/jquery-1.10.2.js"></script>-->
 <!-- BOOTSTRAP SCRIPTS -->
 <script src="assets/js/bootstrap.min.js"></script>
 <!-- METISMENU SCRIPTS -->
 <script src="assets/js/jquery.metisMenu.js"></script>
 <!-- CUSTOM SCRIPTS -->
 <script src="assets/js/custom.js"></script>
+<!--modal-->
+<script type="text/javascript" src="js/rmodal.js"></script>
+<!---->
 <script>
 $(function(){
    var statusbar = '<?php if(!isset($_SESSION["statusbar"]) or $_SESSION["statusbar"] == "") { $_SESSION["statusbar"] = ""; } echo $_SESSION["statusbar"]; ?>';
    if (statusbar == '1'){ $("#statusbar_outer").removeClass("statusbar_outer"); }
+   //
+   var cookies = navigator.cookieEnabled;
+   if(cookies == false){ $("#cookie_js").html("To use all functions of the website, it's required to accept Cookies."); }
 });
 </script>
 </body>

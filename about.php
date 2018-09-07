@@ -10,12 +10,24 @@ include_once("inc/header_info.php");
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Uniwebif : About</title>
+<meta name="keywords" content="uniwebif, extern, universal, web, interface, responsive, webinterface, enigma2, linux, receiver, epg, electronic, program, guide, crawler, save, xml, epg, database, browser, epg to sql, optimized, mobile devices, smartphone, tablet," />
+<meta name="description" content="Crawl, browse and search within the EPG from your Enigma2 Linux Receiver. Save EPG in your SQL database. Uniwebif is optimized for mobile devices like Smartphone and Tablet.." />
+<meta name="author" content="Uniwebif">
+<meta name="publisher" content="Uniwebif">
+<meta name="copyright" content="Uniwebif">
+<meta name="abstract" content="Crawl, browse and search within the EPG from your Enigma2 Linux Receiver. Save EPG in your SQL database. Uniwebif is optimized for mobile devices like Smartphone and Tablet..">
+<meta name="page-topic" content="software">
+<meta name="page-type" content="download">
+<meta name="content-language" content="en">
+<meta name="language" content="en">
 <!-- BOOTSTRAP STYLES-->
 <link href="assets/css/bootstrap.css" rel="stylesheet" />
 <!-- FONTAWESOME STYLES-->
 <link href="assets/css/font-awesome.css" rel="stylesheet" />
 <!-- CUSTOM STYLES-->
 <link href="assets/css/custom.css" rel="stylesheet" />
+<link href="assets/css/rmodal-no-bootstrap.css" rel="stylesheet" />
+<!-- favicon -->
 <link rel="apple-touch-icon" sizes="180x180" href="images/icon/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="images/icon/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="images/icon/favicon-16x16.png">
@@ -56,6 +68,23 @@ animatedcollapse.init()
 <body>
 <a id="top"></a>
 <div id="scroll_top" class="scroll_top"><a href="#" title="to top"><script>document.write("<i class=\"glyphicon glyphicon-circle-arrow-up fa-"+scrolltop_btn_size+"x\"></i>");</script></a></div>
+<!--statusbar modal -->
+ <span id="showModal"></span>
+  <div id="modal" class="modal">
+    <div class="modal-dialog animated">
+    <div class="modal-content">
+      <div class="modal-header">EPG</div>
+      <div class="modal-body">
+        <div id="epgframe"></div>
+        <hr>
+        <div align="right">
+        <button class="btn btn-default" type="button" onclick="modal.close();">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--statusbar modal -->
 <div id="wrapper">
   <div class="navbar navbar-inverse navbar-fixed-top">
     <div class="adjust-nav">
@@ -122,6 +151,11 @@ animatedcollapse.init()
   </div>
   </div><!-- /. ROW  -->
     <div id="page-inner">
+    <div class="row">
+    <div id="cookie_js" class="col-md-12" style="color:#FF0000;">
+    <noscript>To use all functions of the website, it's required to activate JavaScript.</noscript>
+    </div>
+    </div>
       <div class="row">
         <div class="col-md-12">
           <h2>About</h2>
@@ -175,7 +209,7 @@ animatedcollapse.init()
       <hr />
       <div class="row">
         <div class="col-md-12">
-        Uniwebif v1.6
+        Uniwebif v1.7
           <div class="spacer_10"></div>
         Download latest version at <a href="https://github.com/gempro/uniwebif/" target="_blank">Github</a>
         <div class="spacer_10"></div>
@@ -191,18 +225,22 @@ animatedcollapse.init()
 </div>
 <!-- /. WRAPPER  -->
 <!-- SCRIPTS -AT THE BOTOM TO REDUCE THE LOAD TIME-->
-<!-- JQUERY SCRIPTS -->
-<!--<script src="assets/js/jquery-1.10.2.js"></script>-->
 <!-- BOOTSTRAP SCRIPTS -->
 <script src="assets/js/bootstrap.min.js"></script>
 <!-- METISMENU SCRIPTS -->
 <script src="assets/js/jquery.metisMenu.js"></script>
 <!-- CUSTOM SCRIPTS -->
 <script src="assets/js/custom.js"></script>
+<!--modal-->
+<script type="text/javascript" src="js/rmodal.js"></script>
+<!---->
 <script>
 $(function(){
    var statusbar = '<?php if(!isset($_SESSION["statusbar"]) or $_SESSION["statusbar"] == "") { $_SESSION["statusbar"] = ""; } echo $_SESSION["statusbar"]; ?>';
    if (statusbar == '1'){ $("#statusbar_outer").removeClass("statusbar_outer"); }
+   //
+   var cookies = navigator.cookieEnabled;
+   if(cookies == false){ $("#cookie_js").html("To use all functions of the website, it's required to accept Cookies."); }
 });
 </script>
 </body>

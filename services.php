@@ -16,6 +16,8 @@ include_once("inc/header_info.php");
 <link href="assets/css/font-awesome.css" rel="stylesheet" />
 <!-- CUSTOM STYLES-->
 <link href="assets/css/custom.css" rel="stylesheet" />
+<link href="assets/css/rmodal-no-bootstrap.css" rel="stylesheet" />
+<!-- favicon -->
 <link rel="apple-touch-icon" sizes="180x180" href="images/icon/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="images/icon/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="images/icon/favicon-16x16.png">
@@ -68,6 +70,23 @@ $(window).load(function() {
 <body>
 <a id="top"></a>
 <div id="scroll_top" class="scroll_top"><a href="#" title="to top"><script>document.write("<i class=\"glyphicon glyphicon-circle-arrow-up fa-"+scrolltop_btn_size+"x\"></i>");</script></a></div>
+<!--statusbar modal -->
+ <span id="showModal"></span>
+  <div id="modal" class="modal">
+    <div class="modal-dialog animated">
+    <div class="modal-content">
+      <div class="modal-header">EPG</div>
+      <div class="modal-body">
+        <div id="epgframe"></div>
+        <hr>
+        <div align="right">
+        <button class="btn btn-default" type="button" onclick="modal.close();">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--statusbar modal -->
 <div id="wrapper">
   <div class="navbar navbar-inverse navbar-fixed-top">
     <div class="adjust-nav">
@@ -134,6 +153,11 @@ $(window).load(function() {
   </div>
   </div><!-- /. ROW  -->
     <div id="page-inner">
+    <div class="row">
+    <div id="cookie_js" class="col-md-12" style="color:#FF0000;">
+    <noscript>To use all functions of the website, it's required to activate JavaScript.</noscript>
+    </div>
+    </div>
       <div class="row">
         <div class="col-md-12">
           <h2>Services</h2>
@@ -208,18 +232,22 @@ $(window).load(function() {
 </div>
 <!-- /. WRAPPER  -->
 <!-- SCRIPTS -AT THE BOTOM TO REDUCE THE LOAD TIME-->
-<!-- JQUERY SCRIPTS -->
-<!--<script src="assets/js/jquery-1.10.2.js"></script>-->
 <!-- BOOTSTRAP SCRIPTS -->
 <script src="assets/js/bootstrap.min.js"></script>
 <!-- METISMENU SCRIPTS -->
 <script src="assets/js/jquery.metisMenu.js"></script>
 <!-- CUSTOM SCRIPTS -->
 <script src="assets/js/custom.js"></script>
+<!--modal-->
+<script type="text/javascript" src="js/rmodal.js"></script>
+<!---->
 <script>
 $(function(){
    var statusbar = '<?php if(!isset($_SESSION["statusbar"]) or $_SESSION["statusbar"] == "") { $_SESSION["statusbar"] = ""; } echo $_SESSION["statusbar"]; ?>';
    if (statusbar == '1'){ $("#statusbar_outer").removeClass("statusbar_outer"); }
+   //
+   var cookies = navigator.cookieEnabled;
+   if(cookies == false){ $("#cookie_js").html("To use all functions of the website, it's required to accept Cookies."); }
 });
 </script>
 </body>

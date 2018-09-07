@@ -155,11 +155,9 @@ function getDatabaseByte($bytes){
 	
 	// count all epg entries
 	include("inc/dashboard_config.php");
-
 	$sql = mysqli_query($dbmysqli, 'SELECT COUNT(*) FROM `epg_data`');
 	$result = mysqli_fetch_row($sql);
 	$count_all_epg = $result[0];
-	
 	echo "<div class=\"alert alert-info text-center\"> <i class=\"fa fa-bar-chart-o fa-5x\"></i>";
 	echo "<h3>".getByte($totalBytes)."</h3>
 	<div class=\"spacer_10\"></div>EPG Entries total: <strong>$count_all_epg</strong></div>
@@ -178,6 +176,8 @@ function getDatabaseByte($bytes){
 <link href="assets/css/font-awesome.css" rel="stylesheet" />
 <!-- CUSTOM STYLES-->
 <link href="assets/css/custom.css" rel="stylesheet" />
+<link href="assets/css/rmodal-no-bootstrap.css" rel="stylesheet" />
+<!-- favicon -->
 <link rel="apple-touch-icon" sizes="180x180" href="images/icon/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="images/icon/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="images/icon/favicon-16x16.png">
@@ -221,27 +221,25 @@ animatedcollapse.init()
 // load on start
 	$.post("functions/progressbar.php",
 	function(data){
-	// write data in container
 	$("#progressbar").html(data);
 	}
 );
 // remaining broadcast progressbar
-var reload_progressbar = '<? echo $reload_progressbar; ?>';
-if (reload_progressbar == 1) {
-var file = "functions/progressbar.php";
-var seconds_load = 180;
-
-$(document).ready(function() {
-       
-    setInterval(function() {
-        $('#progressbar').load(file + '?ts=' + (new Date().getTime()));
+	var reload_progressbar = '<?php echo $reload_progressbar; ?>';
+	if (reload_progressbar == 1){
+	var file = "functions/progressbar.php";
+	var seconds_load = 180;
+//
+$(document).ready(function(){
+    setInterval(function(){
+    $('#progressbar').load(file + '?ts=' + (new Date().getTime()));
     }, (seconds_load*1000));
 });
 }
 // ticker
 document.addEventListener('DOMContentLoaded', checkWidth);
 document.addEventListener('resize', checkWidth);
-function checkWidth() {
+function checkWidth(){
 if (document.querySelector('html').clientWidth > 1200) {	
 	// load ticker
 $(document).ready(function() {
@@ -271,7 +269,7 @@ $(function(){
 $("#broadcast_hh").on({
     change: function () {
 	var hh = $('#broadcast_hh').val();
-	if (time_format == '1') {
+	if (time_format == '1'){
 	if(isFinite(String(hh)) == false || hh > 23 || hh < 1){ var hh = '00'; $("#broadcast_hh").val("00");
 	}
 	}
@@ -329,6 +327,23 @@ $(function(){
 <div id="scroll_top_primetime_list" class="scroll_top_primetime_list"><a href="#" title="to Primetime"><script>document.write ("<i class=\"glyphicon glyphicon-circle-arrow-up fa-"+primetime_btn_size+"x\"></i>");</script></a></div>
 <div id="scroll_top_broadcast_list" class="scroll_top_broadcast_list"><a href="#" title="to Broadcast"><script>document.write ("<i class=\"glyphicon glyphicon-circle-arrow-up fa-"+broadcast_btn_size+"x\"></i>");</script></a></div>
 <div id="scroll_top" class="scroll_top"><a href="#" title="to top"><script>document.write("<i class=\"glyphicon glyphicon-circle-arrow-up fa-"+scrolltop_btn_size+"x\"></i>");</script></a></div>
+<!--statusbar modal -->
+ <span id="showModal"></span>
+  <div id="modal" class="modal">
+    <div class="modal-dialog animated">
+    <div class="modal-content">
+      <div class="modal-header">EPG</div>
+      <div class="modal-body">
+        <div id="epgframe"></div>
+        <hr>
+        <div align="right">
+        <button class="btn btn-default" type="button" onclick="modal.close();">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--statusbar modal -->
 <div id="wrapper">
   <div class="navbar navbar-inverse navbar-fixed-top">
     <div class="adjust-nav">
@@ -395,6 +410,11 @@ $(function(){
   </div>
   </div><!-- /. ROW  -->
     <div id="page-inner">
+    <div class="row">
+    <div id="cookie_js" class="col-md-12" style="color:#FF0000;">
+    <noscript>To use all functions of the website, it's required to activate JavaScript.</noscript>
+    </div>
+    </div>
       <div class="row">
         <div class="col-md-12">
           <h2>Dashboard</h2>
@@ -498,26 +518,26 @@ $(function(){
           <h5>Broadcast</h5>
           <ul class="nav nav-tabs">
             <li class="active">
-              <button id="now_today" href="#display_now_today" class="btn btn-default" onClick="broadcast_main(this.id);" data-toggle="tab">Broadcast now</button>
+              <button id="now_today" href="#display_now_today" class="btn btn-default nav-btn-a" onClick="broadcast_main(this.id);" data-toggle="tab">Broadcast now</button>
             </li>
             <li class="">
-              <button id="time_forward" href="#display_time_forward" class="btn btn-default" onClick="broadcast_main(this.id);" data-toggle="tab"><?php echo $dur_up_broadcast/60; ?> min +</button>
+              <button id="time_forward" href="#display_time_forward" class="btn btn-default nav-btn-a" onClick="broadcast_main(this.id);" data-toggle="tab"><?php echo $dur_up_broadcast/60; ?> min +</button>
             </li>
             <li class="">
-              <button id="time_backward" href="#display_time_backward" class="btn btn-default" onClick="broadcast_main(this.id);" data-toggle="tab"><?php echo $dur_up_broadcast/60; ?> min -</button>
+              <button id="time_backward" href="#display_time_backward" class="btn btn-default nav-btn-a" onClick="broadcast_main(this.id);" data-toggle="tab"><?php echo $dur_up_broadcast/60; ?> min -</button>
             </li>
             <li class="">
-              <button id="day_forward" href="#display_day_forward" class="btn btn-default" onClick="broadcast_main(this.id)" data-toggle="tab">Day +</button>
+              <button id="day_forward" href="#display_day_forward" class="btn btn-default nav-btn-a" onClick="broadcast_main(this.id)" data-toggle="tab">Day +</button>
             </li>
             <li class="">
-              <button id="day_backward" href="#display_day_backward" class="btn btn-default" onClick="broadcast_main(this.id)" data-toggle="tab">Day -</button>
+              <button id="day_backward" href="#display_day_backward" class="btn btn-default nav-btn-a" onClick="broadcast_main(this.id)" data-toggle="tab">Day -</button>
             </li>
             <li id ="browse_time_panel">
             <div class="spacer_5"></div>
             <span>&nbsp;Time: 
             <input id="broadcast_hh" class="basic-input" type="text" size="2" maxlength="2" placeholder="hh">
             <input id="broadcast_mm" class="basic-input" type="text" size="2" maxlength="2" placeholder="mm">
-			<?php if ($time_format == '2'){ 
+			<?php if($time_format == '2'){ 
 			echo '<select id="broadcast_am_pm">
               <option value="AM">AM</option>
               <option value="PM">PM</option>
@@ -569,13 +589,13 @@ $(function(){
           <h5>Primetime</h5>
           <ul class="nav nav-tabs">
             <li class="active">
-              <button id="primetime_today" href="#display_primetime_today" class="btn btn-default" onClick="primetime_main(this.id); animatedcollapse.show('primetime_main_today');" data-toggle="tab">Primetime today</button>
+              <button id="primetime_today" href="#display_primetime_today" class="btn btn-default nav-btn-a" onClick="primetime_main(this.id); animatedcollapse.show('primetime_main_today');" data-toggle="tab">Primetime today</button>
             </li>
             <li class="">
-              <button id="primetime_day_forward" href="#display_primetime_day_forward" class="btn btn-default" onClick="primetime_main(this.id); animatedcollapse.show('primetime_main_today');" data-toggle="tab">Day +</button>
+              <button id="primetime_day_forward" href="#display_primetime_day_forward" class="btn btn-default nav-btn-a" onClick="primetime_main(this.id); animatedcollapse.show('primetime_main_today');" data-toggle="tab">Day +</button>
             </li>
             <li class="">
-              <button id="primetime_day_backward" href="#display_primetime_day_backward" class="btn btn-default" onClick="primetime_main(this.id); animatedcollapse.show('primetime_main_today');" data-toggle="tab">Day -</button>
+              <button id="primetime_day_backward" href="#display_primetime_day_backward" class="btn btn-default nav-btn-a" onClick="primetime_main(this.id); animatedcollapse.show('primetime_main_today');" data-toggle="tab">Day -</button>
             </li>
             <li class="">
             <div class="spacer_5"></div>
@@ -624,13 +644,12 @@ $(function(){
 				// get channels
             	$sql = "SELECT * FROM channel_list ORDER BY e2servicename ASC";
 				
-				if ($result=mysqli_query($dbmysqli,$sql))
+				if ($result = mysqli_query($dbmysqli,$sql))
 				{
-				// Fetch one and one row
 				while ($obj = mysqli_fetch_object($result)) {
 				{
 				// set selected
-				if ($obj->cb_selected == "1")
+				if($obj->cb_selected == "1")
 				{
 				$select = "selected=\"selected\"";
 				}
@@ -645,13 +664,13 @@ $(function(){
               </select>
             </li>
             <li class="active">
-              <button id="cb_now_today" href="#cb_display_now_today" class="btn btn-default" onClick="channelbrowser_main(this.id);" data-toggle="tab">Broadcast today</button>
+              <button id="cb_now_today" href="#cb_display_now_today" class="btn btn-default nav-btn-b" onClick="channelbrowser_main(this.id);" data-toggle="tab">Broadcast today</button>
             </li>
             <li class="">
-              <button id="cb_day_forward" href="#cb_display_day_forward" class="btn btn-default" onClick="channelbrowser_main(this.id)" data-toggle="tab">Day +</button>
+              <button id="cb_day_forward" href="#cb_display_day_forward" class="btn btn-default nav-btn-b" onClick="channelbrowser_main(this.id)" data-toggle="tab">Day +</button>
             </li>
             <li class="">
-              <button id="cb_day_backward" href="#cb_display_day_backward" class="btn btn-default" onClick="channelbrowser_main(this.id)" data-toggle="tab">Day -</button>
+              <button id="cb_day_backward" href="#cb_display_day_backward" class="btn btn-default nav-btn-b" onClick="channelbrowser_main(this.id)" data-toggle="tab">Day -</button>
             </li>
           </ul>
           <div class="tab-content">
@@ -686,18 +705,22 @@ $(function(){
 </div>
 <!-- /. WRAPPER  -->
 <!-- SCRIPTS -AT THE BOTOM TO REDUCE THE LOAD TIME-->
-<!-- JQUERY SCRIPTS -->
-<!--<script src="assets/js/jquery-1.10.2.js"></script>-->
 <!-- BOOTSTRAP SCRIPTS -->
 <script src="assets/js/bootstrap.min.js"></script>
 <!-- METISMENU SCRIPTS -->
 <script src="assets/js/jquery.metisMenu.js"></script>
 <!-- CUSTOM SCRIPTS -->
 <script src="assets/js/custom.js"></script>
+<!--modal-->
+<script type="text/javascript" src="js/rmodal.js"></script>
+<!---->
 <script>
 $(function(){
    var statusbar = '<?php if(!isset($_SESSION["statusbar"]) or $_SESSION["statusbar"] == "") { $_SESSION["statusbar"] = ""; } echo $_SESSION["statusbar"]; ?>';
    if (statusbar == '1'){ $("#statusbar_outer").removeClass("statusbar_outer"); }
+   //
+   var cookies = navigator.cookieEnabled;
+   if(cookies == false){ $("#cookie_js").html("To use all functions of the website, it's required to accept Cookies."); }
 });
 </script>
 </body>

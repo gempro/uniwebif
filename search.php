@@ -63,8 +63,14 @@ session_start();
 	if(!isset($update_search) or $update_search == ""){ $update_search = ""; }
 	// saved search update end
 	
-	// empty selected record location
+	// set record location
+	if($record_location != "")
+	{ 
+	$sql = mysqli_query($dbmysqli, "UPDATE `record_locations` SET `selected` = '1' WHERE `id` = '".$record_location."' "); 
+	} else {
     $sql = mysqli_query($dbmysqli, "UPDATE `record_locations` SET `selected` = '0' ");
+	}
+	//
 	
 	if($searchterm == "" or strlen($searchterm) < "3"){
 	
@@ -340,6 +346,8 @@ session_start();
 <link href="assets/css/font-awesome.css" rel="stylesheet" />
 <!-- CUSTOM STYLES-->
 <link href="assets/css/custom.css" rel="stylesheet" />
+<link href="assets/css/rmodal-no-bootstrap.css" rel="stylesheet" />
+<!-- favicon -->
 <link rel="apple-touch-icon" sizes="180x180" href="images/icon/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="images/icon/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="images/icon/favicon-16x16.png">
@@ -464,6 +472,23 @@ function check_exclude(){
 <body onload="check_channel_search(); check_exclude();">
 <a id="top"></a>
 <div id="scroll_top" class="scroll_top"><a href="#" title="to top"><script>document.write("<i class=\"glyphicon glyphicon-circle-arrow-up fa-"+scrolltop_btn_size+"x\"></i>");</script></a></div>
+<!--statusbar modal -->
+ <span id="showModal"></span>
+  <div id="modal" class="modal">
+    <div class="modal-dialog animated">
+    <div class="modal-content">
+      <div class="modal-header">EPG</div>
+      <div class="modal-body">
+        <div id="epgframe"></div>
+        <hr>
+        <div align="right">
+        <button class="btn btn-default" type="button" onclick="modal.close();">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--statusbar modal -->
 <div id="wrapper">
   <div class="navbar navbar-inverse navbar-fixed-top">
     <div class="adjust-nav">
@@ -530,6 +555,11 @@ function check_exclude(){
   </div>
   </div><!-- /. ROW  -->
     <div id="page-inner">
+    <div class="row">
+    <div id="cookie_js" class="col-md-12" style="color:#FF0000;">
+    <noscript>To use all functions of the website, it's required to activate JavaScript.</noscript>
+    </div>
+    </div>
       <div class="row">
         <div class="col-md-12">
           <h2>Search</h2>
@@ -638,12 +668,11 @@ function check_exclude(){
 					"; }
 					}
 					} 
-					?>
-                </select>
-                </div>
-              <div style="clear:both"></div>
+					?></select>
+                    </div>
+              	<div style="clear:both"></div>
               <div class="spacer_10"></div>
-              <label>
+             <label>
             <input type="checkbox" name="search_channel" id="search_channel" onclick="check_channel_search()" <?php if ($search_channel == 'on'){ echo "checked"; } ?> />
             Search only at this channel</label>
             <select name="channel_id" id="channel_id" class="form-control">
@@ -669,11 +698,10 @@ function check_exclude(){
 			"); }
 			}
 			}
-			?>
-            </select>
+			?></select>
             </div>
             <div class="spacer_10"></div>
-             <div class="spacer_5"></div>
+            <div class="spacer_5"></div>
             <?php 
         	if(!isset($count_search) or $count_search == "") { $count_search = ""; }
         	if ($count_search == '' ){ $count_search = '0'; }
@@ -681,8 +709,7 @@ function check_exclude(){
         	if($searchterm == "" ) { $desc_text = ''; } else { $desc_text = 'Found <strong>'.$count_search.'</strong> '.$sum.' with this term'; }
         	echo $desc_text;
         	if ($searchterm !== ''){ echo $p_save_search; }
-        	?>
-            <div id="save_search_status"> </div>
+        	?><div id="save_search_status"></div>
             <!-- status -->
           </div>
           <div class="col-md-6">
@@ -716,9 +743,7 @@ function check_exclude(){
       <!-- /. ROW  -->
       <hr />
       <div class="row">
-        <div class="col-md-12">
-        <?php if(!isset($result_list) or $result_list == "") { $result_list = ""; } else { echo utf8_encode($result_list); } ?>
-        </div>
+        <div class="col-md-12"><?php if(!isset($result_list) or $result_list == "") { $result_list = ""; } else { echo utf8_encode($result_list); } ?></div>
       </div>
       <!-- /. ROW  -->
     </div>
@@ -728,18 +753,22 @@ function check_exclude(){
 </div>
 <!-- /. WRAPPER  -->
 <!-- SCRIPTS -AT THE BOTOM TO REDUCE THE LOAD TIME-->
-<!-- JQUERY SCRIPTS -->
-<!--<script src="assets/js/jquery-1.10.2.js"></script>-->
 <!-- BOOTSTRAP SCRIPTS -->
 <script src="assets/js/bootstrap.min.js"></script>
 <!-- METISMENU SCRIPTS -->
 <script src="assets/js/jquery.metisMenu.js"></script>
 <!-- CUSTOM SCRIPTS -->
 <script src="assets/js/custom.js"></script>
+<!--modal-->
+<script type="text/javascript" src="js/rmodal.js"></script>
+<!---->
 <script>
 $(function(){
    var statusbar = '<?php if(!isset($_SESSION["statusbar"]) or $_SESSION["statusbar"] == "") { $_SESSION["statusbar"] = ""; } echo $_SESSION["statusbar"]; ?>';
    if (statusbar == '1'){ $("#statusbar_outer").removeClass("statusbar_outer"); }
+   //
+   var cookies = navigator.cookieEnabled;
+   if(cookies == false){ $("#cookie_js").html("To use all functions of the website, it's required to accept Cookies."); }
 });
 </script>
 </body>
