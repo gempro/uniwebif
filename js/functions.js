@@ -1,6 +1,6 @@
 // JavaScript Document
 // navbar icon scroll
-	function nav_icon_scroll(){
+function nav_icon_scroll(){
 	$('html, body').animate({scrollTop : 0},800);
 }
 
@@ -908,7 +908,7 @@ function timerlist_panel(id){
 	{
 	action: 'unhide'
 	},
-function(data){
+	function(data){
 	$("#panel_unhide").fadeIn();
 	$("#select_all").prop("checked", false);
 	$("#show_unhide").attr("onclick", "reload_timerlist()");
@@ -943,13 +943,7 @@ function(data){
 	$("#tl_glyphicon_status_"+t_id).attr({style:color, title:title});
 	$("#box_"+t_id).prop("checked", false);
 	}
-	
 	$("#panel_action_status").fadeOut(2000);
-//	$("input[name='timerlist_checkbox[]']:checked").each(function ()
-//	{
-//	$("#tl_glyphicon_status_"+$(this).val()+"").attr({style:"color:#5CB85C", title:"sent"});
-//	$("[id^=box]").prop("checked", false);
-//	});
 	$("#select_all").prop("checked", false);
 	load_timer_list_panel();
 	}
@@ -999,19 +993,20 @@ function(data){
 
 // display record list
 function browse_records(){
-	
+	var storage_info_status = $("#storage_info_status").val();
 	$("#record_list").fadeIn();
 	var id = $("#rec_location").val();
 	var device = $("#select_device").val();
-	
+	if(storage_info_status == '0'){ record_list_panel(device); }
 	$("#record_list").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
 	$.post("functions/record_list_inc.php",
 	{
 	device: device,
 	record_location: id
 	},
-function(data){
+	function(data){
 	$("#record_list").html(data);
+	$("#storage_info_status").val("1")
 	});
 }
 
@@ -1100,6 +1095,8 @@ function record_list_panel(device){
 	},
 	function(data){
 	var obj = JSON.parse(data);
+	$("#storage_info").html(obj[0].storage_info+'<hr>');
+	$("#storage_info").fadeIn();
 	$("#record_info").html("Records in folder: <strong>"+obj[0].files_summary+"</strong> | Today recorded: "+obj[0].today_summary+" | Diskspace used: "+obj[0].discspace_used+"");
 	});
 }
