@@ -18,7 +18,6 @@ $(document).ready(function(){
 include("../inc/dashboard_config.php");
 
 	header('Cache-Control: no-cache');
-	
 	sleep(1);
 	
 	if(!isset($_REQUEST['record_location']) or $_REQUEST['record_location'] == ""){ $_REQUEST['record_location'] = ""; }
@@ -39,7 +38,8 @@ include("../inc/dashboard_config.php");
 	}
 	
 	// delete from different device
-	if($action == 'delete' and $device != '0'){
+	if($action == 'delete' and $device != '0')
+	{
 	$sql = mysqli_query($dbmysqli, "SELECT * FROM `device_list` WHERE `id` = '".$device."' ");
 	$result = mysqli_fetch_assoc($sql);
 	$box_ip = $result['device_ip'];
@@ -70,13 +70,15 @@ include("../inc/dashboard_config.php");
 	}
 
 	// recorded files default receiver
-	if($device == "0"){
+	if($device == "0")
+	{
 	$xmlfile = $url_format.'://'.$box_ip.'/web/movielist?dirname='.$record_location.'';
 	$getRecords_request = @file_get_contents($xmlfile, false, $webrequest);
 	$xml = simplexml_load_string($getRecords_request);
 	}
 	
-	if($device != "0"){
+	if($device != "0")
+	{
 	$sql = mysqli_query($dbmysqli, "SELECT * FROM `device_list` WHERE `id` = '".$device."' ");
 	$result = mysqli_fetch_assoc($sql);
 	$box_ip = $result['device_ip'];
@@ -104,12 +106,9 @@ if($xml){
 	$filespace = 0;
 	
 	for ($i = 0; $i <= 500; $i++){
-	
 	if(!isset($xml->e2movie[$i]->e2servicereference) or $xml->e2movie[$i]->e2servicereference == ""){ $xml->e2movie[$i]->e2servicereference = ""; }
-	 
-	if($xml->e2movie[$i]->e2servicereference != ""){
-	
-	// define line
+	if($xml->e2movie[$i]->e2servicereference != "")
+	{
 	$e2servicereference = rawurlencode($xml->e2movie[$i]->e2servicereference);
 	$e2title = rawurldecode($xml->e2movie[$i]->e2title);
 	$e2description = rawurldecode($xml->e2movie[$i]->e2description);
@@ -125,7 +124,7 @@ if($xml){
 	{
 	// time format 1
 	$record_date = date("d.m.Y - H:i |", "".$e2time."");
-	$day_today = date("d.m.Y", "".$time."");
+	$day_today = date("d.m.Y", time());
 	$today_record = date("d.m.Y", "".$e2time."");
 	if($day_today == $today_record){ $sum_today = $sum_today +1; }
 	}
@@ -134,7 +133,7 @@ if($xml){
 	{
 	// time format 2
 	$record_date = date("n/d/Y - g:i A |", "".$e2time."");
-	$day_today = date("n/d/Y", "".$time."");
+	$day_today = date("n/d/Y", time());
 	$today_record = date("n/d/Y", "".$e2time."");
 	if($day_today == $today_record){ $sum_today = $sum_today +1; }
 	}
@@ -147,8 +146,7 @@ if($xml){
 	$imdb_broadcast = '';
 	if($imdb_symbol == '1')
 	{ 
-	$imdb_broadcast = '<a href="https://www.imdb.com/find?ref_=nv_sr_fn&q='.$e2title.'" target="_blank" title="Info on IMDb">
-	<i class="fa fa-info-circle fa-1x"></i></a>';
+	$imdb_broadcast = '<a href="https://www.imdb.com/find?ref_=nv_sr_fn&q='.$e2title.'" target="_blank" title="Info on IMDb"><i class="fa fa-info-circle fa-1x"></i></a>';
 	}
 	
 	$record_list = $record_list."
@@ -165,12 +163,12 @@ if($xml){
 	  </div>
 	  <div id=\"record_btn_$i\" style=\"display:none; cursor: auto;\">
 	  <div id=\"record_list_div_$i\">
-		  <div class=\"spacer_5\"></div>
-		  $e2description
-		  <div class=\"spacer_5\"></div>
-		  $e2descriptionextended
-		  <div class=\"spacer_5\"></div>
-		  <p>$e2length minutes, $record_filesize</p>
+	  <div class=\"spacer_5\"></div>
+	  $e2description
+	  <div class=\"spacer_5\"></div>
+	  $e2descriptionextended
+	  <div class=\"spacer_5\"></div>
+	  <p>$e2length minutes, $record_filesize</p>
 		</div>
 		<input id=\"$e2servicereference\" name=\"$i\" type=\"submit\" onClick=\"delete_record(this.id,this.name)\" value=\"DELETE RECORD\" title=\"Delete record\" class=\"btn btn-xs btn-danger\"/>
 		$imdb_broadcast
@@ -190,10 +188,12 @@ if($xml){
 	
 	$filespace_total = formatBytes("".$filespace."");
 	
-	if($filespace == "0") { $filespace_total = "0 kB"; }
+	if($filespace == "0"){ $filespace_total = "0 kB"; }
 	
-	echo '<span id="record_info">Records in folder: <strong>'.$files_summary.'</strong> | Today recorded: '.$sum_today.' | Diskspace used: '.$filespace_total.'</span>
+	echo '<span id="record_info">Records in folder: <strong>
+	'.$files_summary.'</strong> | Today recorded: '.$sum_today.' | Diskspace used: '.$filespace_total.'</span>
 	<div class="spacer_20"></div>'.$record_list;
+	
 ?>
 </body>
 </html>
