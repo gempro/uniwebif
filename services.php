@@ -17,6 +17,10 @@ include_once("inc/header_info.php");
 <!-- CUSTOM STYLES-->
 <link href="assets/css/custom.css" rel="stylesheet" />
 <link href="assets/css/rmodal-no-bootstrap.css" rel="stylesheet" />
+<!--noty-->
+<link href="assets/css/noty/noty.css" rel="stylesheet" />
+<link href="assets/css/noty/animate.css" rel="stylesheet" />
+<link href="assets/css/noty/themes/mint.css" rel="stylesheet" />
 <!-- favicon -->
 <link rel="apple-touch-icon" sizes="180x180" href="images/icon/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="images/icon/favicon-32x32.png">
@@ -133,9 +137,9 @@ $(window).load(function() {
         <li> <a id="116" onclick="power_control(this.id)" style="cursor:pointer;"> <i class="glyphicon glyphicon-off"></i>Wake up / Standby <span id="pc116"></span></a> </li>
         <li role="presentation" class="active"> <a href="#"><i class="glyphicon glyphicon-hand-right"></i>Extras<span class="fa arrow"></span></a>
           <ul class="nav nav-second-level">
+          	<li> <a href="services.php"><i class="fa fa-list"></i><strong>All Services</strong></a> </li>
             <li> <a href="teletext.php"><i class="fa fa-globe"></i>Teletext Browser</a> </li>
             <li> <a href="#" onclick="animatedcollapse.toggle('div_start_channelzapper');"> <i class="fa fa-arrow-up"></i>Channel Zapper</a> </li>
-            <li><a href="services.php"><i class="fa fa-list"></i><strong>All Services</strong></a> </li>
             <li> <a href="setup.php"><i class="fa fa-wrench"></i>Setup</a> </li>
             <li> <a href="about.php"><i class="glyphicon glyphicon-question-sign"></i>About</a> </li>
           </ul>
@@ -238,6 +242,9 @@ $(window).load(function() {
 <script src="assets/js/jquery.metisMenu.js"></script>
 <!-- CUSTOM SCRIPTS -->
 <script src="assets/js/custom.js"></script>
+<!-- noty -->
+<script src="js/noty.min.js"></script>
+<script src="js/noty-msg.js"></script>
 <!--modal-->
 <script type="text/javascript" src="js/rmodal.js"></script>
 <!---->

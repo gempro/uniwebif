@@ -69,6 +69,10 @@ include_once("inc/header_info.php");
 <!-- CUSTOM STYLES-->
 <link href="assets/css/custom.css" rel="stylesheet" />
 <link href="assets/css/rmodal-no-bootstrap.css" rel="stylesheet" />
+<!--noty-->
+<link href="assets/css/noty/noty.css" rel="stylesheet" />
+<link href="assets/css/noty/animate.css" rel="stylesheet" />
+<link href="assets/css/noty/themes/mint.css" rel="stylesheet" />
 <!-- favicon -->
 <link rel="apple-touch-icon" sizes="180x180" href="images/icon/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="images/icon/favicon-32x32.png">
@@ -247,9 +251,9 @@ function reload_saved_search_panel(){
         <li> <a id="116" onclick="power_control(this.id)" style="cursor:pointer;"> <i class="glyphicon glyphicon-off"></i>Wake up / Standby <span id="pc116"></span></a> </li>
         <li> <a href="#"><i class="glyphicon glyphicon-hand-right"></i>Extras<span class="fa arrow"></span></a>
           <ul class="nav nav-second-level">
+          	<li> <a href="services.php"><i class="fa fa-list"></i>All Services</a> </li>
             <li> <a href="teletext.php"><i class="fa fa-globe"></i>Teletext Browser</a> </li>
             <li> <a href="#" onclick="animatedcollapse.toggle('div_start_channelzapper');"> <i class="fa fa-arrow-up"></i>Channel Zapper</a> </li>
-            <li><a href="services.php"><i class="fa fa-list"></i>All Services</a> </li>
             <li> <a href="setup.php"><i class="fa fa-wrench"></i>Setup</a> </li>
             <li> <a href="about.php"><i class="glyphicon glyphicon-question-sign"></i>About</a> </li>
           </ul>
@@ -335,9 +339,9 @@ function reload_saved_search_panel(){
           <div id="timerlist_main">
           <div class="timer_panel">
           <span class="timerlist_checkbox"><input id="select_all" type="checkbox" onClick="select_timer_checkbox()"></span>
-          <input id="send" type="button" class="btn btn-default btn-success btn-xs" value="send" title="send Timer to Receiver" onClick="timerlist_panel(this.id)">
+          <input id="send" type="button" class="btn btn-success btn-xs" value="send" title="send Timer to Receiver" onClick="timerlist_panel(this.id)">
           <input id="hide" type="button" class="btn btn-primary btn-xs" value="hide" title="hide Timer from list" onClick="timerlist_panel(this.id)">
-          <input id="delete" type="button" class="btn btn-default btn-danger btn-xs" value="delete" onClick="timerlist_panel(this.id)">
+          <input id="delete" type="button" class="btn btn-danger btn-xs" value="delete" onClick="timerlist_panel(this.id)">
           <span id="del_buttons" style="display:none">
           <input id="delete_rec" type="button" class="btn btn-default btn-xs" value="from Receiver" onClick="timerlist_panel(this.id)">
           <input id="delete_db" type="button" class="btn btn-default btn-xs" value="from Database" onClick="timerlist_panel(this.id)">
@@ -381,6 +385,9 @@ function reload_saved_search_panel(){
 <script src="assets/js/jquery.metisMenu.js"></script>
 <!-- CUSTOM SCRIPTS -->
 <script src="assets/js/custom.js"></script>
+<!-- noty -->
+<script src="js/noty.min.js"></script>
+<script src="js/noty-msg.js"></script>
 <!--modal-->
 <script type="text/javascript" src="js/rmodal.js"></script>
 <!---->
