@@ -27,10 +27,6 @@ include_once("inc/header_info.php");
 <!-- CUSTOM STYLES-->
 <link href="assets/css/custom.css" rel="stylesheet" />
 <link href="assets/css/rmodal-no-bootstrap.css" rel="stylesheet" />
-<!--noty-->
-<link href="assets/css/noty/noty.css" rel="stylesheet" />
-<link href="assets/css/noty/animate.css" rel="stylesheet" />
-<link href="assets/css/noty/themes/mint.css" rel="stylesheet" />
 <!-- favicon -->
 <link rel="apple-touch-icon" sizes="180x180" href="images/icon/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="images/icon/favicon-32x32.png">
@@ -236,9 +232,6 @@ animatedcollapse.init()
 <script src="assets/js/jquery.metisMenu.js"></script>
 <!-- CUSTOM SCRIPTS -->
 <script src="assets/js/custom.js"></script>
-<!-- noty -->
-<script src="js/noty.min.js"></script>
-<script src="js/noty-msg.js"></script>
 <!--modal-->
 <script type="text/javascript" src="js/rmodal.js"></script>
 <!---->
