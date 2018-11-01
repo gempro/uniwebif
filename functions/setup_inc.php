@@ -122,7 +122,7 @@ session_start();
 	  `e2servicename` varchar(255) NOT NULL,
 	  `servicename_enc` varchar(255) NOT NULL,
 	  `e2servicereference` varchar(255) NOT NULL,
-	  `channel_hash` varchar(100) NOT NULL,
+	  `service` varchar(255) NOT NULL
 	  PRIMARY KEY (`id`)
 	) ENGINE = MYISAM  DEFAULT CHARSET=utf8;
 	");
@@ -318,10 +318,12 @@ session_start();
 	  `channel_entries` int(6) NOT NULL DEFAULT '100',
 	  `time_format` int(1) NOT NULL DEFAULT '2',
 	  `epg_crawler` int(1) NOT NULL DEFAULT '0',
-	  `crawler_activ` int(1) NOT NULL DEFAULT '0',
+	  `epg_crawler_activ` int(1) NOT NULL DEFAULT '0',
 	  `crawler_timestamp` int(12) NOT NULL,
 	  `crawler_hour` varchar(2) NOT NULL,
 	  `crawler_minute` varchar(2) NOT NULL,
+	  `crawler_start` int(12) NOT NULL,
+	  `crawler_end` int(12) NOT NULL,
 	  `last_epg_crawl` int(12) NOT NULL,
 	  `last_epg` int(12) NOT NULL,
 	  `start_epg_crawler` int(4) NOT NULL DEFAULT '50',
