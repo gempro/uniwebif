@@ -52,7 +52,7 @@ body {
 }
 #statusbar #row2 {
 	min-width: 10%;
-	max-width: 10%
+	max-width: 10%;
 	height: auto;
 	float: left;
 	text-align: right;
@@ -631,6 +631,33 @@ display:none;
 .timer_panel_info {
 	font-size: 14px;
 }
+.quickpanel_dropdown {
+	width:100%;
+	padding-left: 10px;
+	padding-top: 10px;
+	padding-right: 10px;
+}
+.quickpanel_icons {
+	width: 100%;
+	padding-bottom: 5px;
+}
+.quickpanel_icons .row1 {
+	width: auto;
+	float: left;
+	padding-top: 5px;
+}
+.quickpanel_icons .row2 {
+	width: auto;
+	float: left;
+	padding-top: 5px;
+	padding-left: 5px;
+}
+.quickpanel_icons .row3 {
+	width: auto;
+	float: left;
+	padding-top: 5px;
+	padding-left: 5px;
+}
 #record_list_main {
 	width: 100%;
 	height: auto;
@@ -1094,6 +1121,34 @@ display:none;
 }
 #scroll_top_channelbrowser_list a:hover {
 	color:#9A86EB;
+}
+#scroll_top_saved_search {
+	width:45px; 
+	height:45px; 
+	position:fixed;
+	bottom:60px;
+	right:15px;
+	display:none;
+	opacity: 0.8;
+	z-index: 1;
+}
+@media (max-width: 400px) {
+#scroll_top_saved_search {
+	width:22px; 
+	height:22px; 
+	position:fixed;
+	bottom:45px;
+	right:15px;
+	display:none;
+	opacity: 0.8;
+	z-index: 1;
+}
+}
+#scroll_top_saved_search a {
+	color:#BCBCBC;
+}
+#scroll_top_saved_search a:hover {
+	color:#BCBCBC;
 }
 h5, .h5 {
 	font-size: 14px;
