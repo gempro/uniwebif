@@ -152,8 +152,9 @@ include("../inc/dashboard_config.php");
 	$td_spacer = 'cnt_time_2';
 	}
 	
-	if($streaming_symbol == '1'){ $stream_broadcast = '<a href="'.$url_format.'://'.$box_user.':'.$box_password.'@'.$box_ip.'/web/stream.m3u?ref='.$obj->e2eventservicereference.'" title="Stream">
-	<i class="fa fa-desktop fa-1x"></i></a>'; 
+	if($streaming_symbol == '1')
+	{ 
+	$stream_broadcast = '<a href="'.$url_format.'://'.$box_ip.'/web/stream.m3u?ref='.$obj->e2eventservicereference.'&name='.$servicename_enc.'" target="_blank" title="Stream"><i class="fa fa-desktop fa-1x"></i></a>'; 
 	} else { 
 	$stream_broadcast = ''; }
 	

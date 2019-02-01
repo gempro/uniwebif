@@ -2,7 +2,7 @@
 //
 include("../inc/dashboard_config.php");
 
-	if(!isset($_REQUEST['action']) or $_REQUEST['action'] == "") { $_REQUEST['action'] = ""; }
+	if(!isset($_REQUEST['action']) or $_REQUEST['action'] == ""){ $_REQUEST['action'] = ""; }
 	$action = $_REQUEST['action'];
 
 	header('Content-Type: text/event-stream');
@@ -30,7 +30,7 @@ include("../inc/dashboard_config.php");
 	$box_ip = $result3['device_ip'];
 	$box_user = $result3['device_user'];
 	$box_password = $result3['device_password'];
-	$e2location = $result3['device_record_location'];
+	//$e2location = $result3['device_record_location'];
 	$timer_request = str_replace("%22", "%60", $timer_request);
 	$timer_request = str_replace("%27", "%60", $timer_request);
 	$webrequest = stream_context_create(array (

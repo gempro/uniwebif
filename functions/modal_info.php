@@ -59,6 +59,7 @@ $(function(){
 	$servicename_enc = rawurldecode($obj->servicename_enc);
 	$description_enc = rawurldecode($obj->description_enc);
 	$descriptionextended_enc = rawurldecode($obj->descriptionextended_enc);
+	$e2eventservicereference = $obj->e2eventservicereference;
 	
 	if ($time_format == '1')
 	{
@@ -81,6 +82,13 @@ $(function(){
 	$td_spacer = 'cnt_time_2';
 	}
 	
+	if($streaming_symbol == '1')
+	{
+	$stream_broadcast = '<a href="'.$url_format.'://'.$box_ip.'/web/stream.m3u?ref='.$obj->e2eventservicereference.'&name='.$servicename_enc.'" target="_blank" title="Stream"><i class="fa fa-desktop fa-1x"></i></a>'; 
+	} else { 
+	$stream_broadcast = '';
+	}
+	
 	if ($imdb_symbol == '1' ){ $imdb_broadcast = '<a href="https://www.imdb.com/find?ref_=nv_sr_fn&q='.$title_enc.'" target="_blank" title="Info on IMDb"><i class="fa fa-info-circle fa-1x"></i></a>'; 
 	} else { 
 	$imdb_broadcast = ''; }
@@ -98,7 +106,6 @@ $(function(){
 	  <div id=\"channelbrowser_$rand$obj->hash\" style=\"cursor: pointer;\" onclick=\"channelbrowser_list_desc(this.id);\">
 		<div id=\"$td_spacer\"> <span class=\"$timer\">$broadcast_time</span> </div>
 		<div style=\"float:left\"> <span class=\"$timer\">$title_enc</span> </div>
-		<!--<div id=\"cnt_channel\"> <span class=\"$timer\">$servicename_enc</span> </div>-->
 		<div style=\"clear:both\"></div>
 	  </div>
 	  <div id=\"channelbrowser_btn_$rand$obj->hash\" style=\"display:none;\">
@@ -111,7 +118,7 @@ $(function(){
 		  $descriptionextended_enc
 		  <div class=\"spacer_5\"></div>
 		</div>
-		$imdb_broadcast <a href=\"search.php?searchterm=$obj->title_enc&option=title&search_channel=on&channel_id=$obj->e2eventservicereference\" target=\"_blank\" title=\"Search this broadcast on this channel\">More from this broadcast</a>
+		$imdb_broadcast $stream_broadcast <a href=\"search.php?searchterm=$obj->title_enc&option=title&search_channel=on&channel_id=$obj->e2eventservicereference\" target=\"_blank\" title=\"Search this broadcast on this channel\">More from this broadcast</a>
 		<div class=\"spacer_5\"></div>
 		<div id=\"broadcast-tab-button-group\">
 		  <div id=\"row1\">
@@ -202,7 +209,7 @@ if($xml){
 	
 	if(!isset($epg_modal) or $epg_modal == ""){ $epg_modal = ""; }
 	
-	$epg_modal = $epg_modal."
+		$epg_modal = $epg_modal."
 	<div id=\"channelbrowser_main\">
 	  <div id=\"channelbrowser_$rand$hash\" style=\"cursor: pointer;\" onclick=\"channelbrowser_list_desc(this.id);\">
 		<div id=\"$td_spacer\"> <span>$broadcast_time</span> </div>

@@ -1,6 +1,6 @@
 <?php 
 //
-	include("../inc/dashboard_config.php");
+include("../inc/dashboard_config.php");
 	
 	// ajax header
 	header('Content-Type: text/event-stream');

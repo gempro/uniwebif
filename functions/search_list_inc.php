@@ -21,7 +21,7 @@ $(function(){
 //
 include("../inc/dashboard_config.php");
 	
-	if(!isset($_REQUEST['delete_id']) or $_REQUEST['delete_id'] == "") { $_REQUEST['delete_id'] = "";
+	if(!isset($_REQUEST['delete_id']) or $_REQUEST['delete_id'] == ""){ $_REQUEST['delete_id'] = "";
 	
 	} else {
 	
@@ -30,8 +30,6 @@ include("../inc/dashboard_config.php");
 	$sql = mysqli_query($dbmysqli, "DELETE FROM `saved_search` WHERE `id` = '".$delete_id."' ");
 	
 	sleep(1);
-	header('Content-Type: text/event-stream');
-	header('Cache-Control: no-cache');
 	echo "data:deleted";
 	exit;
 	}
@@ -44,12 +42,17 @@ include("../inc/dashboard_config.php");
 	} else {
 	
 	$sort_list = $_REQUEST['sort_list'];
+	
 	$sql = mysqli_query($dbmysqli, "UPDATE `settings` SET `search_list_sort` = '".$sort_list."' ");
+	
 	$sortby = $sort_list;
 	}
 	
 	if($sortby == 'id'){ $sortby1 = 'DESC'; }
 	if($sortby == 'searchterm'){ $sortby1 = 'ASC'; }
+	if($sortby == 'activ'){ $sortby1 = 'DESC'; }
+	if($sortby == 'search_option'){ $sortby1 = 'ASC'; }
+	if($sortby == 'e2location'){ $sortby1 = 'ASC'; }
 	
 	// get record locations
 	$sql2 = "SELECT * FROM `record_locations` ORDER BY `id` ASC";
@@ -57,7 +60,7 @@ include("../inc/dashboard_config.php");
 	{
 	while ($obj = mysqli_fetch_object($result2)) {	
 	{
-	if(!isset($rec_dropdown_saved_search_list) or $rec_dropdown_saved_search_list == "") { $rec_dropdown_saved_search_list = ""; }
+	if(!isset($rec_dropdown_saved_search_list) or $rec_dropdown_saved_search_list == ""){ $rec_dropdown_saved_search_list = ""; }
 	$rec_dropdown_saved_search_list = $rec_dropdown_saved_search_list."<option value=\"$obj->e2location\">$obj->e2location</option>"; }
 	}
 	}
@@ -67,11 +70,9 @@ include("../inc/dashboard_config.php");
 	if ($result2 = mysqli_query($dbmysqli,$sql2))
 	{
 	while ($obj = mysqli_fetch_object($result2)) {
-	
 	$servicename_enc = rawurldecode($obj->servicename_enc);
-	
 	{
-	if(!isset($channel_dropdown_saved_search_list) or $channel_dropdown_saved_search_list == "") { $channel_dropdown_saved_search_list = ""; }
+	if(!isset($channel_dropdown_saved_search_list) or $channel_dropdown_saved_search_list == ""){ $channel_dropdown_saved_search_list = ""; }
 	$channel_dropdown_saved_search_list = $channel_dropdown_saved_search_list."<option value=\"$obj->e2servicereference\">$servicename_enc</option>"; }
 	}
 	}
@@ -82,7 +83,7 @@ include("../inc/dashboard_config.php");
 	{
 	while ($obj = mysqli_fetch_object($result)) {
 	
-	if(!isset($saved_search_list) or $saved_search_list == "") { $saved_search_list = ""; }
+	if(!isset($saved_search_list) or $saved_search_list == ""){ $saved_search_list = ""; }
 	
 	$servicename_enc = rawurldecode($obj->servicename_enc);
 	$searchterm = rawurldecode($obj->searchterm);
@@ -95,28 +96,23 @@ include("../inc/dashboard_config.php");
 	$activ = $obj->activ;
 	$rec_replay = $obj->rec_replay;
 	
-	if(!isset($exclude_channel) or $exclude_channel == "") { $exclude_channel = ""; }
-	if(!isset($exclude_title) or $exclude_title == "") { $exclude_title = ""; }
-	if(!isset($exclude_description) or $exclude_description == "") { $exclude_description = ""; }
-	if(!isset($exclude_extdescription) or $exclude_extdescription == "") { $exclude_extdescription = ""; }
-	if(!isset($rec_replay) or $rec_replay == "") { $rec_replay = "off"; }
-	
+	if(!isset($exclude_channel) or $exclude_channel == ""){ $exclude_channel = ""; }
+	if(!isset($exclude_title) or $exclude_title == ""){ $exclude_title = ""; }
+	if(!isset($exclude_description) or $exclude_description == ""){ $exclude_description = ""; }
+	if(!isset($exclude_extdescription) or $exclude_extdescription == ""){ $exclude_extdescription = ""; }
+	if(!isset($rec_replay) or $rec_replay == ""){ $rec_replay = "off"; }
 	if($rec_replay == 'on'){ $selected4 = 'selected'; } else { $selected4 = ''; }
 	if($rec_replay == 'off'){ $selected5 = 'selected'; } else { $selected5 = ''; }
-	
 	if($search_option == 'all'){ $selected6 = 'selected'; } else { $selected6 = ''; }
 	if($search_option == 'title'){ $selected7 = 'selected'; } else { $selected7 = ''; }
 	if($search_option == 'description'){ $selected8 = 'selected'; } else { $selected8 = ''; }
 	if($search_option == 'extdescription'){ $selected9 = 'selected'; } else { $selected9 = ''; }
-	
 	if($activ == 'yes'){ $selected10 = 'selected'; } else { $selected10 = ''; }
 	if($activ == 'no'){ $selected11 = 'selected'; } else { $selected11 = ''; }
-	
 	if($activ == 'yes'){ $as = 'success'; } else { $as = 'danger'; }
-	
 	if($obj->e2eventservicename == 'NULL'){ $servicename_enc = 'All Channels'; }
 		
-	if(strlen($searchterm) > "25" )
+	if(strlen($searchterm) > "25")
 	{
 	$searchterm = substr($searchterm, 0, 25);
 	$searchterm = $searchterm . '...';
@@ -285,8 +281,8 @@ include("../inc/dashboard_config.php");
 	</div>
 	";
 	}
-}
-if(!isset($saved_search_list) or $saved_search_list == ""){ $saved_search_list = "No saved searches..<hr />"; } else { echo $saved_search_list; }
+	}
+	if(!isset($saved_search_list) or $saved_search_list == ""){ $saved_search_list = "No saved searches..<hr />"; } else { echo $saved_search_list; }
 ?>
 </body>
 </html>

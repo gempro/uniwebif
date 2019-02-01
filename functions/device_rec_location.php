@@ -8,6 +8,12 @@ include("../inc/dashboard_config.php");
 	if(!isset($_REQUEST['device']) or $_REQUEST['device'] == "") { $_REQUEST['device'] = ""; }
 	$device = $_REQUEST['device'];
 	
+	if(!isset($_REQUEST['location']) or $_REQUEST['location'] == "") { $_REQUEST['location'] = ""; }
+	$location = $_REQUEST['location'];
+	
+	if(!isset($_REQUEST['id']) or $_REQUEST['id'] == "") { $_REQUEST['id'] = ""; }
+	$id = $_REQUEST['id'];
+	
 	if($device != "0"){
 	$sql = mysqli_query($dbmysqli ,"SELECT * FROM `device_list` WHERE `id` = '".$device."' ");
 	$result = mysqli_fetch_assoc($sql);
@@ -47,8 +53,20 @@ include("../inc/dashboard_config.php");
 	".$option_9."
 	";
 	
-	echo $device_dropdown;
+	$select_p1 = '';
+	$select_p2 = '';
+	
+	if($location == "timerlist")
+	{
+	$select_p1 = '
+	<select id="timerlist_rec_location_device_'.$id.'">
+	';
+	$select_p2 = '</select>';
+	}
+	
+	echo $select_p1.$device_dropdown.$select_p2;
 	exit;
+	
 	} // if device 0
 	
 	else {

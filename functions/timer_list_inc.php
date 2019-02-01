@@ -10,8 +10,8 @@
 	
 	} else {
 	
-	header('Content-Type: text/event-stream');
-	header('Cache-Control: no-cache');
+//	header('Content-Type: text/event-stream');
+//	header('Cache-Control: no-cache');
 	
 	// hide single timer
 	if($action == 'hide'){
@@ -360,6 +360,8 @@ if($obj->record_status == 'c_expired')
 	if($obj->search_option == 'description'){ $searcharea = 'Description'; }
 	if($obj->search_option == 'extdescription'){ $searcharea = 'Extended description'; }
 	
+	if($search_term == "" and $searcharea == ""){ $search_info = ''; } else { $search_info = 'Searchterm: '.$scroll_search.' | Searcharea: '.$searcharea.' | '; }
+	
 	$timerlist = $timerlist."<div id=\"timerlist_div_outer_$obj->id\" $hidden_class>
 	<div id=\"timerlist\" style=\"border: 1px solid $device_color !important;\">
 	<div id=\"cnt_checkbox\"><input id=\"box_$obj->id\" type=\"checkbox\" name=\"timerlist_checkbox[]\" value=\"$obj->id\" onclick=\"count_selected()\"/>
@@ -384,7 +386,7 @@ if($obj->record_status == 'c_expired')
 	  $descriptionextended_enc<div class=\"spacer_5\"></div>
 	  </div>
 	  <a href=\"search.php?searchterm=$title_enc&option=title\" target=\"_blank\" title=\"Search title\"><i class=\"fa fa-search fa-1x\"></i></a>
-	  Searchterm: $scroll_search | Searcharea: $searcharea | Record location: $obj->record_location | Receiver: <span id=\"device_name_$obj->id\">$device_name</span> $replay_status $show_exclude_text
+	  $search_info Record location: $obj->record_location | Receiver: <span id=\"device_name_$obj->id\">$device_name</span> $replay_status $show_exclude_text
 	  <input id=\"timerlist_device_no_$obj->id\" type=\"hidden\" value=\"$device_no\">
 	  <span id=\"timerlist_rec_location_$obj->hash\" style=\"display:none;\">$rec_location_id</span>  
 	<div class=\"spacer_5\"></div>
@@ -394,6 +396,7 @@ if($obj->record_status == 'c_expired')
 	<option name=\"default\" value=\"0\">default</option>
 	$device_dropdown
 	</select>
+	<span id=\"rec_location_device_$obj->id\"></span>
 	<div class=\"spacer_5\"></div>
 	  <div id=\"timerlist_excluded_terms_$obj->id\" style=\"display:none;\">
 	  $channel_status $spacer $title_status $spacer $description_status $spacer $extdescription_status
@@ -409,24 +412,16 @@ if($obj->record_status == 'c_expired')
 	</div><div class=\"spacer_10\"></div>
 	</div>";
 	}
-}
+	}
+	if(!isset($timerlist) or $timerlist == "") { $timerlist = "No timer present.."; } echo $timerlist;  
 ?>
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="utf-8" />
 <script type="text/javascript">
 // timerlist hover
 $(document).ready(function(){
-$("#timerlist*").hover(function(){
+	$("#timerlist*").hover(function(){
 	$(this).css("background-color", "#FAFAFA");
 	}, function(){
 	$(this).css("background-color", "white");
-});
+	});
 });
 </script>
-</head>
-<body>
-<?php if(!isset($timerlist) or $timerlist == "") { $timerlist = "No timer present.."; } echo $timerlist;  ?>
-</body>
-</html>

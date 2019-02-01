@@ -174,7 +174,7 @@ if($xml){
 		$imdb_broadcast
 		<a id=\"$e2filename\" name=\"$i\" onClick=\"create_m3u(this.id,this.name)\" title=\"Stream\" style=\"cursor:pointer;\"><i class=\"fa fa-desktop fa-1x\"></i></a>
 		<span id=\"record_id_$i\" style=\"display:none;\">$record_hash</span>
-		<a href=\"$url_format://$box_user:$box_password@$box_ip/file?file=$e2filename\" title=\"Download\"><i class=\"glyphicon glyphicon-download-alt fa-1x\"></i></a>
+		<a href=\"$url_format://$box_ip/file?file=$e2filename\" target=\"_blank\" title=\"Download\"><i class=\"glyphicon glyphicon-download-alt fa-1x\"></i></a>
 		<span id=\"m3u_$i\"></span>
 		<span id=\"del_status_$i\"></span>
 		</div>

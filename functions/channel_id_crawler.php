@@ -23,11 +23,9 @@ include("../inc/dashboard_config.php");
 
 	if(!isset($xml->e2service[$i]->e2servicename) or $xml->e2service[$i]->e2servicename == ""){ $xml->e2service[$i]->e2servicename = ""; }
 	
-	// if no channel name
-	if($xml->e2service[$i]->e2servicename == ""){
-	
-	} else {
-	
+	//
+	if($xml->e2service[$i]->e2servicename != "")
+	{
 	// define searchline
 	$e2servicename = utf8_decode($xml->e2service[$i]->e2servicename);
 	$e2servicereference = $xml->e2service[$i]->e2servicereference;

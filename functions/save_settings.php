@@ -3,6 +3,8 @@
 include("../inc/dashboard_config.php");
 	
 	//recieve data
+	$server_ip = $_REQUEST['server_ip'];
+	$script_folder = $_REQUEST['script_folder'];
 	$activate_cron = $_REQUEST['activate_cron'];
 	$epg_entries_per_channel = $_REQUEST['epg_entries_per_channel'];
 	$channel_entries = $_REQUEST['channel_entries'];
@@ -33,6 +35,8 @@ include("../inc/dashboard_config.php");
 	$after_crawl_action = $_REQUEST['after_crawl_action'];
 	$delete_old_epg = $_REQUEST['delete_old_epg'];
 	$url_format = $_REQUEST['url_format'];
+	$del_m3u = $_REQUEST['del_m3u'];
+	$sort_quickpanel = $_REQUEST['sort_quickpanel'];
 	$del_time = $_REQUEST['del_time'];
 	$reload_progressbar = $_REQUEST['reload_progressbar'];
 	$extra_rec_time = $_REQUEST['extra_rec_time'];
@@ -43,7 +47,7 @@ include("../inc/dashboard_config.php");
 	$cz_repeat = $_REQUEST['cz_repeat'];
 	$cz_am_pm = $_REQUEST['cz_am_pm'];
 	$cz_start_channel = $_REQUEST['cz_start_channel'];
-	$del_m3u = $_REQUEST['del_m3u'];
+	
 	
 	if($crawler_am_pm == '0'){ $crawler_am_pm = ''; }
 	
@@ -71,7 +75,10 @@ include("../inc/dashboard_config.php");
 	} else {
 	
 	$sql = mysqli_query($dbmysqli, "
-	UPDATE `settings` SET activate_cron = '$activate_cron', 
+	UPDATE `settings` SET 
+	server_ip = '$server_ip', 
+	script_folder = '$script_folder', 
+	activate_cron = '$activate_cron', 
 	epg_entries_per_channel = '$epg_entries_per_channel', 
 	channel_entries = '$channel_entries', 
 	dur_down_broadcast = '$dur_down_broadcast', 
@@ -101,6 +108,8 @@ include("../inc/dashboard_config.php");
 	after_crawl_action = '$after_crawl_action', 
 	delete_old_epg = '$delete_old_epg', 
 	url_format = '$url_format', 
+	del_m3u = '$del_m3u', 
+	sort_quickpanel = '$sort_quickpanel', 
 	del_time = '$del_time', 
 	reload_progressbar = '$reload_progressbar', 
 	extra_rec_time = '$extra_rec_time', 
@@ -111,7 +120,6 @@ include("../inc/dashboard_config.php");
 	cz_minute = '$cz_minute', 
 	cz_am_pm = '$cz_am_pm', 
 	cz_start_channel = '$cz_start_channel',
-	del_m3u = '$del_m3u', 
 	cz_timestamp = '$cz_timestamp' WHERE `id` = '0' ");
 	
 	$sql = mysqli_query($dbmysqli, "UPDATE `channel_list` SET `zap_start` = '0' ");

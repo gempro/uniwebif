@@ -2,6 +2,10 @@
 //
 include("../inc/dashboard_config.php");
 
+	
+	// crawler time start
+	$sql = mysqli_query($dbmysqli, "UPDATE `settings` SET `crawler_start` = '".time()."' WHERE `id` = '0' ");
+
 	// check power status
 	$xmlfile = $url_format.'://'.$box_ip.'/web/powerstate';
 
@@ -29,41 +33,30 @@ include("../inc/dashboard_config.php");
 	
 	if ($result = mysqli_query($dbmysqli,$sql))
 	{
-	// Fetch one and one row
 	while ($obj = mysqli_fetch_object($result)) {
 	{
-	
 	//count entries
-//	$stmt = $dbmysqli->prepare("SELECT COUNT(*) AS sum_entries FROM `epg_data` WHERE `channel_hash` = '".$obj->channel_hash."' ");
-//	if( !is_a($stmt, 'MySQLI_Stmt') || $dbmysqli->errno > 0 )
-//	throw new Exception( $dbmysqli->error, $dbmysqli->errno );	
-//	$stmt->execute();
-//	$stmt->bind_result($sum_entries);
-//	$stmt->fetch();
-//	$stmt->close();
-	//
 	$sql = mysqli_query($dbmysqli, 'SELECT COUNT(*) FROM `epg_data` WHERE `channel_hash` = "'.$obj->channel_hash.'" ');
 	$result2 = mysqli_fetch_row($sql);
 	$sum_entries = $result2[0];
-	//
-	
-	if ($sum_entries < $start_epg_crawler)
+		
+	if($sum_entries < $start_epg_crawler)
 	{
 	
 	// send zap request
 	$zapp_request = $url_format.'://'.$box_ip.'/web/zap?sRef='.$obj->e2servicereference.'';
 	$request = @file_get_contents($zapp_request, false, $webrequest);
 	
-	$sql = mysqli_query($dbmysqli, "DELETE FROM `epg_data` WHERE `channel_hash` = '".$obj->channel_hash."' ");
+	//$sql = mysqli_query($dbmysqli, "DELETE FROM `epg_data` WHERE `channel_hash` = '".$obj->channel_hash."' ");
 	
-	sleep($cz_sleeptime);
+	sleep($cz_wait_time);
 	
 	// save provider from channel in db
 	$xmlfile = $url_format.'://'.$box_ip.'/web/getcurrent';
 	$request = @file_get_contents($xmlfile, false, $webrequest);
 	$xml = simplexml_load_string($request);
 	
-if($xml->e2service->e2providername != "")
+	if($xml->e2service->e2providername != "")
 	{ 
 	$e2providername = $xml->e2service->e2providername;
 	$sql = mysqli_query($dbmysqli, "UPDATE `channel_list` SET `e2providername` = '".$e2providername."' WHERE `e2servicereference` = '".$obj->e2servicereference."' ");
@@ -87,7 +80,7 @@ if($xml->e2service->e2providername != "")
 	sleep(10);
 	
 	// delete dummy timer
-	if ($dummy_timer == '1')
+	if($dummy_timer == '1')
 	{
 	$dummy_timer_start = $dummy_timer_current;
 	$dummy_timer_time_end = $dummy_timer_start + 1;
@@ -108,7 +101,7 @@ if($xml->e2service->e2providername != "")
 	sleep(3);
 	
 	// powerstate after crawling
-	if ($after_crawl_action == '9'){ $powerstate = ''; } else { $powerstate = $after_crawl_action; }
+	if($after_crawl_action == '9'){ $powerstate = ''; } else { $powerstate = $after_crawl_action; }
 	
 	$powerstate_request = $url_format.'://'.$box_ip.'/web/powerstate?newstate='.$powerstate.'';
 	$send_powerstate = @file_get_contents($powerstate_request, false, $webrequest);
@@ -119,10 +112,9 @@ if($xml->e2service->e2providername != "")
 	
 	// reset saved search
 	$sql = mysqli_query($dbmysqli, "UPDATE `saved_search` SET `crawled` = '0' WHERE `activ` = 'yes' ");
-	
 	$sql = mysqli_query($dbmysqli, "REPAIR TABLE `epg_data`");
 	
 	// set epg crawler not working
-	$sql = mysqli_query($dbmysqli, "UPDATE `settings` SET `epg_crawler_activ` = '0' ");
+	$sql = mysqli_query($dbmysqli, "UPDATE `settings` SET `epg_crawler_activ` = '0', `crawler_end` = '".time()."' WHERE `id` = '0' ");
 
 ?>

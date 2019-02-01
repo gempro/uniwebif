@@ -3,7 +3,7 @@ sleep(1);
 //
 include("../inc/dashboard_config.php");
 
-	$sql = "SELECT * FROM `saved_search` WHERE `crawled` = '0' and `activ` = 'yes' ";
+	$sql = "SELECT * FROM `saved_search` WHERE `crawled` = '0' and `activ` = 'yes' ORDER BY `searchterm` ASC";
 	
 	if($result1 = mysqli_query($dbmysqli,$sql))
 	{
@@ -20,13 +20,10 @@ include("../inc/dashboard_config.php");
 	$e2eventservicereference = $obj->e2eventservicereference;
 	$activ = $obj->activ;
 	$rec_replay = $obj->rec_replay;
-
-	// update last crawl
-	$sql = mysqli_query($dbmysqli, "UPDATE `saved_search` SET `last_crawl` = '".$time."', `crawled` = '1' WHERE `id` = ".$id." ");
 	
 	// search only in selected channel
-	if($e2eventservicereference !== 'NULL'){
-	
+	if($e2eventservicereference !== 'NULL')
+	{
 	$search_include = 'WHERE e2eventservicereference = "'.$e2eventservicereference.'" AND'; 
 	$search_include2 = 'OR e2eventservicereference = "'.$e2eventservicereference.'" AND';
 	
@@ -35,7 +32,6 @@ include("../inc/dashboard_config.php");
 	$search_include = 'WHERE'; 
 	$search_include2 = 'OR';
 	}
-	//
 	
 	$exclude_time = 'AND `e2eventend` > '.$time.'';
 	
@@ -147,13 +143,70 @@ include("../inc/dashboard_config.php");
 	$result = mysqli_fetch_row($sql);
 	$count_hash = $result[0];
 
-	if($count_hash == 0){
-	$sql = mysqli_query($dbmysqli, "INSERT INTO timer (e2eventtitle, title_enc, e2eventdescription, description_enc, e2eventdescriptionextended, descriptionextended_enc, e2eventservicename, servicename_enc, e2eventservicereference, search_term, search_option, exclude_channel, exclude_title, exclude_description, exclude_extdescription, record_location, e2eventstart, e2eventend, timer_request, hash, channel_hash, status, rec_replay, is_replay, hide, search_id)
-	values ('$e2eventtitle', '$title_enc', '$e2eventdescription', '$description_enc', '$e2eventdescriptionextended', '$descriptionextended_enc', '$e2eventservicename', '$servicename_enc', '$e2eventservicereference', '$raw_term', '$search_option', '$exclude_channel', '$exclude_title', '$exclude_description', '$exclude_extdescription', '$e2location', '$e2eventstart', '$e2eventend', '$timer_request', '$hash', '$channel_hash', 'waiting', '$rec_replay', '$is_replay', '$hide', '$id')");
+	if($count_hash == 0)
+	{
+	$sql = mysqli_query($dbmysqli, "INSERT INTO timer (
+	e2eventtitle, 
+	title_enc, 
+	e2eventdescription, 
+	description_enc, 
+	e2eventdescriptionextended, 
+	descriptionextended_enc, 
+	e2eventservicename, 
+	servicename_enc, 
+	e2eventservicereference, 
+	search_term, 
+	search_option, 
+	exclude_channel, 
+	exclude_title, 
+	exclude_description, 
+	exclude_extdescription, 
+	record_location, 
+	e2eventstart, 
+	e2eventend, 
+	timer_request, 
+	hash, 
+	channel_hash, 
+	status, 
+	rec_replay, 
+	is_replay, 
+	hide, 
+	search_id)
+	VALUES 
+	('$e2eventtitle', 
+	'$title_enc', 
+	'$e2eventdescription', 
+	'$description_enc', 
+	'$e2eventdescriptionextended', 
+	'$descriptionextended_enc', 
+	'$e2eventservicename', 
+	'$servicename_enc', 
+	'$e2eventservicereference', 
+	'$raw_term', 
+	'$search_option', 
+	'$exclude_channel', 
+	'$exclude_title', 
+	'$exclude_description', 
+	'$exclude_extdescription', 
+	'$e2location', 
+	'$e2eventstart', 
+	'$e2eventend', 
+	'$timer_request', 
+	'$hash', 
+	'$channel_hash', 
+	'waiting', 
+	'$rec_replay', 
+	'$is_replay', 
+	'$hide', 
+	'$id')");
 	}
 	}
 	}
 	}
+	// update last crawl
+	sleep(1);
+	$sql = mysqli_query($dbmysqli, "UPDATE `saved_search` SET `last_crawl` = '".time()."', `crawled` = '1' WHERE `id` = '".$id."' ");
+	//
 	}
 	}
 	}
@@ -168,17 +221,9 @@ include("../inc/dashboard_config.php");
 	$rec_replay = $obj->rec_replay;
 	$is_replay = $obj->is_replay;
 	
-	if($time > $obj->e2eventstart and $time < $obj->e2eventend )
-	{
-	$record_status = 'a_recording'; }
-	
-	if($time < $obj->e2eventstart and $time < $obj->e2eventend)
-	{
-	$record_status = 'b_incoming'; }
-	
-	if($time > $obj->e2eventend)
-	{
-	$record_status = 'c_expired'; }
+	if($time > $obj->e2eventstart and $time < $obj->e2eventend){ $record_status = 'a_recording'; }
+	if($time < $obj->e2eventstart and $time < $obj->e2eventend){ $record_status = 'b_incoming'; }
+	if($time > $obj->e2eventend){ $record_status = 'c_expired'; }
 
 	$sql = mysqli_query($dbmysqli, "UPDATE `timer` SET `record_status` = '".$record_status."' WHERE `id` = '$id' "); 
 	
@@ -192,8 +237,6 @@ include("../inc/dashboard_config.php");
 	$sql = mysqli_query($dbmysqli, "OPTIMIZE TABLE `timer`");
 	
 	// answer for ajax
-	header('Content-Type: text/event-stream');
-	header('Cache-Control: no-cache');
 	echo "data:done";
 
 ?>

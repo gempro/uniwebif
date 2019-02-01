@@ -12,11 +12,18 @@
 	$result = mysqli_fetch_row($sql);
 	$sent_timer = $result[0];
 	
-	// timer today
+	//
 	$start = date("d.m.Y, 00:00", $time);
 	$end = date("d.m.Y, 23:59", $time);
 	$start_time = strtotime($start);
 	$end_time = strtotime($end);
+	
+	// hidden timer today
+	$sql = mysqli_query($dbmysqli, 'SELECT COUNT(*) FROM `timer` WHERE `e2eventstart` BETWEEN "'.$start_time.'" AND "'.$end_time.'" AND `expired` = "0" AND `hide` = "1" ');
+	$result = mysqli_fetch_row($sql);
+	$hidden_timer_today = $result[0];
+	
+	// timer today
 	$sql = mysqli_query($dbmysqli, 'SELECT COUNT(*) FROM `timer` WHERE `e2eventstart` BETWEEN "'.$start_time.'" AND "'.$end_time.'" AND `expired` = "0" ');
 	$result = mysqli_fetch_row($sql);
 	$timer_today = $result[0];
@@ -36,6 +43,7 @@
 	[{"timer_total":"'.$count_timer.'",
 	"sent_timer":"'.$sent_timer.'",
 	"timer_today":"'.$timer_today.'",
+	"hidden_timer_today":"'.$hidden_timer_today.'",
 	"hidden_timer":"'.$hidden_timer.'",
 	"receiver_timer":"'.$timer_summary.'\r"}]';
 

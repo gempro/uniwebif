@@ -122,7 +122,7 @@ session_start();
 	  `e2servicename` varchar(255) NOT NULL,
 	  `servicename_enc` varchar(255) NOT NULL,
 	  `e2servicereference` varchar(255) NOT NULL,
-	  `service` varchar(255) NOT NULL
+	  `service` varchar(255) NOT NULL,
 	  PRIMARY KEY (`id`)
 	) ENGINE = MYISAM  DEFAULT CHARSET=utf8;
 	");
@@ -167,6 +167,7 @@ session_start();
 	  `zap` int(1) NOT NULL DEFAULT '0',
 	  `zap_start` int(1) NOT NULL DEFAULT '0',
 	  `cb_selected` int(1) NOT NULL,
+	  `qp_selected` int(1) NOT NULL,
 	  `channel_hash` varchar(100) NOT NULL,
 	  `last_crawl` int(12) NOT NULL,
 	  `last_epg` int(12) NOT NULL,
@@ -237,10 +238,11 @@ session_start();
 	  `e2eventcurrenttime` varchar(10) NOT NULL,
 	  `e2eventservicereference` text NOT NULL,
 	  `hd_channel` varchar(3) NOT NULL,
-	  `crawler_time` varchar(10) NOT NULL,
+	  `crawler_time` int(12) NOT NULL,
 	  `hash` varchar(50) NOT NULL,
 	  `channel_hash` varchar(100) NOT NULL,
 	  `timer` int(1) NOT NULL,
+	  `timer_device` int(4) NOT NULL,
 	  PRIMARY KEY (`id`),
 	  FULLTEXT KEY `title_enc` (`title_enc`),
 	  FULLTEXT KEY `description_enc` (`description_enc`),
@@ -366,6 +368,7 @@ session_start();
 	  `dur_up_primetime` int(5) NOT NULL DEFAULT '7200',
 	  `del_m3u` int(1) NOT NULL DEFAULT '0',
 	  `del_m3u_time` int(12) NOT NULL DEFAULT '0',
+	  `sort_quickpanel` varchar(255) NOT NULL DEFAULT 'e2servicename',
 	  `current_git_push` int(12) NOT NULL DEFAULT '0',
 	  PRIMARY KEY (`id`)
 	) ENGINE=MyISAM DEFAULT CHARSET=utf8;

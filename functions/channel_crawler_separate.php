@@ -95,7 +95,7 @@ if ($xml) {
 	$seconds = $rest % 60;
 	
 	// crawler_time
-	$crawler_time = date("m/d/Y H:i:s", $time);
+	$crawler_time = time();
 	
 	// unique id
 	$hash = hash('md4',$servicename_enc.$e2eventstart.$e2eventend);
@@ -103,9 +103,81 @@ if ($xml) {
 	// channel hash
 	$channel_hash = hash('md4',$e2eventservicename);
 	
-	$sql = mysqli_query($dbmysqli, "
-	INSERT INTO epg_data (e2eventtitle, title_enc, e2eventservicename, servicename_enc, e2eventdescription, description_enc, e2eventdescriptionextended, descriptionextended_enc, e2eventid, start_date, us_start_date, start_day, start_month, start_year, start_hour, start_minute, start_weekday, end_date, us_end_date, end_day, end_month, end_year, end_hour, end_minute, end_weekday, total_min, e2eventstart, e2eventend, e2eventduration, e2eventcurrenttime, e2eventservicereference, hd_channel, crawler_time, hash, channel_hash)
-	 values ('$e2eventtitle', '$title_enc', '$e2eventservicename', '$servicename_enc', '$e2eventdescription', '$description_enc', '$e2eventdescriptionextended', '$descriptionextended_enc', '$e2eventid', '$start_date', '$us_start_date', '$start_day', '$start_month', '$start_year', '$start_hour', '$start_minute', '$start_weekday', '$end_date','$us_end_date', '$end_day', '$end_month', '$end_year', '$end_hour', '$end_minute', '$end_weekday', '$total_min', '$e2eventstart', '$e2eventend', '$e2eventduration', '$e2eventcurrenttime', '$e2eventservicereference', '$hd_channel', '$crawler_time', '$hash', '$channel_hash')");
+	$sql = mysqli_query($dbmysqli, "INSERT INTO `epg_data` (
+	e2eventtitle, 
+	title_enc, 
+	e2eventservicename, 
+	servicename_enc, 
+	e2eventdescription, 
+	description_enc, 
+	e2eventdescriptionextended, 
+	descriptionextended_enc, 
+	e2eventid, 
+	start_date, 
+	us_start_date, 
+	start_day, 
+	start_month, 
+	start_year, 
+	start_hour, 
+	start_minute, 
+	start_weekday, 
+	end_date, 
+	us_end_date, 
+	end_day, 
+	end_month, 
+	end_year, 
+	end_hour, 
+	end_minute, 
+	end_weekday, 
+	total_min, 
+	e2eventstart, 
+	e2eventend, 
+	e2eventduration, 
+	e2eventcurrenttime, 
+	e2eventservicereference, 
+	hd_channel, 
+	crawler_time, 
+	hash, 
+	channel_hash
+	)
+	VALUES 
+	(
+	'$e2eventtitle', 
+	'$title_enc', 
+	'$e2eventservicename', 
+	'$servicename_enc', 
+	'$e2eventdescription', 
+	'$description_enc', 
+	'$e2eventdescriptionextended', 
+	'$descriptionextended_enc', 
+	'$e2eventid', 
+	'$start_date', 
+	'$us_start_date', 
+	'$start_day', 
+	'$start_month', 
+	'$start_year', 
+	'$start_hour', 
+	'$start_minute', 
+	'$start_weekday', 
+	'$end_date', 
+	'$us_end_date', 
+	'$end_day', 
+	'$end_month', 
+	'$end_year', 
+	'$end_hour', 
+	'$end_minute', 
+	'$end_weekday', 
+	'$total_min', 
+	'$e2eventstart', 
+	'$e2eventend', 
+	'$e2eventduration', 
+	'$e2eventcurrenttime', 
+	'$e2eventservicereference', 
+	'$hd_channel', 
+	'$crawler_time', 
+	'$hash', 
+	'$channel_hash'
+	)");
 	}
 	}
 	}

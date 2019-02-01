@@ -18,8 +18,8 @@ include("../inc/dashboard_config.php");
 
 	} else { 
 	
-	if($location == 'timerlist'){
-	
+	if($location == 'timerlist')
+	{
 	$sql = mysqli_query($dbmysqli, "SELECT * FROM `timer` WHERE `hash` = '".$hash."' ");
 	
 	} else {
@@ -44,7 +44,8 @@ include("../inc/dashboard_config.php");
 	$e2eventservicereference = $result['e2eventservicereference'];
 	$channel_hash = $result['channel_hash'];
 	
-	if($location == "timerlist"){
+	if($location == "timerlist")
+	{
 	$current_device = $result['device']; 
 	$search_term = $result['search_term'];
 	$search_option = $result['search_option'];
@@ -56,7 +57,8 @@ include("../inc/dashboard_config.php");
 	$rec_replay = $result['rec_replay'];
 	}
 	
-	if($device == "0"){
+	if($device == "0")
+	{
 	// get record location
 	$sql = mysqli_query($dbmysqli, "SELECT `e2location` FROM `record_locations` WHERE `id` = '".$record_location."' ");
 	$result2 = mysqli_fetch_assoc($sql);
@@ -66,7 +68,8 @@ include("../inc/dashboard_config.php");
 	}
 	
 	// record location different device
-	if($device != "0"){
+	if($device != "0")
+	{
 	$e2location = $record_location;
 	}
 	
@@ -76,14 +79,14 @@ include("../inc/dashboard_config.php");
 	if($location == 'timerlist'){ $e2eventend = $result['e2eventend']; }
 	
 	// send to different device
-	if($device != "0"){
+	if($device != "0")
+	{
 	$sql3 = mysqli_query($dbmysqli, "SELECT * FROM `device_list` WHERE `id` = '".$device."' ");
 	$result3 = mysqli_fetch_assoc($sql3);
 	$box_ip = $result3['device_ip'];
 	$box_user = $result3['device_user'];
 	$box_password = $result3['device_password'];
 	$url_format = $result3['url_format'];
-	if($location == 'timerlist' and $device != "0"){ $e2location = $result3['device_record_location']; }
 	//
 	
 	$timer_request = $url_format.'://'.$box_ip.'/web/timeradd?sRef='.$e2eventservicereference.'&begin='.$e2eventstart.'&end='.$e2eventend.'&name='.$title_enc.'&description='.$description_enc.'&dirname='.$e2location.'&afterevent=3';
@@ -103,7 +106,7 @@ include("../inc/dashboard_config.php");
 	$timer_conflict = "1";
 	}
 	
-	sleep(1);
+	//sleep(1);
 	
 	// remove " and ' from request
 	$timer_request = str_replace("%22", "%60", $timer_request);
@@ -134,16 +137,16 @@ include("../inc/dashboard_config.php");
 	$xml = simplexml_load_string($get_timer_status);
 	$timer_status = $xml->e2state;
 	
-	if($timer_status == "TRUE" || $timer_status == "True" || $timer_status == "true"){ $timer_status = ""; 
+	if($timer_status == "TRUE" || $timer_status == "True" || $timer_status == "true")
+	{ 
+	$timer_status = ""; 
 	$timer_conflict = "0";
-	
 	} else { 
-	
 	$timer_status = " - <span class=\"timer_conflict\">Conflict on Receiver</span>"; 
 	$timer_conflict = "1";
 	}
 	
-	sleep(1);
+	//sleep(1);
 	
 	// remove " and ' from request
 	$timer_request = str_replace("%22", "%60", $timer_request);
@@ -167,12 +170,14 @@ include("../inc/dashboard_config.php");
 	$record_status = 'c_expired'; }
 
 	// set timer status
-	if($location == 'timerlist' and $device == $current_device){
+	if($location == 'timerlist' and $device == $current_device)
+	{
 	$sql = mysqli_query($dbmysqli, "UPDATE `timer` SET `status` = 'manual', `conflict` = '".$timer_conflict."' WHERE `hash` = '".$hash."' ");
 	} 
 	
 	// create copy if device is different
-	if($location == "timerlist" and $device != $current_device){
+	if($location == "timerlist" and $device != $current_device)
+	{
 	$sql = mysqli_query($dbmysqli, "SELECT COUNT(*) FROM `timer` WHERE `hash` = '".$hash."' AND `device` = '".$device."' ");
 	$summary = mysqli_fetch_row($sql);
 	if($summary[0] < 1){
@@ -235,7 +240,8 @@ include("../inc/dashboard_config.php");
 	}
 	}
 	
-	if($location == ""){
+	if($location == "")
+	{
 	$sql = mysqli_query($dbmysqli, "INSERT INTO `timer` (
 	e2eventtitle, 
 	title_enc, 
@@ -279,7 +285,8 @@ include("../inc/dashboard_config.php");
 	}
 	
 	$same_timer_msg = "";
-	if($device == "0"){
+	if($device == "0")
+	{
 	// count timer within period
 	$sql = mysqli_query($dbmysqli, 'SELECT COUNT(*) FROM `timer` WHERE "'.$e2eventstart.'" BETWEEN `e2eventstart` AND `e2eventend` OR "'.$e2eventend.'" BETWEEN `e2eventstart` AND `e2eventend` ');
 	$result = mysqli_fetch_row($sql);
@@ -294,7 +301,8 @@ include("../inc/dashboard_config.php");
 	header('Content-Type: text/event-stream');
 	header('Cache-Control: no-cache');
 	
-	if($location == 'ticker'){ 
+	if($location == 'ticker')
+	{ 
 	echo "<i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i>\n\n";
 	
 	} else {
