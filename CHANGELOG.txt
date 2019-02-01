@@ -1,3 +1,13 @@
+1.8
+
++ Quickpanel added under menue. Option to stream channel, read EPG, zap to channel with one click
++ Simple function for remote control added (Menue -> Extras)
++ By changing the target device in timerlist, an option to select the record location will displayed
++ In the overview from all channels (Extras -> All Services) an option to show TV services or Radio services seperate added
++ Some changes for better handling and performance implemented, and some bugs removed
+
+----------------------------------------------------------------------------------------------------------------
+
 1.7
 
 + Function added to statusbar, to display EPG as Popup
