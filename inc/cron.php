@@ -100,7 +100,7 @@
 	{
 	$record_status = 'c_expired'; }
 	
-	if($time > $obj->e2eventstart and $time < $obj->e2eventend )
+	if($time > $obj->e2eventstart and $time < $obj->e2eventend)
 	{
 	$record_status = 'a_recording'; }
 	
