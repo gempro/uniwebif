@@ -12,11 +12,11 @@
 
  1. Unpack the zip file
  
- 2. Open setup.php in your Browser
+ 2. Open install.php in your Browser
  
  3. Type in your SQL Root user and password
  
- 4. Type in the IP, user and password from Receiver
+ 4. Type in the user and IP from Receiver
  
  5. Install Uniwebif
  
@@ -27,4 +27,4 @@
  
  Read Guide in folder: /help
  
- Online Demo: http://uniwebif-demo.techweb.at
+ Online Demo: https://github.techweb.at/uniwebif/dashboard.php
