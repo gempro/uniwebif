@@ -1,8 +1,8 @@
 ﻿<?php 
 session_start();
 //
-include("inc/dashboard_config.php");
-include_once("inc/header_info.php");
+	include("inc/dashboard_config.php");
+	include_once("inc/header_info.php");
 
 	// count timer
 	$sql = mysqli_query($dbmysqli, 'SELECT COUNT(*) FROM `timer` WHERE `expired` = "0" ');
@@ -12,7 +12,7 @@ include_once("inc/header_info.php");
 	$count_timer = $count_timer.' Timer in Database';
 	
 	// sent timer
-	$sql = mysqli_query($dbmysqli, 'SELECT COUNT(*) FROM `timer` WHERE `expired` = "0" AND `status` = "sent" OR `expired` = "0" AND `status` = "manual"');
+	$sql = mysqli_query($dbmysqli, 'SELECT COUNT(*) FROM `timer` WHERE `expired` = "0" AND `status` = "sent" OR `expired` = "0" AND `status` = "manual" ');
 	$result = mysqli_fetch_row($sql);
 	$sent_timer = $result[0];
 	//
@@ -21,22 +21,34 @@ include_once("inc/header_info.php");
 	} else { $show_sent_timer = ' | <span class="timer_panel_info">0 sent | </span>';
 	}
 	
-	// timer today
+	//
 	$start = date("d.m.Y, 00:00", $time);
 	$end = date("d.m.Y, 23:59", $time);
 	$start_time = strtotime($start);
 	$end_time = strtotime($end);
 	
+	// hidden timer today
+	$sql = mysqli_query($dbmysqli, 'SELECT COUNT(*) FROM `timer` WHERE `e2eventstart` BETWEEN "'.$start_time.'" AND "'.$end_time.'" AND `expired` = "0" AND `hide` = "1" ');
+	$result = mysqli_fetch_row($sql);
+	$hidden_timer_today = $result[0];
+	//
+	if($hidden_timer_today > 0){ 
+	$hidden_timer_today = ' ('.$hidden_timer_today.' hidden)'; 
+	} else { 
+	$hidden_timer_today = ' (0 hidden)';
+	}
+	
+	// timer today
 	$sql = mysqli_query($dbmysqli, 'SELECT COUNT(*) FROM `timer` WHERE `e2eventstart` BETWEEN "'.$start_time.'" AND "'.$end_time.'" AND `expired` = "0" ');
 	$result = mysqli_fetch_row($sql);
 	$timer_today = $result[0];
 	//
 	if($sent_timer > 0){
-	$show_timer_today = ' <span class="timer_panel_info">'.$timer_today.' today | </span>'; 
+	$show_timer_today = ' <span class="timer_panel_info">'.$timer_today.' today'.$hidden_timer_today.' | </span>'; 
 	} else { $show_timer_today = ' <span class="timer_panel_info">0 today | </span>'; 
 	}
 	
-	// hidden timer
+	// hidden timer total
 	$sql = mysqli_query($dbmysqli, 'SELECT COUNT(*) FROM `timer` WHERE `expired` = "0" AND `hide` = "1" ');
 	$result = mysqli_fetch_row($sql);
 	$hidden_timer = $result[0];
@@ -68,8 +80,9 @@ include_once("inc/header_info.php");
 <link href="assets/css/font-awesome.css" rel="stylesheet" />
 <!-- CUSTOM STYLES-->
 <link href="assets/css/custom.css" rel="stylesheet" />
+<!-- Modal-->
 <link href="assets/css/rmodal-no-bootstrap.css" rel="stylesheet" />
-<!--noty-->
+<!-- Noty-->
 <link href="assets/css/noty/noty.css" rel="stylesheet" />
 <link href="assets/css/noty/animate.css" rel="stylesheet" />
 <link href="assets/css/noty/themes/mint.css" rel="stylesheet" />
@@ -141,8 +154,12 @@ $(function(){
 });
 //
 function sortby(){
-var search_list_sort = document.getElementById("sort_setting").value;
-	$.post("functions/search_list_inc.php?sort_list="+search_list_sort+"",
+	
+	var search_list_sort = $("#sort_setting").val();
+	$.post("functions/search_list_inc.php",
+	{
+	sort_list: search_list_sort
+	},
 	function(data){
 	$("#search_list").html(data);
 	});
@@ -160,7 +177,7 @@ function load_timer_list_panel(){
 	// hidden timer
 	if(obj[0].hidden_timer > '0'){
 	$("#timerlist_panel").html(obj[0].timer_total+" Timer in Database | <span class=\"timer_panel_info\">\
-	"+obj[0].sent_timer+" sent | "+obj[0].timer_today+" today | <a id=\"show_unhide\" onclick=\""+action+"\" title=\""+title+"\" style=\"cursor:pointer;\">\
+	"+obj[0].sent_timer+" sent | "+obj[0].timer_today+" today ("+obj[0].hidden_timer_today+" hidden) | <a id=\"show_unhide\" onclick=\""+action+"\" title=\""+title+"\" style=\"cursor:pointer;\">\
 	"+obj[0].hidden_timer+" hidden</a> | "+obj[0].receiver_timer+" on Receiver</span>");
 	}
 	// no hidden timer
@@ -188,12 +205,13 @@ function reload_saved_search_panel(){
 <body>
 <a id="top"></a>
 <div id="scroll_top" class="scroll_top"><a href="#" title="to top"><script>document.write("<i class=\"glyphicon glyphicon-circle-arrow-up fa-"+scrolltop_btn_size+"x\"></i>");</script></a></div>
+<div id="scroll_top_saved_search" class="scroll_top_saved_search"><a href="#" title="to Saved Search"><script>document.write ("<i class=\"glyphicon glyphicon-circle-arrow-up fa-"+saved_search_btn_size+"x\"></i>");</script></a></div>
 <!--statusbar modal -->
  <span id="showModal"></span>
   <div id="modal" class="modal">
     <div class="modal-dialog animated">
     <div class="modal-content">
-      <div class="modal-header">EPG</div>
+      <div id="sb-modal-header" class="modal-header"></div>
       <div class="modal-body">
         <div id="epgframe"></div>
         <hr>
@@ -205,6 +223,41 @@ function reload_saved_search_panel(){
   </div>
 </div>
 <!--statusbar modal -->
+<!--remote control modal -->
+ <span id="showModal"></span>
+  <div id="remote_modal" class="modal_rc">
+    <div class="modal-dialog animated">
+    <div class="modal-content">
+      <div class="modal-header">Remote Control <span id="rc_status"></span>
+      </div>
+      <div class="modal-body">
+        <div id="rc_frame"></div>
+        <hr>
+        <div align="right">
+        <button class="btn btn-default" type="button" onclick="remote_modal.close();">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--remote control modal -->
+<!--quickpanel modal -->
+ <span id="showModal"></span>
+  <div id="quickpanel_modal" class="modal">
+    <div class="modal-dialog animated">
+    <div class="modal-content">
+      <div id="quickpanel-modal-header" class="modal-header"></div>
+      <div class="modal-body">
+        <div id="quickpanel_epgframe"></div>
+        <hr>
+        <div align="right">
+        <button class="btn btn-default" type="button" onclick="quickpanel_modal.close();">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--quickpanel modal -->
 <div id="wrapper">
   <div class="navbar navbar-inverse navbar-fixed-top">
     <div class="adjust-nav">
@@ -243,8 +296,8 @@ function reload_saved_search_panel(){
         <li> <a href="#"><i class="fa fa-cog"></i>Settings<span class="fa arrow"></span></a>
           <ul class="nav nav-second-level">
             <li> <a href="settings.php"><i class="fa fa-cog"></i>Main Settings</a> </li>
-            <li> <a href="channel_list.php"><i class="fa fa-list"></i>Channel List</a> </li>
-            <li> <a href="bouquet_list.php"><i class="fa fa-list"></i>Bouquet List</a> </li>
+            <li> <a href="channel_list.php"><i class="fa fa-list"></i>Channel list</a> </li>
+            <li> <a href="bouquet_list.php"><i class="fa fa-list"></i>Bouquet list</a> </li>
           </ul>
         </li>
         <li> <a href="records.php"><i class="glyphicon glyphicon-record"></i>Records</a> </li>
@@ -252,12 +305,14 @@ function reload_saved_search_panel(){
         <li> <a href="#"><i class="glyphicon glyphicon-hand-right"></i>Extras<span class="fa arrow"></span></a>
           <ul class="nav nav-second-level">
           	<li> <a href="services.php"><i class="fa fa-list"></i>All Services</a> </li>
+            <li> <a onclick="remote_modal.open();" style="cursor:pointer;"><i class="fa fa-table"></i>Remote Control</a> </li>
             <li> <a href="teletext.php"><i class="fa fa-globe"></i>Teletext Browser</a> </li>
             <li> <a href="#" onclick="animatedcollapse.toggle('div_start_channelzapper');"> <i class="fa fa-arrow-up"></i>Channel Zapper</a> </li>
             <li> <a href="setup.php"><i class="fa fa-wrench"></i>Setup</a> </li>
             <li> <a href="about.php"><i class="glyphicon glyphicon-question-sign"></i>About</a> </li>
           </ul>
         </li>
+        <li style="background-color: #fff;" id="quickpanel_inc"></li>
       </ul>
     </div>
   </nav>
@@ -284,34 +339,33 @@ function reload_saved_search_panel(){
       <!--crawl channel id-->
       <div id="div_crawl_channel_id">
       <span class="panel-close" onclick="animatedcollapse.hide('div_crawl_channel_id')"><span aria-hidden="true">x</span></span>
-        <h1>Crawl channel ID's</h1>
+        <h1>Crawl Channel ID's</h1>
         <input type="submit" class="btn btn-success" id="crawl_channel_id_btn" value="Click to confirm" onclick="animatedcollapse.show('crawl_channel_id_status'); crawl_channel_id();">
         <div id="crawl_channel_id_status"><img src="images/loading.gif" width="16" height="16" align="absmiddle"> </div>
-        <!--status-->
+        <!--crawl channel id-->
       </div>
-      <!--div_crawl_complete-->
       <!--crawl complete-->
       <div id="div_crawl_complete">
       <span class="panel-close" onclick="animatedcollapse.hide('div_crawl_complete')"><span aria-hidden="true">x</span></span>
-        <h1>Crawl EPG from channels</h1>
+        <h1>Crawl EPG from Channels</h1>
         <input type="submit" class="btn btn-success" id="crawl_complete_btn" value="Click to confirm" onclick="animatedcollapse.show('crawl_complete_status'); crawl_complete();">
         <div id="crawl_complete_status"><img src="images/loading.gif" width="16" height="16" align="absmiddle"> </div>
         <!--status-->
       </div>
-      <!--div_crawl_complete-->
-      <!--crawl mysearch id-->
+      <!--crawl complete-->
+      <!--crawl saved search-->
       <div id="div_crawl_search">
       <span class="panel-close" onclick="animatedcollapse.hide('div_crawl_search')"><span aria-hidden="true">x</span></span>
-        <h1>Crawl search - Write timer in database</h1>
+        <h1>Crawl Search - Write Timer in Database</h1>
         <input type="submit" class="btn btn-success" id="crawl_search_btn" value="Click to confirm" onclick="animatedcollapse.show('crawl_search_status'); crawl_saved_search();">
         <div id="crawl_search_status"><img src="images/loading.gif" width="16" height="16" align="absmiddle"> </div>
         <!--status-->
       </div>
-      <!--div_mysearch-->
+      <!--crawl saved search-->
       <!--send timer-->
       <div id="div_send_timer">
       <span class="panel-close" onclick="animatedcollapse.hide('div_send_timer')"><span aria-hidden="true">x</span></span>
-        <h1>Send timer from database to Receiver</h1>
+        <h1>Send Timer from Database to Receiver</h1>
         <input type="submit" class="btn btn-success" id="send_timer_btn" value="Click to confirm" onclick="animatedcollapse.show('send_timer_status'); send_timer();">
         <div id="send_timer_status"><img src="images/loading.gif" width="16" height="16" align="absmiddle"> </div>
         <!--status-->
@@ -325,7 +379,7 @@ function reload_saved_search_panel(){
         <div id="channelzapper_status"><img src="images/loading.gif" width="16" height="16" align="absmiddle"> </div>
         <!--status-->
       </div>
-      <!--div_channelzapper-->
+      <!--channelzapper-->
       <hr />
       <div class="row">
         <div class="col-md-12">
@@ -366,6 +420,9 @@ function reload_saved_search_panel(){
             <select name="select" id="sort_setting" class="sort_setting" onChange="sortby()">
               <option value="id" <?php if($search_list_sort == 'id'){ echo 'selected'; } ?>>sort standard</option>
               <option value="searchterm" <?php if($search_list_sort == 'searchterm'){ echo 'selected'; } ?>>sort by term</option>
+              <option value="search_option" <?php if($search_list_sort == 'search_option'){ echo 'selected'; } ?>>sort by searcharea</option>
+              <option value="e2location" <?php if($search_list_sort == 'e2location'){ echo 'selected'; } ?>>sort by record location</option>
+              <option value="activ" <?php if($search_list_sort == 'activ'){ echo 'selected'; } ?>>sort by status</option>
             </select>
           </h4>
           <div id="search_list"></div>
@@ -385,10 +442,10 @@ function reload_saved_search_panel(){
 <script src="assets/js/jquery.metisMenu.js"></script>
 <!-- CUSTOM SCRIPTS -->
 <script src="assets/js/custom.js"></script>
-<!-- noty -->
+<!-- Noty -->
 <script src="js/noty.min.js"></script>
 <script src="js/noty-msg.js"></script>
-<!--modal-->
+<!-- Modal-->
 <script type="text/javascript" src="js/rmodal.js"></script>
 <!---->
 <script>

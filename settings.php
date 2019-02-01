@@ -1,8 +1,8 @@
 ﻿<?php 
 session_start();
 //
-include("inc/dashboard_config.php");
-include_once("inc/header_info.php");
+	include("inc/dashboard_config.php");
+	include_once("inc/header_info.php");
 
 	// crawler time
 	if($time_format == '1'){
@@ -56,8 +56,9 @@ include_once("inc/header_info.php");
 <link href="assets/css/font-awesome.css" rel="stylesheet" />
 <!-- CUSTOM STYLES-->
 <link href="assets/css/custom.css" rel="stylesheet" />
+<!-- Modal-->
 <link href="assets/css/rmodal-no-bootstrap.css" rel="stylesheet" />
-<!--noty-->
+<!-- Noty-->
 <link href="assets/css/noty/noty.css" rel="stylesheet" />
 <link href="assets/css/noty/animate.css" rel="stylesheet" />
 <link href="assets/css/noty/themes/mint.css" rel="stylesheet" />
@@ -122,7 +123,7 @@ $.post("functions/device_list_inc.php",
   <div id="modal" class="modal">
     <div class="modal-dialog animated">
     <div class="modal-content">
-      <div class="modal-header">EPG</div>
+      <div id="sb-modal-header" class="modal-header"></div>
       <div class="modal-body">
         <div id="epgframe"></div>
         <hr>
@@ -134,6 +135,41 @@ $.post("functions/device_list_inc.php",
   </div>
 </div>
 <!--statusbar modal -->
+<!--remote control modal -->
+ <span id="showModal"></span>
+  <div id="remote_modal" class="modal_rc">
+    <div class="modal-dialog animated">
+    <div class="modal-content">
+      <div class="modal-header">Remote Control <span id="rc_status"></span>
+      </div>
+      <div class="modal-body">
+        <div id="rc_frame"></div>
+        <hr>
+        <div align="right">
+        <button class="btn btn-default" type="button" onclick="remote_modal.close();">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--remote control modal -->
+<!--quickpanel modal -->
+ <span id="showModal"></span>
+  <div id="quickpanel_modal" class="modal">
+    <div class="modal-dialog animated">
+    <div class="modal-content">
+      <div id="quickpanel-modal-header" class="modal-header"></div>
+      <div class="modal-body">
+        <div id="quickpanel_epgframe"></div>
+        <hr>
+        <div align="right">
+        <button class="btn btn-default" type="button" onclick="quickpanel_modal.close();">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--quickpanel modal -->
 <div id="wrapper">
   <div class="navbar navbar-inverse navbar-fixed-top">
     <div class="adjust-nav">
@@ -172,8 +208,8 @@ $.post("functions/device_list_inc.php",
         <li role="presentation" class="active"> <a href="#"><i class="fa fa-cog"></i>Settings<span class="fa arrow"></span></a>
           <ul class="nav nav-second-level">
             <li> <a href="settings.php"><i class="fa fa-cog"></i><strong>Main Settings</strong></a> </li>
-            <li> <a href="channel_list.php"><i class="fa fa-list"></i>Channel List</a> </li>
-            <li> <a href="bouquet_list.php"><i class="fa fa-list"></i>Bouquet List</a> </li>
+            <li> <a href="channel_list.php"><i class="fa fa-list"></i>Channel list</a> </li>
+            <li> <a href="bouquet_list.php"><i class="fa fa-list"></i>Bouquet list</a> </li>
           </ul>
         </li>
         <li> <a href="records.php"><i class="glyphicon glyphicon-record"></i>Records</a> </li>
@@ -181,12 +217,14 @@ $.post("functions/device_list_inc.php",
         <li> <a href="#"><i class="glyphicon glyphicon-hand-right"></i>Extras<span class="fa arrow"></span></a>
           <ul class="nav nav-second-level">
           	<li> <a href="services.php"><i class="fa fa-list"></i>All Services</a> </li>
+            <li> <a onclick="remote_modal.open();" style="cursor:pointer;"><i class="fa fa-table"></i>Remote Control</a> </li>
             <li> <a href="teletext.php"><i class="fa fa-globe"></i>Teletext Browser</a> </li>
             <li> <a href="#" onclick="animatedcollapse.toggle('div_start_channelzapper');"> <i class="fa fa-arrow-up"></i>Channel Zapper</a> </li>
             <li> <a href="setup.php"><i class="fa fa-wrench"></i>Setup</a> </li>
             <li> <a href="about.php"><i class="glyphicon glyphicon-question-sign"></i>About</a> </li>
           </ul>
         </li>
+        <li style="background-color: #fff;" id="quickpanel_inc"></li>
       </ul>
     </div>
   </nav>
@@ -215,34 +253,33 @@ $.post("functions/device_list_inc.php",
       <!--crawl channel id-->
       <div id="div_crawl_channel_id">
       <span class="panel-close" onclick="animatedcollapse.hide('div_crawl_channel_id')"><span aria-hidden="true">x</span></span>
-        <h1>Crawl channel ID's</h1>
+        <h1>Crawl Channel ID's</h1>
         <input type="submit" class="btn btn-success" id="crawl_channel_id_btn" value="Click to confirm" onclick="animatedcollapse.show('crawl_channel_id_status'); crawl_channel_id();">
         <div id="crawl_channel_id_status"><img src="images/loading.gif" width="16" height="16" align="absmiddle"> </div>
-        <!--status-->
+        <!--crawl channel id-->
       </div>
-      <!--div_crawl_complete-->
       <!--crawl complete-->
       <div id="div_crawl_complete">
       <span class="panel-close" onclick="animatedcollapse.hide('div_crawl_complete')"><span aria-hidden="true">x</span></span>
-        <h1>Crawl EPG from channels</h1>
+        <h1>Crawl EPG from Channels</h1>
         <input type="submit" class="btn btn-success" id="crawl_complete_btn" value="Click to confirm" onclick="animatedcollapse.show('crawl_complete_status'); crawl_complete();">
         <div id="crawl_complete_status"><img src="images/loading.gif" width="16" height="16" align="absmiddle"> </div>
         <!--status-->
       </div>
-      <!--div_crawl_complete-->
-      <!--crawl mysearch id-->
+      <!--crawl complete-->
+      <!--crawl saved search-->
       <div id="div_crawl_search">
       <span class="panel-close" onclick="animatedcollapse.hide('div_crawl_search')"><span aria-hidden="true">x</span></span>
-        <h1>Crawl search - Write timer in database</h1>
+        <h1>Crawl Search - Write Timer in Database</h1>
         <input type="submit" class="btn btn-success" id="crawl_search_btn" value="Click to confirm" onclick="animatedcollapse.show('crawl_search_status'); crawl_saved_search();">
         <div id="crawl_search_status"><img src="images/loading.gif" width="16" height="16" align="absmiddle"> </div>
         <!--status-->
       </div>
-      <!--div_mysearch-->
+      <!--crawl saved search-->
       <!--send timer-->
       <div id="div_send_timer">
       <span class="panel-close" onclick="animatedcollapse.hide('div_send_timer')"><span aria-hidden="true">x</span></span>
-        <h1>Send timer from database to Receiver</h1>
+        <h1>Send Timer from Database to Receiver</h1>
         <input type="submit" class="btn btn-success" id="send_timer_btn" value="Click to confirm" onclick="animatedcollapse.show('send_timer_status'); send_timer();">
         <div id="send_timer_status"><img src="images/loading.gif" width="16" height="16" align="absmiddle"> </div>
         <!--status-->
@@ -256,20 +293,26 @@ $.post("functions/device_list_inc.php",
         <div id="channelzapper_status"><img src="images/loading.gif" width="16" height="16" align="absmiddle"> </div>
         <!--status-->
       </div>
-      <!--div_channelzapper-->
+      <!--channelzapper-->
       <hr />
       <div class="row">
         <div class="col-md-4">
-          <h5>Receiver Login</h5>
+          <h5>Receiver, Server Settings</h5>
           <div class="form-group">
             <p class="help-block">IP from Receiver:</p>
             <input id="box_ip" class="form-control" maxlength="50" value="<?php echo $settings['box_ip']; ?>" />
-            <div class="spacer_20"></div>
+            <div class="spacer_10"></div>
             <p class="help-block">Username from Receiver:</p>
             <input id="box_user" class="form-control" maxlength="50" value="<?php echo $settings['box_user']; ?>" />
-            <div class="spacer_20"></div>
+            <div class="spacer_10"></div>
             <p class="help-block">Password from Receiver:</p>
             <input id="box_password" class="form-control" type="password" maxlength="50" value="<?php echo $settings['box_password']; ?>" />
+            <div class="spacer_10"></div>
+            <p class="help-block">Server IP:</p>
+            <input id="server_ip" class="form-control" maxlength="50" value="<?php echo $settings['server_ip']; ?>" />
+            <div class="spacer_10"></div>
+            <p class="help-block">Script folder:</p>
+            <input id="script_folder" class="form-control" maxlength="50" value="<?php echo $settings['script_folder']; ?>" /> 
           </div>
         </div>
         <div class="col-md-4">
@@ -334,6 +377,11 @@ $.post("functions/device_list_inc.php",
 			if($settings['time_format'] == '2'){ $next_crawling = date("n/d/Y - g:i A", $settings['crawler_timestamp']); }
 			if(!isset($next_crawling) or $next_crawling == "") { $next_crawling = ""; }
 			echo $next_crawling; ?>
+            <br>
+            Duration from last crawling: ~ <?php $crawler_duration = $crawler_end - $crawler_start; 
+			$crawler_duration = round($crawler_duration/60,0); 
+			$crawler_duration = str_replace('.', ',', $crawler_duration);
+			echo $crawler_duration; ?> min.
             <div class="spacer_10"></div>
             When crawling finished, change to this channel
             <div class="spacer_5"></div>
@@ -403,7 +451,8 @@ $.post("functions/device_list_inc.php",
 			if($settings['time_format'] == '1'){ $next_day = date("d.m.Y - H:i", $settings['cz_timestamp']); }
 			// time format 2
 			if($settings['time_format'] == '2'){ $next_day = date("n/d/Y - g:i A", $settings['cz_timestamp']); } echo $next_day; ?>
-            <div>Duration from zapping about: <i class="fa fa-clock-o"></i> <?php echo round($cz_worktime/60,0); ?> min</div>
+            <br>
+            Duration from zapping: ~ <?php echo round($cz_worktime/60,0); ?> min.
             </p>
           </div>
         </div>
@@ -505,6 +554,12 @@ $.post("functions/device_list_inc.php",
           <div class="spacer_10"></div>
           <input type="checkbox" name="" id="del_m3u" onclick="" <?php if($settings['del_m3u'] == '1'){ echo "checked"; } ?> />
           Delete m3u files from /tmp
+          <div class="spacer_10"></div>
+            Sorting channels in Quickpanel
+            <select id="sort_quickpanel">
+          <option value="e2servicename" <?php if($settings['sort_quickpanel'] == 'e2servicename'){ echo "selected"; } ?>>Sort by name</option>
+          <option value="id" <?php if($settings['sort_quickpanel'] == 'id'){ echo "selected"; } ?>>Sorting from Receiver</option>
+        </select>
         </div>
         <!-- row -->
         <div class="col-md-4">
@@ -577,10 +632,10 @@ $.post("functions/device_list_inc.php",
         </div><!-- row-->
         <div class="spacer_10"></div>
         <div class="row">
-        <div class="col-md-2">
+        <!--<div class="col-md-2">
           <p>Record location</p>
           <input id="device_record_location" class="" type="text" placeholder="/media/hdd/">
-        </div>
+        </div>-->
         <!--col 2-->
         <div class="col-md-2">
           <p>Color for Timerlist</p>
@@ -632,10 +687,10 @@ $.post("functions/device_list_inc.php",
 <script src="assets/js/jquery.metisMenu.js"></script>
 <!-- CUSTOM SCRIPTS -->
 <script src="assets/js/custom.js"></script>
-<!-- noty -->
+<!-- Noty -->
 <script src="js/noty.min.js"></script>
 <script src="js/noty-msg.js"></script>
-<!--modal-->
+<!-- Modal-->
 <script type="text/javascript" src="js/rmodal.js"></script>
 <!---->
 <script>
