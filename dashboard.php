@@ -434,7 +434,7 @@ $(function(){
             <li> <a onclick="remote_modal.open();" style="cursor:pointer;"><i class="fa fa-table"></i>Remote Control</a> </li>
             <li> <a href="teletext.php"><i class="fa fa-globe"></i>Teletext Browser</a> </li>
             <li> <a href="#" onclick="animatedcollapse.toggle('div_start_channelzapper');"> <i class="fa fa-arrow-up"></i>Channel Zapper</a> </li>
-            <li> <a href="setup.php"><i class="fa fa-wrench"></i>Setup</a> </li>
+            <li> <a href="install.php"><i class="fa fa-wrench"></i>Install</a> </li>
             <li> <a href="about.php"><i class="glyphicon glyphicon-question-sign"></i>About</a> </li>
           </ul>
         </li>

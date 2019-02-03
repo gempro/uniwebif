@@ -117,7 +117,7 @@ function install(){
     <div class="adjust-nav">
       <div class="navbar-header">
         <button type="button" class="navbar-toggle" onclick="nav_icon_scroll()" data-toggle="collapse" data-target=".sidebar-collapse"> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button>
-        <a class="navbar-brand" href="setup.php"><i class="fa fa-square-o"></i>&nbsp;Setup</a> </div>
+        <a class="navbar-brand" href="install.php"><i class="fa fa-square-o"></i>&nbsp;Setup</a> </div>
       <div class="navbar-collapse collapse">
         <ul class="nav navbar-nav navbar-right">
           <div class="row"> </div>
@@ -132,7 +132,7 @@ function install(){
         <li class="nav-header">
           <div id="nav-header"><i class="fa fa-wrench fa-3-5x"></i> </div>
         </li>
-        <li> <a href="setup.php"><i class="fa fa-wrench"></i><strong>Setup</strong></a> </li>
+        <li> <a href="install.php"><i class="fa fa-wrench"></i><strong>Install</strong></a> </li>
       </ul>
     </div>
   </nav>
@@ -149,7 +149,7 @@ function install(){
     <div id="page-inner">
       <div class="row">
         <div class="col-md-12">
-          <h2>Setup</h2>
+          <h2>Install</h2>
         </div>
       </div>
       <!--crawl channel id-->
