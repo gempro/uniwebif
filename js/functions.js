@@ -776,7 +776,7 @@ function channelbrowser_zap(id,name){
 	});
 }
 
-//
+// change target device
 function channelbrowser_change_device(id){
 	
 	var this_id = id.replace(/channelbrowser_device_dropdown_/g, "");
@@ -919,12 +919,12 @@ function timerlist_hide_timer(id,name){
 	animatedcollapse.addDiv('timerlist_div_outer_'+this_id, 'fade=1,height=auto');
 	animatedcollapse.init();
 	animatedcollapse.toggle('timerlist_div_outer_'+this_id);
-	if($("#box_"+hash).is(':checked')){
+	if($("#box_"+hash).attr('checked', true)){
 	var summary = $("#selected_box_sum").text();
 	var summary = summary.replace("(", "");
 	var summary = summary.replace(")", "");
 	var summary = summary - 1;
-	$("#selected_box_sum").html((summary));
+	$("#selected_box_sum").html("("+summary+")");
 	$("#box_"+hash).attr('checked', false);
 	if(summary < '1'){ $("#selected_box_sum").fadeOut(1500); }
 	}
