@@ -100,7 +100,7 @@ CREATE TABLE IF NOT EXISTS `channel_list` (
   `zap` int(1) NOT NULL DEFAULT '0',
   `zap_start` int(1) NOT NULL DEFAULT '0',
   `cb_selected` int(1) NOT NULL,
-  `qp_selected` int(1) NOT NULL,
+  `qp_selected` int(1) DEFAULT '1' NOT NULL,
   `channel_hash` varchar(100) NOT NULL,
   `last_crawl` int(12) NOT NULL,
   `last_epg` int(12) NOT NULL,
