@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Erstellungszeit: 01. Februar 2019 um 16:45
+-- Erstellungszeit: 07. Mai 2019 um 16:21
 -- Server Version: 5.5.58
 -- PHP-Version: 5.5.9-1ubuntu4.26
 
@@ -100,7 +100,7 @@ CREATE TABLE IF NOT EXISTS `channel_list` (
   `zap` int(1) NOT NULL DEFAULT '0',
   `zap_start` int(1) NOT NULL DEFAULT '0',
   `cb_selected` int(1) NOT NULL,
-  `qp_selected` int(1) DEFAULT '1' NOT NULL,
+  `qp_selected` int(1) NOT NULL DEFAULT '1',
   `channel_hash` varchar(100) NOT NULL,
   `last_crawl` int(12) NOT NULL,
   `last_epg` int(12) NOT NULL,
@@ -201,6 +201,29 @@ CREATE TABLE IF NOT EXISTS `epg_data` (
 
 --
 -- Daten für Tabelle `epg_data`
+--
+
+
+-- --------------------------------------------------------
+
+--
+-- Tabellenstruktur für Tabelle `ignore_list`
+--
+
+DROP TABLE IF EXISTS `ignore_list`;
+CREATE TABLE IF NOT EXISTS `ignore_list` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `e2eventtitle` varchar(255) NOT NULL,
+  `e2eventdescription` varchar(255) NOT NULL,
+  `search_term` varchar(255) NOT NULL,
+  `timestamp` int(12) NOT NULL,
+  `hash` varchar(255) NOT NULL,
+  `activ` int(1) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+--
+-- Daten für Tabelle `ignore_list`
 --
 
 
@@ -362,7 +385,7 @@ CREATE TABLE IF NOT EXISTS `settings` (
 --
 
 INSERT INTO `settings` (`id`, `box_ip`, `box_user`, `box_password`, `url_format`, `server_ip`, `script_folder`, `activate_cron`, `epg_entries_per_channel`, `channel_entries`, `time_format`, `epg_crawler`, `epg_crawler_activ`, `crawler_timestamp`, `crawler_hour`, `crawler_minute`, `crawler_start`, `crawler_end`, `last_epg_crawl`, `last_epg`, `start_epg_crawler`, `after_crawl_action`, `search_crawler`, `last_search_crawl`, `display_old_epg`, `streaming_symbol`, `imdb_symbol`, `timer_ticker`, `show_hidden_ticker`, `ticker_time`, `mark_searchterm`, `send_timer`, `hide_old_timer`, `delete_old_timer`, `delete_receiver_timer`, `delete_further_receiver_timer`, `dummy_timer`, `dummy_timer_time`, `dummy_timer_current`, `delete_old_epg`, `del_time`, `reload_progressbar`, `search_list_sort`, `extra_rec_time`, `cz_activate`, `cz_wait_time`, `cz_repeat`, `cz_hour`, `cz_minute`, `cz_am_pm`, `cz_start_channel`, `cz_timestamp`, `cz_worktime`, `dur_down_broadcast`, `dur_up_broadcast`, `primetime`, `dur_down_primetime`, `dur_up_primetime`, `del_m3u`, `del_m3u_time`, `sort_quickpanel`, `current_git_push`) VALUES
-(0, '', '', '', 'http', '', 'uniwebif', 0, 250, 100, 2, 0, 0, 0, '', '', 0, 0, 0, 0, 50, 0, 0, 0, 0, 1, 1, 1, 0, 604800, 1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 86400, 0, 'id', 0, 0, 15, '', '', '', '', '', '0', '0', 300, 1800, 0, 0, 7200, 0, 0, 'e2servicename', 0);
+(0, '127.0.0.1', 'root', 'dreambox', 'http', '127.0.0.1', 'uniwebif', 0, 250, 100, 1, 0, 0, 0, '0', '00', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 604800, 1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 86400, 0, 'id', 0, 0, 15, 'daily', '7', '00', 'AM', '', '0', '0', 300, 1800, 0, 0, 7200, 0, 0, 'e2servicename', 0);
 
 -- --------------------------------------------------------
 
