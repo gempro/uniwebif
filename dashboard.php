@@ -328,10 +328,10 @@ $(function(){
 </head>
 <body>
 <a id="top"></a>
-<div id="scroll_top_channelbrowser_list" class="scroll_top_channelbrowser_list"><a href="#" title="to Channelbrowser"><script>document.write ("<i class=\"glyphicon glyphicon-circle-arrow-up fa-"+channelbrowser_btn_size+"x\"></i>");</script></a></div>
-<div id="scroll_top_primetime_list" class="scroll_top_primetime_list"><a href="#" title="to Primetime"><script>document.write ("<i class=\"glyphicon glyphicon-circle-arrow-up fa-"+primetime_btn_size+"x\"></i>");</script></a></div>
-<div id="scroll_top_broadcast_list" class="scroll_top_broadcast_list"><a href="#" title="to Broadcast now"><script>document.write ("<i class=\"glyphicon glyphicon-circle-arrow-up fa-"+broadcast_btn_size+"x\"></i>");</script></a></div>
-<div id="scroll_top" class="scroll_top"><a href="#" title="to top"><script>document.write("<i class=\"glyphicon glyphicon-circle-arrow-up fa-"+scrolltop_btn_size+"x\"></i>");</script></a></div>
+<div id="scroll_top_channelbrowser_list"><a href="#" title="to Channelbrowser"><script>document.write ("<i class=\"glyphicon glyphicon-circle-arrow-up fa-"+channelbrowser_btn_size+"x\"></i>");</script></a></div>
+<div id="scroll_top_primetime_list"><a href="#" title="to Primetime"><script>document.write ("<i class=\"glyphicon glyphicon-circle-arrow-up fa-"+primetime_btn_size+"x\"></i>");</script></a></div>
+<div id="scroll_top_broadcast_list"><a href="#" title="to Broadcast now"><script>document.write ("<i class=\"glyphicon glyphicon-circle-arrow-up fa-"+broadcast_btn_size+"x\"></i>");</script></a></div>
+<div id="scroll_top"><a href="#" title="to top"><script>document.write("<i class=\"glyphicon glyphicon-circle-arrow-up fa-"+scrolltop_btn_size+"x\"></i>");</script></a></div>
 <!--statusbar modal -->
  <span id="showModal"></span>
   <div id="modal" class="modal">
@@ -424,6 +424,7 @@ $(function(){
             <li> <a href="settings.php"><i class="fa fa-cog"></i>Main Settings</a> </li>
             <li> <a href="channel_list.php"><i class="fa fa-list"></i>Channel list</a> </li>
             <li> <a href="bouquet_list.php"><i class="fa fa-list"></i>Bouquet list</a> </li>
+            <li> <a href="ignore_list.php"><i class="fa fa-list"></i>Ignore list</a> </li>
           </ul>
         </li>
         <li> <a href="records.php"><i class="glyphicon glyphicon-record"></i>Records</a> </li>
@@ -582,7 +583,7 @@ $(function(){
               <option value="PM">PM</option>
             </select>'; } 
 			?>  
-            <button id="show_time" href="#display_broadcast_browse_time" class="btn btn-xs btn-default" onClick="broadcast_show_time(this.id)" data-toggle="tab">go</button>
+            <button id="show_time" href="#display_broadcast_browse_time" class="btn btn-xs btn-default" onClick="broadcast_show_time(this.id)" data-toggle="tab">show</button>
             </span>
             </li>
           </ul>

@@ -204,8 +204,8 @@ function reload_saved_search_panel(){
 </head>
 <body>
 <a id="top"></a>
-<div id="scroll_top" class="scroll_top"><a href="#" title="to top"><script>document.write("<i class=\"glyphicon glyphicon-circle-arrow-up fa-"+scrolltop_btn_size+"x\"></i>");</script></a></div>
-<div id="scroll_top_saved_search" class="scroll_top_saved_search"><a href="#" title="to Saved Search"><script>document.write ("<i class=\"glyphicon glyphicon-circle-arrow-up fa-"+saved_search_btn_size+"x\"></i>");</script></a></div>
+<div id="scroll_top"><a href="#" title="to top"><script>document.write("<i class=\"glyphicon glyphicon-circle-arrow-up fa-"+scrolltop_btn_size+"x\"></i>");</script></a></div>
+<div id="scroll_top_saved_search"><a href="#" title="to Saved Search"><script>document.write ("<i class=\"glyphicon glyphicon-circle-arrow-up fa-"+saved_search_btn_size+"x\"></i>");</script></a></div>
 <!--statusbar modal -->
  <span id="showModal"></span>
   <div id="modal" class="modal">
@@ -298,6 +298,7 @@ function reload_saved_search_panel(){
             <li> <a href="settings.php"><i class="fa fa-cog"></i>Main Settings</a> </li>
             <li> <a href="channel_list.php"><i class="fa fa-list"></i>Channel list</a> </li>
             <li> <a href="bouquet_list.php"><i class="fa fa-list"></i>Bouquet list</a> </li>
+            <li> <a href="ignore_list.php"><i class="fa fa-list"></i>Ignore list</a> </li>
           </ul>
         </li>
         <li> <a href="records.php"><i class="glyphicon glyphicon-record"></i>Records</a> </li>

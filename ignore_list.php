@@ -9,7 +9,7 @@ session_start();
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Uniwebif : Teletext</title>
+<title>Uniwebif : Ignore list</title>
 <!-- BOOTSTRAP STYLES-->
 <link href="assets/css/bootstrap.css" rel="stylesheet" />
 <!-- FONTAWESOME STYLES-->
@@ -58,11 +58,24 @@ animatedcollapse.ontoggle=function($, divobj, state){ //fires each time a DIV is
 //state: "block" or "none", depending on state
 }
 animatedcollapse.init()
+
+// ignore list
+$(window).load(function() {
+	$("ignore_list").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
+	$.post("functions/ignore_list_inc.php",
+	{
+	action: 'show'
+	},
+	function(data){
+	$("#ignore_list").html(data);
+	}
+	);
+});
 </script>
 </head>
 <body>
 <a id="top"></a>
-<div id="scroll_top"><a href="#" title="to top"><script>document.write("<i class=\"glyphicon fa fa-globe fa-"+scrolltop_btn_size+"x\"></i>");</script></a></div>
+<div id="scroll_top"><a href="#" title="to top"><script>document.write("<i class=\"glyphicon glyphicon-circle-arrow-up fa-"+scrolltop_btn_size+"x\"></i>");</script></a></div>
 <!--statusbar modal -->
  <span id="showModal"></span>
   <div id="modal" class="modal">
@@ -120,7 +133,7 @@ animatedcollapse.init()
     <div class="adjust-nav">
       <div class="navbar-header">
         <button type="button" class="navbar-toggle" onclick="nav_icon_scroll()" data-toggle="collapse" data-target=".sidebar-collapse"> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button>
-        <a class="navbar-brand" href="records.php"><i class="fa fa-square-o"></i>&nbsp;Teletext</a> </div>
+        <a class="navbar-brand" href="ignore_list.php"><i class="fa fa-square-o"></i>&nbsp;Ignore list</a> </div>
       <div class="navbar-collapse collapse">
         <ul class="nav navbar-nav navbar-right">
           <div class="row">
@@ -137,7 +150,7 @@ animatedcollapse.init()
   <nav class="navbar-default navbar-side" role="navigation">
     <div class="sidebar-collapse">
       <ul class="nav" id="main-menu">
-        <script>document.write(navbar_header_teletext)</script>
+        <script>document.write(navbar_header_ignore_list)</script>
         <li> <a href="dashboard.php"><i class="fa fa-home"></i>HOME</a> </li>
         <li> <a href="search.php"><i class="fa fa-search"></i>Search</a> </li>
         <li> <a href="timer.php"><i class="fa fa-clock-o"></i>Timer & Saved Search</a> </li>
@@ -150,21 +163,21 @@ animatedcollapse.init()
             <li> <a href="#" onclick="animatedcollapse.toggle('div_send_timer');"><i class="fa fa-chevron-right"></i>Send Timer from Database to Receiver</a> </li>
           </ul>
         </li>
-        <li role="presentation"> <a href="#"><i class="fa fa-cog"></i>Settings<span class="fa arrow"></span></a>
+        <li role="presentation" class="active"> <a href="#"><i class="fa fa-cog"></i>Settings<span class="fa arrow"></span></a>
           <ul class="nav nav-second-level">
             <li> <a href="settings.php"><i class="fa fa-cog"></i>Main Settings</a> </li>
             <li> <a href="channel_list.php"><i class="fa fa-list"></i>Channel list</a> </li>
             <li> <a href="bouquet_list.php"><i class="fa fa-list"></i>Bouquet list</a> </li>
-            <li> <a href="ignore_list.php"><i class="fa fa-list"></i>Ignore list</a> </li>
+            <li> <a href="ignore_list.php"><i class="fa fa-list"></i><strong>Ignore list</strong></a> </li>
           </ul>
         </li>
         <li> <a href="records.php"><i class="glyphicon glyphicon-record"></i>Records</a> </li>
         <li> <a id="116" onclick="power_control(this.id)" style="cursor:pointer;"> <i class="glyphicon glyphicon-off"></i>Wake up / Standby <span id="pc116"></span></a> </li>
-        <li role="presentation" class="active"> <a href="#"><i class="glyphicon glyphicon-hand-right"></i>Extras<span class="fa arrow"></span></a>
+        <li role="presentation"> <a href="#"><i class="glyphicon glyphicon-hand-right"></i>Extras<span class="fa arrow"></span></a>
           <ul class="nav nav-second-level">
           	<li> <a href="services.php"><i class="fa fa-list"></i>All Services</a> </li>
             <li> <a onclick="remote_modal.open();" style="cursor:pointer;"><i class="fa fa-table"></i>Remote Control</a> </li>
-            <li> <a href="teletext.php"><i class="fa fa-globe"></i><strong>Teletext Browser</strong></a> </li>
+            <li> <a href="teletext.php"><i class="fa fa-globe"></i>Teletext Browser</a> </li>
             <li> <a href="#" onclick="animatedcollapse.toggle('div_start_channelzapper');"> <i class="fa fa-arrow-up"></i>Channel Zapper</a> </li>
             <li> <a href="install.php"><i class="fa fa-wrench"></i>Install</a> </li>
             <li> <a href="about.php"><i class="glyphicon glyphicon-question-sign"></i>About</a> </li>
@@ -182,7 +195,7 @@ animatedcollapse.init()
   <div id="statusbar_cnt">&nbsp;</div>
   </div>
   </div>
-    </div>
+  </div><!-- /. ROW  -->
     <div id="page-inner">
     <div class="row">
     <div id="cookie_js" class="col-md-12" style="color:#FF0000;">
@@ -191,7 +204,7 @@ animatedcollapse.init()
     </div>
       <div class="row">
         <div class="col-md-12">
-          <h2>Teletext Browser</h2>
+          <h2>Ignore list</h2>
         </div>
       </div>
       <!--crawl channel id-->
@@ -240,43 +253,14 @@ animatedcollapse.init()
       <!--channelzapper-->
       <hr />
       <div class="row">
-        <div class="col-md-12"> Teletext Page:
-          <input id="page" type="text" maxlength="3" size="10">
-          <input type="button" onClick="teletext_page()" value="GO" class="btn btn-xs btn-default">
-          <select id="size">
-            <option value="240">240p</option>
-            <option value="360">360p</option>
-            <option value="480" selected>480p</option>
-            <option value="720">720p</option>
-          </select>
-        </div>
-        <div class="spacer_10"></div>
         <div class="col-md-12">
-          <input id="on" type="button" onClick="teletext_control(this.id)" value="Teletext ON" class="btn btn-xs btn-success">
-          <input id="off" type="button" onClick="teletext_control(this.id)" value="Teletext OFF" class="btn btn-xs btn-danger">
-          <input id="reload" type="button" onClick="teletext_control(this.id)" value="Reload" class="btn btn-xs btn-default">
-          <input id="restart" type="button" onClick="teletext_control(this.id)" value="Restart" class="btn btn-xs btn-default">
-        </div>
-        <div class="spacer_10"></div>
-        <div class="col-md-12">
-          <input id="page_backward" type="button" onClick="teletext_browse(this.id)" value="< Page" class="btn btn-xs btn-default">
-          <input id="page_forward" type="button" onClick="teletext_browse(this.id)" value="Page >" class="btn btn-xs btn-default">
-          <input id="page_100" type="button" onClick="document.getElementById('page').value = '100'; teletext_page();" value="Page 100" class="btn btn-xs btn-default">
-        </div>
-        <div class="spacer_10"></div>
-        <div class="col-md-12">
-          <input id="underpage_backward" type="button" onClick="teletext_browse(this.id)" value="< Underpage" class="btn btn-xs btn-default">
-          <input id="underpage_forward" type="button" onClick="teletext_browse(this.id)" value="Underpage >" class="btn btn-xs btn-default">
+        
+        <span id="ignore_list"></span>
+        
         </div>
       </div>
       <!-- /. ROW  -->
       <hr />
-      <div class="row">
-        <div class="col-md-12">
-          <div id="teletext_img"></div>
-        </div>
-      </div>
-      <!-- /. ROW  -->
     </div>
     <!-- /. PAGE INNER  -->
   </div>

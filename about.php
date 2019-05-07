@@ -10,16 +10,6 @@ session_start();
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Uniwebif : About</title>
-<meta name="keywords" content="uniwebif, extern, universal, web, interface, responsive, webinterface, enigma2, linux, receiver, epg, electronic, program, guide, crawler, save, xml, epg, database, browser, epg to sql, optimized, mobile devices, smartphone, tablet," />
-<meta name="description" content="Crawl, browse and search within the EPG from your Enigma2 Linux Receiver. Save EPG in your SQL database. Uniwebif is optimized for mobile devices like Smartphone and Tablet.." />
-<meta name="author" content="Uniwebif">
-<meta name="publisher" content="Uniwebif">
-<meta name="copyright" content="Uniwebif">
-<meta name="abstract" content="Crawl, browse and search within the EPG from your Enigma2 Linux Receiver. Save EPG in your SQL database. Uniwebif is optimized for mobile devices like Smartphone and Tablet..">
-<meta name="page-topic" content="software">
-<meta name="page-type" content="download">
-<meta name="content-language" content="en">
-<meta name="language" content="en">
 <!-- BOOTSTRAP STYLES-->
 <link href="assets/css/bootstrap.css" rel="stylesheet" />
 <!-- FONTAWESOME STYLES-->
@@ -165,6 +155,7 @@ animatedcollapse.init()
             <li> <a href="settings.php"><i class="fa fa-cog"></i>Main Settings</a> </li>
             <li> <a href="channel_list.php"><i class="fa fa-list"></i>Channel list</a> </li>
             <li> <a href="bouquet_list.php"><i class="fa fa-list"></i>Bouquet list</a> </li>
+            <li> <a href="ignore_list.php"><i class="fa fa-list"></i>Ignore list</a> </li>
           </ul>
         </li>
         <li> <a href="records.php"><i class="glyphicon glyphicon-record"></i>Records</a> </li>
@@ -201,6 +192,7 @@ animatedcollapse.init()
       <div class="row">
         <div class="col-md-12">
           <h2>About</h2>
+          <span onclick="foo()" style="cursor:pointer;">foo()</span>
         </div>
       </div>
       <!--crawl channel id-->
