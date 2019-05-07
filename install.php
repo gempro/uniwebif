@@ -45,7 +45,7 @@ function save_sql(){
 	var sql_user = $("#sql_user").val();
 	var sql_pass = $("#sql_pass").val();
 	$("#sql_status").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
-	$.post("functions/setup_inc.php",
+	$.post("functions/install_inc.php",
 	{
 	setting: 'sql',
 	sql_host: sql_host,
@@ -68,7 +68,7 @@ function save_receiver(){
 	var receiver_user = $("#receiver_user").val();
 	var receiver_pass = $("#receiver_pass").val();
 	$("#receiver_status").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
-	$.post("functions/setup_inc.php",
+	$.post("functions/install_inc.php",
 	{
 	setting: 'receiver',
 	receiver_ip: receiver_ip,
@@ -92,7 +92,7 @@ function install(){
 	var receiver_pass = $("#receiver_pass").val();
 	var server_ip = $("#server_ip").val();
 	var script_folder = $("#script_folder").val();
-	$.post("functions/setup_inc.php",
+	$.post("functions/install_inc.php",
 	{
 	setting: 'install',
 	receiver_ip: receiver_ip,
