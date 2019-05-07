@@ -10,11 +10,9 @@
 	
 	} else {
 	
-//	header('Content-Type: text/event-stream');
-//	header('Cache-Control: no-cache');
-	
 	// hide single timer
-	if($action == 'hide'){
+	if($action == 'hide')
+	{
 	$timer_id = $_REQUEST['timer_id'];
 	// track keywords
 	$sql = mysqli_query($dbmysqli, "SELECT * FROM `timer` WHERE `id` = '".$timer_id."' ");
@@ -50,7 +48,8 @@
 	$result = mysqli_fetch_row($sql);
 	$summary = $result[0];
 	
-	if($summary < 1){
+	if($summary < 1)
+	{
 	$sql = mysqli_query($dbmysqli, "INSERT INTO `keywords` (
 	`searchterm`, 
 	`word`, 
@@ -83,15 +82,58 @@
 	}
 	
 	// unhide single timer
-	if($action == 'unhide'){
+	if($action == 'unhide')
+	{
 	sleep(1);
 	$timer_id = $_REQUEST['timer_id'];
 	$sql =  mysqli_query($dbmysqli, "UPDATE `timer` SET `hide` = '0' WHERE `id` = '".$timer_id."' ");
 	echo "data:unhided";
 	exit;
 	}
+	
+	// add broadcast to ignore list
+	if($action == "ignore")
+	{
+	sleep(1);
+	$timer_id = $_REQUEST['timer_id'];
+	$sql_0 = mysqli_query($dbmysqli, "SELECT * FROM `timer` WHERE `id` = '".$timer_id."' ");
+	$result_0 = mysqli_fetch_assoc($sql_0);
+	$e2eventtitle = $result_0['e2eventtitle'];
+	$e2eventdescription = $result_0['e2eventdescription'];
+	$search_term = $result_0['search_term'];
+	$hash = hash('md4',$e2eventtitle.$e2eventdescription);
+	
+	$sql_1 = mysqli_query($dbmysqli, "SELECT COUNT(hash) FROM `ignore_list` WHERE `hash` = '".$hash."' ");
+	$result_1 = mysqli_fetch_row($sql_1);
+	$summary = $result_1[0];
+	
+	if($summary == 0)
+	{
+	$sql = mysqli_query($dbmysqli, "INSERT INTO `ignore_list` (
+	e2eventtitle, 
+	e2eventdescription, 
+	search_term, 
+	timestamp, 
+	hash, 
+	activ) 
+	VALUES (
+	'".$e2eventtitle."', 
+	'".$e2eventdescription."', 
+	'".$search_term."', 
+	'".time()."', 
+	'".$hash."', 
+	'1')
+	");
+	echo 'data:ignored';
+	}
+	
+	else { echo 'data:already_ignored'; }
+	
+	exit;
+	}
 
-	if($action == 'delete'){
+	if($action == 'delete')
+	{
 	if(!isset($_REQUEST['delete_from_box']) or $_REQUEST['delete_from_box'] == "") { $_REQUEST['delete_from_box'] = ""; }
 	if(!isset($_REQUEST['delete_from_db']) or $_REQUEST['delete_from_db'] == "") { $_REQUEST['delete_from_db'] = ""; }
 	if(!isset($_REQUEST['device']) or $_REQUEST['device'] == "") { $_REQUEST['device'] = ""; }
@@ -110,14 +152,16 @@
 	$status = $result['status'];
 	if($device == ""){ $device = $result['device']; }
 	
-	if($status == 'manual' or $status == 'sent'){
+	if($status == 'manual' or $status == 'sent')
+	{
 	$sql = mysqli_query($dbmysqli, "UPDATE `epg_data` SET `timer` = '0' WHERE `hash` = '".$result['hash']."' ");
 	}
 
 	sleep(1);
 	
 	// delete timer from different device
-	if($device != "0"){
+	if($device != "0")
+	{
 	$sql2 = mysqli_query($dbmysqli, "SELECT * FROM `device_list` WHERE `id` = '".$device."' ");
 	$result2 = mysqli_fetch_assoc($sql2);
 	$device_description = $result2['device_description'];
@@ -163,8 +207,8 @@
 	}
 	
 	// unhide
-	if($action == 'unhide'){
-	
+	if($action == 'unhide')
+	{
 	$sql = "SELECT * FROM `timer` WHERE `expired` = '0' ORDER BY `e2eventstart` ASC, `record_status` ASC"; 
 	
 	} else {
@@ -191,7 +235,7 @@
 	// Fetch one and one row
 	while ($obj = mysqli_fetch_object($result)) {
 	
-	if(!isset($timerlist) or $timerlist == "") { $timerlist = ""; }
+	if(!isset($timerlist) or $timerlist == ""){ $timerlist = ""; }
 	
 	$title_enc = rawurldecode($obj->title_enc);
 	$servicename_enc = rawurldecode($obj->servicename_enc);
@@ -405,6 +449,7 @@ if($obj->record_status == 'c_expired')
 	  <div class=\"spacer_5\"></div>
 	  <input id=\"timerlist_send_timer_btn_$obj->hash\" name=\"$obj->id\" type=\"submit\" onClick=\"timerlist_send_timer(this.id,this.name)\" value=\"SEND\" class=\"btn btn-success btn-sm\" title=\"send Timer to Receiver\"/>
 	  $hide_button
+	  <input id=\"ignore_timer_btn_$obj->id\" type=\"submit\" onclick=\"timerlist_ignore(this.id);\" value=\"IGNORE\" class=\"btn btn-default btn-sm\" title=\"Add broadcast to ignore list\">
 	  <input id=\"delete_timer_btn_$obj->id\" type=\"submit\" onClick=\"timerlist_delete_timer(this.id)\" value=\"DELETE\" class=\"btn btn-danger btn-sm\" title=\"delete Timer from Receiver\"/>
 	  <span class=\"del_checkbox\"><input id=\"timerlist_delete_db_$obj->id\" type=\"checkbox\"> delete also from Database</span>
 	  <span id=\"timerlist_status_$obj->id\"></span>
