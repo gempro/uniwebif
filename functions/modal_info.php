@@ -123,7 +123,12 @@ $(function(){
 		<div id=\"broadcast-tab-button-group\">
 		  <div id=\"row1\">
 			<input id=\"channelbrowser_timer_btn_$rand$obj->hash\" type=\"submit\" onClick=\"channelbrowser_timer(this.id)\" value=\"SET TIMER\" class=\"btn btn-success btn-sm\" title=\"send Timer to Receiver\"/> </div>
-		  <div id=\"row3\"> <span id=\"channelbrowser_status_timer_$rand$obj->hash\"></span> </div>
+			<div id=\"row2\">
+    <input id=\"channelbrowser_zap_btn_$rand$obj->hash\" type=\"submit\" name=\"$obj->e2eventservicereference\" onClick=\"channelbrowser_zap(this.id,this.name)\" value=\"ZAP TO CHANNEL\" class=\"btn btn-default btn-sm\"/ title=\"Zap to channel\"> </div>
+		  <div id=\"row3\"> 
+		  <span id=\"channelbrowser_status_zap_$rand$obj->hash\"></span>
+		  <span id=\"channelbrowser_status_timer_$rand$obj->hash\"></span> 
+		  </div>
 		  <div style=\"clear:both\"></div>
 		</div>
 		<div class=\"spacer_5\"></div>
@@ -228,23 +233,6 @@ if($xml){
 		</div>
 		$imdb_broadcast <a href=\"search.php?searchterm=$e2eventtitle&option=title\" target=\"_blank\" title=\"Search this broadcast\">More from this broadcast</a>
 		<div class=\"spacer_5\"></div>
-		<!--<div id=\"broadcast-tab-button-group\">
-	  <div id=\"row1\">
-		<input id=\"channelbrowser_timer_btn_$rand$hash\" type=\"submit\" onClick=\"channelbrowser_timer(this.id)\" value=\"SET TIMER\" class=\"btn btn-success btn-sm\" title=\"send Timer to Receiver\"/> </div>
-	  <div id=\"row3\">
-	  <span id=\"channelbrowser_status_timer_$rand$hash\"></span>
-	  </div>
-	  <div style=\"clear:both\"></div>
-	  </div>
-	  <div class=\"spacer_5\"></div>
-	  <span>Receiver: </span>
-	  <select id=\"channelbrowser_device_dropdown_$rand$hash\" class=\"device_dropdown\" onchange=\"channelbrowser_change_device(this.id)\">
-	  <option value=\"0\">default</option>
-	  $device_dropdown
-	  </select>
-	  <div class=\"spacer_10\"></div>
-	  <span>Record location: </span>
-	  <select id=\"rec_location_channelbrowser_$rand$hash\" class=\"rec_location_dropdown\">$rec_dropdown_channelbrowser</select>-->
 	  </div>
 	</div>
 	<div class=\"spacer_10\"></div>";
