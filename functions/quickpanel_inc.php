@@ -28,12 +28,8 @@
 	{
 	while ($obj = mysqli_fetch_object($result)) {
 	{
-	if($obj->qp_selected == "1")
-	{
-	$select = "selected=\"selected\"";
-	} else {
-	$select = "";
-	}
+	
+	if($obj->qp_selected == "1"){ $select = "selected=\"selected\""; } else { $select = ""; }
 			
 	if(!isset($dropdown) or $dropdown == ""){ $dropdown = ""; }
 	
@@ -43,7 +39,10 @@
 	}
 	
 	// panel content
-	$sql = mysqli_query($dbmysqli, "SELECT e2servicereference, servicename_enc FROM `channel_list` WHERE `qp_selected` = '1'");	
+	$sql = mysqli_query($dbmysqli, "SELECT e2servicereference, servicename_enc FROM `channel_list` WHERE `qp_selected` = '1'");
+	
+	if (mysqli_num_rows($sql) == 0){ $sql = mysqli_query($dbmysqli, "SELECT e2servicereference, servicename_enc FROM `channel_list` ORDER BY `".$sort_quickpanel."` ASC"); }
+	
 	if($result = mysqli_fetch_assoc($sql))
 	{
 	echo '
