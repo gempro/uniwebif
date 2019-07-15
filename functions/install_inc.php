@@ -379,6 +379,7 @@ session_start();
 	  `cz_start_channel` varchar(50) NOT NULL,
 	  `cz_timestamp` varchar(12) NOT NULL DEFAULT '0',
 	  `cz_worktime` varchar(12) NOT NULL DEFAULT '0',
+	  `cz_device` int(2) NOT NULL,
 	  `dur_down_broadcast` int(4) NOT NULL DEFAULT '300',
 	  `dur_up_broadcast` int(4) NOT NULL DEFAULT '1800',
 	  `primetime` int(12) NOT NULL DEFAULT '0',

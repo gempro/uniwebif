@@ -41,6 +41,7 @@ include("../inc/dashboard_config.php");
 	$reload_progressbar = $_REQUEST['reload_progressbar'];
 	$extra_rec_time = $_REQUEST['extra_rec_time'];
 	$cz_activate = $_REQUEST['cz_activate'];
+	$cz_device = $_REQUEST['cz_device'];
 	$cz_wait_time = $_REQUEST['cz_wait_time'];
 	$cz_hour = $_REQUEST['cz_hour'];
 	$cz_minute = $_REQUEST['cz_minute'];
@@ -114,6 +115,7 @@ include("../inc/dashboard_config.php");
 	reload_progressbar = '$reload_progressbar', 
 	extra_rec_time = '$extra_rec_time', 
 	cz_activate = '$cz_activate', 
+	cz_device = '$cz_device', 
 	cz_wait_time = '$cz_wait_time', 
 	cz_repeat = '$cz_repeat', 
 	cz_hour = '$cz_hour', 
