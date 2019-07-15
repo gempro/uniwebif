@@ -658,6 +658,9 @@ display:none;
 	padding-top: 5px;
 	padding-left: 5px;
 }
+#rc_status {
+	float:right;
+}
 #record_list_main {
 	width: 100%;
 	height: auto;
