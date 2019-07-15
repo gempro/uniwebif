@@ -1596,7 +1596,6 @@ function hide_div_start_channelzapper(){
 	window.setTimeout(hide_div_start_channelzapper, 3000);
 	
 function reset_start_channelzapper_btn(){ 
-	//document.getElementById("start_channelzapper_btn").disabled = false;
 	$("#start_channelzapper_btn").prop('disabled', false);
 	}
 	window.setTimeout(reset_start_channelzapper_btn, 3500);	
@@ -1687,6 +1686,7 @@ function save_settings(){
 	if($("#mark_searchterm").is(':checked')){ var mark_searchterm = '1'; } else { var mark_searchterm = '0'; }
 	if($("#cz_activate").is(':checked')){ var cz_activate = '1'; } else { var cz_activate = '0'; }
 
+	var cz_device = $("#cz_device").val();
 	var cz_wait_time = $("#cz_wait_time").val();
 	var cz_hour = $("#cz_hour").val();
 	var cz_minute = $("#cz_minute").val();
@@ -1737,6 +1737,7 @@ function save_settings(){
 	extra_rec_time: extra_rec_time,
 	mark_searchterm: mark_searchterm,
 	cz_activate: cz_activate,
+	cz_device: cz_device,
 	cz_wait_time: cz_wait_time,
 	cz_hour: cz_hour,
 	cz_minute: cz_minute,
