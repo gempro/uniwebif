@@ -1,3 +1,11 @@
+1.9
+
++ Channelzapper could be used for another Receiver in network
++ Funtion to open and browse within Teletext added
++ Quicklink to open Remote control added to header
+
+----------------------------------------------------------------------------------------------------------------
+
 1.8
 
 + Quickpanel added under menue. Option to stream channel, read EPG, zap to channel with one click
