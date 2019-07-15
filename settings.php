@@ -28,21 +28,41 @@ session_start();
 	$sql = mysqli_query($dbmysqli, "SELECT * FROM `settings`");
 	$settings = mysqli_fetch_assoc($sql);
 	$cz_wait_time = $settings['cz_wait_time'];
+	$cz_device_no = $settings['cz_device'];
 	
 	// calculate work time
-	$sql = mysqli_query($dbmysqli, 'SELECT COUNT(*) FROM `channel_list` WHERE `zap` = "1" ');
-	$result = mysqli_fetch_row($sql);
-	$sum_zap_channels = $result[0];
+	$sql_1 = mysqli_query($dbmysqli, "SELECT COUNT(*) FROM `channel_list` WHERE `zap` = '1' ");
+	$result_1 = mysqli_fetch_row($sql_1);
+	$sum_zap_channels = $result_1[0];
 	//
 	$cz_worktime = $sum_zap_channels * $cz_wait_time + 10;
 	
 	// read device info
-	$sql2 = mysqli_query($dbmysqli, "SELECT * FROM `box_info`");
-	$result = mysqli_fetch_assoc($sql2);
-	if(!isset($result['e2enigmaversion']) or $result['e2enigmaversion'] == ""){ $result['e2enigmaversion'] = ""; } else { $result['e2enigmaversion'] = 'OS:<br>'.$result['e2enigmaversion']; }
-	if(!isset($result['e2imageversion']) or $result['e2imageversion'] == ""){ $result['e2imageversion'] = ""; } else { $result['e2imageversion'] = 'Image:<br>'.$result['e2imageversion']; }
-	if(!isset($result['e2webifversion']) or $result['e2webifversion'] == ""){ $result['e2webifversion'] = ""; } else { $result['e2webifversion'] = 'Webinterface:<br>'.$result['e2webifversion']; }
-	if(!isset($result['e2model']) or $result['e2model'] == ""){ $result['e2model'] = ""; } else { $result['e2model'] = 'Device:<br>'.$result['e2model']; }
+	$sql_2 = mysqli_query($dbmysqli, "SELECT * FROM `box_info`");
+	$result_2 = mysqli_fetch_assoc($sql_2);
+	if(!isset($result_2['e2enigmaversion']) or $result_2['e2enigmaversion'] == ""){ $result_2['e2enigmaversion'] = ""; } else { $result_2['e2enigmaversion'] = 'OS:<br>'.$result_2['e2enigmaversion']; }
+	if(!isset($result_2['e2imageversion']) or $result_2['e2imageversion'] == ""){ $result_2['e2imageversion'] = ""; } else { $result_2['e2imageversion'] = 'Image:<br>'.$result_2['e2imageversion']; }
+	if(!isset($result_2['e2webifversion']) or $result_2['e2webifversion'] == ""){ $result_2['e2webifversion'] = ""; } else { $result_2['e2webifversion'] = 'Webinterface:<br>'.$result_2['e2webifversion']; }
+	if(!isset($result_2['e2model']) or $result_2['e2model'] == ""){ $result_2['e2model'] = ""; } else { $result_2['e2model'] = 'Device:<br>'.$result_2['e2model']; }
+	
+	// cz device list
+	$sql_3 = "SELECT * FROM `device_list` ";
+	
+	if ($result_3 = mysqli_query($dbmysqli,$sql_3))
+	{
+	while ($obj = mysqli_fetch_object($result_3)){
+	{
+	
+	if(!isset($cz_device_list) or $cz_device_list == ""){ $cz_device_list = ""; }
+	
+	if($cz_device_no == $obj->id){ $cz_list_selected = "selected=\"selected\""; } else { $cz_list_selected = ""; }
+	
+	$cz_device_list = $cz_device_list.'
+	<option value="'.$obj->id.'" '.$cz_list_selected.'>'.rawurldecode($obj->device_description).'</option>
+	';
+	}
+	}
+}
 ?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -175,7 +195,7 @@ $.post("functions/device_list_inc.php",
     <div class="adjust-nav">
       <div class="navbar-header">
         <button type="button" class="navbar-toggle" onclick="nav_icon_scroll()" data-toggle="collapse" data-target=".sidebar-collapse"> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button>
-        <a class="navbar-brand" href="settings.php"><i class="fa fa-square-o"></i>&nbsp;Settings</a> </div>
+        <span class="navbar-brand"><span style="color:#000; cursor:pointer;" onclick="remote_modal.open();" title="Remote Control"><i class="fa fa-table fa-sm"></i></span> <a class="navbar-link" href="settings.php">Settings</a></span> </div>
       <div class="navbar-collapse collapse">
         <ul class="nav navbar-nav navbar-right">
           <div class="row">
@@ -328,10 +348,10 @@ $.post("functions/device_list_inc.php",
         <div class="col-md-1"></div>
         <div class="col-md-3">
           <h5>Receiver Info</h5>
-          <p><?php echo $result['e2enigmaversion']; ?></p>
-          <p><?php echo $result['e2imageversion']; ?></p>
-          <p><?php echo $result['e2webifversion']; ?></p>
-          <p><?php echo $result['e2model']; ?></p>
+          <p><?php echo $result_2['e2enigmaversion']; ?></p>
+          <p><?php echo $result_2['e2imageversion']; ?></p>
+          <p><?php echo $result_2['e2webifversion']; ?></p>
+          <p><?php echo $result_2['e2model']; ?></p>
         </div>
       </div>
       <hr />
@@ -414,6 +434,15 @@ $.post("functions/device_list_inc.php",
             <h5>Channel Zapper</h5>
             <input type="checkbox" name="" id="cz_activate" onclick="" <?php if($settings['cz_activate'] == '1'){ echo "checked"; } ?> />
             <strong>Activate</strong> automatic Channel Zapper
+            
+            <div class="spacer_10"></div>
+            Device for zapping 
+            <select id="cz_device">
+            <option value="0">default</option>
+            <?php echo $cz_device_list; ?>
+            </select>
+            
+            
             <div class="spacer_10"></div>
             Wait on channel (in seconds)
             <input name="textfield" type="text" id="cz_wait_time" size="2" maxlength="2" value="<?php echo $settings['cz_wait_time']?>" >

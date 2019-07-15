@@ -58,17 +58,6 @@ animatedcollapse.ontoggle=function($, divobj, state){ //fires each time a DIV is
 //state: "block" or "none", depending on state
 }
 animatedcollapse.init()
-
-// all services list
-$(window).load(function() {
-	$("#all_services_list").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
-	$.post("functions/services_inc.php",
-	function(data){
-	$("#all_services_list").html(data);
-	$("#show_services_btn").fadeIn();
-	}
-	);
-});
 </script>
 </head>
 <body>
@@ -131,7 +120,7 @@ $(window).load(function() {
     <div class="adjust-nav">
       <div class="navbar-header">
         <button type="button" class="navbar-toggle" onclick="nav_icon_scroll()" data-toggle="collapse" data-target=".sidebar-collapse"> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button>
-        <a class="navbar-brand" href="services.php"><i class="fa fa-square-o"></i>&nbsp;Services</a> </div>
+        <span class="navbar-brand"><span style="color:#000; cursor:pointer;" onclick="remote_modal.open();" title="Remote Control"><i class="fa fa-table fa-sm"></i></span> <a class="navbar-link" href="services.php">Services</a></span> </div>
       <div class="navbar-collapse collapse">
         <ul class="nav navbar-nav navbar-right">
           <div class="row">
@@ -250,13 +239,13 @@ $(window).load(function() {
       </div>
       <!--channelzapper-->
       <hr />
-      <input type="submit" onClick="get_all_services()" value="Get Services from Receiver" class="btn btn-default"/>
-      <div id="show_services_btn" class="row" style="display:none;">
+      <input type="submit" onClick="get_all_services()" value="Get services from Receiver" class="btn btn-default"/>
+      <div id="show_services_btn" class="row">
       <div class="col-md-12">
-        <hr>
-        <input class="btn btn-default btn-xs" type="submit" value="Show both" onclick="show_all_services('both')">
+        <hr> 
         <input class="btn btn-default btn-xs" type="submit" value="Show TV" onclick="show_all_services('tv')">
         <input class="btn btn-default btn-xs" type="submit" value="Show Radio" onclick="show_all_services('radio')">
+        <input class="btn btn-default btn-xs" type="submit" value="Show both" onclick="show_all_services('both')">
         </div>
        </div>
       <span id="all_services_status_crawl"></span>

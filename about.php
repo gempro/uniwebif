@@ -120,7 +120,7 @@ animatedcollapse.init()
     <div class="adjust-nav">
       <div class="navbar-header">
         <button type="button" class="navbar-toggle" onclick="nav_icon_scroll()" data-toggle="collapse" data-target=".sidebar-collapse"> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button>
-        <a class="navbar-brand" href="about.php"><i class="fa fa-square-o"></i>&nbsp;About</a> </div>
+        <span class="navbar-brand"><span style="color:#000; cursor:pointer;" onclick="remote_modal.open();" title="Remote Control"><i class="fa fa-table fa-sm"></i></span> <a class="navbar-link" href="about.php">About</a></span> </div>
       <div class="navbar-collapse collapse">
         <ul class="nav navbar-nav navbar-right">
           <div class="row">
@@ -192,7 +192,7 @@ animatedcollapse.init()
       <div class="row">
         <div class="col-md-12">
           <h2>About</h2>
-          <span onclick="foo()" style="cursor:pointer;">foo()</span>
+          <!--<span onclick="foo()" style="cursor:pointer;">foo()</span>-->
         </div>
       </div>
       <!--crawl channel id-->
@@ -242,7 +242,7 @@ animatedcollapse.init()
       <hr />
       <div class="row">
         <div class="col-md-12">
-        Uniwebif v1.8
+        Uniwebif v1.9
           <div class="spacer_10"></div>
         Download latest version at <a href="https://github.com/gempro/uniwebif/" target="_blank">Github</a>
         <div class="spacer_10"></div>

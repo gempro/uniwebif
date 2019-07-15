@@ -95,30 +95,27 @@ session_start();
 	
 	if(!isset($obj->e2providername) or $obj->e2providername == "") { $obj->e2providername = ""; }
 	
-	$channel_list = $channel_list."<div id=\"channel_list_content\">
-		<div id=\"row1\"><!--channel crawl-->
-		  <input id=\"set_crawl_channel_$obj->id\" name=\"checkbox_crawl[]\" type=\"checkbox\" onClick=\"set_crawl_channel(this.id)\" $checked_crawl>
-		</div>
-		<div id=\"row2\"><!--channel zap-->
-		  <input id=\"set_zap_channel_$obj->id\" name=\"checkbox_zap[]\" type=\"checkbox\" onClick=\"set_zap_channel(this.id)\" $checked_zap>
-		</div>
-		<div id=\"row3\"><!--channel delete-->
-		  <input id=\"checkbox_del\" name=\"checkbox_delete[]\" type=\"checkbox\" value=\"$obj->id\">
-		</div>
-		<div id=\"row4\">$obj->e2servicename <span id=\"edit_channel_$obj->id\"></span>
-		</div>
-		<div id=\"row5\"><!--channel provider-->
-		$obj->e2providername
-		</div>
-		<div style=\"clear:both\">&nbsp;</div>
-		</div>";
+	$channel_list = $channel_list."
+	<div id=\"channel_list_content\">
+	<div id=\"row1\"><!--channel crawl-->
+	  <input id=\"set_crawl_channel_$obj->id\" name=\"checkbox_crawl[]\" type=\"checkbox\" onClick=\"set_crawl_channel(this.id)\" $checked_crawl>
+	</div>
+	<div id=\"row2\"><!--channel zap-->
+	  <input id=\"set_zap_channel_$obj->id\" name=\"checkbox_zap[]\" type=\"checkbox\" onClick=\"set_zap_channel(this.id)\" $checked_zap>
+	</div>
+	<div id=\"row3\"><!--channel delete-->
+	  <input id=\"checkbox_del\" name=\"checkbox_delete[]\" type=\"checkbox\" value=\"$obj->id\">
+	</div>
+	<div id=\"row4\">$obj->e2servicename <span id=\"edit_channel_$obj->id\"></span>
+	</div>
+	<div id=\"row5\"><!--channel provider-->
+	$obj->e2providername
+	</div>
+	<div style=\"clear:both\">&nbsp;</div>
+	</div>";
 	}
     }
-  // Free result set
-  mysqli_free_result($result);
-}
-//close db
-mysqli_close($dbmysqli);
+	}
 ?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -236,7 +233,7 @@ animatedcollapse.init()
     <div class="adjust-nav">
       <div class="navbar-header">
         <button type="button" class="navbar-toggle" onclick="nav_icon_scroll()" data-toggle="collapse" data-target=".sidebar-collapse"> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button>
-        <a class="navbar-brand" href="channel_list.php"><i class="fa fa-square-o"></i>&nbsp;Channel list</a> </div>
+        <span class="navbar-brand"><span style="color:#000; cursor:pointer;" onclick="remote_modal.open();" title="Remote Control"><i class="fa fa-table fa-sm"></i></span> <a class="navbar-link" href="channel_list.php">Channel list</a></span> </div>
       <div class="navbar-collapse collapse">
         <ul class="nav navbar-nav navbar-right">
           <div class="row">
