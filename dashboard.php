@@ -26,11 +26,7 @@ session_start();
 	// percent for latest epg
 	$time_now = time();
 	
-	if(!isset($last_entry['e2eventstart']) or $last_entry['e2eventstart'] == "") { $last_entry['e2eventstart'] = ""; 
-	
-	} else { 
-	
-	$last_entry['e2eventstart'] = $last_entry['e2eventstart']; }
+	if(!isset($last_entry['e2eventstart']) or $last_entry['e2eventstart'] == "") { $last_entry['e2eventstart'] = ""; }
 	
 	if ($last_entry['e2eventstart'] == '')
 	{
@@ -222,109 +218,6 @@ animatedcollapse.ontoggle=function($, divobj, state){ //fires each time a DIV is
 }
 animatedcollapse.init()
 </script>
-<script type="text/javascript">
-// load on start
-	$.post("functions/progressbar.php",
-	function(data){
-	$("#progressbar").html(data);
-	}
-);
-// remaining broadcast progressbar
-	var reload_progressbar = '<?php echo $reload_progressbar; ?>';
-	if (reload_progressbar == 1){
-	var file = "functions/progressbar.php";
-	var seconds_load = 180;
-//
-$(document).ready(function(){
-    setInterval(function(){
-    $('#progressbar').load(file + '?ts=' + (new Date().getTime()));
-    }, (seconds_load*1000));
-});
-}
-// ticker
-document.addEventListener('DOMContentLoaded', checkWidth);
-document.addEventListener('resize', checkWidth);
-function checkWidth(){
-if (document.querySelector('html').clientWidth > 1200) {	
-	// load ticker
-$(document).ready(function() {
-	$.post("ticker/ticker.php",
-	function(data){
-	// write data in container
-	$("#ticker").html(data);	
-	});
-});
-}
-};
-// broadcast list main
-$(document).ready(function(){
-$("#broadcast_main_now_today").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
-	$.post("functions/broadcast_list_main.php",
-	{
-	time: 'now_today'
-	},
-	function(data){
-	// write data in container
-	$("#broadcast_main_now_today").html(data);
-	});
-});
-// time input broadcast list
-$(function(){
-	var time_format = '<?php echo $time_format; ?>';
-$("#broadcast_hh").on({
-    change: function () {
-	var hh = $('#broadcast_hh').val();
-	if (time_format == '1'){
-	if(isFinite(String(hh)) == false || hh > 23 || hh < 1){ var hh = '00'; $("#broadcast_hh").val("00");
-	}
-	}
-	if (time_format == '2') {
-	if(isFinite(String(hh)) == false || hh > 12 || hh < 1){ var hh = '12'; $("#broadcast_hh").val("12");
-	}
-	}
-   }
-});
-});
-$(function(){
-$("#broadcast_mm").on({
-    change: function () {
-	var mm = $('#broadcast_mm').val();
-	if(isFinite(String(mm)) == false || mm > 59 || mm < 1){ var mm = '00'; $("#broadcast_mm").val("00");
-	}
-    }
-});
-});
-// time input primetime list
-$(function(){
-	var time_format = '<?php echo $time_format; ?>';
-$("#primetime_hh").on({
-    change: function () {
-	var hh = $('#primetime_hh').val();
-	if (time_format == '1') {
-	if(isFinite(String(hh)) == false || hh > 23 || hh < 1){ var hh = '00'; $("#primetime_hh").val("00");
-	} else { $("#primetime_hh").removeClass("error-input"); };
-	}
-	if (time_format == '2') {
-	if(isFinite(String(hh)) == false || hh > 12 || hh < 1){ var hh = '12'; $("#primetime_hh").val("12");
-	}
-	}
-   }
-});
-});
-$(function(){
-$("#primetime_mm").on({
-    change: function () {
-	var mm = $('#primetime_mm').val();
-	if(isFinite(String(mm)) == false || mm > 59 || mm < 1){ var mm = '00'; $("#primetime_mm").val("00");
-	}
-    }
-});
-});
-//
-$(function(){
-   $("#time_format").val("<?php if (!isset($time_format) or $time_format == ""){ $time_format = '2'; } echo $time_format; ?>");
-});
-</script>
 </head>
 <body>
 <a id="top"></a>
@@ -384,6 +277,25 @@ $(function(){
   </div>
 </div>
 <!--quickpanel modal -->
+<!--broadcast now modal -->
+  <span id="showModal"></span>
+  <div id="bn_epg_modal" class="modal">
+    <div class="modal-dialog animated">
+    <div class="modal-content">
+      <div id="bn-modal-header" class="modal-header"></div>
+      <div class="modal-body">
+        <div id="bn_epgframe"></div>
+        <hr>
+        <div align="right">
+        <button class="btn btn-default" type="button" onclick="bn_epg_modal.close();">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<span id="bn_modal_service" style="display:none"></span>
+<span id="bn_modal_name" style="display:none"></span>
+<!--broadcast now modal -->
 <div id="wrapper">
   <div class="navbar navbar-inverse navbar-fixed-top">
     <div class="adjust-nav">
@@ -758,13 +670,161 @@ $(function(){
 <!-- Modal-->
 <script type="text/javascript" src="js/rmodal.js"></script>
 <!---->
-<script>
+<script type="text/javascript">
+// load on start
+$.post("functions/progressbar.php",
+	function(data){
+	$("#progressbar").html(data);
+	}
+);
+// remaining broadcast progressbar
+	var reload_progressbar = '<?php echo $reload_progressbar; ?>';
+	if (reload_progressbar == 1){
+	var file = "functions/progressbar.php";
+	var seconds_load = 180;
+//
+$(document).ready(function(){
+    setInterval(function(){
+    $('#progressbar').load(file + '?ts=' + (new Date().getTime()));
+    }, (seconds_load*1000));
+});
+}
+// ticker
+document.addEventListener('DOMContentLoaded', checkWidth);
+document.addEventListener('resize', checkWidth);
+function checkWidth(){
+	if (document.querySelector('html').clientWidth > 1200) {	
+	// load ticker
+	$(document).ready(function() {
+	$.post("ticker/ticker.php",
+	function(data){
+	// write data in container
+	$("#ticker").html(data);	
+	});
+});
+}
+};
+// broadcast list main
+$(document).ready(function(){
+	$("#broadcast_main_now_today").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
+	$.post("functions/broadcast_list_main.php",
+	{
+	time: 'now_today'
+	},
+	function(data){
+	// write data in container
+	$("#broadcast_main_now_today").html(data);
+	});
+});
+// time input broadcast list
+$(function(){
+	var time_format = '<?php echo $time_format; ?>';
+	$("#broadcast_hh").on({
+    change: function () {
+	var hh = $('#broadcast_hh').val();
+	if (time_format == '1'){
+	if(isFinite(String(hh)) == false || hh > 23 || hh < 1){ var hh = '00'; $("#broadcast_hh").val("00");
+	}
+	}
+	if (time_format == '2') {
+	if(isFinite(String(hh)) == false || hh > 12 || hh < 1){ var hh = '12'; $("#broadcast_hh").val("12");
+	}
+	}
+   }
+});
+});
+$(function(){
+	$("#broadcast_mm").on({
+    change: function () {
+	var mm = $('#broadcast_mm').val();
+	if(isFinite(String(mm)) == false || mm > 59 || mm < 1){ var mm = '00'; $("#broadcast_mm").val("00");
+	}
+    }
+});
+});
+// time input primetime list
+$(function(){
+	var time_format = '<?php echo $time_format; ?>';
+$("#primetime_hh").on({
+    change: function () {
+	var hh = $('#primetime_hh').val();
+	if (time_format == '1') {
+	if(isFinite(String(hh)) == false || hh > 23 || hh < 1){ var hh = '00'; $("#primetime_hh").val("00");
+	} else { $("#primetime_hh").removeClass("error-input"); };
+	}
+	if (time_format == '2') {
+	if(isFinite(String(hh)) == false || hh > 12 || hh < 1){ var hh = '12'; $("#primetime_hh").val("12");
+	}
+	}
+   }
+});
+});
+$(function(){
+	$("#primetime_mm").on({
+    change: function () {
+	var mm = $('#primetime_mm').val();
+	if(isFinite(String(mm)) == false || mm > 59 || mm < 1){ var mm = '00'; $("#primetime_mm").val("00");
+	}
+    }
+});
+});
+//
+$(function(){
+   $("#time_format").val("<?php if (!isset($time_format) or $time_format == ""){ $time_format = '2'; } echo $time_format; ?>");
+});
+//
 $(function(){
    var statusbar = '<?php if(!isset($_SESSION["statusbar"]) or $_SESSION["statusbar"] == "") { $_SESSION["statusbar"] = ""; } echo $_SESSION["statusbar"]; ?>';
    if (statusbar == '1'){ $("#statusbar_outer").removeClass("statusbar_outer"); }
    //
    var cookies = navigator.cookieEnabled;
    if(cookies == false){ $("#cookie_js").html("To use all functions of the website, it's required to accept Cookies."); }
+});
+// broadcast now epg modal
+function open_bn_modal(e2servicereference,service_name){
+	$("#bn_modal_service").html(e2servicereference);
+	$("#bn_modal_name").html(service_name);
+	bn_epg_modal.open();
+}
+$(function(){
+		   
+	var bn_epg_modal = new RModal(document.getElementById('bn_epg_modal'), {
+	beforeOpen: function(next) {
+	var e2servicereference = $("#bn_modal_service").html();
+	var service_name = $("#bn_modal_name").html();
+	$("#bn-modal-header").html(service_name);
+	$.post("functions/modal_info.php",
+	{
+	e2servicereference: e2servicereference
+	},
+	function(data){
+	$('#bn_epgframe').animate({scrollTop : 0},800);
+	$("#bn_epgframe").html(data);
+	next();
+	});
+	},
+	afterOpen: function() {
+	//console.log('opened');
+	},
+	beforeClose: function(next) {
+	//console.log('beforeClose');
+	next();
+	},
+	afterClose: function() {
+	//console.log('closed');
+	}
+	});
+	document.getElementById('bn_epg_modal').addEventListener('click', function(e) {
+    if( e.target !== e.currentTarget ) {
+	e.stopPropagation();
+	return;
+    }
+    bn_epg_modal.close();
+	}, false);
+	document.addEventListener('keydown', function(ev) {
+	bn_epg_modal.keydown(ev);
+	}, false);
+	window.bn_epg_modal = bn_epg_modal;
 });
 </script>
 </body>
