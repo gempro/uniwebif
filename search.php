@@ -66,9 +66,10 @@ session_start();
 	// set record location
 	if($record_location != "")
 	{ 
-	$sql = mysqli_query($dbmysqli, "UPDATE `record_locations` SET `selected` = '1' WHERE `id` = '".$record_location."' "); 
+	mysqli_query($dbmysqli, "UPDATE `record_locations` SET `selected` = '0' ");
+	mysqli_query($dbmysqli, "UPDATE `record_locations` SET `selected` = '1' WHERE `id` = '".$record_location."' "); 
 	} else {
-    $sql = mysqli_query($dbmysqli, "UPDATE `record_locations` SET `selected` = '0' ");
+    mysqli_query($dbmysqli, "UPDATE `record_locations` SET `selected` = '0' ");
 	}
 	//
 	
@@ -90,9 +91,9 @@ session_start();
 	// set selected channel in dropdown
 	if($search_channel == 'on'){
 	// reset selected
-    $sql = mysqli_query($dbmysqli, "UPDATE `channel_list` SET `selected` = '0' ");
+    mysqli_query($dbmysqli, "UPDATE `channel_list` SET `selected` = '0' ");
     // set selected
-    $sql = mysqli_query($dbmysqli, "UPDATE `channel_list` SET `selected` = '1' WHERE `e2servicereference` = '".$channel_id."' ");
+    mysqli_query($dbmysqli, "UPDATE `channel_list` SET `selected` = '1' WHERE `e2servicereference` = '".$channel_id."' ");
 	}
 	
 	// record location in dropdown / result list
