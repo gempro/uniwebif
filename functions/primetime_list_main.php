@@ -213,7 +213,9 @@ if($action == 'show'){
 		  $descriptionextended_enc
 		  <div class=\"spacer_5\"></div>
 		</div>
-		$imdb_broadcast $stream_broadcast <a href=\"search.php?searchterm=$obj->title_enc&option=title\" target=\"_blank\" title=\"Search this broadcast on all channels\">More from this broadcast</a>
+		$imdb_broadcast $stream_broadcast <a onclick=\"open_bn_modal('$obj->e2eventservicereference','$servicename_enc')\" title=\"Show EPG\" style=\"cursor:pointer;\">
+		<i class=\"fa fa-list-alt fa-1x\"></i></a>
+		<a href=\"search.php?searchterm=$obj->title_enc&option=title\" target=\"_blank\" title=\"Search this broadcast on all channels\">More from this broadcast</a>
 		<div class=\"spacer_5\"></div>
 		<div id=\"broadcast-tab-button-group\">
   <div id=\"row1\">
