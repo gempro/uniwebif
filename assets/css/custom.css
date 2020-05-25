@@ -259,8 +259,14 @@ body {
 	width: auto;
 	float: left;
 	margin-right: 5px;
+	padding-bottom: 5px;
 }
 #broadcast-tab-button-group #row3 {
+	width: auto;
+	float: left;
+	margin-right: 5px;
+}
+#broadcast-tab-button-group #row4 {
 	max-width:90%;
 	float: left;
 	margin-right: 5px;
