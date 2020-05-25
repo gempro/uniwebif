@@ -368,7 +368,7 @@ $(function(){
 });
 
 // send timer broadcast list main
-function broadcast_timer(id){
+function broadcast_timer(id,action){
 	
 	var this_id = id.replace(/broadcast_timer_btn_/g, "");
 	var res = this_id.substr(3);
@@ -378,6 +378,7 @@ function broadcast_timer(id){
 	$("#broadcast_status_timer_"+this_id).html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
 	$.post("functions/send_timer_instant.php",
 	{
+	action: action,
 	hash: res,
 	record_location: record_location,
 	device: device
@@ -425,7 +426,7 @@ function broadcast_change_device(id){
 }
 
 // send timer searchlist
-function searchlist_timer(id){
+function searchlist_timer(id,action){
 	
 	var this_id = id.replace(/searchlist_timer_btn_/g, "");
 	var record_location = $("#rec_location_searchlist_"+this_id).val();
@@ -434,6 +435,7 @@ function searchlist_timer(id){
 	$("#searchlist_status_timer_"+this_id).html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
 	$.post("functions/send_timer_instant.php",
 	{
+	action: action,
 	hash: this_id,
 	record_location: record_location,
 	device: device
@@ -588,7 +590,7 @@ function(data){
 }
 
 // send timer primetime list main
-function primetime_timer(id){
+function primetime_timer(id,action){
 	
 	var this_id = id.replace(/primetime_timer_btn_/g, "");
 	var record_location = $("#rec_location_primetime_"+this_id).val();
@@ -597,6 +599,7 @@ function primetime_timer(id){
 	$("#primetime_status_timer_"+this_id).html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");	
 	$.post("functions/send_timer_instant.php",
 	{
+	action: action,
 	hash: this_id,
 	record_location: record_location,
 	device: device
@@ -738,7 +741,7 @@ $('#scroll_top_channelbrowser_list').click(function(){
 });
 
 // send timer channelbrowser list
-function channelbrowser_timer(id){
+function channelbrowser_timer(id,action){
 	
 	var this_id = id.replace(/channelbrowser_timer_btn_/g, "");
 	var res = this_id.substr(3);
@@ -748,6 +751,7 @@ function channelbrowser_timer(id){
 	$("#channelbrowser_status_timer_"+this_id).html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");	
 	$.post("functions/send_timer_instant.php",
 	{
+	action: action,
 	hash: res,
 	record_location: record_location,
 	device: device
@@ -851,7 +855,7 @@ function timerlist_delete_timer(id){
 }
 
 // timerlist send timer
-function timerlist_send_timer(id,name){
+function timerlist_send_timer(id,name,action){
 	
 	var this_id = id.replace(/timerlist_send_timer_btn_/g, "");
 	var record_location = $("#timerlist_rec_location_"+this_id).text();
@@ -864,6 +868,7 @@ function timerlist_send_timer(id,name){
 	$("#timerlist_status_"+name).html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
 	$.post("functions/send_timer_instant.php",
 	{
+	action: action,
 	location: 'timerlist',
 	hash: this_id,
 	record_location: record_location,
@@ -885,7 +890,7 @@ function timerlist_send_timer(id,name){
 }
 
 //
-function change_timerlist_device(id){
+function change_timerlist_device(id,action){
 	
 	var this_id = id.replace(/timerlist_device_dropdown_/g, "");
 	var device_no = $("#timerlist_device_dropdown_"+this_id).val();
@@ -900,7 +905,9 @@ function change_timerlist_device(id){
 	device: device_no
 	},
 	function(data){
+	if(action == 'record'){
 	$("#rec_location_device_"+this_id).html(data);
+	}
 	});
 	} else { $("#rec_location_device_"+this_id).fadeOut(); }
 
