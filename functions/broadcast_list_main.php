@@ -174,10 +174,12 @@ include("../inc/dashboard_config.php");
 		<div class=\"spacer_5\"></div>
 		<div id=\"broadcast-tab-button-group\">
   <div id=\"row1\">
-    <input id=\"broadcast_timer_btn_$rand$obj->hash\" type=\"submit\" onClick=\"broadcast_timer(this.id)\" value=\"SET TIMER\" class=\"btn btn-success btn-sm\" title=\"send Timer to Receiver\"/> </div>
-  <div id=\"row2\">
-    <input id=\"broadcast_zap_btn_$rand$obj->hash\" name=\"$obj->e2eventservicereference\" type=\"submit\" onClick=\"broadcast_zap(this.id,this.name)\" value=\"ZAP TO CHANNEL\" class=\"btn btn-default btn-sm\"/> </div>
+    <input id=\"broadcast_timer_btn_$rand$obj->hash\" type=\"submit\" onClick=\"broadcast_timer(this.id,'record')\" value=\"SET TIMER\" class=\"btn btn-success btn-sm\" title=\"Send timer to Receiver\"/> </div>
+	<div id=\"row2\">
+    <input id=\"broadcast_timer_btn_$rand$obj->hash\" type=\"submit\" onClick=\"broadcast_timer(this.id,'zap')\" value=\"ZAP TIMER\" class=\"btn btn-warning btn-sm\" title=\"Send zap timer to Receiver\"/> </div>
   <div id=\"row3\">
+    <input id=\"broadcast_zap_btn_$rand$obj->hash\" name=\"$obj->e2eventservicereference\" type=\"submit\" onClick=\"broadcast_zap(this.id,this.name)\" value=\"ZAP TO CHANNEL\" class=\"btn btn-default btn-sm\"/> </div>
+  <div id=\"row4\">
 	<span id=\"broadcast_status_zap_$rand$obj->hash\"></span> <span id=\"broadcast_status_timer_$rand$obj->hash\"></span> </div>
 	<div style=\"clear:both\"></div>
 	</div>

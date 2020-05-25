@@ -23,8 +23,8 @@ include("../inc/dashboard_config.php");
 	$time = $_REQUEST['time'];
 	$channel = $_REQUEST['channel'];
 	
-	$sql = mysqli_query($dbmysqli, "UPDATE `channel_list` SET `cb_selected` = '0' ");
-	$sql = mysqli_query($dbmysqli, "UPDATE `channel_list` SET `cb_selected` = '1' WHERE `e2servicereference` = '$channel' ");
+	mysqli_query($dbmysqli, "UPDATE `channel_list` SET `cb_selected` = '0' ");
+	mysqli_query($dbmysqli, "UPDATE `channel_list` SET `cb_selected` = '1' WHERE `e2servicereference` = '$channel' ");
 	
 	$date_for_cb = date("d.m.Y");
 	$date_start = $date_for_cb.'00:00';
@@ -193,10 +193,12 @@ $channelbrowser_list = $channelbrowser_list."
 		<div class=\"spacer_5\"></div>
 <div id=\"broadcast-tab-button-group\">
   <div id=\"row1\">
-    <input id=\"channelbrowser_timer_btn_$rand$obj->hash\" type=\"submit\" onClick=\"channelbrowser_timer(this.id)\" value=\"SET TIMER\" class=\"btn btn-success btn-sm\" title=\"send Timer to Receiver\"/> </div>
-  <div id=\"row2\">
-    <input id=\"channelbrowser_zap_btn_$rand$obj->hash\" type=\"submit\" name=\"$obj->e2eventservicereference\" onClick=\"channelbrowser_zap(this.id,this.name)\" value=\"ZAP TO CHANNEL\" class=\"btn btn-default btn-sm\"/> </div>
+    <input id=\"channelbrowser_timer_btn_$rand$obj->hash\" type=\"submit\" onClick=\"channelbrowser_timer(this.id,'record')\" value=\"SET TIMER\" class=\"btn btn-success btn-sm\" title=\"Send timer to Receiver\"/> </div>
+	<div id=\"row2\">
+    <input id=\"channelbrowser_timer_btn_$rand$obj->hash\" type=\"submit\" onClick=\"channelbrowser_timer(this.id,'zap')\" value=\"ZAP TIMER\" class=\"btn btn-warning btn-sm\" title=\"Send zap timer to Receiver\"/> </div>
   <div id=\"row3\">
+    <input id=\"channelbrowser_zap_btn_$rand$obj->hash\" type=\"submit\" name=\"$obj->e2eventservicereference\" onClick=\"channelbrowser_zap(this.id,this.name)\" value=\"ZAP TO CHANNEL\" class=\"btn btn-default btn-sm\"/> </div>
+  <div id=\"row4\">
   <span id=\"channelbrowser_status_zap_$rand$obj->hash\"></span>
   <span id=\"channelbrowser_status_timer_$rand$obj->hash\"></span>
   </div>

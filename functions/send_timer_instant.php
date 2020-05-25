@@ -1,12 +1,14 @@
 <?php 
 //
-include("../inc/dashboard_config.php");
+	include("../inc/dashboard_config.php");
 
+	if(!isset($_REQUEST['action']) or $_REQUEST['action'] == ""){ $_REQUEST['action'] = ""; }
 	if(!isset($_REQUEST['hash']) or $_REQUEST['hash'] == ""){ $_REQUEST['hash'] = ""; }
 	if(!isset($_REQUEST['record_location']) or $_REQUEST['record_location'] == ""){ $_REQUEST['record_location'] = ""; }
 	if(!isset($_REQUEST['device']) or $_REQUEST['device'] == ""){ $_REQUEST['device'] = ""; }
 	if(!isset($_REQUEST['location']) or $_REQUEST['location'] == ""){ $_REQUEST['location'] = ""; }
 	
+	$action = $_REQUEST["action"];
 	$hash = $_REQUEST["hash"];
 	$record_location = $_REQUEST["record_location"];
 	$device = $_REQUEST["device"];
@@ -64,7 +66,7 @@ include("../inc/dashboard_config.php");
 	$result2 = mysqli_fetch_assoc($sql);
 	$e2location = $result2['e2location'];
 	// mark epg entry
-	$sql = mysqli_query($dbmysqli, "UPDATE `epg_data` SET `timer` = '1' WHERE `hash` = '".$hash."' ");
+	mysqli_query($dbmysqli, "UPDATE `epg_data` SET `timer` = '1' WHERE `hash` = '".$hash."' ");
 	}
 	
 	// record location different device
@@ -78,7 +80,7 @@ include("../inc/dashboard_config.php");
 	
 	if($location == 'timerlist'){ $e2eventend = $result['e2eventend']; }
 	
-	// send to different device
+	# send to different device
 	if($device != "0")
 	{
 	$sql3 = mysqli_query($dbmysqli, "SELECT * FROM `device_list` WHERE `id` = '".$device."' ");
@@ -89,7 +91,17 @@ include("../inc/dashboard_config.php");
 	$url_format = $result3['url_format'];
 	//
 	
+	if($action == "record")
+	{
 	$timer_request = $url_format.'://'.$box_ip.'/web/timeradd?sRef='.$e2eventservicereference.'&begin='.$e2eventstart.'&end='.$e2eventend.'&name='.$title_enc.'&description='.$description_enc.'&dirname='.$e2location.'&afterevent=3';
+	}
+	
+	if($action == "zap")
+	{
+	$e2location = "zap_timer";
+	$e2eventend = $e2eventstart + 1;
+	$timer_request = $url_format.'://'.$box_ip.'/web/timeradd?sRef='.$e2eventservicereference.'&begin='.$e2eventstart.'&end='.$e2eventend.'&name='.$title_enc.'&description='.$description_enc.'&justplay=1';
+	}
 	
 	// timer conflict
 	$get_timer_status = @file_get_contents($timer_request, false, $webrequest);
@@ -105,8 +117,6 @@ include("../inc/dashboard_config.php");
 	$timer_status = " - <span class=\"timer_conflict\">Conflict on Receiver</span>";
 	$timer_conflict = "1";
 	}
-	
-	//sleep(1);
 	
 	// remove " and ' from request
 	$timer_request = str_replace("%22", "%60", $timer_request);
@@ -127,7 +137,18 @@ include("../inc/dashboard_config.php");
 	
 	} else {
 	
+	# send to default device
+	if($action == "record")
+	{
 	$timer_request = $url_format.'://'.$box_ip.'/web/timeradd?sRef='.$e2eventservicereference.'&begin='.$e2eventstart.'&end='.$e2eventend.'&name='.$title_enc.'&description='.$description_enc.'&dirname='.$e2location.'&afterevent=3';
+	}
+	
+	if($action == "zap")
+	{
+	$e2location = "zap_timer";
+	$e2eventend = $e2eventstart + 1;
+	$timer_request = $url_format.'://'.$box_ip.'/web/timeradd?sRef='.$e2eventservicereference.'&begin='.$e2eventstart.'&end='.$e2eventend.'&name='.$title_enc.'&description='.$description_enc.'&justplay=1';
+	}
 	
 	// request with eventid
 	//$timer_request = "http://$box_ip/web/timeraddbyeventid?sRef=".$e2eventservicereference."&eventid=".$e2eventid."&dirname=".$e2location."";
@@ -145,8 +166,6 @@ include("../inc/dashboard_config.php");
 	$timer_status = " - <span class=\"timer_conflict\">Conflict on Receiver</span>"; 
 	$timer_conflict = "1";
 	}
-	
-	//sleep(1);
 	
 	// remove " and ' from request
 	$timer_request = str_replace("%22", "%60", $timer_request);
@@ -172,7 +191,7 @@ include("../inc/dashboard_config.php");
 	// set timer status
 	if($location == 'timerlist' and $device == $current_device)
 	{
-	$sql = mysqli_query($dbmysqli, "UPDATE `timer` SET `status` = 'manual', `conflict` = '".$timer_conflict."' WHERE `hash` = '".$hash."' ");
+	mysqli_query($dbmysqli, "UPDATE `timer` SET `status` = 'manual', `conflict` = '".$timer_conflict."' WHERE `hash` = '".$hash."' ");
 	} 
 	
 	// create copy if device is different
@@ -180,8 +199,9 @@ include("../inc/dashboard_config.php");
 	{
 	$sql = mysqli_query($dbmysqli, "SELECT COUNT(*) FROM `timer` WHERE `hash` = '".$hash."' AND `device` = '".$device."' ");
 	$summary = mysqli_fetch_row($sql);
+	
 	if($summary[0] < 1){
-	$sql = mysqli_query($dbmysqli, "INSERT INTO `timer` (
+	mysqli_query($dbmysqli, "INSERT INTO `timer` (
 	e2eventtitle, 
 	title_enc, 
 	e2eventdescription, 
@@ -208,8 +228,8 @@ include("../inc/dashboard_config.php");
 	rec_replay, 
 	device, 
 	search_id,
-	conflict)
-	VALUES (
+	conflict
+	) VALUES (
 	'$e2eventtitle', 
 	'$title_enc', 
 	'$e2eventdescription', 
@@ -242,7 +262,7 @@ include("../inc/dashboard_config.php");
 	
 	if($location == "")
 	{
-	$sql = mysqli_query($dbmysqli, "INSERT INTO `timer` (
+	mysqli_query($dbmysqli, "INSERT INTO `timer` (
 	e2eventtitle, 
 	title_enc, 
 	e2eventdescription, 
@@ -261,8 +281,8 @@ include("../inc/dashboard_config.php");
 	status, 
 	record_status, 
 	device,
-	conflict)
-	VALUES (
+	conflict
+	) VALUES (
 	'$e2eventtitle', 
 	'$title_enc', 
 	'$e2eventdescription', 
@@ -320,4 +340,5 @@ include("../inc/dashboard_config.php");
 	echo "<i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i> Timer sent $same_timer_msg $timer_status\n\n";
 	}
 }
+
 ?>

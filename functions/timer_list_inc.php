@@ -50,7 +50,7 @@
 	
 	if($summary < 1)
 	{
-	$sql = mysqli_query($dbmysqli, "INSERT INTO `keywords` (
+	mysqli_query($dbmysqli, "INSERT INTO `keywords` (
 	`searchterm`, 
 	`word`, 
 	`sum_total`, 
@@ -70,13 +70,13 @@
 	
 	} else {
 	
-	$sql = mysqli_query($dbmysqli, "UPDATE `keywords` SET `counter` = `counter` + 1 WHERE `hash` = '".$string_hash."' ");
+	mysqli_query($dbmysqli, "UPDATE `keywords` SET `counter` = `counter` + 1 WHERE `hash` = '".$string_hash."' ");
 	}
 	}
 	}
 	//
 	// hide
-	$sql = mysqli_query($dbmysqli, "UPDATE `timer` SET `hide` = '1' WHERE `id` = '".$timer_id."' ");
+	mysqli_query($dbmysqli, "UPDATE `timer` SET `hide` = '1' WHERE `id` = '".$timer_id."' ");
 	echo "data:hided";
 	exit;
 	}
@@ -86,7 +86,7 @@
 	{
 	sleep(1);
 	$timer_id = $_REQUEST['timer_id'];
-	$sql =  mysqli_query($dbmysqli, "UPDATE `timer` SET `hide` = '0' WHERE `id` = '".$timer_id."' ");
+	mysqli_query($dbmysqli, "UPDATE `timer` SET `hide` = '0' WHERE `id` = '".$timer_id."' ");
 	echo "data:unhided";
 	exit;
 	}
@@ -109,7 +109,7 @@
 	
 	if($summary == 0)
 	{
-	$sql = mysqli_query($dbmysqli, "INSERT INTO `ignore_list` (
+	mysqli_query($dbmysqli, "INSERT INTO `ignore_list` (
 	e2eventtitle, 
 	e2eventdescription, 
 	search_term, 
@@ -145,7 +145,6 @@
 	// unmark timer
 	$sql = mysqli_query($dbmysqli, "SELECT * FROM `timer` WHERE `id` = '".$timer_id."' ");
 	$result = mysqli_fetch_assoc($sql);
-	
 	$e2eventservicereference = $result['e2eventservicereference'];
 	$e2eventstart = $result['e2eventstart'];
 	$e2eventend = $result['e2eventend'];
@@ -154,7 +153,7 @@
 	
 	if($status == 'manual' or $status == 'sent')
 	{
-	$sql = mysqli_query($dbmysqli, "UPDATE `epg_data` SET `timer` = '0' WHERE `hash` = '".$result['hash']."' ");
+	mysqli_query($dbmysqli, "UPDATE `epg_data` SET `timer` = '0' WHERE `hash` = '".$result['hash']."' ");
 	}
 
 	sleep(1);
@@ -188,13 +187,13 @@
 	$deleteTimer_request = @file_get_contents($deleteTimer, false, $webrequest);
 	}
 	
-	$sql = mysqli_query($dbmysqli, "UPDATE `timer` SET `status` = 'waiting' WHERE `id` = '".$timer_id."' ");
+	mysqli_query($dbmysqli, "UPDATE `timer` SET `status` = 'waiting' WHERE `id` = '".$timer_id."' ");
 	}
 	
 	// delete timer from database
 	if($delete_from_db == '1')
 	{
-	$sql = mysqli_query($dbmysqli, "DELETE FROM `timer` WHERE `id` = '".$timer_id."' ");
+	mysqli_query($dbmysqli, "DELETE FROM `timer` WHERE `id` = '".$timer_id."' ");
 	//
 	echo "data:deleted_db";
 	exit;
@@ -229,6 +228,8 @@
 	}
 	}
 	} // device dropdown
+
+
 
 	if($result = mysqli_query($dbmysqli,$sql))
 	{
@@ -269,7 +270,6 @@
 	// time format 1
 	$e2eventstart = $obj->e2eventstart;
 	$date_start = date("l, d.m.Y", $e2eventstart);
-	
 	$e2eventend = $obj->e2eventend;
 	$broadcast_time = date("H:i", $e2eventstart).' - '.date("H:i", $e2eventend);
 	$broadcast_date = date("d.m", $e2eventstart);
@@ -281,7 +281,6 @@
 	// time format 2
 	$e2eventstart = $obj->e2eventstart;
 	$date_start = date("l n/d/Y", $e2eventstart);
-	
 	$e2eventend = $obj->e2eventend;
 	$broadcast_time = date("g:i A", $e2eventstart).' - '.date("g:i A", $e2eventend);
 	$broadcast_date = date("n/d", $e2eventstart);
@@ -355,6 +354,21 @@ if($obj->record_status == 'c_expired')
 	<i class="glyphicon glyphicon-time" style="color:#F0AD4E" title="expired event"></i>
 	';
 	}
+	
+if($obj->record_location == 'zap_timer')
+	{
+	$status = '
+	<i id="tl_glyphicon_status_m_'.$obj->id.'" class="fa fa-arrow-up fa-1x" style="color:#000" title="Zap timer"></i> | 
+	<i id="tl_glyphicon_status_'.$obj->id.'" class="glyphicon glyphicon-export" style="color:#5CB85C" title="sent"></i>
+	';
+	if($timer_conflict == "1")
+	{
+	$status = '
+	<i id="tl_glyphicon_status_m_'.$obj->id.'" class="fa fa-arrow-up fa-1x" style="color:#000" title="Zap timer"></i> | 
+	<i id="tl_glyphicon_status_'.$obj->id.'" class="glyphicon glyphicon-export" style="color:#F0AD4E" title="Conflict on Receiver"></i>
+	';
+	}
+	}
 		
 	if($obj->exclude_channel != ''){ $channel_status = 'Excluded in <strong>channel</strong>: '.$exclude_channel.'<br>'; } else { $channel_status = ''; }
 	if($obj->exclude_title != ''){ $title_status = 'Excluded in <strong>title</strong>: '.$exclude_title.'<br>'; } else { $title_status = ''; }
@@ -385,12 +399,12 @@ if($obj->record_status == 'c_expired')
 	if($is_replay == '1'){ $replay_sign = '<i class="fa fa-repeat"></i>'; } else { $replay_sign = ''; }
 	
 	if($hidden == '1'){ $hidden_class = 'class="opac_70"'; 
-	$hide_button = "<input id=\"timerlist_unhide_timer_btn_$obj->id\" name=\"null\" type=\"submit\" onClick=\"timerlist_unhide_timer(this.id,this.name)\" value=\"UNHIDE\" class=\"btn btn-primary btn-sm\" title=\"unhide Timer from list\"/>"; 
+	$hide_button = "<input id=\"timerlist_unhide_timer_btn_$obj->id\" name=\"null\" type=\"submit\" onClick=\"timerlist_unhide_timer(this.id,this.name)\" value=\"UNHIDE\" class=\"btn btn-primary btn-sm\" title=\"Unhide timer from list\"/>"; 
 	
 	} else { 
 	
 	$hidden_class = ''; 
-	$hide_button = "<input id=\"timerlist_hide_timer_btn_$obj->id\" name=\"hide_$obj->hash\" type=\"submit\" onClick=\"timerlist_hide_timer(this.id,this.name)\" value=\"HIDE\" class=\"btn btn-primary btn-sm\" title=\"hide Timer from list\"/>";
+	$hide_button = "<input id=\"timerlist_hide_timer_btn_$obj->id\" name=\"hide_$obj->hash\" type=\"submit\" onClick=\"timerlist_hide_timer(this.id,this.name)\" value=\"HIDE\" class=\"btn btn-primary btn-sm\" title=\"Hide timer from list\"/>";
 	}
 	
 	if(!isset($device_dropdown) or $device_dropdown == ""){ $device_dropdown = ""; }
@@ -405,6 +419,8 @@ if($obj->record_status == 'c_expired')
 	if($obj->search_option == 'extdescription'){ $searcharea = 'Extended description'; }
 	
 	if($search_term == "" and $searcharea == ""){ $search_info = ''; } else { $search_info = 'Searchterm: '.$scroll_search.' | Searcharea: '.$searcharea.' | '; }
+	
+	if($obj->record_location == "zap_timer"){ $obj->record_location = "Zap timer"; $action = "zap"; } else { $action = "record"; }
 	
 	$timerlist = $timerlist."<div id=\"timerlist_div_outer_$obj->id\" $hidden_class>
 	<div id=\"timerlist\" style=\"border: 1px solid $device_color !important;\">
@@ -435,7 +451,7 @@ if($obj->record_status == 'c_expired')
 	  <span id=\"timerlist_rec_location_$obj->hash\" style=\"display:none;\">$rec_location_id</span>  
 	<div class=\"spacer_5\"></div>
 	<span>Receiver: </span>
-	<select id=\"timerlist_device_dropdown_$obj->id\" onChange=\"change_timerlist_device(this.id)\">
+	<select id=\"timerlist_device_dropdown_$obj->id\" onChange=\"change_timerlist_device(this.id,'".$action."')\">
 	<option selected disabled>$device_name</option>
 	<option name=\"default\" value=\"0\">default</option>
 	$device_dropdown
@@ -447,11 +463,11 @@ if($obj->record_status == 'c_expired')
 	  <div class=\"spacer_5\"></div>
 	  </div>
 	  <div class=\"spacer_5\"></div>
-	  <input id=\"timerlist_send_timer_btn_$obj->hash\" name=\"$obj->id\" type=\"submit\" onClick=\"timerlist_send_timer(this.id,this.name)\" value=\"SEND\" class=\"btn btn-success btn-sm\" title=\"send Timer to Receiver\"/>
+	  <input id=\"timerlist_send_timer_btn_$obj->hash\" name=\"$obj->id\" type=\"submit\" onClick=\"timerlist_send_timer(this.id,this.name,'record')\" value=\"SEND\" class=\"btn btn-success btn-sm\" title=\"Send timer to Receiver\"/>
 	  $hide_button
 	  <input id=\"ignore_timer_btn_$obj->id\" type=\"submit\" onclick=\"timerlist_ignore(this.id);\" value=\"IGNORE\" class=\"btn btn-default btn-sm\" title=\"Add broadcast to ignore list\">
-	  <input id=\"delete_timer_btn_$obj->id\" type=\"submit\" onClick=\"timerlist_delete_timer(this.id)\" value=\"DELETE\" class=\"btn btn-danger btn-sm\" title=\"delete Timer from Receiver\"/>
-	  <span class=\"del_checkbox\"><input id=\"timerlist_delete_db_$obj->id\" type=\"checkbox\"> delete also from Database</span>
+	  <input id=\"delete_timer_btn_$obj->id\" type=\"submit\" onClick=\"timerlist_delete_timer(this.id)\" value=\"DELETE\" class=\"btn btn-danger btn-sm\" title=\"Delete timer from Receiver\"/>
+	  <label style=\"font-weight: normal;\"><span class=\"del_checkbox\"><input id=\"timerlist_delete_db_$obj->id\" type=\"checkbox\"> Delete also from database</span></label>
 	  <span id=\"timerlist_status_$obj->id\"></span>
 	  </div>
 	</div><div class=\"spacer_10\"></div>
