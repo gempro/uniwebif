@@ -394,8 +394,8 @@ function reload_saved_search_panel(){
           <div id="timerlist_main">
           <div class="timer_panel">
           <span class="timerlist_checkbox"><input id="select_all" type="checkbox" onClick="select_timer_checkbox()"></span>
-          <input id="send" type="button" class="btn btn-success btn-xs" value="send" title="send Timer to Receiver" onClick="timerlist_panel(this.id)">
-          <input id="hide" type="button" class="btn btn-primary btn-xs" value="hide" title="hide Timer from list" onClick="timerlist_panel(this.id)">
+          <input id="send" type="button" class="btn btn-success btn-xs" value="send" title="Send timer to Receiver" onClick="timerlist_panel(this.id)">
+          <input id="hide" type="button" class="btn btn-primary btn-xs" value="hide" title="Hide timer from list" onClick="timerlist_panel(this.id)">
           <input id="delete" type="button" class="btn btn-danger btn-xs" value="delete" onClick="timerlist_panel(this.id)">
           <span id="del_buttons" style="display:none">
           <input id="delete_rec" type="button" class="btn btn-default btn-xs" value="from Receiver" onClick="timerlist_panel(this.id)">

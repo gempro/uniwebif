@@ -309,7 +309,8 @@ session_start();
 		<p>Start: $date_start<br>
 		End: $date_end<br>
 		Duration: $obj->total_min Min.<div class=\"spacer_5\"></div>
-		<input id=\"searchlist_timer_btn_$obj->hash\" type=\"submit\" onClick=\"searchlist_timer(this.id)\" value=\"SET TIMER\" class=\"btn btn-success btn-sm\" title=\"send Timer to Receiver\"/>
+		<input id=\"searchlist_timer_btn_$obj->hash\" type=\"submit\" onClick=\"searchlist_timer(this.id,'record')\" value=\"SET TIMER\" class=\"btn btn-success btn-sm\" title=\"Send timer to Receiver\"/>
+		<input id=\"searchlist_timer_btn_$obj->hash\" type=\"submit\" onClick=\"searchlist_timer(this.id,'zap')\" value=\"ZAP TIMER\" class=\"btn btn-warning btn-sm\" title=\"Send zap timer to Receiver\"/>
 		<input id=\"searchlist_zap_btn_$obj->hash\" type=\"submit\" name=\"$obj->e2eventservicereference\" onClick=\"searchlist_zap(this.id,this.name)\" value=\"ZAP TO CHANNEL\" class=\"btn btn-default btn-sm\"/>
 		<span id=\"searchlist_status_zap_$obj->hash\"></span>
 		<span id=\"searchlist_status_timer_$obj->hash\"></span>
@@ -692,7 +693,7 @@ function check_exclude(){
               <div id="btn1">
                 <input type="submit" value="Search trough" class="btn btn-success"/>
               </div>
-              <div id="btn2">Recording path: 
+              <div id="btn2">Record location: 
                 <select name="record_location" id="searchlist_record_location">
                   <?php 
 					$sql = "SELECT * FROM `record_locations` ORDER BY `id` ASC";
