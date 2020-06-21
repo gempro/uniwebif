@@ -16,8 +16,8 @@
 	echo "<a href=\"$url_format://$box_ip/web/stream.m3u?ref=".$result['e2servicereference']."&name=".$result['servicename_enc']."\" target=\"_blank\" title=\"Stream\">
 	<i class=\"fa fa-desktop fa-1x\"></i></a>";
 	
-	$sql = mysqli_query($dbmysqli, "UPDATE `channel_list` SET `qp_selected` = '0' ");
-	$sql = mysqli_query($dbmysqli, "UPDATE `channel_list` SET `qp_selected` = '1' WHERE `e2servicereference` LIKE '".$service_reference."' ");
+	mysqli_query($dbmysqli, "UPDATE `channel_list` SET `qp_selected` = '0' ");
+	mysqli_query($dbmysqli, "UPDATE `channel_list` SET `qp_selected` = '1' WHERE `e2servicereference` LIKE '".$service_reference."' ");
 	exit;
 	}
 	

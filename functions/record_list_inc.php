@@ -75,7 +75,8 @@ include("../inc/dashboard_config.php");
 	$xmlfile = $url_format.'://'.$box_ip.'/web/movielist?dirname='.$record_location.'';
 	$getRecords_request = @file_get_contents($xmlfile, false, $webrequest);
 	$xml = simplexml_load_string($getRecords_request);
-	}
+	if(!isset($xml) or $xml == ""){ echo 'Data could not received'; exit; }
+	}	
 	
 	if($device != "0")
 	{
@@ -97,6 +98,7 @@ include("../inc/dashboard_config.php");
 	$xmlfile = $url_format.'://'.$box_ip.'/web/movielist?dirname='.$record_location.'';
 	$getRecords_request = @file_get_contents($xmlfile, false, $rl_webrequest);
 	$xml = simplexml_load_string($getRecords_request);
+	if(!isset($xml) or $xml == ""){ echo 'Data could not received'; exit; }
 	}
 	
 if($xml){

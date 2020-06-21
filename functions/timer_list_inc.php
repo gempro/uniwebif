@@ -3,17 +3,17 @@
 	include("../inc/dashboard_config.php");
 	
 	if(!isset($_REQUEST['action']) or $_REQUEST['action'] == ""){ $_REQUEST['action'] = ""; }
-	
 	$action = $_REQUEST['action'];
 	
-	if(!isset($_REQUEST['timer_id']) or $_REQUEST['timer_id'] == ""){ $_REQUEST['timer_id'] = ""; 
+	if(!isset($_REQUEST['timer_id']) or $_REQUEST['timer_id'] == ""){ $_REQUEST['timer_id'] = ""; }
+	$timer_id = $_REQUEST['timer_id'];
 	
-	} else {
-	
+	if($timer_id != "")
+	{
 	// hide single timer
 	if($action == 'hide')
 	{
-	$timer_id = $_REQUEST['timer_id'];
+	
 	// track keywords
 	$sql = mysqli_query($dbmysqli, "SELECT * FROM `timer` WHERE `id` = '".$timer_id."' ");
 	$result = mysqli_fetch_assoc($sql);
@@ -74,12 +74,11 @@
 	}
 	}
 	}
-	//
-	// hide
+	
 	mysqli_query($dbmysqli, "UPDATE `timer` SET `hide` = '1' WHERE `id` = '".$timer_id."' ");
 	echo "data:hided";
 	exit;
-	}
+	} // hide single timer
 	
 	// unhide single timer
 	if($action == 'unhide')
@@ -89,7 +88,7 @@
 	mysqli_query($dbmysqli, "UPDATE `timer` SET `hide` = '0' WHERE `id` = '".$timer_id."' ");
 	echo "data:unhided";
 	exit;
-	}
+	} // unhide single timer
 	
 	// add broadcast to ignore list
 	if($action == "ignore")
@@ -130,30 +129,35 @@
 	else { echo 'data:already_ignored'; }
 	
 	exit;
-	}
+	} // add broadcast to ignore list
 
+	// delete timer
 	if($action == 'delete')
 	{
+	if(!isset($_REQUEST['hash']) or $_REQUEST['hash'] == "") { $_REQUEST['hash'] = ""; }
 	if(!isset($_REQUEST['delete_from_box']) or $_REQUEST['delete_from_box'] == "") { $_REQUEST['delete_from_box'] = ""; }
 	if(!isset($_REQUEST['delete_from_db']) or $_REQUEST['delete_from_db'] == "") { $_REQUEST['delete_from_db'] = ""; }
 	if(!isset($_REQUEST['device']) or $_REQUEST['device'] == "") { $_REQUEST['device'] = ""; }
 	
 	$timer_id = $_REQUEST['timer_id'];
+	$hash = $_REQUEST['hash'];
 	$delete_from_db = $_REQUEST['delete_from_db'];
 	$device = $_REQUEST['device'];
 	
-	// unmark timer
-	$sql = mysqli_query($dbmysqli, "SELECT * FROM `timer` WHERE `id` = '".$timer_id."' ");
-	$result = mysqli_fetch_assoc($sql);
-	$e2eventservicereference = $result['e2eventservicereference'];
-	$e2eventstart = $result['e2eventstart'];
-	$e2eventend = $result['e2eventend'];
-	$status = $result['status'];
+	$sql_2 = mysqli_query($dbmysqli, "SELECT * FROM `timer` WHERE `id` = '".$timer_id."' AND `device` = '".$device."' ");
+	$result_2 = mysqli_fetch_assoc($sql_2);
+	$e2eventservicereference = $result_2['e2eventservicereference'];
+	$e2eventstart = $result_2['e2eventstart'];
+	$e2eventend = $result_2['e2eventend'];
+	$record_location = $result_2['record_location'];
+	$status = $result_2['status'];
+	
 	if($device == ""){ $device = $result['device']; }
 	
 	if($status == 'manual' or $status == 'sent')
 	{
-	mysqli_query($dbmysqli, "UPDATE `epg_data` SET `timer` = '0' WHERE `hash` = '".$result['hash']."' ");
+	// unmark timer
+	mysqli_query($dbmysqli, "UPDATE `epg_data` SET `timer` = '0' WHERE `hash` = '".$hash."' ");
 	}
 
 	sleep(1);
@@ -161,12 +165,12 @@
 	// delete timer from different device
 	if($device != "0")
 	{
-	$sql2 = mysqli_query($dbmysqli, "SELECT * FROM `device_list` WHERE `id` = '".$device."' ");
-	$result2 = mysqli_fetch_assoc($sql2);
-	$device_description = $result2['device_description'];
-	$box_ip = $result2['device_ip'];
-	$box_user = $result2['device_user'];
-	$box_password = $result2['device_user'];
+	$sql_3 = mysqli_query($dbmysqli, "SELECT * FROM `device_list` WHERE `id` = '".$device."' ");
+	$result_3 = mysqli_fetch_assoc($sql_3);
+	$device_description = $result_3['device_description'];
+	$box_ip = $result_3['device_ip'];
+	$box_user = $result_3['device_user'];
+	$box_password = $result_3['device_user'];
 	
 	$webrequest = stream_context_create(array (
 	'http' => array (
@@ -178,22 +182,21 @@
 	));
 	$deleteTimer = $url_format.'://'.$box_ip.'/web/timerdelete?sRef='.$e2eventservicereference.'&begin='.$e2eventstart.'&end='.$e2eventend.'';
 	$deleteTimer_request = @file_get_contents($deleteTimer, false, $webrequest);
-	} // delete timer from different device
+	// delete timer from different device
 	
-	else {
+	} else {
 	
 	// delete from default receiver
 	$deleteTimer = $url_format.'://'.$box_ip.'/web/timerdelete?sRef='.$e2eventservicereference.'&begin='.$e2eventstart.'&end='.$e2eventend.'';
 	$deleteTimer_request = @file_get_contents($deleteTimer, false, $webrequest);
 	}
-	
-	mysqli_query($dbmysqli, "UPDATE `timer` SET `status` = 'waiting' WHERE `id` = '".$timer_id."' ");
+	mysqli_query($dbmysqli, "UPDATE `timer` SET `status` = 'waiting' WHERE `id` = '".$timer_id."' AND `device` = '".$device."' ");
 	}
 	
 	// delete timer from database
 	if($delete_from_db == '1')
 	{
-	mysqli_query($dbmysqli, "DELETE FROM `timer` WHERE `id` = '".$timer_id."' ");
+	mysqli_query($dbmysqli, "DELETE FROM `timer` WHERE `id` = '".$timer_id."' AND `device` = '".$device."' ");
 	//
 	echo "data:deleted_db";
 	exit;
@@ -203,38 +206,42 @@
 	echo "data:deleted";
 	exit;
 	}
-	}
-	
-	// unhide
-	if($action == 'unhide')
-	{
-	$sql = "SELECT * FROM `timer` WHERE `expired` = '0' ORDER BY `e2eventstart` ASC, `record_status` ASC"; 
-	
-	} else {
-	
-	$sql = "SELECT * FROM `timer` WHERE `expired` = '0' AND `hide` = '0' ORDER BY `e2eventstart` ASC, `record_status` ASC";
-	}
+	} // delete timer
 	
 	// device dropdown
-	$sql4 = "SELECT * FROM `device_list` ORDER BY `id` ASC";
-	if ($result4 = mysqli_query($dbmysqli,$sql4))
+	$sql_4 = "SELECT * FROM `device_list` ORDER BY `id` ASC";
+	if ($result_4 = mysqli_query($dbmysqli,$sql_4))
 	{
-	while ($obj4 = mysqli_fetch_object($result4)){
+	while ($obj_4 = mysqli_fetch_object($result_4)){
 	{
-	$id = $obj4->id;
-	$device_description = rawurldecode($obj4->device_description);
+	$id = $obj_4->id;
+	$device_description = rawurldecode($obj_4->device_description);
 	if(!isset($device_dropdown) or $device_dropdown == ""){ $device_dropdown = ""; }
 	$device_dropdown = $device_dropdown."<option name=\"$device_description\" value=\"$id\">$device_description</option>"; 
 	}
 	}
 	} // device dropdown
-
-
-
-	if($result = mysqli_query($dbmysqli,$sql))
+	
+	// unhide
+	if($action == 'unhide')
 	{
-	// Fetch one and one row
-	while ($obj = mysqli_fetch_object($result)) {
+	$sql_5 = "SELECT * FROM `timer` WHERE `expired` = '0' ORDER BY `e2eventstart` ASC, `record_status` ASC"; 
+	
+	} else {
+	
+	$sql_5 = "SELECT * FROM `timer` WHERE `expired` = '0' AND `hide` = '0' ORDER BY `e2eventstart` ASC, `record_status` ASC";
+	}
+	
+//	if($action == 'append')
+//	{
+//	$hash = $_REQUEST['hash'];
+//	$device = $_REQUEST['device'];
+//	$sql = "SELECT * FROM `timer` WHERE `hash` = '".$hash."' and `device` = '".$device."' LIMIT 0,1";
+//	}
+
+	if($result_5 = mysqli_query($dbmysqli,$sql_5))
+	{
+	while ($obj = mysqli_fetch_object($result_5)) {
 	
 	if(!isset($timerlist) or $timerlist == ""){ $timerlist = ""; }
 	
@@ -369,6 +376,14 @@ if($obj->record_location == 'zap_timer')
 	';
 	}
 	}
+	
+	if($imdb_symbol == '1')
+	{
+	$imdb_broadcast = '<a href="https://www.imdb.com/find?ref_=nv_sr_fn&q='.$obj->e2eventtitle.'" target="_blank" title="Info on IMDb">
+	<i class="fa fa-info-circle fa-1x"></i></a>'; 
+	} else { 
+	$imdb_broadcast = ''; 
+	}
 		
 	if($obj->exclude_channel != ''){ $channel_status = 'Excluded in <strong>channel</strong>: '.$exclude_channel.'<br>'; } else { $channel_status = ''; }
 	if($obj->exclude_title != ''){ $title_status = 'Excluded in <strong>title</strong>: '.$exclude_title.'<br>'; } else { $title_status = ''; }
@@ -381,16 +396,16 @@ if($obj->record_location == 'zap_timer')
 	$spacer = '';
 	
 	// get record location id
-	$sql2 = mysqli_query($dbmysqli, "SELECT * FROM `record_locations` WHERE `e2location` = '".$obj->record_location."' LIMIT 0,1");
-	$result2 = mysqli_fetch_assoc($sql2);
-	$rec_location_id = $result2['id'];
+	$sql_6 = mysqli_query($dbmysqli, "SELECT * FROM `record_locations` WHERE `e2location` = '".$obj->record_location."' LIMIT 0,1");
+	$result_6 = mysqli_fetch_assoc($sql_6);
+	$rec_location_id = $result_6['id'];
 	
 	// get device
 	if($obj->device != "0"){ 
-	$sql3 = mysqli_query($dbmysqli, "SELECT * FROM `device_list` WHERE `id` = '".$obj->device."' ");
-	$result3 = mysqli_fetch_assoc($sql3);
-	$device_name = rawurldecode($result3['device_description']);
-	$device_color = $result3['device_color'];
+	$sql_7 = mysqli_query($dbmysqli, "SELECT * FROM `device_list` WHERE `id` = '".$obj->device."' ");
+	$result_7 = mysqli_fetch_assoc($sql_7);
+	$device_name = rawurldecode($result_7['device_description']);
+	$device_color = $result_7['device_color'];
 	} else {
 	$device_name = "default"; 
 	$device_color = "#DDDDDD";
@@ -445,6 +460,7 @@ if($obj->record_location == 'zap_timer')
 	  $description_enc<div class=\"spacer_5\"></div>
 	  $descriptionextended_enc<div class=\"spacer_5\"></div>
 	  </div>
+	  $imdb_broadcast
 	  <a href=\"search.php?searchterm=$title_enc&option=title\" target=\"_blank\" title=\"Search title\"><i class=\"fa fa-search fa-1x\"></i></a>
 	  $search_info Record location: $obj->record_location | Receiver: <span id=\"device_name_$obj->id\">$device_name</span> $replay_status $show_exclude_text
 	  <input id=\"timerlist_device_no_$obj->id\" type=\"hidden\" value=\"$device_no\">
@@ -466,7 +482,7 @@ if($obj->record_location == 'zap_timer')
 	  <input id=\"timerlist_send_timer_btn_$obj->hash\" name=\"$obj->id\" type=\"submit\" onClick=\"timerlist_send_timer(this.id,this.name,'record')\" value=\"SEND\" class=\"btn btn-success btn-sm\" title=\"Send timer to Receiver\"/>
 	  $hide_button
 	  <input id=\"ignore_timer_btn_$obj->id\" type=\"submit\" onclick=\"timerlist_ignore(this.id);\" value=\"IGNORE\" class=\"btn btn-default btn-sm\" title=\"Add broadcast to ignore list\">
-	  <input id=\"delete_timer_btn_$obj->id\" type=\"submit\" onClick=\"timerlist_delete_timer(this.id)\" value=\"DELETE\" class=\"btn btn-danger btn-sm\" title=\"Delete timer from Receiver\"/>
+	  <input id=\"delete_timer_btn_$obj->id\" type=\"submit\" onClick=\"timerlist_delete_timer(this.id,'$obj->hash')\" value=\"DELETE\" class=\"btn btn-danger btn-sm\" title=\"Delete timer from Receiver\"/>
 	  <label style=\"font-weight: normal;\"><span class=\"del_checkbox\"><input id=\"timerlist_delete_db_$obj->id\" type=\"checkbox\"> Delete also from database</span></label>
 	  <span id=\"timerlist_status_$obj->id\"></span>
 	  </div>
@@ -485,4 +501,11 @@ $(document).ready(function(){
 	$(this).css("background-color", "white");
 	});
 });
+//$(document).ready(function(){
+//	$("#timerlist*").hover(function(){
+//	$(this).css("background-color", "#9D5F00");
+//	}, function(){
+//	$(this).css("background-color", "#533200");
+//	});
+//});
 </script>

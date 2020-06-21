@@ -19,6 +19,10 @@ include("../inc/dashboard_config.php");
 	$getEPG_request = @file_get_contents($xmlfile, false, $webrequest);
 	
 	$xml = simplexml_load_string(preg_replace('/[^\x{0009}\x{000a}\x{000d}\x{0020}-\x{D7FF}\x{E000}-\x{FFFD}]+/u', ' ', $getEPG_request));
+	
+	$sql = mysqli_query($dbmysqli, "SELECT `e2eventstart` FROM `epg_data` WHERE `e2eventservicereference` LIKE '".$e2servicereference."' ORDER BY `e2eventstart` DESC");
+	$result = mysqli_fetch_assoc($sql);
+	$last_epg = $result['e2eventstart'];
 
 if ($xml) {
     
@@ -103,7 +107,11 @@ if ($xml) {
 	// channel hash
 	$channel_hash = hash('md4',$e2eventservicename);
 	
-	$sql = mysqli_query($dbmysqli, "INSERT INTO `epg_data` (
+	// if last epg <
+	if($last_epg < $e2eventstart)
+	{
+	
+	mysqli_query($dbmysqli, "INSERT INTO `epg_data` (
 	e2eventtitle, 
 	title_enc, 
 	e2eventservicename, 
@@ -181,25 +189,26 @@ if ($xml) {
 	}
 	}
 	}
+	}
 	// latest entry
 	$sql = mysqli_query($dbmysqli, "SELECT `e2eventend` FROM `epg_data` WHERE `channel_hash` = '$channel_hash' ORDER BY `e2eventend` DESC LIMIT 0 , 1");
 	$result = mysqli_fetch_assoc($sql);
 	$last_epg = $result['e2eventend'];
 	
 	// last crawl / last entry
-	$sql = mysqli_query($dbmysqli, "UPDATE `channel_list` SET `last_crawl` = '$time', `last_epg` = '$last_epg' WHERE `channel_hash` = '$channel_hash' ");
+	mysqli_query($dbmysqli, "UPDATE `channel_list` SET `last_crawl` = '$time', `last_epg` = '$last_epg' WHERE `channel_hash` = '$channel_hash' ");
 	
 	// update last epg timestamp // settings
 	$sql = mysqli_query($dbmysqli, "SELECT `e2eventend` FROM `epg_data` ORDER BY `e2eventend` DESC LIMIT 0 , 1");
 	$result = mysqli_fetch_assoc($sql);
 	$last_epg = $result['e2eventend'];
-	$sql = mysqli_query($dbmysqli, "UPDATE `settings` SET `last_epg` = '$last_epg' WHERE `id` = '0' ");
+	mysqli_query($dbmysqli, "UPDATE `settings` SET `last_epg` = '$last_epg' WHERE `id` = '0' ");
 	
 	// reset saved search
-	$sql = mysqli_query($dbmysqli, "UPDATE `saved_search` SET `crawled` = '0' WHERE `activ` = 'yes' ");
+	mysqli_query($dbmysqli, "UPDATE `saved_search` SET `crawled` = '0' WHERE `activ` = 'yes' ");
 	
 	// set epg crawler not working
-	$sql = mysqli_query($dbmysqli, "UPDATE `settings` SET `epg_crawler_activ` = '0' ");
+	mysqli_query($dbmysqli, "UPDATE `settings` SET `epg_crawler_activ` = '0' ");
 	
 	// answer for ajax
 	header('Content-Type: text/event-stream');

@@ -62,9 +62,9 @@
 	if($device == "0")
 	{
 	// get record location
-	$sql = mysqli_query($dbmysqli, "SELECT `e2location` FROM `record_locations` WHERE `id` = '".$record_location."' ");
-	$result2 = mysqli_fetch_assoc($sql);
-	$e2location = $result2['e2location'];
+	$sql_2 = mysqli_query($dbmysqli, "SELECT `e2location` FROM `record_locations` WHERE `id` = '".$record_location."' ");
+	$result_2 = mysqli_fetch_assoc($sql_2);
+	$e2location = $result_2['e2location'];
 	// mark epg entry
 	mysqli_query($dbmysqli, "UPDATE `epg_data` SET `timer` = '1' WHERE `hash` = '".$hash."' ");
 	}
@@ -83,12 +83,12 @@
 	# send to different device
 	if($device != "0")
 	{
-	$sql3 = mysqli_query($dbmysqli, "SELECT * FROM `device_list` WHERE `id` = '".$device."' ");
-	$result3 = mysqli_fetch_assoc($sql3);
-	$box_ip = $result3['device_ip'];
-	$box_user = $result3['device_user'];
-	$box_password = $result3['device_password'];
-	$url_format = $result3['url_format'];
+	$sql_3 = mysqli_query($dbmysqli, "SELECT * FROM `device_list` WHERE `id` = '".$device."' ");
+	$result_3 = mysqli_fetch_assoc($sql_3);
+	$box_ip = $result_3['device_ip'];
+	$box_user = $result_3['device_user'];
+	$box_password = $result_3['device_password'];
+	$url_format = $result_3['url_format'];
 	//
 	
 	if($action == "record")
@@ -99,6 +99,7 @@
 	if($action == "zap")
 	{
 	$e2location = "zap_timer";
+	$e2eventstart = $e2eventstart - 1;
 	$e2eventend = $e2eventstart + 1;
 	$timer_request = $url_format.'://'.$box_ip.'/web/timeradd?sRef='.$e2eventservicereference.'&begin='.$e2eventstart.'&end='.$e2eventend.'&name='.$title_enc.'&description='.$description_enc.'&justplay=1';
 	}
@@ -132,7 +133,7 @@
 	))
 	));
 	$send_timer_request = @file_get_contents($timer_request, false, $webrequest);
-	$device = $result3['id'];
+	$device = $result_3['id'];
 	// send to different device
 	
 	} else {
@@ -146,6 +147,7 @@
 	if($action == "zap")
 	{
 	$e2location = "zap_timer";
+	$e2eventstart = $e2eventstart - 1;
 	$e2eventend = $e2eventstart + 1;
 	$timer_request = $url_format.'://'.$box_ip.'/web/timeradd?sRef='.$e2eventservicereference.'&begin='.$e2eventstart.'&end='.$e2eventend.'&name='.$title_enc.'&description='.$description_enc.'&justplay=1';
 	}
@@ -197,8 +199,8 @@
 	// create copy if device is different
 	if($location == "timerlist" and $device != $current_device)
 	{
-	$sql = mysqli_query($dbmysqli, "SELECT COUNT(*) FROM `timer` WHERE `hash` = '".$hash."' AND `device` = '".$device."' ");
-	$summary = mysqli_fetch_row($sql);
+	$sql_4 = mysqli_query($dbmysqli, "SELECT COUNT(*) FROM `timer` WHERE `hash` = '".$hash."' AND `device` = '".$device."' ");
+	$summary = mysqli_fetch_row($sql_4);
 	
 	if($summary[0] < 1){
 	mysqli_query($dbmysqli, "INSERT INTO `timer` (
@@ -308,8 +310,8 @@
 	if($device == "0")
 	{
 	// count timer within period
-	$sql = mysqli_query($dbmysqli, 'SELECT COUNT(*) FROM `timer` WHERE "'.$e2eventstart.'" BETWEEN `e2eventstart` AND `e2eventend` OR "'.$e2eventend.'" BETWEEN `e2eventstart` AND `e2eventend` ');
-	$result = mysqli_fetch_row($sql);
+	$sql_5 = mysqli_query($dbmysqli, 'SELECT COUNT(*) FROM `timer` WHERE "'.$e2eventstart.'" BETWEEN `e2eventstart` AND `e2eventend` OR "'.$e2eventend.'" BETWEEN `e2eventstart` AND `e2eventend` ');
+	$result = mysqli_fetch_row($sql_5);
 	$same_timer_time = $result[0];
 	//
 	
@@ -330,10 +332,17 @@
 	if($location == 'timerlist')
 	{
 	if($device == "0" and $same_timer_time > 0){ $same_timer_msg = "(<strong>".$same_timer_time."</strong> within the period)"; } else { $same_timer_msg = ""; }
+	
 	if($timer_conflict == "1"){ $timer_status = ' - <span class=\"timer_conflict\">Conflict on Receiver</span>'; } else { $timer_status = ""; }
+	
+	if($device != "0" and $timer_conflict != "1"){ $append = $hash; } else { $append = "0"; }
+	
 	echo '
-	[{"conflict":"'.$timer_conflict.'",
-	"timer_html":"<i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i> Timer sent '.$same_timer_msg.' '.$timer_status.'\r"}]';
+	[{
+	"conflict":"'.$timer_conflict.'",
+	"timer_status":"<i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i> Timer sent '.$same_timer_msg.' '.$timer_status.'",
+	"div_id":"'.$append.'"
+	}]';
 	exit;
 	}
 	

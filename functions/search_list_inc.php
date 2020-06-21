@@ -19,23 +19,23 @@ $(function(){
 <body>
 <?php 
 //
-include("../inc/dashboard_config.php");
+	include("../inc/dashboard_config.php");
 	
-	if(!isset($_REQUEST['delete_id']) or $_REQUEST['delete_id'] == ""){ $_REQUEST['delete_id'] = "";
+	if(!isset($_REQUEST['delete_id']) or $_REQUEST['delete_id'] == ''){ $_REQUEST['delete_id'] = '';
 	
 	} else {
 	
 	$delete_id = $_REQUEST['delete_id'];
 	
-	$sql = mysqli_query($dbmysqli, "DELETE FROM `saved_search` WHERE `id` = '".$delete_id."' ");
+	mysqli_query($dbmysqli, "DELETE FROM `saved_search` WHERE `id` = '".$delete_id."' ");
 	
 	sleep(1);
-	echo "data:deleted";
+	echo 'data:deleted';
 	exit;
 	}
 	
 	// sort saved search
-	if(!isset($_REQUEST['sort_list']) or $_REQUEST['sort_list'] == ""){ 
+	if(!isset($_REQUEST['sort_list']) or $_REQUEST['sort_list'] == ''){ 
 	
 	$sortby = $search_list_sort; 
 	
@@ -43,7 +43,7 @@ include("../inc/dashboard_config.php");
 	
 	$sort_list = $_REQUEST['sort_list'];
 	
-	$sql = mysqli_query($dbmysqli, "UPDATE `settings` SET `search_list_sort` = '".$sort_list."' ");
+	mysqli_query($dbmysqli, "UPDATE `settings` SET `search_list_sort` = '".$sort_list."' ");
 	
 	$sortby = $sort_list;
 	}
@@ -54,34 +54,76 @@ include("../inc/dashboard_config.php");
 	if($sortby == 'search_option'){ $sortby1 = 'ASC'; }
 	if($sortby == 'e2location'){ $sortby1 = 'ASC'; }
 	
-	// get record locations
-	$sql2 = "SELECT * FROM `record_locations` ORDER BY `id` ASC";
-	if ($result2 = mysqli_query($dbmysqli,$sql2))
+	$group = '';
+	$group_title = '';
+	
+	// record location
+	$sql_1 = "SELECT * FROM `record_locations` ORDER BY `id` ASC";
+	if ($result_1 = mysqli_query($dbmysqli,$sql_1))
 	{
-	while ($obj = mysqli_fetch_object($result2)) {	
+	while ($obj = mysqli_fetch_object($result_1)) {	
 	{
-	if(!isset($rec_dropdown_saved_search_list) or $rec_dropdown_saved_search_list == ""){ $rec_dropdown_saved_search_list = ""; }
-	$rec_dropdown_saved_search_list = $rec_dropdown_saved_search_list."<option value=\"$obj->e2location\">$obj->e2location</option>"; }
+	if(!isset($record_dropdown) or $record_dropdown == ''){ $record_dropdown = ''; }
+	$record_dropdown = $record_dropdown.'<option value="'.$obj->e2location.'">'.$obj->e2location.'</option>'; 
+	}
 	}
 	}
 	
 	// channel dropdown
-	$sql2 = "SELECT * FROM `channel_list` ORDER BY `e2servicename` ASC";
-	if ($result2 = mysqli_query($dbmysqli,$sql2))
+	$sql_2 = "SELECT * FROM `channel_list` ORDER BY `e2servicename` ASC";
+	if ($result_2 = mysqli_query($dbmysqli,$sql_2))
 	{
-	while ($obj = mysqli_fetch_object($result2)) {
+	while ($obj = mysqli_fetch_object($result_2)) {
 	$servicename_enc = rawurldecode($obj->servicename_enc);
 	{
-	if(!isset($channel_dropdown_saved_search_list) or $channel_dropdown_saved_search_list == ""){ $channel_dropdown_saved_search_list = ""; }
-	$channel_dropdown_saved_search_list = $channel_dropdown_saved_search_list."<option value=\"$obj->e2servicereference\">$servicename_enc</option>"; }
+	if(!isset($channel_dropdown) or $channel_dropdown == ''){ $channel_dropdown = ''; }
+	$channel_dropdown = $channel_dropdown.'<option value="'.$obj->e2servicereference.'">'.$servicename_enc.'</option>'; 
 	}
 	}
-	//
+	}
 	
-	$sql = "SELECT * FROM `saved_search` ORDER BY ".$sortby." ".$sortby1." ";
-	if ($result = mysqli_query($dbmysqli,$sql))
+	if(!isset($sort_list) or $sort_list == ''){ $sort_list = ''; }
+	if($sort_list == 'searchterm' or $search_list_sort == 'searchterm')
 	{
-	while ($obj = mysqli_fetch_object($result)) {
+	$scroll_buttons = '
+	<div id="scroll_buttons_tab">
+	<div class="spacer_5"></div>
+	<button onclick="search_list_scroll(\'A\')" class="btn btn-default btn-xs">A</button>
+	<button onclick="search_list_scroll(\'B\')" class="btn btn-default btn-xs">B</button>
+	<button onclick="search_list_scroll(\'C\')" class="btn btn-default btn-xs">C</button>
+	<button onclick="search_list_scroll(\'D\')" class="btn btn-default btn-xs">D</button>
+	<button onclick="search_list_scroll(\'E\')" class="btn btn-default btn-xs">E</button>
+	<button onclick="search_list_scroll(\'F\')" class="btn btn-default btn-xs">F</button>
+	<button onclick="search_list_scroll(\'G\')" class="btn btn-default btn-xs">G</button>
+	<button onclick="search_list_scroll(\'H\')" class="btn btn-default btn-xs">H</button>
+	<button onclick="search_list_scroll(\'I\')" class="btn btn-default btn-xs">I</button>
+	<button onclick="search_list_scroll(\'J\')" class="btn btn-default btn-xs">J</button>
+	<button onclick="search_list_scroll(\'K\')" class="btn btn-default btn-xs">K</button>
+	<button onclick="search_list_scroll(\'L\')" class="btn btn-default btn-xs">L</button>
+	<button onclick="search_list_scroll(\'M\')" class="btn btn-default btn-xs">M</button>
+	<button onclick="search_list_scroll(\'N\')" class="btn btn-default btn-xs">N</button>
+	<button onclick="search_list_scroll(\'O\')" class="btn btn-default btn-xs">O</button>
+	<button onclick="search_list_scroll(\'P\')" class="btn btn-default btn-xs">P</button>
+	<button onclick="search_list_scroll(\'Q\')" class="btn btn-default btn-xs">Q</button>
+	<button onclick="search_list_scroll(\'R\')" class="btn btn-default btn-xs">R</button>
+	<button onclick="search_list_scroll(\'S\')" class="btn btn-default btn-xs">S</button>
+	<button onclick="search_list_scroll(\'T\')" class="btn btn-default btn-xs">T</button>
+	<button onclick="search_list_scroll(\'U\')" class="btn btn-default btn-xs">U</button>
+	<button onclick="search_list_scroll(\'V\')" class="btn btn-default btn-xs">V</button>
+	<button onclick="search_list_scroll(\'W\')" class="btn btn-default btn-xs">W</button>
+	<button onclick="search_list_scroll(\'X\')" class="btn btn-default btn-xs">X</button>
+	<button onclick="search_list_scroll(\'Y\')" class="btn btn-default btn-xs">Y</button>
+	<button onclick="search_list_scroll(\'Z\')" class="btn btn-default btn-xs">Z</button>
+	<div class="spacer_10"></div>
+	</div>
+	';
+	} else { $scroll_buttons = ''; }
+	
+	// saved search list
+	$sql_3 = "SELECT * FROM `saved_search` ORDER BY ".$sortby." ".$sortby1." ";
+	if ($result_3 = mysqli_query($dbmysqli,$sql_3))
+	{
+	while ($obj = mysqli_fetch_object($result_3)) {
 	
 	if(!isset($saved_search_list) or $saved_search_list == ""){ $saved_search_list = ""; }
 	
@@ -96,11 +138,11 @@ include("../inc/dashboard_config.php");
 	$activ = $obj->activ;
 	$rec_replay = $obj->rec_replay;
 	
-	if(!isset($exclude_channel) or $exclude_channel == ""){ $exclude_channel = ""; }
-	if(!isset($exclude_title) or $exclude_title == ""){ $exclude_title = ""; }
-	if(!isset($exclude_description) or $exclude_description == ""){ $exclude_description = ""; }
-	if(!isset($exclude_extdescription) or $exclude_extdescription == ""){ $exclude_extdescription = ""; }
-	if(!isset($rec_replay) or $rec_replay == ""){ $rec_replay = "off"; }
+	if(!isset($exclude_channel) or $exclude_channel == ''){ $exclude_channel = ''; }
+	if(!isset($exclude_title) or $exclude_title == ''){ $exclude_title = ''; }
+	if(!isset($exclude_description) or $exclude_description == ''){ $exclude_description = ''; }
+	if(!isset($exclude_extdescription) or $exclude_extdescription == ''){ $exclude_extdescription = ''; }
+	if(!isset($rec_replay) or $rec_replay == ''){ $rec_replay = 'off'; }
 	if($rec_replay == 'on'){ $selected4 = 'selected'; } else { $selected4 = ''; }
 	if($rec_replay == 'off'){ $selected5 = 'selected'; } else { $selected5 = ''; }
 	if($search_option == 'all'){ $selected6 = 'selected'; } else { $selected6 = ''; }
@@ -112,7 +154,7 @@ include("../inc/dashboard_config.php");
 	if($activ == 'yes'){ $as = 'success'; } else { $as = 'danger'; }
 	if($obj->e2eventservicename == 'NULL'){ $servicename_enc = 'All Channels'; }
 		
-	if(strlen($searchterm) > "25")
+	if(strlen($searchterm) > '25')
 	{
 	$searchterm = substr($searchterm, 0, 25);
 	$searchterm = $searchterm . '...';
@@ -133,36 +175,45 @@ include("../inc/dashboard_config.php");
 	$channel_id = $obj->e2eventservicereference; 
 	}
 	
-	if($search_option == "all"){ $search_option_desc = "All"; }
-	if($search_option == "title"){ $search_option_desc = "Title"; }
-	if($search_option == "description"){ $search_option_desc = "Description"; }
-	if($search_option == "extdescription"){ $search_option_desc = "Extended description"; }
+	if($search_option == 'all'){ $search_option_desc = 'All'; }
+	if($search_option == 'title'){ $search_option_desc = 'Title'; }
+	if($search_option == 'description'){ $search_option_desc = 'Description'; }
+	if($search_option == 'extdescription'){ $search_option_desc = 'Extended description'; }
 	
-	if($time_format == "1")
+	if($time_format == '1')
 	{
-	$last_change = date("d.m - H:i", $obj->last_change);
-	$last_crawl = date("d.m - H:i", $obj->last_crawl);
+	$last_change = date('d.m.Y - H:i', $obj->last_change);
+	$last_crawl = date('d.m.Y - H:i', $obj->last_crawl);
 	//
-	if($last_change == "01.01 - 01:00"){ $last_change = "not changed"; }
-	if($last_crawl == "01.01 - 01:00"){ $last_crawl = "not crawled"; }
+	if($obj->last_change == '0'){ $last_change = 'not changed'; }
+	if($obj->last_crawl == '0'){ $last_crawl = 'not crawled'; }
 	}
 	
-	if($time_format == "2" or $time_format == "")
+	if($time_format == '2' or $time_format == '')
 	{
-	$last_change = date("n/d - g:i A", $obj->last_change);
-	$last_crawl = date("n/d - g:i A", $obj->last_crawl);
+	$last_change = date('n/d/Y - g:i A', $obj->last_change);
+	$last_crawl = date('n/d/Y - g:i A', $obj->last_crawl);
 	//
-	if($last_change == "1/01 - 1:00 AM"){ $last_change = "not changed"; }
-	if($last_crawl == "1/01 - 1:00 AM"){ $last_crawl = "not crawled"; }
+	if($obj->last_change == '0'){ $last_change = 'not changed'; }
+	if($obj->last_change == '0'){ $last_crawl = 'not crawled'; }
+	}
+	
+	//
+	if($sortby == 'searchterm')
+	{
+	if($group == strtoupper($searchterm[0][0])){ $group_title = ''; } else { $group_title = strtoupper($obj->searchterm[0][0]); }
+	$group = strtoupper($obj->searchterm[0][0]);
 	}
 	
 	// get record location id
-	$sql = mysqli_query($dbmysqli, "SELECT * FROM `record_locations` WHERE `e2location` = '".$record_location."' LIMIT 0,1");
-	$result3 = mysqli_fetch_assoc($sql);
-	$rec_location_id = $result3['id'];
-	
+	$sql_4 = mysqli_query($dbmysqli, "SELECT * FROM `record_locations` WHERE `e2location` = '".$record_location."' LIMIT 0,1");
+	$result_4 = mysqli_fetch_assoc($sql_4);
+	$rec_location_id = $result_4['id'];
+
 	$saved_search_list = $saved_search_list."
+	<div id=\"list_$group_title\">
 	<div id=\"search_list_div_$obj->id\">
+	<strong>$group_title</strong>
 	<div id=\"saved_search_list\">
 	  <div class=\"row\">
 		<div id=\"saved_search_list_$obj->id\" onclick=\"saved_search_list_edit(this.id);\" style=\"cursor: pointer;\">
@@ -207,13 +258,13 @@ include("../inc/dashboard_config.php");
 			<p><select id=\"channel_dropdown_saved_search_list_$obj->id\" class=\"search_list_channel\">
 			<option value=\"\"></option>
 			<option value=\"NULL\">All channels</option>
-			$channel_dropdown_saved_search_list</select></p>
+			$channel_dropdown</select></p>
 		  </div>
 		  <!---->
 		  <div class=\"col-md-2\">
 			<p><select id=\"rec_dropdown_saved_search_list_$obj->id\" value=\"$obj->e2location\" class=\"search_list_rec_location\">
 			<option value=\"\"></option>
-			$rec_dropdown_saved_search_list
+			$record_dropdown
 			</select></p>
 		  </div>
 		  <div class=\"col-md-2\">
@@ -279,10 +330,11 @@ include("../inc/dashboard_config.php");
 	</div>
 	<div class=\"spacer_10\"></div>
 	</div>
+	</div>
 	";
 	}
 	}
-	if(!isset($saved_search_list) or $saved_search_list == ""){ $saved_search_list = "No saved searches..<hr />"; } else { echo $saved_search_list; }
+	if(!isset($saved_search_list) or $saved_search_list == ""){ $saved_search_list = "No saved searches..<hr />"; } else { echo $scroll_buttons.$saved_search_list; }
 ?>
 </body>
 </html>
