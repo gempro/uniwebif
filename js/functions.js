@@ -740,8 +740,8 @@ $('#scroll_top_channelbrowser_list').click(function(){
 	});
 });
 
-// send timer channelbrowser list
-function channelbrowser_timer(id,action){
+// send timer channelbrowser list / epg modal
+function channelbrowser_timer(id,action,location){
 	
 	var this_id = id.replace(/channelbrowser_timer_btn_/g, "");
 	var res = this_id.substr(3);
@@ -758,6 +758,11 @@ function channelbrowser_timer(id,action){
 	},
 	function(data){
 	$("#channelbrowser_status_timer_"+this_id).html(data);
+	if(location == "modal")
+	{
+	load_timer_list_panel();
+	reload_timerlist();
+	}
 	});
 }
 
@@ -808,7 +813,7 @@ function timerlist_desc(id){
 }
 
 // timerlist delete timer
-function timerlist_delete_timer(id){
+function timerlist_delete_timer(id,hash){
 	
 	var this_id = id.replace(/delete_timer_btn_/g, "");
 	var device = $("#timerlist_device_no_"+this_id).val();
@@ -820,6 +825,7 @@ function timerlist_delete_timer(id){
 	{
 	action: 'delete',
 	timer_id: this_id,
+	hash: hash,
 	delete_from_db: delete_from_db,
 	device: device
 	},
@@ -878,13 +884,28 @@ function timerlist_send_timer(id,name,action){
 	var obj = JSON.parse(data);
 	//
 	if(obj[0].conflict == '0'){
-	$("#timerlist_status_"+name).html(obj[0].timer_html);
+	$("#timerlist_status_"+name).html(obj[0].timer_status);
 	$("#tl_glyphicon_status_"+name+"").attr({style:"color:#5CB85C", title:"sent"});
 	}
 	if(obj[0].conflict == '1'){
-	$("#timerlist_status_"+name).html(obj[0].timer_html);
+	$("#timerlist_status_"+name).html(obj[0].timer_status);
 	$("#tl_glyphicon_status_"+name+"").attr({style:"color:#F0AD4E", title:"Conflict on Receiver"});
 	}
+	<!---->
+//	if(obj[0].div_id != '0')
+//	{
+//	$.post("functions/timer_list_inc.php",
+//	{
+//	action: 'append',
+//	timer_id: obj[0].div_id,
+//	device: device
+//	},
+//	function(data){
+//	$("#timerlist_div_outer_"+name).append("<div id='div_"+obj[0].div_id+"' style='display:none;'>"+data+"</div>");
+//	$("#div_"+obj[0].div_id).fadeIn(1000);
+//	});
+//	}
+	<!---->
 	load_timer_list_panel();
 	});
 }
@@ -1047,9 +1068,6 @@ function count_selected(){
 //
 function timerlist_panel(id){
 	
-	$("#panel_action_status").html("");
-	$("#panel_action_status").fadeIn();
-	
 	var checked = []
 	$("input[name='timerlist_checkbox[]']:checked").each(function ()
 	{
@@ -1060,12 +1078,13 @@ function timerlist_panel(id){
 	$("#del_buttons").toggle();
 	return;
 	}
-	if(id == 'send' || id == 'delete_db' || id == 'delete_rec' || id == 'delete_both' || id == 'hide' || id == 'panel_unhide'){
+	if(id == 'send' || id == 'delete_db' || id == 'delete_rec' || id == 'delete_both' || id == 'hide' || id == 'panel_unhide')
+	{
+	$("#panel_action_status").fadeIn();
 	if(checked == 0){ return; }
 	}
 	
 	if(id == 'show_unhide'){
-	//$("[id^=timerlist_div_outer_]").removeClass("hidden");
 	$("#selected_box_sum").html("");
 	$("#hidden_status").text("1");
 	
@@ -1095,6 +1114,7 @@ function timerlist_panel(id){
 	
 	$("#panel_action_status").html("<i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i>");
 	$("#selected_box_sum").html("");
+	setTimeout(function() { $("#panel_action_status").html(""); }, 3000);
 	
 	if(id == 'send'){
 	var obj = JSON.parse(data);
@@ -2144,11 +2164,15 @@ function get_all_services(){
 
 // show services
 function show_all_services(service){
+	
+	if(service == 'search'){ var searchterm = $("#service_searchterm").val(); } else { var searchterm = ''; }
 
 	$("#all_services_list").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
+	
 	$.post("functions/services_inc.php",
 	{
-	service: service
+	service: service,
+	searchterm: searchterm
 	},
 	function(data){
 	$("#all_services_list").html(data);
