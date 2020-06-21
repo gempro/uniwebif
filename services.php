@@ -170,7 +170,7 @@ animatedcollapse.init()
             <li> <a href="about.php"><i class="glyphicon glyphicon-question-sign"></i>About</a> </li>
           </ul>
         </li>
-        <li style="background-color: #fff;" id="quickpanel_inc"></li>
+        <li class="quickpanel_inc" id="quickpanel_inc"></li>
       </ul>
     </div>
   </nav>
@@ -251,6 +251,20 @@ animatedcollapse.init()
       <span id="all_services_status_crawl"></span>
       <hr />
       <div class="row">
+      <div class="col-md-12">
+      <div class="form-inline">
+      <div class="form-group">
+      <div class="input-group">
+      <input type="text" class="form-control" id="service_searchterm" placeholder="Channelname" size="40">
+        </div>
+      </div>
+      <button class="btn btn-default" onclick="show_all_services('search')">Search</button>
+    </div>
+      </div>
+      </div>
+      <!-- /. ROW  -->
+      <hr>
+      <div class="row">
         <div class="col-md-12">
           <div id="channel_list">
           <span id="last_zapped_service" style="display:none;"></span>
@@ -259,7 +273,7 @@ animatedcollapse.init()
           <!-- Channel list -->
         </div>
       </div>
-      <!-- /. ROW  -->
+      <!-- /. ROW  --> 
       <div class="row">
       <div class="col-md-12"></div>
       </div>
@@ -291,6 +305,12 @@ $(function(){
    var cookies = navigator.cookieEnabled;
    if(cookies == false){ $("#cookie_js").html("To use all functions of the website, it's required to accept Cookies."); }
 });
+//
+$("#service_searchterm").keypress(function(a){
+	if (a.which == 13){
+	show_all_services('search'); 
+	}
+	});
 </script>
 </body>
 </html>

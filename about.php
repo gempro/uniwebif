@@ -16,6 +16,7 @@ session_start();
 <link href="assets/css/font-awesome.css" rel="stylesheet" />
 <!-- CUSTOM STYLES-->
 <link href="assets/css/custom.css" rel="stylesheet" />
+<!--<link href="assets/css/custom-bo.css" rel="stylesheet" />-->
 <!-- Modal-->
 <link href="assets/css/rmodal-no-bootstrap.css" rel="stylesheet" />
 <!-- Noty-->
@@ -120,7 +121,7 @@ animatedcollapse.init()
     <div class="adjust-nav">
       <div class="navbar-header">
         <button type="button" class="navbar-toggle" onclick="nav_icon_scroll()" data-toggle="collapse" data-target=".sidebar-collapse"> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button>
-        <span class="navbar-brand"><span style="color:#000; cursor:pointer;" onclick="remote_modal.open();" title="Remote Control"><i class="fa fa-table fa-sm"></i></span> <a class="navbar-link" href="about.php">About</a></span> </div>
+        <span class="navbar-brand"><span style="color:#000; cursor:pointer;" onclick="remote_modal.open();" title="Remote Control"><i class="fa fa-wifi fa-sm"></i></span> <a class="navbar-link" href="about.php">About</a></span> </div>
       <div class="navbar-collapse collapse">
         <ul class="nav navbar-nav navbar-right">
           <div class="row">
@@ -170,7 +171,7 @@ animatedcollapse.init()
             <li> <a href="about.php"><i class="glyphicon glyphicon-question-sign"></i><strong>About</strong></a> </li>
           </ul>
         </li>
-        <li style="background-color: #fff;" id="quickpanel_inc"></li>
+        <li class="quickpanel_inc" id="quickpanel_inc"></li>
       </ul>
     </div>
   </nav>
@@ -192,7 +193,7 @@ animatedcollapse.init()
       <div class="row">
         <div class="col-md-12">
           <h2>About</h2>
-          <!--<span onclick="foo()" style="cursor:pointer;">foo()</span>-->
+          <span onclick="foo()" style="cursor:pointer;">foo()</span>
         </div>
       </div>
       <!--crawl channel id-->

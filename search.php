@@ -267,6 +267,14 @@ session_start();
 	while ($obj = mysqli_fetch_object($result)) {
     {
 	
+	if($imdb_symbol == '1')
+	{
+	$imdb_broadcast = '<a href="https://www.imdb.com/find?ref_=nv_sr_fn&q='.$obj->e2eventtitle.'" target="_blank" title="Info on IMDb">
+	<i class="fa fa-info-circle fa-1x"></i></a>'; 
+	} else { 
+	$imdb_broadcast = ''; 
+	}
+	
 	if ($mark_searchterm == '1')
 	{
 	// mark search term
@@ -295,13 +303,16 @@ session_start();
 	
 	if($obj->e2eventdescription == ""){ $obj->e2eventdescription = "No description"; }
 	if($obj->e2eventdescriptionextended == ""){ $obj->e2eventdescriptionextended = "No extended description"; }
+	
 	if(!isset($result_list) or $result_list == "") { $result_list = ""; }
 	
 	if(!isset($device_dropdown) or $device_dropdown == ""){ $device_dropdown = ""; }
 	
 	$result_list = $result_list."
 		<div id=\"search_result_header\"><a href=\"search.php?searchterm=$raw_term&option=$option&search_channel=on&channel_id=$obj->e2eventservicereference\" target=\"_blank\" class=\"links\" title=\"Search the term only on this channel\"><strong>$obj->e2eventservicename</strong></a>
-		| $obj->e2eventtitle | Description: $obj->e2eventdescription</div>
+		| $obj->e2eventtitle | Description: $obj->e2eventdescription 
+		$imdb_broadcast
+		</div>
 		<div class=\"spacer_10\"></div>
 		Extended description:
 		<div class=\"spacer_10\"></div>
@@ -581,7 +592,7 @@ function check_exclude(){
             <li> <a href="about.php"><i class="glyphicon glyphicon-question-sign"></i>About</a> </li>
           </ul>
         </li>
-        <li style="background-color: #fff;" id="quickpanel_inc"></li>
+        <li class="quickpanel_inc" id="quickpanel_inc"></li>
       </ul>
     </div>
   </nav>

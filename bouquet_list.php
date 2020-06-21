@@ -201,7 +201,7 @@ animatedcollapse.init()
             <li> <a href="about.php"><i class="glyphicon glyphicon-question-sign"></i>About</a> </li>
           </ul>
         </li>
-        <li style="background-color: #fff;" id="quickpanel_inc"></li>
+        <li class="quickpanel_inc" id="quickpanel_inc"></li>
       </ul>
     </div>
   </nav>

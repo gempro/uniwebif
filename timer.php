@@ -313,7 +313,7 @@ function reload_saved_search_panel(){
             <li> <a href="about.php"><i class="glyphicon glyphicon-question-sign"></i>About</a> </li>
           </ul>
         </li>
-        <li style="background-color: #fff;" id="quickpanel_inc"></li>
+        <li class="quickpanel_inc" id="quickpanel_inc"></li>
       </ul>
     </div>
   </nav>
@@ -419,11 +419,11 @@ function reload_saved_search_panel(){
         <div class="col-md-12">
           <h4><span id="saved_search_panel2"></span>
             <select name="select" id="sort_setting" class="sort_setting" onChange="sortby()">
-              <option value="id" <?php if($search_list_sort == 'id'){ echo 'selected'; } ?>>sort standard</option>
-              <option value="searchterm" <?php if($search_list_sort == 'searchterm'){ echo 'selected'; } ?>>sort by term</option>
-              <option value="search_option" <?php if($search_list_sort == 'search_option'){ echo 'selected'; } ?>>sort by searcharea</option>
-              <option value="e2location" <?php if($search_list_sort == 'e2location'){ echo 'selected'; } ?>>sort by record location</option>
-              <option value="activ" <?php if($search_list_sort == 'activ'){ echo 'selected'; } ?>>sort by status</option>
+              <option value="id" <?php if($search_list_sort == 'id'){ echo 'selected'; } ?>>Sort standard</option>
+              <option value="searchterm" <?php if($search_list_sort == 'searchterm'){ echo 'selected'; } ?>>Sort by term</option>
+              <option value="search_option" <?php if($search_list_sort == 'search_option'){ echo 'selected'; } ?>>Sort by searcharea</option>
+              <option value="e2location" <?php if($search_list_sort == 'e2location'){ echo 'selected'; } ?>>Sort by record location</option>
+              <option value="activ" <?php if($search_list_sort == 'activ'){ echo 'selected'; } ?>>Sort by status</option>
             </select>
           </h4>
           <div id="search_list"></div>
@@ -453,10 +453,12 @@ function reload_saved_search_panel(){
 $(function(){
    var statusbar = '<?php if(!isset($_SESSION["statusbar"]) or $_SESSION["statusbar"] == "") { $_SESSION["statusbar"] = ""; } echo $_SESSION["statusbar"]; ?>';
    if (statusbar == '1'){ $("#statusbar_outer").removeClass("statusbar_outer"); }
-   //
    var cookies = navigator.cookieEnabled;
    if(cookies == false){ $("#cookie_js").html("To use all functions of the website, it's required to accept Cookies."); }
 });
+function search_list_scroll(id){ 
+	if($('#list_'+id).length){ $('html, body').animate({ scrollTop: ($('#list_'+id).offset().top-50)}, 'slow'); }
+}
 </script>
 </body>
 </html>
