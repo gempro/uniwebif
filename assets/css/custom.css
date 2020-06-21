@@ -637,6 +637,9 @@ display:none;
 .timer_panel_info {
 	font-size: 14px;
 }
+#quickpanel_inc {
+	background-color:#FFFFFF;
+}
 .quickpanel_dropdown {
 	width:100%;
 	padding-left: 10px;
