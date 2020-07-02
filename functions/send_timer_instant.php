@@ -31,7 +31,6 @@
 	}
 	
 	$result = mysqli_fetch_assoc($sql);
-	
 	$e2eventtitle = $result['e2eventtitle'];
 	$title_enc = $result['title_enc'];
 	$e2eventservicename = $result['e2eventservicename'];
@@ -150,7 +149,7 @@
 	$e2eventstart = $e2eventstart - 1;
 	$e2eventend = $e2eventstart + 1;
 	$timer_request = $url_format.'://'.$box_ip.'/web/timeradd?sRef='.$e2eventservicereference.'&begin='.$e2eventstart.'&end='.$e2eventend.'&name='.$title_enc.'&description='.$description_enc.'&justplay=1';
-	}
+	} // action zap
 	
 	// request with eventid
 	//$timer_request = "http://$box_ip/web/timeraddbyeventid?sRef=".$e2eventservicereference."&eventid=".$e2eventid."&dirname=".$e2location."";
@@ -191,10 +190,21 @@
 	$record_status = 'c_expired'; }
 
 	// set timer status
-	if($location == 'timerlist' and $device == $current_device)
+	if($location == 'timerlist' and $device == $current_device and $action != 'zap')
 	{
 	mysqli_query($dbmysqli, "UPDATE `timer` SET `status` = 'manual', `conflict` = '".$timer_conflict."' WHERE `hash` = '".$hash."' ");
 	} 
+	
+	// create zap timer
+	if($action == 'zap')
+	{
+	$sql_6 = mysqli_query($dbmysqli, "SELECT COUNT(id) FROM `timer` WHERE `hash` LIKE '".$hash."' AND `record_location` LIKE 'zap_timer' ");
+	$result_6 = mysqli_fetch_row($sql_6);
+	if($result_6[0] == 1)
+	{ 
+	mysqli_query($dbmysqli, "UPDATE `timer` SET `status` = 'manual', `conflict` = '".$timer_conflict."' WHERE `hash` = '".$hash."' AND `record_location` LIKE 'zap_timer' "); 
+	}
+	}
 	
 	// create copy if device is different
 	if($location == "timerlist" and $device != $current_device)
@@ -335,13 +345,10 @@
 	
 	if($timer_conflict == "1"){ $timer_status = ' - <span class=\"timer_conflict\">Conflict on Receiver</span>'; } else { $timer_status = ""; }
 	
-	if($device != "0" and $timer_conflict != "1"){ $append = $hash; } else { $append = "0"; }
-	
 	echo '
 	[{
 	"conflict":"'.$timer_conflict.'",
-	"timer_status":"<i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i> Timer sent '.$same_timer_msg.' '.$timer_status.'",
-	"div_id":"'.$append.'"
+	"timer_status":"<i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i> Timer sent '.$same_timer_msg.' '.$timer_status.'"
 	}]';
 	exit;
 	}
