@@ -200,13 +200,73 @@
 	{
 	$sql_6 = mysqli_query($dbmysqli, "SELECT COUNT(id) FROM `timer` WHERE `hash` LIKE '".$hash."' AND `record_location` LIKE 'zap_timer' ");
 	$result_6 = mysqli_fetch_row($sql_6);
+	
 	if($result_6[0] == 1)
 	{ 
 	mysqli_query($dbmysqli, "UPDATE `timer` SET `status` = 'manual', `conflict` = '".$timer_conflict."' WHERE `hash` = '".$hash."' AND `record_location` LIKE 'zap_timer' "); 
-	}
-	}
 	
-	// create copy if device is different
+	} else {
+	
+	mysqli_query($dbmysqli, "INSERT INTO `timer` (
+	e2eventtitle, 
+	title_enc, 
+	e2eventdescription, 
+	description_enc, 
+	e2eventdescriptionextended, 
+	descriptionextended_enc, 
+	e2eventservicename, 
+	servicename_enc, 
+	e2eventservicereference, 
+	search_term, 
+	search_option,
+	exclude_channel, 
+	exclude_title, 
+	exclude_description, 
+	exclude_extdescription, 
+	record_location, 
+	e2eventstart, 
+	e2eventend, 
+	timer_request, 
+	hash, 
+	channel_hash, 
+	status, 
+	record_status, 
+	rec_replay, 
+	device, 
+	search_id,
+	conflict
+	) VALUES (
+	'$e2eventtitle', 
+	'$title_enc', 
+	'$e2eventdescription', 
+	'$description_enc', 
+	'$e2eventdescriptionextended', 
+	'$descriptionextended_enc', 
+	'$e2eventservicename', 
+	'$servicename_enc', 
+	'$e2eventservicereference', 
+	'$search_term', 
+	'$search_option', 
+	'$exclude_channel', 
+	'$exclude_title', 
+	'$exclude_description', 
+	'$exclude_extdescription',
+	'$e2location', 
+	'$e2eventstart', 
+	'$e2eventend', 
+	'$timer_request', 
+	'$hash', 
+	'$channel_hash', 
+	'manual', 
+	'$record_status', 
+	'$rec_replay', 
+	'$device',
+	'$search_id',
+	'$timer_conflict')");
+	}
+	} // zap timer
+	
+	// timer for different device
 	if($location == "timerlist" and $device != $current_device)
 	{
 	$sql_4 = mysqli_query($dbmysqli, "SELECT COUNT(*) FROM `timer` WHERE `hash` = '".$hash."' AND `device` = '".$device."' ");
