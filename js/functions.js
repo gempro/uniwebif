@@ -891,21 +891,11 @@ function timerlist_send_timer(id,name,action){
 	$("#timerlist_status_"+name).html(obj[0].timer_status);
 	$("#tl_glyphicon_status_"+name+"").attr({style:"color:#F0AD4E", title:"Conflict on Receiver"});
 	}
+	
 	<!---->
-//	if(obj[0].div_id != '0')
-//	{
-//	$.post("functions/timer_list_inc.php",
-//	{
-//	action: 'append',
-//	timer_id: obj[0].div_id,
-//	device: device
-//	},
-//	function(data){
-//	$("#timerlist_div_outer_"+name).append("<div id='div_"+obj[0].div_id+"' style='display:none;'>"+data+"</div>");
-//	$("#div_"+obj[0].div_id).fadeIn(1000);
-//	});
-//	}
+	if(action == 'zap'){ $("#tl_glyphicon_status_m_"+name).attr({class:"fa fa-arrow-up fa-1x", title:"Zap timer", style:"color:#000" }); }
 	<!---->
+	
 	load_timer_list_panel();
 	});
 }
