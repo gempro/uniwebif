@@ -121,7 +121,7 @@ animatedcollapse.init()
     <div class="adjust-nav">
       <div class="navbar-header">
         <button type="button" class="navbar-toggle" onclick="nav_icon_scroll()" data-toggle="collapse" data-target=".sidebar-collapse"> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button>
-        <span class="navbar-brand"><span style="color:#000; cursor:pointer;" onclick="remote_modal.open();" title="Remote Control"><i class="fa fa-table fa-sm"></i></span> <a class="navbar-link" href="crawl_seperate.php">Crawler</a></span> </div>
+        <span class="navbar-brand"><span style="font-size:1.1em; color:#000; cursor:pointer;" onclick="remote_modal.open();" title="Remote Control"><i class="fa fa-wifi fa-1x"></i></span> <a class="navbar-link" href="crawl_seperate.php">Crawler</a></span> </div>
       <div class="navbar-collapse collapse">
         <ul class="nav navbar-nav navbar-right">
           <div class="row">
