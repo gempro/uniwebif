@@ -13,7 +13,7 @@ include("../inc/dashboard_config.php");
 	$action = $_REQUEST['action'];	
 	
 	if($action == 'delete'){
-	$sql = mysqli_query($dbmysqli, "DELETE FROM `saved_search` WHERE `id` = '$id' ");
+	mysqli_query($dbmysqli, "DELETE FROM `saved_search` WHERE `id` = '$id' ");
 	
 	// answer for ajax
 	echo "data:done";
@@ -81,16 +81,16 @@ include("../inc/dashboard_config.php");
 	if($record_location == ''){ $rec_location_sql =  ''; } else { $rec_location_sql = ', e2location = "'.$record_location.'"'; }
 	if($active == ''){ $active_sql = ''; } else { $active_sql = ', activ = "'.$active.'"'; }
 	
-	$sql = mysqli_query($dbmysqli, "UPDATE `saved_search` SET $searchterm_sql $searcharea_sql $exclude_channel_sql $exclude_title_sql $exclude_description_sql $exclude_extdescription_sql $rec_replay_sql $channel_sql $rec_location_sql, last_change = '$time', crawled = '0' $active_sql WHERE `id` = '$id' ");
+	mysqli_query($dbmysqli, "UPDATE `saved_search` SET $searchterm_sql $searcharea_sql $exclude_channel_sql $exclude_title_sql $exclude_description_sql $exclude_extdescription_sql $rec_replay_sql $channel_sql $rec_location_sql, last_change = '$time', crawled = '0' $active_sql WHERE `id` = '$id' ");
 	
 	// answer for ajax
 	if($time_format == "1")
 	{
-	$last_change = date("d.m - H:i", $time);
+	$last_change = date("d.m.Y - H:i", $time);
 	}
 	if($time_format == "2" or $time_format == "")
 	{
-	$last_change = date("n/d - g:i A", $time);
+	$last_change = date("n/d/Y - g:i A", $time);
 	}
 	echo '[{"last_change":"'.$last_change.'\r"}]';
 }
