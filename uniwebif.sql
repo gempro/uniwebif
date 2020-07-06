@@ -400,7 +400,7 @@ CREATE TABLE IF NOT EXISTS `timer` (
   `e2eventtitle` varchar(255) NOT NULL,
   `title_enc` varchar(255) NOT NULL,
   `e2eventdescription` varchar(255) NOT NULL,
-  `description_enc` varchar(255) NOT NULL,
+  `description_enc` text NOT NULL,
   `e2eventdescriptionextended` text NOT NULL,
   `descriptionextended_enc` text NOT NULL,
   `e2eventservicename` varchar(255) NOT NULL,
