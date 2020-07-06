@@ -149,7 +149,7 @@
 	$e2eventstart = $e2eventstart - 1;
 	$e2eventend = $e2eventstart + 1;
 	$timer_request = $url_format.'://'.$box_ip.'/web/timeradd?sRef='.$e2eventservicereference.'&begin='.$e2eventstart.'&end='.$e2eventend.'&name='.$title_enc.'&description='.$description_enc.'&justplay=1';
-	} // action zap
+	} // zap
 	
 	// request with eventid
 	//$timer_request = "http://$box_ip/web/timeraddbyeventid?sRef=".$e2eventservicereference."&eventid=".$e2eventid."&dirname=".$e2location."";
@@ -217,12 +217,8 @@
 	e2eventservicename, 
 	servicename_enc, 
 	e2eventservicereference, 
-	search_term, 
-	search_option,
-	exclude_channel, 
-	exclude_title, 
-	exclude_description, 
-	exclude_extdescription, 
+	
+	
 	record_location, 
 	e2eventstart, 
 	e2eventend, 
@@ -231,9 +227,9 @@
 	channel_hash, 
 	status, 
 	record_status, 
-	rec_replay, 
+	
 	device, 
-	search_id,
+	
 	conflict
 	) VALUES (
 	'$e2eventtitle', 
@@ -245,12 +241,8 @@
 	'$e2eventservicename', 
 	'$servicename_enc', 
 	'$e2eventservicereference', 
-	'$search_term', 
-	'$search_option', 
-	'$exclude_channel', 
-	'$exclude_title', 
-	'$exclude_description', 
-	'$exclude_extdescription',
+	
+	
 	'$e2location', 
 	'$e2eventstart', 
 	'$e2eventend', 
@@ -259,10 +251,11 @@
 	'$channel_hash', 
 	'manual', 
 	'$record_status', 
-	'$rec_replay', 
+	
 	'$device',
-	'$search_id',
-	'$timer_conflict')");
+	
+	'$timer_conflict')
+	");
 	}
 	} // zap timer
 	
@@ -332,7 +325,7 @@
 	}
 	}
 	
-	if($location == "")
+	if($location == "" and $action != 'zap')
 	{
 	mysqli_query($dbmysqli, "INSERT INTO `timer` (
 	e2eventtitle, 
