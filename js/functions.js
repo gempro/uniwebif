@@ -1510,9 +1510,14 @@ function channel_crawler(id){
 	channel_hash: this_id
 	},
 	function(data){
-	if(data == 'data:done'){
+	
+	var obj = JSON.parse(data);
+		
+	if(obj.status == 'done'){
 	$("#channel_crawler_status_"+this_id).html("<i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i>");
 	$("#channel_crawler_"+this_id).prop('disabled', false);
+	$("#channel_crawler_summary_"+this_id).html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
+	setTimeout(function() { $("#channel_crawler_summary_"+this_id).html(obj.summary); }, 1000);
 	}
 });
 }
