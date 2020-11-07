@@ -33,7 +33,7 @@ include("../inc/dashboard_config.php");
 	// delete from default receiver
 	if($action == 'delete' and $device == '0')
 	{
-	$delete_request = $url_format.'://'.$box_ip.'/web/moviedelete?sRef='.$del_id.'';
+	$delete_request = $url_format.'://'.$box_ip.'/web/moviedelete?sRef='.$del_id.$session_part_2;
 	$delete_record = @file_get_contents($delete_request, false, $webrequest);
 	}
 	
@@ -49,13 +49,14 @@ include("../inc/dashboard_config.php");
 	// Webrequest
 	$rl_webrequest = stream_context_create(array (
 	'http' => array (
+	'method' => 'POST',
 	'header' => 'Authorization: Basic ' . base64_encode("$box_user:$box_password"),
 	'ssl' =>array (
 	'verify_peer' => false,
 	'verify_peer_name' => false,
 	))
 	));
-	$delete_request = $url_format.'://'.$box_ip.'/web/moviedelete?sRef='.$del_id.'';
+	$delete_request = $url_format.'://'.$box_ip.'/web/moviedelete?sRef='.$del_id.$session_part_2;
 	$delete_record = @file_get_contents($delete_request, false, $rl_webrequest);
 	}
 	
@@ -64,15 +65,18 @@ include("../inc/dashboard_config.php");
 	// calculate filesize
 	function formatBytes($size, $precision = 2)
 	{
+	if(is_numeric($size))
+	{
 	$base = log($size, 1024);
 	$suffixes = array('', 'kB', 'MB', 'GB', 'TB');
 	return round(pow(1024, $base - floor($base)), $precision) .' '. $suffixes[floor($base)];
+	}
 	}
 
 	// recorded files default receiver
 	if($device == "0")
 	{
-	$xmlfile = $url_format.'://'.$box_ip.'/web/movielist?dirname='.$record_location.'';
+	$xmlfile = $url_format.'://'.$box_ip.'/web/movielist?dirname='.$record_location.$session_part_2;
 	$getRecords_request = @file_get_contents($xmlfile, false, $webrequest);
 	$xml = simplexml_load_string($getRecords_request);
 	if(!isset($xml) or $xml == ""){ echo 'Data could not received'; exit; }
@@ -89,13 +93,14 @@ include("../inc/dashboard_config.php");
 	// Webrequest
 	$rl_webrequest = stream_context_create(array (
 	'http' => array (
+	'method' => 'POST',
 	'header' => 'Authorization: Basic ' . base64_encode("$box_user:$box_password"),
 	'ssl' =>array (
 	'verify_peer' => false,
 	'verify_peer_name' => false,
 	))
 	));
-	$xmlfile = $url_format.'://'.$box_ip.'/web/movielist?dirname='.$record_location.'';
+	$xmlfile = $url_format.'://'.$box_ip.'/web/movielist?dirname='.$record_location.$session_part_2;
 	$getRecords_request = @file_get_contents($xmlfile, false, $rl_webrequest);
 	$xml = simplexml_load_string($getRecords_request);
 	if(!isset($xml) or $xml == ""){ echo 'Data could not received'; exit; }
@@ -151,6 +156,8 @@ if($xml){
 	$imdb_broadcast = '<a href="https://www.imdb.com/find?ref_=nv_sr_fn&q='.$e2title.'" target="_blank" title="Info on IMDb"><i class="fa fa-info-circle fa-1x"></i></a>';
 	}
 	
+	if($e2length and $record_filesize == ''){ $show_info = 'display:none;'; } else { $show_info = ''; }
+	
 	$record_list = $record_list."
 	<div id=\"record_entry_$i\">
 		<div id=\"record_list_main\">
@@ -170,7 +177,7 @@ if($xml){
 	  <div class=\"spacer_5\"></div>
 	  $e2descriptionextended
 	  <div class=\"spacer_5\"></div>
-	  <p>$e2length minutes, $record_filesize</p>
+	  <p style=\"$show_info\">$e2length minutes, $record_filesize</p>
 		</div>
 		<input id=\"$e2servicereference\" name=\"$i\" type=\"submit\" onClick=\"delete_record(this.id,this.name)\" value=\"DELETE RECORD\" title=\"Delete record\" class=\"btn btn-xs btn-danger\"/>
 		$imdb_broadcast

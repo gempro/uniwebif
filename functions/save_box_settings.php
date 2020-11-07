@@ -20,10 +20,8 @@ include("../inc/dashboard_config.php");
 	if(!isset($_REQUEST['box_password']) or $_REQUEST['box_password'] == ""){ $set_box_password = $box_password; }
 
 	// check xml
-	$xmlfile = $url_format.'://'.$set_box_ip.'/web/about';
-	
+	$xmlfile = $url_format.'://'.$set_box_ip.'/web/about'.$session_part;
 	$check_conn = @file_get_contents($xmlfile, false, $webrequest);
-	
 	$xml = simplexml_load_string($check_conn);
 	
 	if(!isset($xml->e2about->e2enigmaversion) or $xml->e2about->e2enigmaversion == ""){ $xml->e2about->e2enigmaversion = ""; }
@@ -42,11 +40,11 @@ include("../inc/dashboard_config.php");
 	
 	} else {
 	
-	$sql = mysqli_query($dbmysqli, "UPDATE `settings` SET `box_ip` = '$set_box_ip', `box_user` = '$set_box_user', `box_password` = '$set_box_password' WHERE `id` = '0' ");
+	mysqli_query($dbmysqli, "UPDATE `settings` SET `box_ip` = '$set_box_ip', `box_user` = '$set_box_user', `box_password` = '$set_box_password' WHERE `id` = '0' ");
 	
-	$sql = mysqli_query($dbmysqli, "TRUNCATE `box_info`");
+	mysqli_query($dbmysqli, "TRUNCATE `box_info`");
 	
-	$sql = mysqli_query($dbmysqli, "INSERT INTO `box_info` (`e2enigmaversion`, `e2imageversion`, `e2webifversion`, `e2model`) VALUES ('$e2enigmaversion', '$e2imageversion', '$e2webifversion', '$e2model')");
+	mysqli_query($dbmysqli, "INSERT INTO `box_info` (`e2enigmaversion`, `e2imageversion`, `e2webifversion`, `e2model`) VALUES ('$e2enigmaversion', '$e2imageversion', '$e2webifversion', '$e2model')");
 	
 	// answer for ajax
 	echo "data: settings ok $conn";

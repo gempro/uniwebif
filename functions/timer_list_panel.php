@@ -9,7 +9,7 @@
 	$timer_id = $_REQUEST['timer_id'];
 		
 	// delete from db
-if($panel_action == 'delete_db')
+	if($panel_action == 'delete_db')
 	{
 	$tags = explode(';' , $timer_id);
 	foreach($tags as $i => $key)
@@ -34,7 +34,7 @@ if($panel_action == 'delete_db')
 	}
 	
 	// delete from receiver
-if ($panel_action == 'delete_rec')
+	if ($panel_action == 'delete_rec')
 	{
 	$tags = explode(';' , $timer_id);
 	foreach($tags as $i => $key)
@@ -63,19 +63,20 @@ if ($panel_action == 'delete_rec')
 	$device_url_format = $result_2['url_format'];
 	$device_webrequest = stream_context_create(array (
 	'http' => array (
+	'method' => 'POST',
 	'header' => 'Authorization: Basic ' . base64_encode("$device_box_user:$device_box_password"),
 	'ssl' =>array (
 	'verify_peer' => false,
 	'verify_peer_name' => false,
 	))
 	));
-	$device_deleteTimer = $device_url_format.'://'.$device_box_ip.'/web/timerdelete?sRef='.$e2eventservicereference.'&begin='.$e2eventstart.'&end='.$e2eventend.'';
+	$device_deleteTimer = $device_url_format.'://'.$device_box_ip.'/web/timerdelete?sRef='.$e2eventservicereference.'&begin='.$e2eventstart.'&end='.$e2eventend.$session_part_2;
 	$device_deleteTimer_request = @file_get_contents($device_deleteTimer, false, $device_webrequest);
 	} // different device
 	
 	else {
 	
-	$deleteTimer = $url_format.'://'.$box_ip.'/web/timerdelete?sRef='.$e2eventservicereference.'&begin='.$e2eventstart.'&end='.$e2eventend.'';
+	$deleteTimer = $url_format.'://'.$box_ip.'/web/timerdelete?sRef='.$e2eventservicereference.'&begin='.$e2eventstart.'&end='.$e2eventend.$session_part_2;
 	$deleteTimer_request = @file_get_contents($deleteTimer, false, $webrequest);
 	} //default receiver
 	
@@ -124,19 +125,20 @@ if($panel_action == 'delete_both')
 	$device_url_format = $result_4['url_format'];
 	$device_webrequest = stream_context_create(array (
 	'http' => array (
+	'method' => 'POST',
 	'header' => 'Authorization: Basic ' . base64_encode("$device_box_user:$device_box_password"),
 	'ssl' =>array (
 	'verify_peer' => false,
 	'verify_peer_name' => false,
 	))
 	));
-	$device_deleteTimer = $device_url_format.'://'.$device_box_ip.'/web/timerdelete?sRef='.$e2eventservicereference.'&begin='.$e2eventstart.'&end='.$e2eventend.'';
+	$device_deleteTimer = $device_url_format.'://'.$device_box_ip.'/web/timerdelete?sRef='.$e2eventservicereference.'&begin='.$e2eventstart.'&end='.$e2eventend.$session_part_2;
 	$device_deleteTimer_request = @file_get_contents($device_deleteTimer, false, $device_webrequest);
 	} // different device
 	
 	else {
 	
-	$deleteTimer = $url_format.'://'.$box_ip.'/web/timerdelete?sRef='.$e2eventservicereference.'&begin='.$e2eventstart.'&end='.$e2eventend.'';
+	$deleteTimer = $url_format.'://'.$box_ip.'/web/timerdelete?sRef='.$e2eventservicereference.'&begin='.$e2eventstart.'&end='.$e2eventend.$session_part_2;
 	$deleteTimer_request = @file_get_contents($deleteTimer, false, $webrequest);
 	} // default receiver
 	
@@ -152,7 +154,7 @@ if($panel_action == 'delete_both')
 	}
 	
 	// send
-if($panel_action == 'send')
+	if($panel_action == 'send')
 	{
 	$tags = explode(';' , $timer_id);
 	foreach($tags as $i => $key)
@@ -182,13 +184,14 @@ if($panel_action == 'send')
 	$device_url_format = $result_6['url_format'];
 	$device_webrequest = stream_context_create(array (
 	'http' => array (
+	'method' => 'POST',
 	'header' => 'Authorization: Basic ' . base64_encode("$device_box_user:$device_box_password"),
 	'ssl' =>array (
 	'verify_peer' => false,
 	'verify_peer_name' => false,
 	))
 	));
-	$device_timer_request = $device_url_format.'://'.$device_box_ip.'/web/timeradd?sRef='.$e2eventservicereference.'&begin='.$e2eventstart.'&end='.$e2eventend.'&name='.$title_enc.'&description='.$description_enc.'&dirname='.$e2location.'&afterevent=3';
+	$device_timer_request = $device_url_format.'://'.$device_box_ip.'/web/timeradd?sRef='.$e2eventservicereference.'&begin='.$e2eventstart.'&end='.$e2eventend.'&name='.$title_enc.'&description='.$description_enc.'&dirname='.$e2location.'&afterevent=3'.$session_part_2;
 	$device_timer_request = str_replace("%22", "%60", $device_timer_request);
 	$device_timer_request = str_replace("%27", "%60", $device_timer_request);	
 	$device_send_timer_request = @file_get_contents($device_timer_request, false, $device_webrequest);
@@ -204,9 +207,9 @@ if($panel_action == 'send')
 	
 	if($e2location == 'zap_timer')
 	{
-	$timer_request = $url_format.'://'.$box_ip.'/web/timeradd?sRef='.$e2eventservicereference.'&begin='.$e2eventstart.'&end='.$e2eventend.'&name='.$title_enc.'&description='.$description_enc.'&justplay=1';
+	$timer_request = $url_format.'://'.$box_ip.'/web/timeradd?sRef='.$e2eventservicereference.'&begin='.$e2eventstart.'&end='.$e2eventend.'&name='.$title_enc.'&description='.$description_enc.'&justplay=1'.$session_part_2;
 	} else {
-	$timer_request = $url_format.'://'.$box_ip.'/web/timeradd?sRef='.$e2eventservicereference.'&begin='.$e2eventstart.'&end='.$e2eventend.'&name='.$title_enc.'&description='.$description_enc.'&dirname='.$e2location.'&afterevent=3';
+	$timer_request = $url_format.'://'.$box_ip.'/web/timeradd?sRef='.$e2eventservicereference.'&begin='.$e2eventstart.'&end='.$e2eventend.'&name='.$title_enc.'&description='.$description_enc.'&dirname='.$e2location.'&afterevent=3'.$session_part_2;
 	}
 	
 	// remove " and ' from request
@@ -236,7 +239,7 @@ if($panel_action == 'send')
 	}
 	
 	// hide
-if($panel_action == 'hide')
+	if($panel_action == 'hide')
 	{
 	$tags = explode(';' , $timer_id);
 	foreach($tags as $i => $key)
@@ -250,7 +253,7 @@ if($panel_action == 'hide')
 	}
 	
 	// unhide
-if($panel_action == 'panel_unhide')
+	if($panel_action == 'panel_unhide')
 	{
 	$tags = explode(';' , $timer_id);
 	foreach($tags as $i => $key)

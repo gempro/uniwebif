@@ -2,40 +2,35 @@
 //
 include("../inc/dashboard_config.php");
 
-	// set epg crawler as current working
-	$sql = mysqli_query($dbmysqli, "UPDATE `settings` SET `epg_crawler_activ` = '1' ");
-
 	$channel_hash = $_REQUEST["channel_hash"];
+
+	// set epg crawler as current working
+	mysqli_query($dbmysqli, "UPDATE `settings` SET `epg_crawler_activ` = '1' ");
 	
 	$sql = mysqli_query($dbmysqli, "SELECT `e2servicereference` FROM `channel_list` WHERE `channel_hash` = '".$channel_hash."' ");
 	$result = mysqli_fetch_assoc($sql);
 	$e2servicereference = $result['e2servicereference'];
 	
 	// delete before crawling
-	$sql = mysqli_query($dbmysqli, "DELETE FROM `epg_data` WHERE `channel_hash` = '".$channel_hash."' ");
+	mysqli_query($dbmysqli, "DELETE FROM `epg_data` WHERE `channel_hash` = '".$channel_hash."' ");
 	
-	$xmlfile = $url_format.'://'.$box_ip.'/web/epgservice?sRef='.$e2servicereference.'';
-	
+	$xmlfile = $url_format.'://'.$box_ip.'/web/epgservice?sRef='.$e2servicereference.$session_part_2;
 	$getEPG_request = @file_get_contents($xmlfile, false, $webrequest);
-	
 	$xml = simplexml_load_string(preg_replace('/[^\x{0009}\x{000a}\x{000d}\x{0020}-\x{D7FF}\x{E000}-\x{FFFD}]+/u', ' ', $getEPG_request));
 	
 	$sql = mysqli_query($dbmysqli, "SELECT `e2eventstart` FROM `epg_data` WHERE `e2eventservicereference` LIKE '".$e2servicereference."' ORDER BY `e2eventstart` DESC");
 	$result = mysqli_fetch_assoc($sql);
 	$last_epg = $result['e2eventstart'];
 
-if ($xml) {
-    
-	for ($i = 0; $i <= $epg_entries_per_channel; $i++) {
+	if($xml)
+	{
+	for ($i = 0; $i <= $epg_entries_per_channel; $i++){
 
-	///////////////////////////////////////////////
 	if(!isset($xml->e2event[$i]->e2eventtitle) or $xml->e2event[$i]->e2eventtitle == ""){ $xml->e2event[$i]->e2eventtitle = ""; }
 	
 	// if no title dont write in database
-	if($xml->e2event[$i]->e2eventtitle == "" ) {
-	
-	} else {
-	
+	if($xml->e2event[$i]->e2eventtitle != "")
+	{
 	// define search line
 	$e2eventtitle = utf8_decode($xml->e2event[$i]->e2eventtitle);
 	$title_enc = rawurlencode($xml->e2event[$i]->e2eventtitle);
@@ -111,7 +106,8 @@ if ($xml) {
 	if($last_epg < $e2eventstart)
 	{
 	
-	mysqli_query($dbmysqli, "INSERT INTO `epg_data` (
+	mysqli_query($dbmysqli, "INSERT INTO `epg_data`
+	(
 	e2eventtitle, 
 	title_enc, 
 	e2eventservicename, 
@@ -147,9 +143,7 @@ if ($xml) {
 	crawler_time, 
 	hash, 
 	channel_hash
-	)
-	VALUES 
-	(
+	) VALUES (
 	'$e2eventtitle', 
 	'$title_enc', 
 	'$e2eventservicename', 
@@ -202,6 +196,7 @@ if ($xml) {
 	$sql = mysqli_query($dbmysqli, "SELECT `e2eventend` FROM `epg_data` ORDER BY `e2eventend` DESC LIMIT 0 , 1");
 	$result = mysqli_fetch_assoc($sql);
 	$last_epg = $result['e2eventend'];
+	
 	mysqli_query($dbmysqli, "UPDATE `settings` SET `last_epg` = '$last_epg' WHERE `id` = '0' ");
 	
 	// reset saved search
@@ -210,9 +205,14 @@ if ($xml) {
 	// set epg crawler not working
 	mysqli_query($dbmysqli, "UPDATE `settings` SET `epg_crawler_activ` = '0' ");
 	
+	$sql = mysqli_query($dbmysqli, "SELECT COUNT(id) FROM `epg_data` WHERE `channel_hash` LIKE '".$channel_hash."' ");
+	$result = mysqli_fetch_row($sql);
+	$summary = $result[0];
+	
 	// answer for ajax
-	header('Content-Type: text/event-stream');
-	header('Cache-Control: no-cache');
-	echo "data:done";
+	$json['status'] = 'done';
+	$json['summary'] = $summary;
+	
+	echo json_encode($json);
 
 ?>

@@ -13,16 +13,15 @@ include("../inc/dashboard_config.php");
 	
 	} else {
 	
-	$remote_request = $url_format.'://'.$box_ip.'/web/remotecontrol?command='.$command.'';
+	$remote_request = $url_format.'://'.$box_ip.'/web/remotecontrol?command='.$command.$session_part_2;
 	$switch_power = @file_get_contents($remote_request, false, $webrequest);
 	
-	$xmlfile = $url_format.'://'.$box_ip.'/web/powerstate';
-	
+	$xmlfile = $url_format.'://'.$box_ip.'/web/powerstate'.$session_part;
 	$power_status = @file_get_contents($xmlfile, false, $webrequest);
-
 	$xml = simplexml_load_string($power_status);
 
 	if(!isset($xml->e2instandby) or $xml->e2instandby == ""){ $xml->e2instandby = "";
+	
 	// error
  	header('Content-Type: text/event-stream');
 	header('Cache-Control: no-cache');
@@ -37,7 +36,8 @@ include("../inc/dashboard_config.php");
 	$current_status = preg_replace('/\s+/', '', $current_status);
 	
 	// answer for ajax
- 	header('Content-Type: text/event-stream');
+ 	sleep(1);
+	header('Content-Type: text/event-stream');
 	header('Cache-Control: no-cache');
 	echo "data:$current_status";
 	}

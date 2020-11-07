@@ -16,7 +16,7 @@ include("../inc/dashboard_config.php");
 	}
 
 	// get info
-	$xmlfile = $url_format.'://'.$box_ip.'/web/getcurrent';
+	$xmlfile = $url_format.'://'.$box_ip.'/web/getcurrent'.$session_part;
 	$getstatus_request = @file_get_contents($xmlfile, false, $webrequest);
 	$xml = simplexml_load_string($getstatus_request);
 	

@@ -11,7 +11,7 @@
 	if($timer_id != "")
 	{
 	// hide single timer
-if($action == 'hide')
+	if($action == 'hide')
 	{
 	// track keywords
 	$sql = mysqli_query($dbmysqli, "SELECT * FROM `timer` WHERE `id` = '".$timer_id."' ");
@@ -93,7 +93,7 @@ if($action == 'hide')
 	} // unhide single timer
 	
 	// add broadcast to ignore list
-if($action == "ignore")
+	if($action == "ignore")
 	{
 	sleep(1);
 	$timer_id = $_REQUEST['timer_id'];
@@ -136,7 +136,7 @@ if($action == "ignore")
 	} // add broadcast to ignore list
 
 	// delete timer
-if($action == 'delete')
+	if($action == 'delete')
 	{
 	if(!isset($_REQUEST['hash']) or $_REQUEST['hash'] == ""){ $_REQUEST['hash'] = ""; }
 	if(!isset($_REQUEST['delete_from_box']) or $_REQUEST['delete_from_box'] == ""){ $_REQUEST['delete_from_box'] = ""; }
@@ -178,27 +178,28 @@ if($action == 'delete')
 	
 	$webrequest = stream_context_create(array (
 	'http' => array (
+	'method' => 'POST',
 	'header' => 'Authorization: Basic ' . base64_encode("$box_user:$box_password"),
 	'ssl' =>array (
 	'verify_peer' => false,
 	'verify_peer_name' => false,
 	))
 	));
-	$deleteTimer = $url_format.'://'.$box_ip.'/web/timerdelete?sRef='.$e2eventservicereference.'&begin='.$e2eventstart.'&end='.$e2eventend.'';
+	$deleteTimer = $url_format.'://'.$box_ip.'/web/timerdelete?sRef='.$e2eventservicereference.'&begin='.$e2eventstart.'&end='.$e2eventend.$session_part_2;
 	$deleteTimer_request = @file_get_contents($deleteTimer, false, $webrequest);
 	// delete timer from different device
 	
 	} else {
 	
 	// delete from default receiver
-	$deleteTimer = $url_format.'://'.$box_ip.'/web/timerdelete?sRef='.$e2eventservicereference.'&begin='.$e2eventstart.'&end='.$e2eventend.'';
+	$deleteTimer = $url_format.'://'.$box_ip.'/web/timerdelete?sRef='.$e2eventservicereference.'&begin='.$e2eventstart.'&end='.$e2eventend.$session_part_2;
 	$deleteTimer_request = @file_get_contents($deleteTimer, false, $webrequest);
 	}
 	mysqli_query($dbmysqli, "UPDATE `timer` SET `status` = 'waiting' WHERE `id` = '".$timer_id."' AND `device` = '".$device."' ");
 	}
 	
 	// delete timer from database
-if($delete_from_db == '1')
+	if($delete_from_db == '1')
 	{
 	mysqli_query($dbmysqli, "DELETE FROM `timer` WHERE `id` = '".$timer_id."' AND `device` = '".$device."' ");
 	//
@@ -227,7 +228,7 @@ if($delete_from_db == '1')
 	} // device dropdown
 	
 	// unhide
-if($action == 'unhide')
+	if($action == 'unhide')
 	{
 	$sql_5 = "SELECT * FROM `timer` WHERE `expired` = '0' ORDER BY `e2eventstart` ASC, `record_status` ASC"; 
 	
@@ -389,7 +390,7 @@ if($obj->record_location == 'zap_timer' and $obj->status == 'waiting')
 	}
 	}
 	
-	if($imdb_symbol == '1')
+if($imdb_symbol == '1')
 	{
 	$imdb_broadcast = '<a href="https://www.imdb.com/find?ref_=nv_sr_fn&q='.$obj->e2eventtitle.'" target="_blank" title="Info on IMDb">
 	<i class="fa fa-info-circle fa-1x"></i></a>'; 

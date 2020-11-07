@@ -85,7 +85,7 @@ include("../inc/dashboard_config.php");
 	</div>
 	<div class=\"col-md-2\">$date_last</div>
 	<div class=\"col-md-2\">$last_crawl</div>
-	<div class=\"col-md-2\">$sum_entries</div>
+	<div id=\"channel_crawler_summary_$obj->channel_hash\" class=\"col-md-2\">$sum_entries</div>
 	<div class=\"spacer_10\"></div>";
 	}
 	}

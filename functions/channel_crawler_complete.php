@@ -4,25 +4,22 @@ include("../inc/dashboard_config.php");
 
 	$channel_id = $_REQUEST["channel_id"];
 	
-	$xmlfile = $url_format.'://'.$box_ip.'/web/epgservice?sRef='.$channel_id.'';
-	
+	$xmlfile = $url_format.'://'.$box_ip.'/web/epgservice?sRef='.$channel_id.$session_part_2;
 	$getEPG_request = @file_get_contents($xmlfile, false, $webrequest);
-	
 	$xml = simplexml_load_string(preg_replace('/[^\x{0009}\x{000a}\x{000d}\x{0020}-\x{D7FF}\x{E000}-\x{FFFD}]+/u', ' ', $getEPG_request));
 	
 	$sql = mysqli_query($dbmysqli, "SELECT `e2eventstart` FROM `epg_data` WHERE `e2eventservicereference` LIKE '".$channel_id."' ORDER BY `e2eventstart` DESC");
 	$result = mysqli_fetch_assoc($sql);
 	$last_epg = $result['e2eventstart'];
 
-if($xml){
+	if($xml){
 
-	for($i = 0; $i <= $epg_entries_per_channel; $i++){
-
+	for($i = 0; $i <= $epg_entries_per_channel; $i++)
+	{
 	if(!isset($xml->e2event[$i]->e2eventtitle) or $xml->e2event[$i]->e2eventtitle == ""){ $xml->e2event[$i]->e2eventtitle = ""; }
 	
 	if($xml->e2event[$i]->e2eventtitle != "")
 	{
-	// define search line
 	$e2eventtitle = utf8_decode($xml->e2event[$i]->e2eventtitle);
 	$title_enc = rawurlencode($xml->e2event[$i]->e2eventtitle);
 	$e2eventservicename = utf8_decode($xml->e2event[$i]->e2eventservicename);
@@ -95,9 +92,10 @@ if($xml){
 	if(!isset($channel_hash) or $channel_hash == ""){ $channel_hash = ""; }
 	
 	// if last epg <
-	if($last_epg < $e2eventstart){
-	
-	$sql = mysqli_query($dbmysqli, "INSERT INTO `epg_data` (
+	if($last_epg < $e2eventstart)
+	{
+	mysqli_query($dbmysqli, "INSERT INTO `epg_data` 
+	(
 	e2eventtitle, 
 	title_enc, 
 	e2eventservicename, 
@@ -133,9 +131,7 @@ if($xml){
 	crawler_time, 
 	hash, 
 	channel_hash
-	)
-	VALUES 
-	(
+	) VALUES (
 	'$e2eventtitle', 
 	'$title_enc', 
 	'$e2eventservicename', 
@@ -171,10 +167,13 @@ if($xml){
 	'$crawler_time', 
 	'$hash', 
 	'$channel_hash'
-	)");
+	)"
+	);
 	}
-	}
-	}
+
+	} // for i
+	
+	} // xml
 	
 	if(!isset($channel_hash) or $channel_hash == ""){ $channel_hash = ""; }
 	
@@ -184,12 +183,23 @@ if($xml){
 	$last_epg = $result['e2eventend'];
 	
 	// last crawl / last entry
-	$sql = mysqli_query($dbmysqli, "UPDATE `channel_list` SET `last_crawl` = '".$time."', `last_epg` = '".$last_epg."' WHERE `channel_hash` = '".$channel_hash."' ");
+	mysqli_query($dbmysqli, "UPDATE `channel_list` SET `last_crawl` = '".$time."', `last_epg` = '".$last_epg."' WHERE `channel_hash` = '".$channel_hash."' ");
 	
 	// update last epg timestamp // crawler time end
-	$sql = mysqli_query($dbmysqli, "SELECT `e2eventend` FROM `epg_data` ORDER BY `e2eventend` DESC LIMIT 0 , 1");
-	$result = mysqli_fetch_assoc($sql);
-	$sql = mysqli_query($dbmysqli, "UPDATE `settings` SET `last_epg` = '".$last_epg."' WHERE `id` = '0' ");
+	mysqli_query($dbmysqli, "UPDATE `settings` SET `last_epg` = '".$last_epg."' WHERE `id` = '0' ");
+	
+	// update channel name
+	if(!isset($e2eventservicename) or $e2eventservicename == ""){ $e2eventservicename = ""; }
+	if(!isset($servicename_enc) or $servicename_enc == ""){ $servicename_enc = ""; }
+	if(!isset($e2eventservicereference) or $e2eventservicereference == ""){ $e2eventservicereference = ""; }
+	
+	if($e2eventservicename != '' and $servicename_enc != '' and $e2eventservicereference != '')
+	{
+	mysqli_query($dbmysqli, "UPDATE `channel_list` SET 
+	`e2servicename` = '".$e2eventservicename."', 
+	`servicename_enc` = '".$servicename_enc."' 
+	WHERE `e2servicereference` = '".$e2eventservicereference."' ");
+	}
 	
 	} // if last epg <
 	

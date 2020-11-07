@@ -61,7 +61,7 @@ include("../inc/dashboard_config.php");
 	{
 	mysqli_query($dbmysqli, "TRUNCATE `all_services`");
 	
-	$xmlfile = $url_format.'://'.$box_ip.'/web/getservices?sRef=1:7:1:0:0:0:0:0:0:0:%20ORDER%20BY%20name';
+	$xmlfile = $url_format.'://'.$box_ip.'/web/getservices?sRef=1:7:1:0:0:0:0:0:0:0:%20ORDER%20BY%20name'.$session_part_2;
 	
 	$get_services_request = @file_get_contents($xmlfile, false, $webrequest);
 	
@@ -148,7 +148,7 @@ include("../inc/dashboard_config.php");
 	
 	if($all_services_list == "" and $service == "search"){ $all_services_list = "No channels found.."; }
 	
-	if($all_services_list == "" and $service != "search"){ $all_services_list = "Service list in database is empty. Click button to copy services from Receiver.."; }
+	if($all_services_list == "" and $service != "search"){ $all_services_list = "Servicelist in database is empty. Click button 'Get services from Receiver' to get it."; }
 	
 	if(!isset($services_total) or $services_total == "") { $services_total = ""; }
 	

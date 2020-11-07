@@ -11,19 +11,23 @@ include("../inc/dashboard_config.php");
 	// calculate filesize
 	function formatBytes($size, $precision = 2)
 	{
+	if(is_numeric($size))
+	{
 	$base = log($size, 1024);
 	$suffixes = array('', 'kB', 'MB', 'GB', 'TB');
 	return round(pow(1024, $base - floor($base)), $precision) .' '. $suffixes[floor($base)];
 	}
+	}
 
 	// recorded files default receiver
-	if($device == "0"){
-	$xmlfile = $url_format.'://'.$box_ip.'/web/movielist?dirname='.$record_location.'';
+	if($device == "0")
+	{
+	$xmlfile = $url_format.'://'.$box_ip.'/web/movielist?dirname='.$record_location.$session_part_2;
 	$getRecords_request = @file_get_contents($xmlfile, false, $webrequest);
 	$xml = simplexml_load_string($getRecords_request);
 	
 	// storage info
-	$xmlfile = $url_format.'://'.$box_ip.'/web/deviceinfo';
+	$xmlfile = $url_format.'://'.$box_ip.'/web/deviceinfo'.$session_part;
 	$storageInfo_request = @file_get_contents($xmlfile, false, $webrequest);
 	$xml2 = simplexml_load_string($storageInfo_request);
 	for ($i = 0; $i <= 10; $i++)
@@ -40,7 +44,7 @@ include("../inc/dashboard_config.php");
 	} // storage info
 	}
 	
-	// recorded files other device
+	// recorded files different device
 	if($device != "0"){
 	$sql = mysqli_query($dbmysqli, "SELECT * FROM `device_list` WHERE `id` = '".$device."' ");
 	$result = mysqli_fetch_assoc($sql);
@@ -51,6 +55,7 @@ include("../inc/dashboard_config.php");
 	// Webrequest
 	$rl_webrequest = stream_context_create(array (
 	'http' => array (
+	'method' => 'POST',
 	'header' => 'Authorization: Basic ' . base64_encode("$box_user:$box_password"),
 	'ssl' =>array (
 	'verify_peer' => false,

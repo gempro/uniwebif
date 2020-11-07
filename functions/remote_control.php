@@ -7,10 +7,11 @@ include("../inc/dashboard_config.php");
 	
 	if($command != "")
 	{
-	$rc_command = $url_format.'://'.$box_ip.'/web/remotecontrol?command='.$command.'';
+	$rc_command = $url_format.'://'.$box_ip.'/web/remotecontrol?command='.$command.$session_part_2;
 	$send_rc_command = @file_get_contents($rc_command, false, $webrequest);
 	$xml = simplexml_load_string($send_rc_command);
 	$e2result = $xml->e2result;
+	sleep(1);
 	echo $e2result;
 	exit;
 	}
@@ -43,6 +44,7 @@ include("../inc/dashboard_config.php");
   <div class="spacer_10"></div>
   <button type="button" class="btn btn-default btn-xs" onclick="remote_control('108')" title="Textpage down"><i class="glyphicon glyphicon-arrow-down"></i></button>
   <button type="button" class="btn btn-default btn-xs" onclick="remote_control('388')" title="Teletext">Text</button>
+  <button type="button" class="btn btn-default btn-xs" onclick="remote_control('352')" title="OK">OK</button>
   <button type="button" class="btn btn-danger btn-xs" onclick="remote_control('174')" title="Exit">Exit</button>
   <button type="button" class="btn btn-default btn-xs" onclick="remote_control('103')" title="Textpage up"><i class="glyphicon glyphicon-arrow-up"></i></button>
 </div>

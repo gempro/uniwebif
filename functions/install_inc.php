@@ -59,17 +59,35 @@ session_start();
 	if($receiver_user == ''){ echo 'Receiver User missing<br>'; }
 	if($receiver_pass == ''){ echo 'Receiver Password missing<br>'; }
 	
+	// check if session is needed
+//	$webrequest = stream_context_create(array (
+//	'http' => array (
+//	'method' => 'POST',
+//	'header' => 'Authorization: Basic ' . base64_encode("$box_user:$box_password"),
+//	'ssl' =>array (
+//	'verify_peer' => false,
+//	'verify_peer_name' => false,
+//	))
+//	));
+	
+	$xmlfile = $url_format.'://'.$receiver_ip.'/web/session?sessionid=0';
+	$session_info = @file_get_contents($xmlfile, false, $webrequest);
+	$e2sessionid = simplexml_load_string($session_info);
+	
+	if($e2sessionid != ''){ $session_part = '?sessionid='.$e2sessionid; } else { $session_part = ''; }
+	
 	if($receiver_ip != '' and $receiver_user != '' and $receiver_pass != '')
 	{
 	$webrequest = stream_context_create(array (
 	'http' => array (
+	'method' => 'POST',
 	'header' => 'Authorization: Basic ' . base64_encode("$receiver_user:$receiver_pass"),
 	'ssl' =>array (
 	'verify_peer' => false,
 	'verify_peer_name' => false,
 	))
 	));
-	$request = $url_format.'://'.$receiver_ip.'/web/powerstate';
+	$request = $url_format.'://'.$receiver_ip.'/web/powerstate'.$session_part;
 	$status = @file_get_contents($request, false, $webrequest);
 	
 	if($status == TRUE){
@@ -85,7 +103,6 @@ session_start();
 	echo 'Connection Error!'; }
 	}
 	}
-	
 
 	if($setting == 'install'){
 	

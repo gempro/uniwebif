@@ -34,7 +34,7 @@
 	$hidden_timer = $result[0];
 	
 	// timer on receiver
-	$xmlfile = ''.$url_format.'://'.$box_ip.'/web/timerlist';
+	$xmlfile = ''.$url_format.'://'.$box_ip.'/web/timerlist'.$session_part;
 	$getTimer = @file_get_contents($xmlfile, false, $webrequest);
 	$sum = preg_match_all("#<e2timerlist>(.*?)</e2timerlist>#si", $getTimer, $match_sum);
 	$timer_summary = preg_match_all("#<e2timer>(.*?)</e2timer>#si", $match_sum[0][0]);

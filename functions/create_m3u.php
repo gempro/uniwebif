@@ -22,7 +22,7 @@ include("../inc/dashboard_config.php");
 	{
 	$next_del_time = $time + 86400;
 	exec('rm -f ../tmp/stream-*');
-	$sql = mysqli_query($dbmysqli, "UPDATE `settings` SET `del_m3u_time` = '".$next_del_time."' WHERE `id` = '0' ");
+	mysqli_query($dbmysqli, "UPDATE `settings` SET `del_m3u_time` = '".$next_del_time."' WHERE `id` = '0' ");
 	}
 	exit;
 	}
@@ -37,7 +37,7 @@ include("../inc/dashboard_config.php");
 	$url_format = "http";
 	}
 	
-	$stream_adress = ''.$url_format.'://'.$box_user.':'.$box_password.'@'.$box_ip.'/file?file='.$raw_file.'';
+	$stream_adress = $url_format.'://'.$box_user.':'.$box_password.'@'.$box_ip.'/file?file='.$raw_file.$session_part_2;
 		
 	$content = '#EXTM3U
 #EXTINF:-1,'.$record_file.'

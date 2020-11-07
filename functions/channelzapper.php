@@ -63,6 +63,7 @@
 	// Webrequest
 	$webrequest = stream_context_create(array (
 	'http' => array (
+	'method' => 'POST',
 	'header' => 'Authorization: Basic ' . base64_encode("$box_user:$box_password"),
 	'ssl' =>array (
 	'verify_peer' => false,
@@ -72,7 +73,7 @@
 	}
 	
 	// check power status
-	$xmlfile = $url_format.'://'.$box_ip.'/web/powerstate';
+	$xmlfile = $url_format.'://'.$box_ip.'/web/powerstate'.$session_part;
 	$power_command = @file_get_contents($xmlfile, false, $webrequest);
 	$xml = simplexml_load_string($power_command);
 	if(!isset($xml->e2instandby) or $xml->e2instandby == ""){ $xml->e2instandby = ""; }
@@ -81,7 +82,7 @@
 	// turn on Receiver
 	if(preg_match("/\btrue\b/i", $power_status))
 	{
-	$turn_on_request = $url_format.'://'.$box_ip.'/web/powerstate?newstate=0';
+	$turn_on_request = $url_format.'://'.$box_ip.'/web/powerstate?newstate=0'.$session_part_2;
 	$turn_on = @file_get_contents($turn_on_request, false, $webrequest);
 	}	
 
@@ -96,13 +97,13 @@
 	{
 	$e2servicereference = $obj->e2servicereference;
 	
-	$zap_request = $url_format.'://'.$box_ip.'/web/zap?sRef='.$e2servicereference.'';
+	$zap_request = $url_format.'://'.$box_ip.'/web/zap?sRef='.$e2servicereference.$session_part_2;
 	$zap_channel = @file_get_contents($zap_request, false, $webrequest);
 	
 	sleep($cz_wait_time);
 	
 	//save provider from channel in db
-	$xmlfile = $url_format.'://'.$box_ip.'/web/getcurrent';
+	$xmlfile = $url_format.'://'.$box_ip.'/web/getcurrent'.$session_part;
 	$request = @file_get_contents($xmlfile, false, $webrequest);
 	$xml = simplexml_load_string($request);
 	
@@ -125,7 +126,7 @@
 	sleep(10);
 	
 	// turn off Receiver
-	$turn_off_request = $url_format.'://'.$box_ip.'/web/powerstate?newstate=0';
+	$turn_off_request = $url_format.'://'.$box_ip.'/web/powerstate?newstate=0'.$session_part_2;
 	$turn_off = @file_get_contents($turn_off_request, false, $webrequest);
 
 	// answer for ajax

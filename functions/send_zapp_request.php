@@ -21,7 +21,8 @@ include("../inc/dashboard_config.php");
 	sleep(1);
 	
 	// send to different device
-	if($device != "0"){
+	if($device != "0")
+	{
 	$sql = mysqli_query($dbmysqli, "SELECT * FROM `device_list` WHERE `id` = '".$device."' ");
 	$result = mysqli_fetch_assoc($sql);
 	$box_ip = $result['device_ip'];
@@ -31,14 +32,14 @@ include("../inc/dashboard_config.php");
 	// Webrequest
 	$webrequest = stream_context_create(array (
 	'http' => array (
+	'method' => 'POST',
 	'header' => 'Authorization: Basic ' . base64_encode("$box_user:$box_password"),
 	'ssl' =>array (
 	'verify_peer' => false,
 	'verify_peer_name' => false,
 	))
 	));
-	
-	$zapp_request = $url_format.'://'.$box_ip.'/web/zap?sRef='.$e2servicereference.'';
+	$zapp_request = $url_format.'://'.$box_ip.'/web/zap?sRef='.$e2servicereference.$session_part_2;
 	$request = @file_get_contents($zapp_request, false, $webrequest);
 	
 	// answer for ajax
@@ -46,10 +47,11 @@ include("../inc/dashboard_config.php");
 	
 	} else {
 	
-	$zapp_request = $url_format.'://'.$box_ip.'/web/zap?sRef='.$e2servicereference.'';
+	$zapp_request = $url_format.'://'.$box_ip.'/web/zap?sRef='.$e2servicereference.$session_part_2;
 	$request = @file_get_contents($zapp_request, false, $webrequest);
 	
 	// answer for ajax
 	echo "data:done";
 	}
+	
 ?>
