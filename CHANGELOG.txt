@@ -1,3 +1,13 @@
+Update 11/2020
+
++ Session function for Webinterfaces with activated Anti-Hijacking added
++ Zap timer function in 'Timerlist' added
++ Grouping function for 'Saved search' list added
++ Search function in 'All services' list added
++ Some bugs fixed
+
+----------------------------------------------------------------------------------------------------------------
+
 1.9
 
 + Channelzapper could be used for another Receiver in network
