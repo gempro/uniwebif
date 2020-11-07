@@ -86,6 +86,7 @@
 	// Webrequest
 	$webrequest = stream_context_create(array (
 	'http' => array (
+	'method' => 'POST',
 	'header' => 'Authorization: Basic ' . base64_encode("$box_user:$box_password"),
 	'ssl' =>array (
 	'verify_peer' => false,
@@ -95,7 +96,19 @@
 	
 	// time date
 	$time = time();
-	//$thedate = date("d.m.Y");
-	//$thetime = date("H:i:s");
+
+	// check if session is needed
+	$xmlfile = $url_format.'://'.$box_ip.'/web/session?sessionid=0';
+	$session_info = @file_get_contents($xmlfile, false, $webrequest);
+	$e2sessionid = simplexml_load_string($session_info);
+	
+	if($e2sessionid != '')
+	{ 
+	$session_part = '?sessionid='.$e2sessionid; 
+	$session_part_2 = '&sessionid='.$e2sessionid; 
+	} else { 
+	$session_part = ''; 
+	$session_part_2 = ''; 
+	}
 	
 ?>

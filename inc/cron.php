@@ -14,38 +14,47 @@
 	
 	// start search crawler / save timer in db
 	$last_crawl_time = $settings["last_search_crawl"];
-	//$time_to_crawl = $last_crawl_time + 0;
+
 	if($settings["search_crawler"] == '1')
 	{
 	if($last_crawl_time < $time)
 	{
 	$save_timer_in_db = file_get_contents(''.$url_format.'://'.$server_ip.'/'.$script_folder.'/functions/save_timer_in_db.php');
-	$sql = mysqli_query($dbmysqli, "UPDATE `settings` SET `last_search_crawl` = '$time'");
+	mysqli_query($dbmysqli, "UPDATE `settings` SET `last_search_crawl` = '$time'");
 	}
 	}
 	
 	// hide expired timer from database
 	if($settings["hide_old_timer"] == '1')
 	{
-	$hide_old_timer = mysqli_query($dbmysqli, "UPDATE `timer` SET `expired` = '1' WHERE `e2eventend` < '$time' AND `expired` NOT LIKE '1' ");
+	mysqli_query($dbmysqli, "UPDATE `timer` SET `expired` = '1' WHERE `e2eventend` < '".$time."' AND `expired` NOT LIKE '1' ");
 	}
 	
 	// delete expired timer from database
 	if($settings["delete_old_timer"] == '1')
 	{
 	$del_period = $time - 604800;
-	$delete_old_timer = mysqli_query($dbmysqli, "DELETE FROM `timer` WHERE `e2eventend` < '$del_period' ");
+	mysqli_query($dbmysqli, "DELETE FROM `timer` WHERE `e2eventend` < '".$del_period."' ");
 	}
 	
 	// delete expired timer from receiver
 	if($settings["delete_receiver_timer"] == '1')
 	{
-	$delete_timer_request = $url_format.'://'.$box_ip.'/web/timercleanup?cleanup=true';
+	// count timer
+	$xmlfile = $url_format.'://'.$box_ip.'/web/timerlist'.$session_part;
+	$getTimer = file_get_contents($xmlfile, false, $webrequest);
+	$sum = preg_match_all("#<e2timerlist>(.*?)</e2timerlist>#si", $getTimer, $match_sum);
+	$timer_summary = preg_match_all("#<e2timer>(.*?)</e2timer>#si", $match_sum[0][0]);
+	
+	if($timer_summary != 0)
+	{
+	$delete_timer_request = $url_format.'://'.$box_ip.'/web/timercleanup?cleanup=true'.$session_part_2;
 	$delete_receiver_timer = file_get_contents($delete_timer_request, false, $webrequest);
+	}
 	}
 	
 	// delete expired timer from additional receiver
-	if($settings["delete_further_receiver_timer"] == "1")
+	if($settings["delete_further_receiver_timer"] == '1')
 	{
 	$sql = "SELECT * FROM `device_list`";
 	if ($result = mysqli_query($dbmysqli,$sql))
@@ -58,13 +67,14 @@
 	$device_url_format = $obj->url_format;
 	$device_webrequest = stream_context_create(array (
 	'http' => array (
+	'method' => 'POST',
 	'header' => 'Authorization: Basic ' . base64_encode("$device_user:$device_password"),
 	'ssl' =>array (
 	'verify_peer' => false,
 	'verify_peer_name' => false,
 	))
 	));
-	$delete_device_timer_request = $device_url_format.'://'.$device_ip.'/web/timercleanup?cleanup=true';
+	$delete_device_timer_request = $device_url_format.'://'.$device_ip.'/web/timercleanup?cleanup=true'.$session_part_2;
 	$delete_device_receiver_timer = file_get_contents($delete_device_timer_request, false, $device_webrequest);
 	sleep(1);
 	}
@@ -75,14 +85,14 @@
 	// delete duplicate timer
 	//$sql = mysqli_query($dbmysqli, "DELETE FROM timer USING timer, timer AS Dup WHERE NOT timer.id = Dup.id AND timer.id > Dup.id AND timer.timer_request = Dup.timer_request");
 	
-	$sql = mysqli_query($dbmysqli, "OPTIMIZE TABLE `timer`");
-	$sql = mysqli_query($dbmysqli, "OPTIMIZE TABLE `saved_search`");
+	mysqli_query($dbmysqli, "OPTIMIZE TABLE `timer`");
+	mysqli_query($dbmysqli, "OPTIMIZE TABLE `saved_search`");
 	
 	// delete old epg
 	if($settings["delete_old_epg"] == '1')
 	{
 	$time_to_delete = $time - $del_time;
-	$delete_epg = mysqli_query($dbmysqli, "DELETE FROM `epg_data` WHERE `e2eventstart` < '$time_to_delete'");
+	mysqli_query($dbmysqli, "DELETE FROM `epg_data` WHERE `e2eventstart` < '".$time_to_delete."' ");
 	}
 	
 	// update record status if search crawler is deactivated
@@ -108,7 +118,7 @@
 	{
 	$record_status = 'b_incoming'; }
 
-	$sql = mysqli_query($dbmysqli, "UPDATE `timer` SET `record_status` = '".$record_status."' WHERE `id` = '$id' "); }
+	mysqli_query($dbmysqli, "UPDATE `timer` SET `record_status` = '".$record_status."' WHERE `id` = '".$id."' "); }
 	}
 	}
 	}
@@ -123,14 +133,14 @@
 	// start epg crawler
 	if($settings["epg_crawler"] == '1' and $settings["crawler_timestamp"] < $time)
 	{
-	$sql = mysqli_query($dbmysqli, "UPDATE `settings` SET `epg_crawler_activ` = '1'");
+	mysqli_query($dbmysqli, "UPDATE `settings` SET `epg_crawler_activ` = '1' WHERE `id` = '0' ");
 	
 	// dummy timer
 	$crawler_timestamp = $settings["crawler_timestamp"] - 300;
-	$sql = mysqli_query($dbmysqli, "UPDATE `settings` SET `dummy_timer_current` = '$crawler_timestamp' WHERE `id` = '0' ");
+	mysqli_query($dbmysqli, "UPDATE `settings` SET `dummy_timer_current` = '".$crawler_timestamp."' WHERE `id` = '0' ");
 	
 	$next_crawl = $settings["crawler_timestamp"] + 86400;
-	$sql = mysqli_query($dbmysqli, "UPDATE `settings` SET `crawler_timestamp` = '$next_crawl' WHERE `id` = '0' ");
+	mysqli_query($dbmysqli, "UPDATE `settings` SET `crawler_timestamp` = '".$next_crawl."' WHERE `id` = '0' ");
 	
 	sleep(1);
 	
@@ -155,4 +165,5 @@
 	$delete_m3u = $url_format.'://'.$server_ip.'/'.$script_folder.'/functions/create_m3u.php?action=delete';
 	$delete_request = file_get_contents($delete_m3u);
 	}
+	
 ?>
