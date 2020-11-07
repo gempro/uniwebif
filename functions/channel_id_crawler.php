@@ -4,7 +4,7 @@ include("../inc/dashboard_config.php");
 
 	sleep(1);
 
-	$sql = mysqli_query($dbmysqli, "TRUNCATE `channel_list`");
+	mysqli_query($dbmysqli, "TRUNCATE `channel_list`");
 
 	$sql = "SELECT * FROM `bouquet_list` WHERE `crawl` = '1' ";
 	
@@ -13,7 +13,7 @@ include("../inc/dashboard_config.php");
 	while ($obj = mysqli_fetch_object($result)){	
 	{
 
-	$xmlfile = $url_format.'://'.$box_ip.'/web/getservices?sRef='.$obj->e2servicereference.'';
+	$xmlfile = $url_format.'://'.$box_ip.'/web/getservices?sRef='.$obj->e2servicereference.$session_part_2;
 	$channel_ID_request = @file_get_contents($xmlfile, false, $webrequest);
 	$xml = simplexml_load_string($channel_ID_request);
 	
@@ -23,7 +23,6 @@ include("../inc/dashboard_config.php");
 
 	if(!isset($xml->e2service[$i]->e2servicename) or $xml->e2service[$i]->e2servicename == ""){ $xml->e2service[$i]->e2servicename = ""; }
 	
-	//
 	if($xml->e2service[$i]->e2servicename != "")
 	{
 	// define searchline
@@ -34,7 +33,7 @@ include("../inc/dashboard_config.php");
 	// channel hash
 	$channel_hash = hash('md4',$e2servicename);
 	
-	$sql = mysqli_query($dbmysqli, "INSERT INTO `channel_list` (e2servicename, servicename_enc, e2servicereference, e2providername, channel_hash) values ('$e2servicename', '$servicename_enc', '$e2servicereference', '-', '$channel_hash')");
+	mysqli_query($dbmysqli, "INSERT INTO `channel_list` (e2servicename, servicename_enc, e2servicereference, e2providername, channel_hash) values ('$e2servicename', '$servicename_enc', '$e2servicereference', '-', '$channel_hash')");
 	}}}
 	}}}
 	// answer for ajax
@@ -57,5 +56,6 @@ include("../inc/dashboard_config.php");
 	//channel_list AS Dup WHERE NOT channel_list.id = Dup.id AND channel_list.id > Dup.id AND channel_list.e2servicereference = Dup.e2servicereference");
 	
 	// delete broken channels
-	$sql = mysqli_query($dbmysqli, "DELETE FROM `channel_list` WHERE `e2servicename` = '<n/a>' OR `e2servicename` = '.' ");
+	mysqli_query($dbmysqli, "DELETE FROM `channel_list` WHERE `e2servicename` = '<n/a>' OR `e2servicename` = '.' ");
+	
 ?>
