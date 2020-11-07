@@ -288,7 +288,7 @@ function install(){
           <div class="col-md-12" align="center">
             <div id="steps" style="display:none;">
               <p>User uniwebif with password uniwebif, USAGE rights for database `uniwebif` created.. <i class='glyphicon glyphicon-ok green'></i></p>
-              <p>Database `uniwebif` with 9 tables created.. <i class='glyphicon glyphicon-ok green'></i></p>
+              <p>Database `uniwebif` with 12 tables created.. <i class='glyphicon glyphicon-ok green'></i></p>
               <p>Bouquets and Record locations added to database.. <i class='glyphicon glyphicon-ok green'></i></p>
               <hr>
               <p>Please do follow steps now:<br>
@@ -296,8 +296,8 @@ function install(){
                 <strong>1.</strong> Open your FTP program and make CHMOD 755 for folder /uniwebif/<strong>tmp</strong><br>
                 When you want stream a recorded file from Receiver, the m3u playlist file will be stored there.<br>
               <p><strong>2.</strong> Open the Bouquet list in Browser - <a href="bouquet_list.php" target="_blank">Link</a> <br>
-                Select the Bouqet which includes channels, you wanna have the EPG from.<br>
-                After selecting open the menue "Crawler Tools" and click <b>"Crawl channel ID's"</b>.<br>
+                Select the bouqet which includes channels, you wanna have the EPG from.<br>
+                After selecting, open the menue "Crawler Tools" and click <b>"Crawl channel ID's"</b>.<br>
                 Click confirm button to start.<br>
                 Now the channels from the selected Bouquet are in database.<br>
                 <br>
