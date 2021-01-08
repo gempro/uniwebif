@@ -42,6 +42,7 @@ function open_bouquet_settings_btn(){
 
 // open info broadcast_list_desc
 function broadcast_list_desc(id){
+	
 	var this_id = id.replace(/broadcast_/g, "");
 	animatedcollapse.addDiv('broadcast_btn_'+this_id, 'fade=1,height=auto');
 	animatedcollapse.init()
@@ -52,6 +53,7 @@ function broadcast_list_desc(id){
 function broadcast_main(id){
 	
 	$("#broadcast_main_"+id).html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
+	
 	$.post("functions/broadcast_list_main.php",
 	{
 	time: id
@@ -81,6 +83,7 @@ function broadcast_show_time(id){
 	}
 	$("#show_time").attr('data-toggle', 'tab');
 	$("#broadcast_browse_time").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
+	
 	$.post("functions/broadcast_list_main.php",
 	{
 	time: id,
@@ -194,6 +197,7 @@ if(document.querySelector('html').clientWidth < 830){
 $(function(){
 	statusbar_loop();
 	function statusbar_loop(){
+	
 	$.post("functions/statusbar.php?t="+(new Date().getTime()),
 	function(data){
 	var obj = JSON.parse(data);
@@ -213,7 +217,7 @@ $(function(){
 	| +"+obj[0].time_remaining+" of "+obj[0].time_complete+" min | <input type=\"text\" id=\"sb_service\" name='"+e2eventservicename+"' value='"+e2servicereference+"'\
 	style=\"display:none;\">\
 	<strong>"+e2eventservicename+"</strong></div>\
-	<div id=\"row2\">"+obj[0].e2videowidth+" "+obj[0].e2videoheight+"</div>\
+	<div id=\"row2\">"+obj[0].e2videowidth+"p x "+obj[0].e2videoheight+"p</div>\
 	<div style=\"clear:both\"></div>\
 	</div>");
 	} else {
@@ -255,6 +259,7 @@ $(function(){
 	var service_name = $("#sb_service").attr('name');
 	
 	$("#sb-modal-header*").html(service_name);
+	
 	$.post("functions/modal_info.php",
 	{
 	e2servicereference: e2servicereference
@@ -294,6 +299,7 @@ $(function(){
 		   
 	var remote_modal = new RModal(document.getElementById('remote_modal'), {
 	beforeOpen: function(next) {
+	
 	$.post("functions/remote_control.php",
 	function(data){
 	$("#rc_frame").html(data);
@@ -333,6 +339,7 @@ $(function(){
 	var service_name = $("#quickpanel_dropdown option:selected").text();
 	
 	$("#quickpanel-modal-header*").html(service_name);
+	
 	$.post("functions/modal_info.php",
 	{
 	e2servicereference: service_reference
@@ -376,6 +383,7 @@ function broadcast_timer(id,action){
 	var device = $("#broadcast_device_dropdown_"+this_id).val();
 	
 	$("#broadcast_status_timer_"+this_id).html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
+	
 	$.post("functions/send_timer_instant.php",
 	{
 	action: action,
@@ -397,6 +405,7 @@ function broadcast_zap(id,name){
 	
 	$("#broadcast_status_zap_"+this_id).fadeIn();
 	$("#broadcast_status_zap_"+this_id).html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
+	
 	$.post("functions/send_zapp_request.php",
 	{
 	e2servicereference: name,
@@ -416,6 +425,7 @@ function broadcast_change_device(id){
 	
 	var this_id = id.replace(/broadcast_device_dropdown_/g, "");
 	var value = $("#"+id).val();
+	
 	$.post("functions/device_rec_location.php",
 	{
 	device: value
@@ -433,6 +443,7 @@ function searchlist_timer(id,action){
 	var device = $("#searchlist_device_dropdown_"+this_id).val();
 	
 	$("#searchlist_status_timer_"+this_id).html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
+	
 	$.post("functions/send_timer_instant.php",
 	{
 	action: action,
@@ -453,6 +464,7 @@ function searchlist_zap(id,name){
 	
 	$("#searchlist_status_zap_"+this_id+"").fadeIn();
 	$("#searchlist_status_zap_"+this_id+"").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
+	
 	$.post("functions/send_zapp_request.php",
 	{
 	e2servicereference: name,
@@ -472,6 +484,7 @@ function searchlist_change_device(id){
 	
 	var this_id = id.replace(/searchlist_device_dropdown_/g, "");
 	var value = $("#searchlist_device_dropdown_"+this_id).val();
+	
 	$.post("functions/device_rec_location.php",
 	{
 	device: value
@@ -487,6 +500,7 @@ function channel_crawler_zap(id,name){
 	var this_id = id.replace(/channel_crawler_zap_/g, "");
 	$("#channel_crawler_status_zap_"+this_id+"").fadeIn();
 	$("#channel_crawler_status_zap_"+this_id).html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
+	
 	$.post("functions/send_zapp_request.php",
 	{
 	e2servicereference: name,
@@ -502,6 +516,7 @@ function channel_crawler_zap(id,name){
 function show_all(){
 	
 	$("#crawl_separate_list").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\"> EPG data is loading, this could take some time..");
+	
 	$.post("functions/channel_crawler_separate_inc.php",
 	{
 	channel: 'all'
@@ -519,6 +534,7 @@ function show_single_data(){
 	
 	var channel = $("#channel_id").val();
 	$("#crawl_separate_list").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
+	
 	$.post("functions/channel_crawler_separate_inc.php",
 	{
 	channel: channel
@@ -578,6 +594,7 @@ function primetime_main(id){
 	var this_id = id.replace(/primetime_/g, "");
 	$("#primetime_main_"+this_id+"").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
 	$("#pt_status").html("1");
+	
 	$.post("functions/primetime_list_main.php",
 	{
 	action: 'show',
@@ -597,6 +614,7 @@ function primetime_timer(id,action){
 	var device = $("#primetime_device_dropdown_"+this_id).val();
 
 	$("#primetime_status_timer_"+this_id).html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");	
+	
 	$.post("functions/send_timer_instant.php",
 	{
 	action: action,
@@ -617,6 +635,7 @@ function primetime_zap(id,name){
 	
 	$("#primetime_status_zap_"+this_id).fadeIn();
 	$("#primetime_status_zap_"+this_id).html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");	
+	
 	$.post("functions/send_zapp_request.php",
 	{
 	e2servicereference: name,
@@ -635,7 +654,6 @@ function primetime_zap(id,name){
 function set_primetime(){
 	
 	$("#set_status").fadeIn();
-	
 	var time_format = $("#time_format").val();
 	var hh = $("#primetime_hh").val();
 	var mm = $("#primetime_mm").val();
@@ -655,6 +673,7 @@ function set_primetime(){
 	}
 	
 	$("#set_status").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
+	
 	$.post("functions/primetime_list_main.php",
 	{
 	action: 'set',
@@ -673,6 +692,7 @@ function primetime_change_device(id){
 	
 	var this_id = id.replace(/primetime_device_dropdown_/g, "");
 	var value = $("#"+id).val();
+	
 	$.post("functions/device_rec_location.php",
 	{
 	device: value
@@ -686,8 +706,8 @@ function primetime_change_device(id){
 function channelbrowser_main(id){
 	
 	var channel_id = $("#channel_id").val();
-	
 	$("#channelbrowser_main_"+id).html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
+	
 	$.post("functions/channelbrowser_list_main.php",
 	{
 	time: id,
@@ -749,6 +769,7 @@ function channelbrowser_timer(id,action,location){
 	var device = $("#channelbrowser_device_dropdown_"+this_id).val();
 
 	$("#channelbrowser_status_timer_"+this_id).html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");	
+	
 	$.post("functions/send_timer_instant.php",
 	{
 	action: action,
@@ -775,6 +796,7 @@ function channelbrowser_zap(id,name){
 	
 	$("#channelbrowser_status_zap_"+this_id+"").fadeIn();
 	$("#channelbrowser_status_zap_"+this_id).html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
+	
 	$.post("functions/send_zapp_request.php",
 	{
 	e2servicereference: name,
@@ -794,6 +816,7 @@ function channelbrowser_change_device(id){
 	
 	var this_id = id.replace(/channelbrowser_device_dropdown_/g, "");
 	var value = $("#"+id).val();
+	
 	$.post("functions/device_rec_location.php",
 	{
 	device: value
@@ -821,6 +844,7 @@ function timerlist_delete_timer(id,hash){
 	if($("#timerlist_delete_db_"+this_id).is(':checked')){ var delete_from_db = '1'; } else { var delete_from_db = '0'; }
 	
 	$("#timerlist_status_"+this_id).html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
+	
 	$.post("functions/timer_list_inc.php",
 	{
 	action: 'delete',
@@ -864,6 +888,7 @@ function timerlist_delete_timer(id,hash){
 function timerlist_send_timer(id,name,action){
 	
 	var this_id = id.replace(/timerlist_send_timer_btn_/g, "");
+	if(action == 'zap'){ var this_id = id.replace(/timerlist_zap_timer_btn_/g, ""); }
 	var record_location = $("#timerlist_rec_location_"+this_id).text();
 	var device = $("#timerlist_device_no_"+name).val();
 	
@@ -872,6 +897,7 @@ function timerlist_send_timer(id,name,action){
 	}
 	
 	$("#timerlist_status_"+name).html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
+	
 	$.post("functions/send_timer_instant.php",
 	{
 	action: action,
@@ -882,7 +908,6 @@ function timerlist_send_timer(id,name,action){
 	},
 	function(data){
 	var obj = JSON.parse(data);
-	//
 	if(obj[0].conflict == '0'){
 	$("#timerlist_status_"+name).html(obj[0].timer_status);
 	$("#tl_glyphicon_status_"+name+"").attr({style:"color:#5CB85C", title:"sent"});
@@ -891,10 +916,15 @@ function timerlist_send_timer(id,name,action){
 	$("#timerlist_status_"+name).html(obj[0].timer_status);
 	$("#tl_glyphicon_status_"+name+"").attr({style:"color:#F0AD4E", title:"Conflict on Receiver"});
 	}
-	
-	<!---->
 	if(action == 'zap'){ $("#tl_glyphicon_status_m_"+name).attr({class:"fa fa-arrow-up fa-1x", title:"Zap timer", style:"color:#000" }); }
-	<!---->
+	if(obj[0].device_c != ''){ $("#timerlist_inner_"+name).attr({ style:"border: 1px solid "+obj[0].device_c+" !important; lol" }); }
+	
+	if(device != '0'){ 
+	$("#timerlist_send_timer_btn_"+this_id).prop('disabled', true);
+	$("#timerlist_zap_timer_btn_"+this_id).prop('disabled', true);
+	$("#timerlist_hide_timer_btn_"+name).prop('disabled', true);
+	$("#delete_timer_btn_"+name).prop('disabled', true);
+	}
 	
 	load_timer_list_panel();
 	});
@@ -909,6 +939,7 @@ function change_timerlist_device(id,action){
 	
 	if(device_no != 0){
 	$("#rec_location_device_"+this_id).fadeIn();
+	
 	$.post("functions/device_rec_location.php",
 	{
 	location: 'timerlist',
@@ -934,6 +965,7 @@ function timerlist_hide_timer(id,name){
 	if($("#box_"+this_id).is(':checked')){ var checked = '1'; }
 	
 	$("#timerlist_status_"+this_id).html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
+	
 	$.post("functions/timer_list_inc.php",
 	{
 	action: 'hide',
@@ -968,8 +1000,8 @@ function timerlist_hide_timer(id,name){
 function timerlist_unhide_timer(id){
 	
 	var this_id = id.replace(/timerlist_unhide_timer_btn_/g, "");
-
 	$("#timerlist_status_"+this_id).html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
+	
 	$.post("functions/timer_list_inc.php",
 	{
 	action: 'unhide',
@@ -987,8 +1019,10 @@ function timerlist_unhide_timer(id){
 
 // timerlist add to inore list
 function timerlist_ignore(id){
+	
 	var this_id = id.replace(/ignore_timer_btn_/g, "");
 	$("#timerlist_status_"+this_id).html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
+	
 	$.post("functions/timer_list_inc.php",
 	{
 	action: 'ignore',
@@ -1016,8 +1050,8 @@ function timerlist_show_exclude(id){
 function tickerlist_send_timer(id){
 
 	var this_id = id.replace(/tickerlist_send_timer_btn_/g, "");
-
 	$("#tickerlist_send_timer_status_"+this_id).html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
+	
 	$.post("functions/send_timer_instant.php",
 	{
 	hash: this_id,
@@ -1031,6 +1065,7 @@ function tickerlist_send_timer(id){
 
 // reload timerlist
 function reload_timerlist(){
+	
 	$.post("functions/timer_list_inc.php",
 	function(data){
 	$("#selected_box_sum").html("");
@@ -1044,12 +1079,14 @@ function reload_timerlist(){
 
 // timerlist panel
 function select_timer_checkbox(){
+	
 	if(select_all.checked == true){ $("[id^=box]").prop("checked", true); }
 	if(select_all.checked == false){ $("[id^=box]").prop("checked", false); }
 	count_selected();
 }
 //
 function count_selected(){
+	
 	var summary = document.querySelectorAll('input[id^=box]:checked').length;
 	$("#selected_box_sum").html("("+summary+")");
 	if(summary > '0'){ $("#selected_box_sum").fadeIn(500); }
@@ -1167,12 +1204,14 @@ function timerlist_panel(id){
 
 // display record list
 function browse_records(){
+	
 	var storage_info_status = $("#storage_info_status").val();
 	$("#record_list").fadeIn();
 	var id = $("#rec_location").val();
 	var device = $("#select_device").val();
 	if(storage_info_status == '0'){ record_list_panel(device); }
 	$("#record_list").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
+	
 	$.post("functions/record_list_inc.php",
 	{
 	device: device,
@@ -1198,6 +1237,7 @@ function reload_rec_location(){
 	
 	var device = $("#select_device").val();
 	$("#rec_folder_status").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
+	
 	$.post("functions/save_rec_locations.php",
 	{
 	device: device
@@ -1222,6 +1262,7 @@ function create_m3u(id,name){
 	var device = $("#select_device").val();
 	
 	$("#m3u_"+name).html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");	
+	
 	$.post("functions/create_m3u.php",
 	{
 	record_file: id,
@@ -1241,6 +1282,7 @@ function delete_record(id,name){
 	if(confirm('Are you sure?')){
 	var device = $("#select_device").val();
 	$("#del_status_"+name).html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
+	
 	$.post("functions/record_list_inc.php",
 	{
 	action: 'delete',
@@ -1261,7 +1303,9 @@ function delete_record(id,name){
 
 // record list panel
 function record_list_panel(device){
+	
 	var record_location = $("#rec_location").val();
+	
 	$.post("functions/record_list_panel.php",
 	{
 	device: device,
@@ -1322,6 +1366,7 @@ function saved_search_list_save(id){
 	var active = $("#active_"+this_id).val();
 
 	$("#saved_search_list_status_"+this_id).html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
+	
 	$.post("functions/search_list_edit.php",
 	{
 	action: 'save',
@@ -1339,18 +1384,21 @@ function saved_search_list_save(id){
 	},
 	function(data){
 	var obj = JSON.parse(data);
-	$("#last_change_"+this_id).html(obj[0]["last_change"]);
+	$("#last_change_"+this_id).html(obj.last_change);
 	$("#saved_search_list_status_"+this_id).html("<i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i>");
+	$("#search_link_"+this_id).attr({ href:obj.search_link });
 	reload_saved_search_panel();
 	});
 }
 
 // saved search list delete
 function saved_search_list_delete(id){
+	
 	if(confirm('Are you sure?')){
 	var this_id = id.replace(/saved_search_list_delete_btn_/g, "");
 
 	$("#saved_search_list_status_"+this_id).html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");	
+	
 	$.post("functions/search_list_edit.php",
 	{
 	id: this_id,
@@ -1440,6 +1488,7 @@ function crawl_channel_id(){
 	
 	$("#crawl_channel_id_btn").prop('disabled', true);
 	$("#crawl_channel_id_status").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
+	
 	$.post("functions/channel_id_crawler.php",
 	function(data){
 	if(data == 'data:error'){
@@ -1469,6 +1518,7 @@ function crawl_channel_id(){
 function crawl_complete(){
 	
 	$("#crawl_complete_btn").prop('disabled', true);
+	
 	$.post("functions/start_channel_crawler_complete.php",
 	function(data){
 	if(data == 'data:done'){
@@ -1502,17 +1552,15 @@ function reset_crawl_complete_btn(){
 function channel_crawler(id){
 	
 	var this_id = id.replace(/channel_crawler_/g, "");
-
 	$("#channel_crawler_"+this_id).prop('disabled', true);	
 	$("#channel_crawler_status_"+this_id).html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
+	
 	$.post("functions/channel_crawler_separate.php",
 	{
 	channel_hash: this_id
 	},
 	function(data){
-	
-	var obj = JSON.parse(data);
-		
+	var obj = JSON.parse(data);	
 	if(obj.status == 'done'){
 	$("#channel_crawler_status_"+this_id).html("<i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i>");
 	$("#channel_crawler_"+this_id).prop('disabled', false);
@@ -1526,6 +1574,7 @@ function channel_crawler(id){
 function crawl_saved_search(){
 	
 	$("#crawl_search_btn").prop('disabled', true);
+	
 	$.post("functions/save_timer_in_db.php",
 	function(data){
 	if(data == 'data:done'){
@@ -1559,6 +1608,7 @@ function hide_div_crawl_savedsearch(){
 function send_timer(){
 
 	$("#send_timer_btn").prop('disabled', true);
+	
 	$.post("functions/send_timer_to_box.php",
 	{
 	action: 'manual'
@@ -1594,6 +1644,7 @@ function reset_send_timer_btn(){
 function start_channelzapper(){
 	
 	$("#start_channelzapper_btn").prop('disabled', true);
+	
 	$.post("functions/channelzapper.php",
 	{
 	manual: 'yes'
@@ -1634,6 +1685,7 @@ function save_box_settings(){
 	animatedcollapse.hide('save_box_info');
 	
 	$("#save_box_settings_status").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
+	
 	$.post("functions/save_box_settings.php",
 	{
 	box_ip: box_ip,
@@ -1719,6 +1771,7 @@ function save_settings(){
 	var cz_start_channel = $("#channel_id").val();
 
 	$("#save_settings_status").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");	
+	
 	$.post("functions/save_settings.php",
 	{
 	server_ip: server_ip,
@@ -1781,6 +1834,7 @@ function save_settings(){
 function get_receiver_data(){
 
 	$("#save_box_info_status").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
+	
 	$.post("functions/save_rec_locations.php",
 	{
 	device: '0'
@@ -1828,7 +1882,6 @@ function device_list(id,action){
 	var device_ip = $("#device_ip_"+this_id).val();
 	var device_user = $("#device_user_"+this_id).val();
 	var device_password = $("#device_password_"+this_id).val();
-	//var device_record_location = $("#device_record_location_"+this_id).val();
 	var device_color = $("#device_color_"+this_id).val();
 	var url_format = $("#device_url_format_"+this_id).val();
 	if(device_description == '' || device_ip == '' || device_user == ''){ return; }
@@ -1866,7 +1919,6 @@ function device_list(id,action){
 	},
 	function(data){
 	if(data == "data:connection_error"){
-	//$("#device_list_status").html("<i class=\"glyphicon glyphicon-remove fa-1x\" style=\"color:#D9534F\"></i>");
 	$("#device_description").val(device_description);
 	$("#device_ip").val(device_ip);
 	$("#device_user").val(device_user);
@@ -1885,6 +1937,7 @@ function device_list(id,action){
 	alert("Device already exist");
 	return; 
 	}
+	
 	$.post("functions/device_list_inc.php",
 	{
 	action: 'show'
@@ -1900,10 +1953,9 @@ function device_list(id,action){
 function set_crawl_channel(id){
 
 	var this_id = id.replace(/set_crawl_channel_/g, "");
-
 	if($("#"+id).is(':checked')){ var set_crawler = '1'; } else { var set_crawler = '0'; }
-	
 	$("#edit_channel_"+this_id).html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
+	
 	$.post("functions/channel_list_inc.php",
 	{
 	set_crawl: set_crawler,
@@ -1918,10 +1970,9 @@ function set_crawl_channel(id){
 function set_zap_channel(id){
 	
 	var this_id = id.replace(/set_zap_channel_/g, "");
-
 	if($("#"+id).is(':checked')){ var set_zap = '1'; } else { var set_zap = '0'; }
-	
 	$("#edit_channel_"+this_id).html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
+	
 	$.post("functions/channel_list_inc.php",
 	{
 	set_zap: set_zap,
@@ -1937,8 +1988,8 @@ function add_single_channel(){
 
 	var channel_name = $("#channel_name").val();
 	var service_reference = $("#service_reference").val();
-	
 	$("#add_single_channel_status").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
+	
 	$.post("functions/channel_list_inc.php",
 	{
 	action: 'add',
@@ -1956,10 +2007,9 @@ function add_single_channel(){
 function select_bouquet(id){
 	
 	var this_id = id.replace(/save_bouquet_settings_status_/g, "");
-
 	if($("#"+id).is(':checked')){ var crawl_bouquet = '1'; } else { var crawl_bouquet = '0'; }
-	
 	$("#save_bouquet_settings_status_"+this_id).html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
+	
 	$.post("functions/save_bouquet_settings.php",
 	{
 	crawl_bouquet: crawl_bouquet,
@@ -1977,6 +2027,7 @@ function add_custom_bouquet(){
 	var custom_bouquet_title = $("#custom_bouquet_title").val();
 
 	$("#add_custom_bouquet_status").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
+	
 	$.post("functions/add_custom_bouquet.php",
 	{
 	custom_bouquet_url: custom_bouquet_url,
@@ -1992,6 +2043,7 @@ function power_control(id){
 	
 	$("#pc"+id).fadeIn();
 	$("#pc"+id).html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
+	
 	$.post("functions/power_control.php",
 	{
 	command: id
@@ -2019,6 +2071,7 @@ function teletext_page(){
 	if(number == ''){ return; }
 
 	$("#teletext_img").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");	
+	
 	$.post("functions/teletext_inc.php",
 	{
 	page: number,
@@ -2036,6 +2089,7 @@ function teletext_browse(id){
 	var size = $("#size").val();
 
 	$("#teletext_img").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
+	
 	$.post("functions/teletext_inc.php",
 	{
 	browse: id,
@@ -2051,8 +2105,8 @@ function teletext_browse(id){
 function teletext_control(id){
 	
 	var size = $("#size").val();
-
 	$("#teletext_img").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");	
+	
 	$.post("functions/teletext_inc.php",
 	{
 	control: id,
@@ -2074,7 +2128,7 @@ $(function(){
 function quickpanel(action){
 	
 	var service_reference = $("#quickpanel_dropdown").val();
-	// stream icon
+	
 	$.post("functions/quickpanel_inc.php",
 	{
 	action: 'change_channel',
@@ -2091,6 +2145,7 @@ function quickpanel(action){
 	if(action == 'zap')
 	{ 
 	$("#quickpanel_status").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
+	
 	$.post("functions/send_zapp_request.php",
 	{
 	e2servicereference: service_reference,
@@ -2107,8 +2162,8 @@ function quickpanel(action){
 function all_services_add(id,name){
 	
 	var this_id = id.replace(/all_services_add_btn_/g, "");
-
 	$("#all_services_status_add_"+this_id).html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
+	
 	$.post("functions/services_inc.php",
 	{
 	action: 'add',
@@ -2129,6 +2184,7 @@ function all_services_zapp(id,name){
 	$("#all_services_status_zapp_"+this_id+"").fadeIn();
 	$("#all_services_status_zapp_"+this_id).html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
 	$("#last_zapped_service").html(this_id);
+	
 	$.post("functions/send_zapp_request.php",
 	{
 	e2servicereference: name,
@@ -2145,6 +2201,7 @@ function all_services_zapp(id,name){
 function get_all_services(){
 
 	$("#all_services_list").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\"> Copy Services from Receiver..");
+	
 	$.post("functions/services_inc.php",
 	{
 	action: 'crawl'
@@ -2161,7 +2218,6 @@ function get_all_services(){
 function show_all_services(service){
 	
 	if(service == 'search'){ var searchterm = $("#service_searchterm").val(); } else { var searchterm = ''; }
-
 	$("#all_services_list").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
 	
 	$.post("functions/services_inc.php",
@@ -2179,6 +2235,7 @@ function ignore_list_delete(id){
 	
 	var this_id = id.replace(/ignore_list_/g, "");
 	$("#ignore_list_status_"+this_id).html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
+	
 	$.post("functions/ignore_list_inc.php",
 	{
 	action: 'delete',
@@ -2192,6 +2249,7 @@ function ignore_list_delete(id){
 function remote_control(command){
 
 	$("#rc_status").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
+	
 	$.post("functions/remote_control.php",
 	{
 	command: command
