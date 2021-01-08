@@ -230,8 +230,7 @@ $(function(){
 			  $servicename_enc</p>
 		  </div>
 		  <div class=\"col-md-2\">
-			<p>Record location<br>
-			  $obj->e2location</p>
+			<p>$obj->e2location</p>
 		  </div>
 		  <div class=\"col-md-2\">
 			<p>activ<br>
@@ -315,7 +314,7 @@ $(function(){
 		  </div><!-- row-->
 		  <div class=\"row\">
 		  <div class=\"col-md-12\">
-		  <a href=\"search.php?searchterm=$obj->searchterm&option=$search_option&record_location=$rec_location_id&exclude_channel=$obj->exclude_channel&exclude_title=$obj->exclude_title&exclude_description=$obj->exclude_description&exclude_extdescription=$obj->exclude_extdescription&search_channel=$search_channel&channel_id=$channel_id&rec_replay=$rec_replay&search_id=$obj->id\" target=\"_blank\" title=\"Show results\">
+		  <a id=\"search_link_$obj->id\" href=\"search.php?searchterm=$obj->searchterm&option=$search_option&record_location=$rec_location_id&exclude_channel=$obj->exclude_channel&exclude_title=$obj->exclude_title&exclude_description=$obj->exclude_description&exclude_extdescription=$obj->exclude_extdescription&search_channel=$search_channel&channel_id=$channel_id&rec_replay=$rec_replay&search_id=$obj->id\" target=\"_blank\" title=\"Show results\">
 		  <i class=\"fa fa-search fa-1x\"></i></a>
 		<input id=\"saved_search_list_save_btn_$obj->id\" type=\"submit\" onClick=\"saved_search_list_save(this.id)\" value=\"SAVE\" class=\"btn btn-success btn-sm\">
 		<input id=\"saved_search_list_delete_btn_$obj->id\" type=\"submit\" onClick=\"saved_search_list_delete(this.id)\" value=\"DELETE\" class=\"btn btn-danger btn-sm\"/>

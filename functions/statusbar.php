@@ -1,7 +1,9 @@
 <?php 
 session_start();
 //
-include("../inc/dashboard_config.php");
+	include("../inc/dashboard_config.php");
+	
+	sleep(1);
 
 	// ajax header
  	header('Content-Type: text/html;');
@@ -60,7 +62,8 @@ if ($xml){
 	$e2eventname = $e2eventname . '...';
 	}
 	
-	if($e2eventname == ""){
+	if($e2eventname == "")
+	{
 	$e2eventname = ' No EPG available ';
 	}
 	
@@ -73,9 +76,11 @@ if ($xml){
 	} else {
 	
 	$channel_name = str_replace(" ", "+", $e2eventservicename);
-	if($e2videowidth == "N/A"){ $e2videowidth = ""; } else { $e2videowidth = $e2videowidth.'p x '; } 
-	if($e2videoheight == "N/A"){ $e2videoheight = ""; } else { $e2videoheight = $e2videoheight.'p'; }
-	//$stream_url = "$url_format://$box_user:$box_password@$box_ip/web/stream.m3u?ref=$e2servicereference&name=$channel_name";
+	
+	if($e2videowidth == "N/A"){ $e2videowidth = ""; }
+	
+	if($e2videoheight == "N/A"){ $e2videoheight = ""; }
+
 	$stream_url = "$url_format://$box_ip/web/stream.m3u?ref=$e2servicereference&name=$channel_name";
 	
 	$_SESSION["statusbar"] = "1";

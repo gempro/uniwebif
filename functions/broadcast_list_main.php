@@ -79,11 +79,11 @@ include("../inc/dashboard_config.php");
 	}
 	
 	// device dropdown
-	$sql2 = "SELECT * FROM `device_list` ORDER BY `id` ASC";
+	$sql_2 = "SELECT * FROM `device_list` ORDER BY `id` ASC";
 	
-	if ($result2 = mysqli_query($dbmysqli,$sql2))
+	if ($result_2 = mysqli_query($dbmysqli,$sql_2))
 	{
-	while ($obj = mysqli_fetch_object($result2)){
+	while ($obj = mysqli_fetch_object($result_2)){
 	{
 	$id = $obj->id;
 	$device_description = rawurldecode($obj->device_description);
@@ -103,10 +103,14 @@ include("../inc/dashboard_config.php");
 	
 	if(!isset($broadcast_list) or $broadcast_list == "") { $broadcast_list = ""; }
 	
+	$obj->title_enc = str_replace("%5Cn", " ", $obj->title_enc);
+	$obj->description_enc = str_replace("%5Cn", " ", $obj->description_enc);
+	$obj->descriptionextended_enc = str_replace("%5Cn", " ", $obj->descriptionextended_enc);
 	$title_enc = rawurldecode($obj->title_enc);
 	$servicename_enc = rawurldecode($obj->servicename_enc);
 	$description_enc = rawurldecode($obj->description_enc);
 	$descriptionextended_enc = rawurldecode($obj->descriptionextended_enc);
+	$e2eventduration = $obj->e2eventduration;
 	
 	if($time_format == '1')
 	{
@@ -148,6 +152,11 @@ include("../inc/dashboard_config.php");
 	
 	$rand = substr(str_shuffle(str_repeat('0123456789',3)),0,3);
 	
+	// broadcast length
+	if($descriptionextended_enc == ''){ $spacer_d = ''; } else { $spacer_d = '<br>'; }
+	$event_duration = $e2eventduration / 60;
+	$event_duration = $spacer_d.round($event_duration, 0).' min.';
+	
 	if(!isset($device_dropdown) or $device_dropdown == ""){ $device_dropdown = ""; }
 
 	$broadcast_list = $broadcast_list."
@@ -165,7 +174,7 @@ include("../inc/dashboard_config.php");
 		  <div class=\"spacer_5\"></div>
 		  $description_enc
 		  <div class=\"spacer_5\"></div>
-		  $descriptionextended_enc
+		  $descriptionextended_enc $event_duration
 		  <div class=\"spacer_5\"></div>
 		</div>
 		$imdb_broadcast $stream_broadcast <a onclick=\"open_bn_modal('$obj->e2eventservicereference','$servicename_enc')\" title=\"Show EPG\" style=\"cursor:pointer;\">

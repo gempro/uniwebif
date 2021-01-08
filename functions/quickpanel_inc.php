@@ -39,7 +39,7 @@
 	}
 	
 	// panel content
-	$sql = mysqli_query($dbmysqli, "SELECT e2servicereference, servicename_enc FROM `channel_list` WHERE `qp_selected` = '1'");
+	$sql = mysqli_query($dbmysqli, "SELECT e2servicereference, servicename_enc FROM `channel_list` ORDER BY `qp_selected` ASC");
 	
 	if (mysqli_num_rows($sql) == 0){ $sql = mysqli_query($dbmysqli, "SELECT e2servicereference, servicename_enc FROM `channel_list` ORDER BY `".$sort_quickpanel."` ASC"); }
 	

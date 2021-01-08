@@ -86,9 +86,9 @@ include("../inc/dashboard_config.php");
 	}
 	// get record locations
 	$sql = "SELECT * FROM `record_locations` ORDER BY `id` ASC";
-	if ($result2 = mysqli_query($dbmysqli,$sql))
+	if ($result = mysqli_query($dbmysqli,$sql))
 	{
-	while ($obj = mysqli_fetch_object($result2)) {	
+	while ($obj = mysqli_fetch_object($result)) {	
 	{
 	if(!isset($rec_dropdown_channelbrowser) or $rec_dropdown_channelbrowser == "") { $rec_dropdown_channelbrowser = ""; }
 	$rec_dropdown_channelbrowser = $rec_dropdown_channelbrowser."<option value=\"$obj->id\">$obj->e2location</option>"; }
@@ -96,11 +96,11 @@ include("../inc/dashboard_config.php");
 	}
 	
 	// device dropdown
-	$sql2 = "SELECT * FROM `device_list` ORDER BY `id` ASC";
+	$sql = "SELECT * FROM `device_list` ORDER BY `id` ASC";
 	
-	if ($result2 = mysqli_query($dbmysqli,$sql2))
+	if ($result = mysqli_query($dbmysqli,$sql))
 	{
-	while ($obj = mysqli_fetch_object($result2)){
+	while ($obj = mysqli_fetch_object($result)){
 	{
 	$id = $obj->id;
 	$device_description = rawurldecode($obj->device_description);
@@ -126,10 +126,14 @@ include("../inc/dashboard_config.php");
 	
 	if(!isset($channelbrowser_list) or $channelbrowser_list == "") { $channelbrowser_list = ""; }
 	
+	$obj->title_enc = str_replace("%5Cn", " ", $obj->title_enc);
+	$obj->description_enc = str_replace("%5Cn", " ", $obj->description_enc);
+	$obj->descriptionextended_enc = str_replace("%5Cn", " ", $obj->descriptionextended_enc);
 	$title_enc = rawurldecode($obj->title_enc);
 	$servicename_enc = rawurldecode($obj->servicename_enc);
 	$description_enc = rawurldecode($obj->description_enc);
 	$descriptionextended_enc = rawurldecode($obj->descriptionextended_enc);
+	$e2eventduration = $obj->e2eventduration;
 	
 	if ($time_format == '1')
 	{
@@ -166,8 +170,12 @@ include("../inc/dashboard_config.php");
 	// mark existing timer
 	if ($obj->timer == '1'){ $timer = "timer"; } else { $timer = ""; }
 	
-	//
 	$rand = substr(str_shuffle(str_repeat('0123456789',3)),0,3);
+	
+	// broadcast length
+	if($descriptionextended_enc == ''){ $spacer_d = ''; } else { $spacer_d = '<br>'; }
+	$event_duration = $e2eventduration / 60;
+	$event_duration = $spacer_d.round($event_duration, 0).' min.';
 	
 	if(!isset($device_dropdown) or $device_dropdown == ""){ $device_dropdown = ""; }
 
@@ -186,7 +194,7 @@ $channelbrowser_list = $channelbrowser_list."
 		  <div class=\"spacer_5\"></div>
 		  $description_enc
 		  <div class=\"spacer_5\"></div>
-		  $descriptionextended_enc
+		  $descriptionextended_enc $event_duration
 		  <div class=\"spacer_5\"></div>
 		</div>
 		$imdb_broadcast $stream_broadcast <a href=\"search.php?searchterm=$obj->title_enc&option=title&search_channel=on&channel_id=$obj->e2eventservicereference\" target=\"_blank\" title=\"Search this broadcast only on this channel\">More broadcast on this channel</a>

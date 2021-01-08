@@ -469,10 +469,18 @@
 	
 	if($timer_conflict == '1'){ $timer_status = ' - <span class=\"timer_conflict\">Conflict on Receiver</span>'; } else { $timer_status = ''; }
 	
+	if($device != '0')
+	{
+	$sql = mysqli_query($dbmysqli, "SELECT device_color FROM `device_list` WHERE `id` LIKE '".$device."' ");
+	$result = mysqli_fetch_assoc($sql);
+	$device_color = $result['device_color'];
+	} else { $device_color = ''; }
+	
 	echo '
 	[{
 	"conflict":"'.$timer_conflict.'",
-	"timer_status":"<i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i> Timer sent '.$same_timer_msg.' '.$timer_status.'"
+	"timer_status":"<i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i> Timer sent '.$same_timer_msg.' '.$timer_status.'",
+	"device_c":"'.$device_color.'"
 	}]';
 	exit;
 	}

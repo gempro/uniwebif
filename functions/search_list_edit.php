@@ -60,6 +60,11 @@ include("../inc/dashboard_config.php");
 	sort($sorted_extdescription, SORT_STRING); 
 	$exclude_extdescription = implode("%3B", $sorted_extdescription);
 	
+	// get record location id
+	$sql = mysqli_query($dbmysqli, "SELECT * FROM `record_locations` WHERE `e2location` = '".$record_location."' LIMIT 0,1");
+	$result = mysqli_fetch_assoc($sql);
+	$rec_location_id = $result['id'];
+	
 	// get channel name
 	$sql = mysqli_query($dbmysqli, "SELECT `e2servicename`, `servicename_enc` FROM `channel_list` WHERE `e2servicereference` = '$channel' ");
 	$result = mysqli_fetch_assoc($sql);
@@ -92,6 +97,24 @@ include("../inc/dashboard_config.php");
 	{
 	$last_change = date("n/d/Y - g:i A", $time);
 	}
-	echo '[{"last_change":"'.$last_change.'\r"}]';
+	
+	if($channel == '' or $channel == 'NULL')
+	{
+	$search_channel = '';
+	$channel_id = '';
+	
+	} else {
+	
+	$search_channel = 'on';
+	$channel_id = $channel; 
+	}
+	
+	if($rec_replay == 'yes'){ $rec_replay = 'on'; } else { $rec_replay = 'off'; }
+	
+	$json['last_change'] = $last_change;
+	$json['search_link'] = 'search.php?searchterm='.$searchterm.'&option='.$searcharea.'&record_location='.$rec_location_id.'&exclude_channel='.$exclude_channel.'&exclude_title='.$exclude_title.'&exclude_description='.$exclude_description.'&exclude_extdescription='.$exclude_extdescription.'&search_channel='.$search_channel.'&channel_id='.$channel_id.'&rec_replay='.$rec_replay.'&search_id='.$id.'';
+	
+	echo json_encode($json);
+	
 }
 ?>

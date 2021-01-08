@@ -8,17 +8,17 @@ include("../inc/dashboard_config.php");
 	
 	if($channel == 'all'){ 
 	
-	$sql = 'SELECT * FROM `channel_list` ORDER BY `e2servicename` ASC';
+	$sql_0 = 'SELECT * FROM `channel_list` ORDER BY `e2servicename` ASC';
 	
 	} else { 
 	
-	$sql = 'SELECT * FROM `channel_list` WHERE `e2servicereference` = "'.$channel.'" '; 
+	$sql_0 = 'SELECT * FROM `channel_list` WHERE `e2servicereference` = "'.$channel.'" '; 
 	
 	}
 	
-	if ($result = mysqli_query($dbmysqli,$sql))
+	if ($result_0 = mysqli_query($dbmysqli,$sql_0))
 	{
-	while ($obj = mysqli_fetch_object($result)) {
+	while ($obj = mysqli_fetch_object($result_0)) {
 	{
 	
 	// last crawl
@@ -26,42 +26,45 @@ include("../inc/dashboard_config.php");
 	
 	// latest epg entry
 	if($channel == 'all'){
-	$sql = mysqli_query($dbmysqli, "SELECT `e2eventend` FROM `epg_data` WHERE `e2eventservicereference` = '".$obj->e2servicereference."' ORDER BY `e2eventend` DESC LIMIT 0 , 1");
+	$sql_1 = mysqli_query($dbmysqli, "SELECT `e2eventend` FROM `epg_data` WHERE `e2eventservicereference` = '".$obj->e2servicereference."' ORDER BY `e2eventend` DESC LIMIT 0 , 1");
 	
 	} else {
 	
-	$sql = mysqli_query($dbmysqli, "SELECT `e2eventend` FROM `epg_data` WHERE `e2eventservicereference` = '".$channel."' ORDER BY `e2eventend` DESC LIMIT 0 , 1");
+	$sql_1 = mysqli_query($dbmysqli, "SELECT `e2eventend` FROM `epg_data` WHERE `e2eventservicereference` = '".$channel."' ORDER BY `e2eventend` DESC LIMIT 0 , 1");
 	}
-	$result2 = mysqli_fetch_assoc($sql);
+	$result_1 = mysqli_fetch_assoc($sql_1);
+	
 	if($time_format == '1')
 	{
-	// time format 1
-	$e2eventend = $result2['e2eventend'];
+	$e2eventend = $result_1['e2eventend'];
 	$date_last = date("d.m.Y, H:i", $e2eventend);
 	if($date_last == '01.01.1970, 01:00'){ $date_last = "no data"; }
-	$last_crawl = date("d.m.Y", $obj->last_crawl);
+	
+	$last_crawl = date("d.m.Y, H:i", $obj->last_crawl);
 	if($last_crawl == '01.01.1970'){ $last_crawl = "no data"; }
 	}
+	
 	if($time_format == '2')
 	{
-	// time format 2
-	$e2eventend = $result2['e2eventend'];
+	$e2eventend = $result_1['e2eventend'];
 	$date_last = date("n/d/Y, g:i A", $e2eventend);
-	if ($date_last == '1/01/1970, 1:00 AM'){ $date_last = "no data"; }
-	$last_crawl = date("n/d/Y", $obj->last_crawl);
-	if ($last_crawl == '1/01/1970'){ $last_crawl = "no data"; }
+	if($date_last == '1/01/1970, 1:00 AM'){ $date_last = "no data"; }
+	
+	$last_crawl = date("n/d/Y, g:i A", $obj->last_crawl);
+	if($last_crawl == '1/01/1970'){ $last_crawl = "no data"; }
 	}
 	
 	//count entries
-	if($channel == 'all'){
-	$sql3 = mysqli_query($dbmysqli, 'SELECT COUNT(*) FROM `epg_data` WHERE `e2eventservicereference` = "'.$obj->e2servicereference.'" ');
+	if($channel == 'all')
+	{
+	$sql_2 = mysqli_query($dbmysqli, 'SELECT COUNT(*) FROM `epg_data` WHERE `e2eventservicereference` = "'.$obj->e2servicereference.'" ');
 	
 	} else {
 	
-	$sql3 = mysqli_query($dbmysqli, 'SELECT COUNT(*) FROM `epg_data` WHERE `e2eventservicereference` = "'.$channel.'" ');
+	$sql_2 = mysqli_query($dbmysqli, 'SELECT COUNT(*) FROM `epg_data` WHERE `e2eventservicereference` = "'.$channel.'" ');
 	}
-	$result3 = mysqli_fetch_row($sql3);
-	$sum_entries = $result3[0];
+	$result_2 = mysqli_fetch_row($sql_2);
+	$sum_entries = $result_2[0];
 	
 	if($sum_entries < $start_epg_crawler or $sum_entries == '0'){ $sum_entries = '<strong>'.$sum_entries.'</strong>'; }
 	
