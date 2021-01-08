@@ -128,79 +128,6 @@ animatedcollapse.ontoggle=function($, divobj, state){ //fires each time a DIV is
 }
 animatedcollapse.init()
 </script>
-<script>
-// timerlist
-$(function(){
-	$.post("functions/timer_list_inc.php",
-	function(data){
-	$("#timerlist_inc").html(data);
-	});
-	// saved search panel
-	$.post("functions/search_list_panel.php",
-	function(data){
-	var obj = JSON.parse(data)
-	$("#saved_search_panel").html("<span class=\"timer_panel_info\">"+obj[0].summary_total+"\
-	<a style=\"cursor:pointer\" onclick=\"javascript:$('html, body').animate({ scrollTop: ($(saved_search_row).offset().top)}, 'slow');\">\
-	Saved Search</a> for Auto Timer</span>");
-	//
-	$("#saved_search_panel2").html(obj[0].summary_total+" Saved Search for Auto Timer | <span class=\"timer_panel_info\">\
-	<span class=\"saved_search_panel_info\">"+obj[0].activ+" activ | "+obj[0].inactiv+" inactiv | </span>");
-	});
-	// saved search list
-	$.post("functions/search_list_inc.php",
-	function(data){
-	$("#search_list").html(data);
-	});
-});
-//
-function sortby(){
-	
-	var search_list_sort = $("#sort_setting").val();
-	$.post("functions/search_list_inc.php",
-	{
-	sort_list: search_list_sort
-	},
-	function(data){
-	$("#search_list").html(data);
-	});
-}
-//
-function load_timer_list_panel(){
-	
-	var list_hidden_status = $("#show_unhide").attr("title");
-	if(list_hidden_status == 'hide'){ var list_hidden_status = '1'; } else { var list_hidden_status = '0'; }
-	if(list_hidden_status == '1'){ var action = 'reload_timerlist()'; var title = 'hide'; } else { var action = 'timerlist_panel(this.id)'; var title = 'show'; }
-	
-	$.post("functions/timer_list_panel_inc.php",
-	function(data){
-	var obj = JSON.parse(data);
-	// hidden timer
-	if(obj[0].hidden_timer > '0'){
-	$("#timerlist_panel").html(obj[0].timer_total+" Timer in Database | <span class=\"timer_panel_info\">\
-	"+obj[0].sent_timer+" sent | "+obj[0].timer_today+" today ("+obj[0].hidden_timer_today+" hidden) | <a id=\"show_unhide\" onclick=\""+action+"\" title=\""+title+"\" style=\"cursor:pointer;\">\
-	"+obj[0].hidden_timer+" hidden</a> | "+obj[0].receiver_timer+" on Receiver</span>");
-	}
-	// no hidden timer
-	if(obj[0].hidden_timer == '0'){
-	$("#timerlist_panel").html(obj[0].timer_total+" Timer in Database | <span class=\"timer_panel_info\">\
-	"+obj[0].sent_timer+" sent | "+obj[0].timer_today+" today | "+obj[0].hidden_timer+" hidden | "+obj[0].receiver_timer+" on Receiver</span>");
-	}
-	});
-}
-//
-function reload_saved_search_panel(){
-	$.post("functions/search_list_panel.php",
-	function(data){
-	var obj = JSON.parse(data)
-	$("#saved_search_panel").html("<span class=\"timer_panel_info\">"+obj[0].summary_total+"\
-	<a style=\"cursor:pointer\" onclick=\"javascript:$('html, body').animate({ scrollTop: ($(saved_search_row).offset().top)}, 'slow');\">\
-	Saved Search</a> for Auto Timer</span>");
-	//
-	$("#saved_search_panel2").html(obj[0].summary_total+" Saved Search for Auto Timer | <span class=\"timer_panel_info\">\
-	<span class=\"saved_search_panel_info\">"+obj[0].activ+" activ | "+obj[0].inactiv+" inactiv | </span>");
-	});
-}
-</script>
 </head>
 <body>
 <a id="top"></a>
@@ -216,7 +143,7 @@ function reload_saved_search_panel(){
         <div id="epgframe"></div>
         <hr>
         <div align="right">
-        <button class="btn btn-default" type="button" onclick="modal.close();">Close</button>
+        <button class="btn btn-default btn-sm" type="button" onclick="modal.close();">Close</button>
         </div>
       </div>
     </div>
@@ -234,7 +161,7 @@ function reload_saved_search_panel(){
         <div id="rc_frame"></div>
         <hr>
         <div align="right">
-        <button class="btn btn-default" type="button" onclick="remote_modal.close();">Close</button>
+        <button class="btn btn-default btn-sm" type="button" onclick="remote_modal.close();">Close</button>
         </div>
       </div>
     </div>
@@ -251,7 +178,7 @@ function reload_saved_search_panel(){
         <div id="quickpanel_epgframe"></div>
         <hr>
         <div align="right">
-        <button class="btn btn-default" type="button" onclick="quickpanel_modal.close();">Close</button>
+        <button class="btn btn-default btn-sm" type="button" onclick="quickpanel_modal.close();">Close</button>
         </div>
       </div>
     </div>
@@ -396,13 +323,13 @@ function reload_saved_search_panel(){
           <span class="timerlist_checkbox"><input id="select_all" type="checkbox" onClick="select_timer_checkbox()"></span>
           <input id="send" type="button" class="btn btn-success btn-xs" value="send" title="Send timer to Receiver" onClick="timerlist_panel(this.id)">
           <input id="hide" type="button" class="btn btn-primary btn-xs" value="hide" title="Hide timer from list" onClick="timerlist_panel(this.id)">
-          <input id="delete" type="button" class="btn btn-danger btn-xs" value="delete" onClick="timerlist_panel(this.id)">
+          <input id="delete" type="button" class="btn btn-danger btn-xs" value="delete" title="Delete timer from list" onClick="timerlist_panel(this.id)">
           <span id="del_buttons" style="display:none">
           <input id="delete_rec" type="button" class="btn btn-default btn-xs" value="from Receiver" onClick="timerlist_panel(this.id)">
           <input id="delete_db" type="button" class="btn btn-default btn-xs" value="from Database" onClick="timerlist_panel(this.id)">
           <input id="delete_both" type="button" class="btn btn-default btn-xs" value="both" onClick="timerlist_panel(this.id)">
           </span>
-          <input id="panel_unhide" type="button" class="btn btn-default btn-xs" style="display:none;" value="unhide" title="unhide selected" onClick="timerlist_panel(this.id)">
+          <input id="panel_unhide" type="button" class="btn btn-default btn-xs" style="display:none;" value="unhide" title="Unhide selected" onClick="timerlist_panel(this.id)">
           <span id="selected_box_sum"></span>
           <span id="panel_action_status"></span>
           </div>
@@ -450,6 +377,78 @@ function reload_saved_search_panel(){
 <script type="text/javascript" src="js/rmodal.js"></script>
 <!---->
 <script>
+// timerlist
+$(function(){
+	$.post("functions/timer_list_inc.php",
+	function(data){
+	$("#timerlist_inc").html(data);
+	});
+	// saved search panel
+	$.post("functions/search_list_panel.php",
+	function(data){
+	var obj = JSON.parse(data)
+	$("#saved_search_panel").html("<span class=\"timer_panel_info\">"+obj[0].summary_total+"\
+	<a style=\"cursor:pointer\" onclick=\"javascript:$('html, body').animate({ scrollTop: ($(saved_search_row).offset().top)}, 'slow');\">\
+	Saved Search</a> for Auto Timer</span>");
+	//
+	$("#saved_search_panel2").html(obj[0].summary_total+" Saved Search for Auto Timer | <span class=\"timer_panel_info\">\
+	<span class=\"saved_search_panel_info\">"+obj[0].activ+" activ | "+obj[0].inactiv+" inactiv | </span>");
+	});
+	// saved search list
+	$.post("functions/search_list_inc.php",
+	function(data){
+	$("#search_list").html(data);
+	});
+});
+//
+function sortby(){
+	
+	var search_list_sort = $("#sort_setting").val();
+	$.post("functions/search_list_inc.php",
+	{
+	sort_list: search_list_sort
+	},
+	function(data){
+	$("#search_list").html(data);
+	});
+}
+//
+function load_timer_list_panel(){
+	
+	var list_hidden_status = $("#show_unhide").attr("title");
+	if(list_hidden_status == 'hide'){ var list_hidden_status = '1'; } else { var list_hidden_status = '0'; }
+	if(list_hidden_status == '1'){ var action = 'reload_timerlist()'; var title = 'hide'; } else { var action = 'timerlist_panel(this.id)'; var title = 'show'; }
+	
+	$.post("functions/timer_list_panel_inc.php",
+	function(data){
+	var obj = JSON.parse(data);
+	// hidden timer
+	if(obj[0].hidden_timer > '0'){
+	$("#timerlist_panel").html(obj[0].timer_total+" Timer in Database | <span class=\"timer_panel_info\">\
+	"+obj[0].sent_timer+" sent | "+obj[0].timer_today+" today ("+obj[0].hidden_timer_today+" hidden) | <a id=\"show_unhide\" onclick=\""+action+"\" title=\""+title+"\" style=\"cursor:pointer;\">\
+	"+obj[0].hidden_timer+" hidden</a> | "+obj[0].receiver_timer+" on Receiver</span>");
+	}
+	// no hidden timer
+	if(obj[0].hidden_timer == '0'){
+	$("#timerlist_panel").html(obj[0].timer_total+" Timer in Database | <span class=\"timer_panel_info\">\
+	"+obj[0].sent_timer+" sent | "+obj[0].timer_today+" today | "+obj[0].hidden_timer+" hidden | "+obj[0].receiver_timer+" on Receiver</span>");
+	}
+	});
+}
+//
+function reload_saved_search_panel(){
+	$.post("functions/search_list_panel.php",
+	function(data){
+	var obj = JSON.parse(data)
+	$("#saved_search_panel").html("<span class=\"timer_panel_info\">"+obj[0].summary_total+"\
+	<a style=\"cursor:pointer\" onclick=\"javascript:$('html, body').animate({ scrollTop: ($(saved_search_row).offset().top)}, 'slow');\">\
+	Saved Search</a> for Auto Timer</span>");
+	//
+	$("#saved_search_panel2").html(obj[0].summary_total+" Saved Search for Auto Timer | <span class=\"timer_panel_info\">\
+	<span class=\"saved_search_panel_info\">"+obj[0].activ+" activ | "+obj[0].inactiv+" inactiv | </span>");
+	});
+}
+//
 $(function(){
    var statusbar = '<?php if(!isset($_SESSION["statusbar"]) or $_SESSION["statusbar"] == "") { $_SESSION["statusbar"] = ""; } echo $_SESSION["statusbar"]; ?>';
    if (statusbar == '1'){ $("#statusbar_outer").removeClass("statusbar_outer"); }

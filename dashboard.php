@@ -235,7 +235,7 @@ animatedcollapse.init()
         <div id="epgframe"></div>
         <hr>
         <div align="right">
-        <button class="btn btn-default" type="button" onclick="modal.close();">Close</button>
+        <button class="btn btn-default btn-sm" type="button" onclick="modal.close();">Close</button>
         </div>
       </div>
     </div>
@@ -253,7 +253,7 @@ animatedcollapse.init()
         <div id="rc_frame"></div>
         <hr>
         <div align="right">
-        <button class="btn btn-default" type="button" onclick="remote_modal.close();">Close</button>
+        <button class="btn btn-default btn-sm" type="button" onclick="remote_modal.close();">Close</button>
         </div>
       </div>
     </div>
@@ -270,7 +270,7 @@ animatedcollapse.init()
         <div id="quickpanel_epgframe"></div>
         <hr>
         <div align="right">
-        <button class="btn btn-default" type="button" onclick="quickpanel_modal.close();">Close</button>
+        <button class="btn btn-default btn-sm" type="button" onclick="quickpanel_modal.close();">Close</button>
         </div>
       </div>
     </div>

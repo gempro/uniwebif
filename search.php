@@ -4,7 +4,6 @@ session_start();
 	include("inc/dashboard_config.php");
 	include_once("inc/header_info.php");
 
-	if(!isset($_POST['searchterm']) or $_POST['searchterm'] == ""){ $_POST['searchterm'] = ""; }
 	if(!isset($_REQUEST['searchterm']) or $_REQUEST['searchterm'] == ""){ $_REQUEST['searchterm'] = ""; }
 	if(!isset($_REQUEST['option']) or $_REQUEST['option'] == ""){ $_REQUEST['option'] = ""; }
 	if(!isset($_REQUEST['search_channel']) or $_REQUEST['search_channel'] == ""){ $_REQUEST['search_channel'] = ""; }
@@ -17,8 +16,6 @@ session_start();
 	if(!isset($_REQUEST['rec_replay']) or $_REQUEST['rec_replay'] == ""){ $_REQUEST['rec_replay'] = ""; }
 	if(!isset($_REQUEST['search_id']) or $_REQUEST['search_id'] == ""){ $_REQUEST['search_id'] = ""; }
 	
-	$search_id = $_REQUEST["search_id"];
-	$searchterm = trim($_POST["searchterm"]);
 	$searchterm = trim($_REQUEST["searchterm"]);
 	$searchterm = str_replace("\"", "", $searchterm);
 	//$searchterm = str_replace("'", "", $searchterm);
@@ -51,9 +48,11 @@ session_start();
 	$exclude_extdescription = str_replace("%", "", $exclude_extdescription);
 	
 	$rec_replay = $_REQUEST["rec_replay"];
+	$search_id = $_REQUEST["search_id"];
 	
 	// update saved search
-	if(is_numeric($search_id)){ 
+	if(is_numeric($search_id))
+	{ 
 	$sql = mysqli_query($dbmysqli, "SELECT * FROM `saved_search` WHERE `id` = '".$search_id."' ");
 	$result = mysqli_fetch_assoc($sql);
 	if($result != ""){ 
@@ -89,19 +88,20 @@ session_start();
 	}
 	
 	// set selected channel in dropdown
-	if($search_channel == 'on'){
-	// reset selected
+	if($search_channel == 'on')
+	{
+	// reset
     mysqli_query($dbmysqli, "UPDATE `channel_list` SET `selected` = '0' ");
-    // set selected
+    // set
     mysqli_query($dbmysqli, "UPDATE `channel_list` SET `selected` = '1' WHERE `e2servicereference` = '".$channel_id."' ");
 	}
 	
 	// record location in dropdown / result list
-	$sql2 = "SELECT * FROM `record_locations` ORDER BY `id` ASC";
+	$sql_2 = "SELECT * FROM `record_locations` ORDER BY `id` ASC";
 	
-	if($result2 = mysqli_query($dbmysqli,$sql2))
+	if($result_2 = mysqli_query($dbmysqli,$sql_2))
 	{
-	while ($obj = mysqli_fetch_object($result2)){
+	while ($obj = mysqli_fetch_object($result_2)){
 	{
 	
 	if(!isset($rec_dropdown_broadcast) or $rec_dropdown_broadcast == ""){ $rec_dropdown_broadcast = ""; }
@@ -112,11 +112,11 @@ session_start();
 	}
 	
 	// device dropdown
-	$sql3 = "SELECT * FROM `device_list` ORDER BY `id` ASC";
+	$sql_3 = "SELECT * FROM `device_list` ORDER BY `id` ASC";
 	
-	if($result3 = mysqli_query($dbmysqli,$sql3))
+	if($result_3 = mysqli_query($dbmysqli,$sql_3))
 	{
-	while ($obj = mysqli_fetch_object($result3)){
+	while ($obj = mysqli_fetch_object($result_3)){
 	{
 	$id = $obj->id;
 	$device_description = utf8_decode(rawurldecode($obj->device_description));
@@ -128,10 +128,11 @@ session_start();
 	}
 	}
 	
-	if ($display_old_epg == '0'){ $exclude_time = 'AND `e2eventend` > '.$time.''; } else { $exclude_time = ''; }
+	if($display_old_epg == '0'){ $exclude_time = 'AND `e2eventend` > '.$time.''; } else { $exclude_time = ''; }
 
 	// search only selected channel
-	if($channel_id !== ''){ 
+	if($channel_id !== '')
+	{ 
 	$search_include = 'WHERE `e2eventservicereference` = "'.$channel_id.'" AND'; 
 	$search_include2 = 'OR `e2eventservicereference` = "'.$channel_id.'" AND'; 
 	} else { 
@@ -143,7 +144,8 @@ session_start();
 	
 	$raw_exclude_channel = rawurlencode($exclude_channel);
 	// exclude titel
-	if ($raw_exclude_channel !== ''){
+	if($raw_exclude_channel !== '')
+	{
 	$tags = explode(rawurlencode(';') , $raw_exclude_channel);
 	foreach($tags as $i =>$key) { $i >0;
 	if(!isset($exclude_channel_part) or $exclude_channel_part == "") { $exclude_channel_part = ""; }
@@ -154,7 +156,8 @@ session_start();
 	
 	$raw_exclude_title = rawurlencode($exclude_title);
 	// exclude titel
-	if ($raw_exclude_title !== ''){
+	if($raw_exclude_title !== '')
+	{
 	$tags = explode(rawurlencode(';') , $raw_exclude_title);
 	foreach($tags as $i =>$key) { $i >0;
 	if(!isset($exclude_title_part) or $exclude_title_part == "") { $exclude_title_part = ""; }
@@ -165,7 +168,8 @@ session_start();
 	
 	$raw_exclude_description = rawurlencode($exclude_description);
 	// exclude description
-	if($raw_exclude_description !== ''){
+	if($raw_exclude_description !== '')
+	{
 	$tags = explode(rawurlencode(';') , $raw_exclude_description);
 	foreach($tags as $i =>$key) { $i >0;
 	if(!isset($exclude_description_part) or $exclude_description_part == "") { $exclude_description_part = ""; }
@@ -176,7 +180,8 @@ session_start();
 	
 	$raw_exclude_extdescription = rawurlencode($exclude_extdescription);
 	// exclude extended description
-	if ($raw_exclude_extdescription !== ''){
+	if($raw_exclude_extdescription !== '')
+	{
 	$tags = explode(rawurlencode(';') , $raw_exclude_extdescription);
 	foreach($tags as $i =>$key) { $i >0;
 	if(!isset($exclude_extdescription_part) or $exclude_extdescription_part == "") { $exclude_extdescription_part = ""; }
@@ -188,18 +193,54 @@ session_start();
 	// search all
 	if ($option == 'all' or $option == '')
 	{
-	$sql = 'SELECT * FROM `epg_data` '.$search_include.' MATCH (title_enc, description_enc, descriptionextended_enc) AGAINST ("%'.$raw_term.'%") '.$exclude_time.' '.$search_include2.' `title_enc` LIKE "%'.$raw_term.'%" '.$exclude_title_part.' '.$exclude_description_part.' '.$exclude_extdescription_part.' '.$exclude_channel_part.' '.$exclude_time.' '.$search_include2.' `description_enc` LIKE "%'.$raw_term.'%" '.$exclude_title_part.' '.$exclude_description_part.' '.$exclude_extdescription_part.' '.$exclude_channel_part.' '.$exclude_time.' '.$search_include2.' `descriptionextended_enc` LIKE "%'.$raw_term.'%" '.$exclude_title_part.' '.$exclude_description_part.' '.$exclude_extdescription_part.' '.$exclude_channel_part.' '.$exclude_time.' ORDER BY `e2eventstart` ASC';
+	$sql = 'SELECT * FROM `epg_data` '.$search_include.' MATCH (title_enc, description_enc, descriptionextended_enc) AGAINST ("%'.$raw_term.'%") 
+	'.$exclude_time.' 
+	'.$search_include2.' `title_enc` LIKE "%'.$raw_term.'%" 
+	'.$exclude_title_part.' 
+	'.$exclude_description_part.' 
+	'.$exclude_extdescription_part.' 
+	'.$exclude_channel_part.' 
+	'.$exclude_time.' 
+	'.$search_include2.' `description_enc` LIKE "%'.$raw_term.'%" 
+	'.$exclude_title_part.' 
+	'.$exclude_description_part.' 
+	'.$exclude_extdescription_part.' 
+	'.$exclude_channel_part.' 
+	'.$exclude_time.' 
+	'.$search_include2.' `descriptionextended_enc` LIKE "%'.$raw_term.'%" 
+	'.$exclude_title_part.' 
+	'.$exclude_description_part.' 
+	'.$exclude_extdescription_part.' 
+	'.$exclude_channel_part.' 
+	'.$exclude_time.' ORDER BY `e2eventstart` ASC';
 	
 	// count hits
-	$sql2 = mysqli_query($dbmysqli, "SELECT COUNT(*) FROM `epg_data` ".$search_include." MATCH (title_enc, description_enc, descriptionextended_enc) 
-	AGAINST ('%".$raw_term."%') ".$exclude_time." ".$search_include2." `title_enc` LIKE '%".$raw_term."%' 
-	".$exclude_title_part." ".$exclude_description_part." ".$exclude_extdescription_part." ".$exclude_channel_part." ".$exclude_time." ".$search_include2." 
-	`description_enc` LIKE '%".$raw_term."%' ".$exclude_title_part." ".$exclude_description_part." ".$exclude_extdescription_part." ".$exclude_channel_part." ".$exclude_time." 
-	".$search_include2." `descriptionextended_enc` LIKE '%".$raw_term."%' ".$exclude_title_part." ".$exclude_description_part." ".$exclude_extdescription_part." 
-	".$exclude_channel_part." ".$exclude_time." ");
-	$result = mysqli_fetch_row($sql2);
-	$count_search = $result[0];
-	//
+	$sql_2 = mysqli_query($dbmysqli, 'SELECT COUNT(*) FROM `epg_data` '.$search_include.' MATCH (title_enc, description_enc, descriptionextended_enc) 
+	AGAINST ("%'.$raw_term.'%") 
+	'.$exclude_time.' 
+	'.$search_include2.' `title_enc` LIKE "%'.$raw_term.'%" 
+	'.$exclude_title_part.' 
+	'.$exclude_description_part.' 
+	'.$exclude_extdescription_part.' 
+	'.$exclude_channel_part.' 
+	'.$exclude_time.' 
+	'.$search_include2.' 
+	`description_enc` LIKE "%'.$raw_term.'%" 
+	'.$exclude_title_part.' 
+	'.$exclude_description_part.' 
+	'.$exclude_extdescription_part.' 
+	'.$exclude_channel_part.' 
+	'.$exclude_time.' 
+	'.$search_include2.' `descriptionextended_enc` LIKE "%'.$raw_term.'%" 
+	'.$exclude_title_part.' 
+	'.$exclude_description_part.' 
+	'.$exclude_extdescription_part.' 
+	'.$exclude_channel_part.' 
+	'.$exclude_time.' 
+	');
+	$result_2 = mysqli_fetch_row($sql_2);
+	$count_search = $result_2[0];
+
 	if ($count_search > 1000)
 	{
 	echo "There are more than 1000 results for this search.<br>Please define term more exactly. There is the risk that the process crash..<br>";
@@ -211,13 +252,24 @@ session_start();
 	// search title
 	if ($option == 'title')
 	{
-	$sql = 'SELECT * FROM `epg_data` '.$search_include.' `title_enc` LIKE "%'.$raw_term.'%" '.$exclude_channel_part.' '.$exclude_title_part.' '.$exclude_description_part.' '.$exclude_extdescription_part.' '.$exclude_time.' ORDER BY `e2eventstart` ASC';
+	$sql = 'SELECT * FROM `epg_data` '.$search_include.' `title_enc` LIKE "%'.$raw_term.'%" 
+	'.$exclude_channel_part.' 
+	'.$exclude_title_part.' 
+	'.$exclude_description_part.' 
+	'.$exclude_extdescription_part.' 
+	'.$exclude_time.' ORDER BY `e2eventstart` ASC';
 	
 	// count hits
-	$sql2 = mysqli_query($dbmysqli, 'SELECT COUNT(*) FROM `epg_data` '.$search_include.' `title_enc` LIKE "%'.$raw_term.'%" '.$exclude_channel_part.' '.$exclude_title_part.' '.$exclude_description_part.' '.$exclude_extdescription_part.' '.$exclude_time.'');
-	$result = mysqli_fetch_row($sql2);
-	$count_search = $result[0];
-	//
+	$sql_2 = mysqli_query($dbmysqli, 'SELECT COUNT(*) FROM `epg_data` '.$search_include.' `title_enc` LIKE "%'.$raw_term.'%" 
+	'.$exclude_channel_part.' 
+	'.$exclude_title_part.' 
+	'.$exclude_description_part.' 
+	'.$exclude_extdescription_part.' 
+	'.$exclude_time.'
+	');
+	$result_2 = mysqli_fetch_row($sql_2);
+	$count_search = $result_2[0];
+
 	if ($count_search > 1000)
 	{
 	echo "There are more than 1000 results for this search.<br>Please define term more exactly. There is the risk that the process crash..<br>";
@@ -229,13 +281,24 @@ session_start();
 	// search description
 	if ($option == 'description')
 	{
-	$sql = 'SELECT * FROM `epg_data` '.$search_include.' `description_enc` LIKE "%'.$raw_term.'%" '.$exclude_channel_part.' '.$exclude_title_part.' '.$exclude_description_part.' '.$exclude_extdescription_part.' '.$exclude_time.' ORDER BY `e2eventstart` ASC';
+	$sql = 'SELECT * FROM `epg_data` '.$search_include.' `description_enc` LIKE "%'.$raw_term.'%" 
+	'.$exclude_channel_part.' 
+	'.$exclude_title_part.' 
+	'.$exclude_description_part.' 
+	'.$exclude_extdescription_part.' 
+	'.$exclude_time.' ORDER BY `e2eventstart` ASC';
 	
 	// count hits
-	$sql2 = mysqli_query($dbmysqli, 'SELECT COUNT(*) FROM `epg_data` '.$search_include.' `description_enc` LIKE "%'.$raw_term.'%" '.$exclude_channel_part.' '.$exclude_title_part.' '.$exclude_description_part.' '.$exclude_extdescription_part.' '.$exclude_time.' ');
-	$result = mysqli_fetch_row($sql2);
-	$count_search = $result[0];
-	//
+	$sql_2 = mysqli_query($dbmysqli, 'SELECT COUNT(*) FROM `epg_data` '.$search_include.' `description_enc` LIKE "%'.$raw_term.'%" 
+	'.$exclude_channel_part.' 
+	'.$exclude_title_part.' 
+	'.$exclude_description_part.' 
+	'.$exclude_extdescription_part.' 
+	'.$exclude_time.' 
+	');
+	$result_2 = mysqli_fetch_row($sql_2);
+	$count_search = $result_2[0];
+
 	if ($count_search > 1000)
 	{
 	echo "There are more than 1000 results for this search.<br>Please define term more exactly. There is the risk that the process crash..<br>";
@@ -247,13 +310,24 @@ session_start();
 	// search extended description
 	if ($option == 'extdescription')
 	{
-	$sql = 'SELECT * FROM `epg_data` '.$search_include.' descriptionextended_enc LIKE "%'.$raw_term.'%" '.$exclude_channel_part.' '.$exclude_title_part.' '.$exclude_description_part.' '.$exclude_extdescription_part.' '.$exclude_time.' ORDER BY `e2eventstart` ASC';
+	$sql = 'SELECT * FROM `epg_data` '.$search_include.' descriptionextended_enc LIKE "%'.$raw_term.'%" 
+	'.$exclude_channel_part.' 
+	'.$exclude_title_part.' 
+	'.$exclude_description_part.' 
+	'.$exclude_extdescription_part.' 
+	'.$exclude_time.' ORDER BY `e2eventstart` ASC';
 	
 	// count hits
-	$sql2 = mysqli_query($dbmysqli, 'SELECT COUNT(*) FROM `epg_data` '.$search_include.' `descriptionextended_enc` LIKE "%'.$raw_term.'%" '.$exclude_channel_part.' '.$exclude_title_part.' '.$exclude_description_part.' '.$exclude_extdescription_part.' '.$exclude_time.' ');
-	$result = mysqli_fetch_row($sql2);
-	$count_search = $result[0];
-	//
+	$sql_2 = mysqli_query($dbmysqli, 'SELECT COUNT(*) FROM `epg_data` '.$search_include.' `descriptionextended_enc` LIKE "%'.$raw_term.'%" 
+	'.$exclude_channel_part.' 
+	'.$exclude_title_part.' 
+	'.$exclude_description_part.' 
+	'.$exclude_extdescription_part.' 
+	'.$exclude_time.' 
+	');
+	$result_2 = mysqli_fetch_row($sql_2);
+	$count_search = $result_2[0];
+	
 	if ($count_search > 1000)
 	{
 	echo "There are more than 1000 results for this search.<br>Please define term more exactly. There is the risk that the process crash..<br>";
@@ -495,7 +569,7 @@ function check_exclude(){
         <div id="epgframe"></div>
         <hr>
         <div align="right">
-        <button class="btn btn-default" type="button" onclick="modal.close();">Close</button>
+        <button class="btn btn-default btn-sm" type="button" onclick="modal.close();">Close</button>
         </div>
       </div>
     </div>
@@ -513,7 +587,7 @@ function check_exclude(){
         <div id="rc_frame"></div>
         <hr>
         <div align="right">
-        <button class="btn btn-default" type="button" onclick="remote_modal.close();">Close</button>
+        <button class="btn btn-default btn-sm" type="button" onclick="remote_modal.close();">Close</button>
         </div>
       </div>
     </div>
@@ -530,7 +604,7 @@ function check_exclude(){
         <div id="quickpanel_epgframe"></div>
         <hr>
         <div align="right">
-        <button class="btn btn-default" type="button" onclick="quickpanel_modal.close();">Close</button>
+        <button class="btn btn-default btn-sm" type="button" onclick="quickpanel_modal.close();">Close</button>
         </div>
       </div>
     </div>
