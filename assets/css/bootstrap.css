@@ -2079,6 +2079,87 @@ fieldset[disabled] .btn-default.active {
   color: #fff;
   background-color: #333;
 }
+/**/
+.btn-default-2 {
+  color: #333;
+  background-color: #F4F4F4;
+  border-color: #ccc;
+}
+.btn-default-2:hover,
+/*.btn-default-2:focus,*/
+.btn-default-2:active,
+.btn-default-2.active,
+.open .dropdown-toggle.btn-default-2 {
+  color: #333;
+  background-color: #ebebeb;
+  border-color: #adadad;
+}
+.btn-default-2:active,
+.btn-default-2.active,
+.open .dropdown-toggle.btn-default-2 {
+  background-image: none;
+}
+.btn-default-2.disabled,
+.btn-default-2[disabled],
+fieldset[disabled] .btn-default-2,
+.btn-default-2.disabled:hover,
+.btn-default-2[disabled]:hover,
+fieldset[disabled] .btn-default-2:hover,
+.btn-default-2.disabled:focus,
+.btn-default-2[disabled]:focus,
+fieldset[disabled] .btn-default-2:focus,
+.btn-default-2.disabled:active,
+.btn-default-2[disabled]:active,
+fieldset[disabled] .btn-default-2:active,
+.btn-default-2.disabled.active,
+.btn-default-2[disabled].active,
+fieldset[disabled] .btn-default-2.active {
+  background-color: #ebebeb;
+  border-color: #ccc;
+}
+.btn-default-2 .badge {
+  color: #fff;
+  background-color: #333;
+}
+/**/
+
+.btn-default-3 {
+  width: 30px;
+  height: 15px;
+}
+.btn-default-3:hover,
+/*.btn-default-3:focus,*/
+.btn-default-3:active,
+.btn-default-3.active,
+.open .dropdown-toggle.btn-default-3 {
+  color: #fff;
+}
+.btn-default-3:active,
+.btn-default-3.active,
+.open .dropdown-toggle.btn-default-3 {
+  background-image: none;
+}
+.btn-default-3.disabled,
+.btn-default-3[disabled],
+fieldset[disabled] .btn-default-3,
+.btn-default-3.disabled:hover,
+.btn-default-3[disabled]:hover,
+fieldset[disabled] .btn-default-3:hover,
+.btn-default-3.disabled:focus,
+.btn-default-3[disabled]:focus,
+fieldset[disabled] .btn-default-3:focus,
+.btn-default-3.disabled:active,
+.btn-default-3[disabled]:active,
+fieldset[disabled] .btn-default-3:active,
+.btn-default-3.disabled.active,
+.btn-default-3[disabled].active,
+fieldset[disabled] .btn-default-3.active {
+  background-color: #fff;
+  border-color: #fff;
+}
+/**/
+
+
 .btn-primary {
   color: #fff;
   background-color: #428bca;

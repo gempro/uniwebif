@@ -568,7 +568,7 @@ display:none;
 	padding-left: 10px;
 	margin-bottom: 5px;
 }
-#timerlist {
+div[id*="timerlist_inner"] {
 	width: 100%;
 	height: auto;
 	padding: 5px;
@@ -578,49 +578,49 @@ display:none;
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 }
-#timerlist #cnt_checkbox {
+div[id*="timerlist_inner"] #cnt_checkbox {
 	float: left;
 	padding-right: 5px;
 }
-#timerlist #cnt_time {
+div[id*="timerlist_inner"] #cnt_time {
 	min-width:23%;
 	max-width:23%;
 	height: auto;
 	float: left;
 }
-#timerlist #cnt_time_2 {
+div[id*="timerlist_inner"] #cnt_time_2 {
 	min-width:27%;
 	max-width:27%;
 	height: auto;
 	float: left;
 }
-#timerlist #cnt_title {
+div[id*="timerlist_inner"] #cnt_title {
 	width: auto;
 	height: auto;
 	min-width:50%;
 	max-width:50%;
 	float: left;
 }
-#timerlist #cnt_channel {
+div[id*="timerlist_inner"] #cnt_channel {
 	width: auto;
 	height: auto;
 	float: left;
 }
 /* For small screen */    
 @media (max-width: 768px) {
-#timerlist #cnt_time {
+div[id*="timerlist_inner"] #cnt_time {
 	width: 100%;
 	min-width:100%;
 	height: auto;
 	float: left;
 }
-#timerlist #cnt_title {
+div[id*="timerlist_inner"] #cnt_title {
     width: 100%;
 	min-width:100%;
 	height: auto;
 	float: left;
 }
-#timerlist #cnt_channel {
+div[id*="timerlist_inner"] #cnt_channel {
 	width: 80%;
 	height: auto;
 	float: left;
@@ -798,6 +798,80 @@ display:none;
 	font-size: 12px;
 	opacity: .5;
 	float: right;
+}
+.include_channel_c {
+	border: thin solid #000;
+}
+.include_channel_g {
+	border: thin solid #CCC;
+}
+#status_include_channel {
+	color: #000;
+}
+.include_title_c {
+	border: thin solid #F0AD4E;
+}
+.include_title_g {
+	border: thin solid #CCC;
+}
+#status_include_title {
+	color: #F0AD4E;
+}
+.include_title_text {
+	color: #F0AD4E;
+}
+.include_description_c {
+	border: thin solid #5CB85C;
+}
+.include_description_g {
+	border: thin solid #CCC;
+}
+#status_include_description {
+	color: #5CB85C;
+}
+.include_description_text {
+	color: #5CB85C;
+}
+.include_extdescription_c {
+	border: thin solid #0000CC;
+}
+.include_extdescription_g {
+	border: thin solid #CCC;
+}
+#status_include_extdescription {
+	color: #0000CC;
+}
+.include_extdescription_text {
+	color: #0000CC;
+}
+/* search list includes */
+.include_channel {
+	color: #000;
+	cursor: pointer;
+}
+.include_channel_field {
+	border: thin solid #000;
+}
+.include_title {
+	color: #F0AD4E;
+	cursor: pointer;
+}
+.include_title_field {
+	border: thin solid #F0AD4E;
+}
+.include_description {
+	color: #5CB85C;
+	cursor: pointer;
+}
+.include_description_field {
+	border: thin solid #5CB85C;
+}
+.include_extdescription {
+	color: #0000CC;
+	cursor: pointer;
+}
+.include_extdescription_field {
+	border: thin solid #0000CC;
 }
 .exclude_channel_c {
 	border: thin solid #000;
