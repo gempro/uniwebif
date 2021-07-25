@@ -258,6 +258,11 @@ animatedcollapse.init()
       <input type="text" class="form-control" id="service_searchterm" placeholder="Channelname" size="40">
         </div>
       </div>
+      <select id="search_area" class="form-control">
+      <option value="both" selected>TV + Radio</option>
+      <option value="tv">TV</option>
+      <option value="radio">Radio</option>
+      </select>
       <button class="btn btn-default" onclick="show_all_services('search')">Search</button>
     </div>
       </div>
