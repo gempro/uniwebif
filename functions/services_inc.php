@@ -26,6 +26,9 @@ include("../inc/dashboard_config.php");
 	if(!isset($_REQUEST["searchterm"]) or $_REQUEST["searchterm"] == ""){ $_REQUEST["searchterm"] = ""; }
 	$searchterm = $_REQUEST["searchterm"];
 	
+	if(!isset($_REQUEST["search_area"]) or $_REQUEST["search_area"] == ""){ $_REQUEST["search_area"] = ""; }
+	$search_area = $_REQUEST["search_area"];
+	
 	sleep(1);
 	
 	if($action == 'add')
@@ -102,7 +105,9 @@ include("../inc/dashboard_config.php");
 	if($service == '' or $service == 'both'){ $query = ''; }
 	if($service == 'tv'){ $query = 'WHERE `service` = "tv" '; }
 	if($service == 'radio'){ $query = 'WHERE `service` = "radio" '; }
-	if($service == 'search'){ $query = 'WHERE `e2servicename` LIKE "%'.$searchterm.'%" '; }
+	if($service == 'search'){ $query = 'WHERE `e2servicename` LIKE "%'.$searchterm.'%" OR `e2servicereference` LIKE "%'.$searchterm.'%" '; }
+	if($search_area == 'tv'){ $query = 'WHERE `e2servicename` LIKE "%'.$searchterm.'%" AND `service` LIKE "tv" OR `e2servicereference` LIKE "%'.$searchterm.'%" AND `service` LIKE "tv" '; }
+	if($search_area == 'radio'){ $query = 'WHERE `e2servicename` LIKE "%'.$searchterm.'%" AND `service` LIKE "radio" OR `e2servicereference` LIKE "%'.$searchterm.'%" AND `service` LIKE "radio" '; }
 	
 	// count
 	$sql = mysqli_query($dbmysqli, 'SELECT COUNT(*) FROM `all_services` '.$query.' ');
