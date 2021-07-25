@@ -156,11 +156,12 @@ $(function(){
 	<div class=\"spacer_10\"></div>";
 	}
 	}
-	if(!isset($epg_modal) or $epg_modal == ""){ 
+	
+	if(!isset($epg_modal) or $epg_modal == ""){
 	
 	////////////////////////////////////////////////////////////
 	// xml from receiver
-	$xmlfile = $url_format.'://'.$box_ip.'/web/epgservice?sRef='.$e2servicereference.'';
+	$xmlfile = $url_format.'://'.$box_ip.'/web/epgservice?sRef='.$e2servicereference.$session_part_2;
 	
 	$getEPG_request = @file_get_contents($xmlfile, false, $webrequest);
 	

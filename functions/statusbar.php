@@ -1,7 +1,7 @@
 <?php 
 session_start();
 //
-	include("../inc/dashboard_config.php");
+	include('../inc/dashboard_config.php');
 	
 	sleep(1);
 
@@ -13,7 +13,7 @@ session_start();
 	if(!ini_get('allow_url_fopen'))
 	{
 	echo '[{"statusbar":"2"}]';
-	$_SESSION["statusbar"] = "2";
+	$_SESSION["statusbar"] = '2';
 	exit;
 	}
 
@@ -25,19 +25,19 @@ session_start();
 	if($xml === FALSE)
 	{
 	echo '[{"statusbar":"3"}]';
-	$_SESSION["statusbar"] = "3";
+	$_SESSION["statusbar"] = '3';
 	exit;
 	}
 
 if ($xml){
 
-	if(!isset($xml->e2service->e2servicereference) or $xml->e2service->e2servicereference == ""){ $xml->e2service->e2servicereference = ""; }
+	if(!isset($xml->e2service->e2servicereference) or $xml->e2service->e2servicereference == ''){ $xml->e2service->e2servicereference = ''; }
 	
 	// if no data on channel
-	if($xml->e2service->e2servicereference == "")
+	if($xml->e2service->e2servicereference == '')
 	{
 	echo '[{"statusbar":"4"}]';
-	$_SESSION["statusbar"] = "4";
+	$_SESSION["statusbar"] = '4';
 	exit;
 	
 	} else {
@@ -67,27 +67,37 @@ if ($xml){
 	$e2eventname = ' No EPG available ';
 	}
 	
-	if($e2videowidth == "N/A" and $e2eventname == "")
+	if($e2videowidth == 'N/A' and $e2eventname == '')
 	{
 	echo '[{"statusbar":"5"}]';
-	$_SESSION["statusbar"] = "5";
+	$_SESSION["statusbar"] = '5';
 	exit;
 	
 	} else {
 	
-	$channel_name = str_replace(" ", "+", $e2eventservicename);
+	$channel_name = str_replace(' ', '+', $e2eventservicename);
 	
-	if($e2videowidth == "N/A"){ $e2videowidth = ""; }
+	if($e2videowidth == 'N/A'){ $e2videowidth = ''; }
 	
-	if($e2videoheight == "N/A"){ $e2videoheight = ""; }
-
-	$stream_url = "$url_format://$box_ip/web/stream.m3u?ref=$e2servicereference&name=$channel_name";
+	if($e2videoheight == 'N/A'){ $e2videoheight = ''; }
 	
-	$_SESSION["statusbar"] = "1";
+	$stream_url = $url_format.'://'.$box_ip.'/web/stream.m3u?ref='.$e2servicereference.'&name='.$channel_name;
+	
+	if(preg_match('(^(?=.*[a-z]).+$)', $e2servicereference))
+	{
+	$media = 'file';
+	$e2servicereference = str_replace('1:0:0:0:0:0:0:0:0:0:', '', $e2servicereference);
+	$stream_url = $url_format.'://'.$box_ip.'/file?file='.$e2servicereference.'&name='.$channel_name;
+	} else {
+	$media = '';
+	}
+	
+	$_SESSION['statusbar'] = '1';
 	
 	echo '
 	[{"statusbar":"1",
-	"stream_url":"'.rawurlencode($stream_url).'",
+	"media":"'.$media.'",
+	"stream_url":"'.$stream_url.'",
 	"e2servicereference":"'.$e2servicereference.'",
 	"e2eventname":"'.rawurlencode($e2eventname).'",
 	"e2eventservicename":"'.rawurlencode($e2eventservicename).'",

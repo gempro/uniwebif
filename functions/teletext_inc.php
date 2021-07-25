@@ -41,13 +41,13 @@ include("../inc/dashboard_config.php");
 	
 	$sendTeletext_request = @file_get_contents($xmlfile, false, $webrequest);
 	$xml = simplexml_load_string($sendTeletext_request);
-	sleep(2);
+	sleep(1);
 	}
-	echo '<img src="'.$url_format.'://'.$box_user.':'.$box_password.'@'.$box_ip.'/grab?format=jpg&r='.$resolution.'&&o=&n=&'.$time.$session_part_2.'">';
+	echo '<img src="'.$url_format.'://'.$box_user.':'.$box_password.'@'.$box_ip.'/grab?format=jpg&r='.$resolution.'&'.time().'">';
 	}
 	
 	//
-	if($browse !== '')
+	if($browse != '')
 	{
 	if($browse == 'page_backward'){ $xmlfile = ''.$url_format.'://'.$box_ip.'/web/remotecontrol?command=108'.$session_part_2; }
 	if($browse == 'page_forward'){ $xmlfile = ''.$url_format.'://'.$box_ip.'/web/remotecontrol?command=103'.$session_part_2; }
@@ -56,41 +56,39 @@ include("../inc/dashboard_config.php");
 	
 	$sendTeletext_request = @file_get_contents($xmlfile, false, $webrequest);
 	$xml = simplexml_load_string($sendTeletext_request);
-	sleep(2);
+	sleep(1);
 	
-	echo '<img src="'.$url_format.'://'.$box_user.':'.$box_password.'@'.$box_ip.'/grab?format=jpg&r='.$resolution.'&&o=&n=&'.$time.$session_part_2.'">';
+	echo '<img src="'.$url_format.'://'.$box_user.':'.$box_password.'@'.$box_ip.'/grab?format=jpg&r='.$resolution.'&'.time().'">';
 	}
 	
-	if($control !== '')
+	if($control != '')
 	{
 	if($control == 'on'){ $xmlfile = ''.$url_format.'://'.$box_ip.'/web/remotecontrol?command=388'.$session_part_2; }
 	if($control == 'off'){ $xmlfile = ''.$url_format.'://'.$box_ip.'/web/remotecontrol?command=174'.$session_part_2; }
-	if($control == 'reload'){ $xmlfile = ''.$url_format.'://'.$box_ip.'/web/remotecontrol?command=388'.$session_part_2; }
 
 	if($control == 'restart')
 	{	
 	$xmlfile = $url_format.'://'.$box_ip.'/web/remotecontrol?command=174'.$session_part_2; 
 	$sendTeletext_request = @file_get_contents($xmlfile, false, $webrequest);
 	$xml = simplexml_load_string($sendTeletext_request);
-	sleep(2);
+	sleep(1);
 	
 	$xmlfile = $url_format.'://'.$box_ip.'/web/remotecontrol?command=388'.$session_part_2;
 	$sendTeletext_request = @file_get_contents($xmlfile, false, $webrequest);
 	$xml = simplexml_load_string($sendTeletext_request);
-	
-	sleep(3);
+	sleep(1);
 	}
 	//
 	
 	$sendTeletext_request = @file_get_contents($xmlfile, false, $webrequest);
 	$xml = simplexml_load_string($sendTeletext_request);
-	sleep(2);
+	sleep(1);
 	
-	if($control == 'on'){ sleep(5); }
+	if($control == 'on'){ sleep(1); }
 	if($control == 'off'){ echo 'Teletext off..'; exit; }
-	if($control == 'reload'){ sleep(3); }
+	if($control == 'reload'){ sleep(1); }
 	
-	echo '<img src="'.$url_format.'://'.$box_user.':'.$box_password.'@'.$box_ip.'/grab?format=jpg&r='.$resolution.'&&o=&n=&'.$time.$session_part_2.'">';
+	echo '<img src="'.$url_format.'://'.$box_user.':'.$box_password.'@'.$box_ip.'/grab?format=jpg&r='.$resolution.'&'.time().'">';
 	}
 
 ?>
