@@ -255,7 +255,7 @@ animatedcollapse.init()
           <input id="on" type="button" onClick="teletext_control(this.id)" value="Teletext ON" class="btn btn-xs btn-success">
           <input id="off" type="button" onClick="teletext_control(this.id)" value="Teletext OFF" class="btn btn-xs btn-danger">
           <input id="reload" type="button" onClick="teletext_control(this.id)" value="Reload" class="btn btn-xs btn-default">
-          <input id="restart" type="button" onClick="teletext_control(this.id)" value="Restart" class="btn btn-xs btn-default">
+          <!--<input id="restart" type="button" onClick="teletext_control(this.id)" value="Restart" class="btn btn-xs btn-default">-->
         </div>
         <div class="spacer_10"></div>
         <div class="col-md-12">
