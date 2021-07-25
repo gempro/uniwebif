@@ -201,11 +201,14 @@ $(function(){
 	$.post("functions/statusbar.php?t="+(new Date().getTime()),
 	function(data){
 	var obj = JSON.parse(data);
+	var media = decodeURIComponent(obj[0].media);
 	var stream_url = decodeURIComponent(obj[0].stream_url);
 	var e2servicereference = decodeURIComponent(obj[0].e2servicereference);
 	var e2eventname = decodeURIComponent(obj[0].e2eventname);
 	var e2eventservicename = decodeURIComponent(obj[0].e2eventservicename);
 	var e2eventdescriptionextended = decodeURIComponent(obj[0].e2eventdescriptionextended);
+	
+	if(media == 'file'){ var epg_sign = 'style="display:none;"'; } else { var epg_sign = ''; }
 	
 	if(document.querySelector('html').clientWidth > 550){
 	$("#statusbar_cnt").html("\
@@ -213,7 +216,7 @@ $(function(){
 	<div id=\"row1\">\
 	<a href=\""+stream_url+"\" target=\"_blank\" title=\"Stream\">\
 	<i class=\"fa fa-desktop fa-1x\"></i></a>\
-	<a onclick=\"modal.open();\" title=\"Show EPG\" style=\"cursor:pointer;\"><i class=\"fa fa-list-alt fa-1x\"></i></a> "+e2eventname+"\
+	<a "+epg_sign+" onclick=\"modal.open();\" title=\"Show EPG\" style=\"cursor:pointer;\"><i class=\"fa fa-list-alt fa-1x\"></i></a> "+e2eventname+"\
 	| +"+obj[0].time_remaining+" of "+obj[0].time_complete+" min | <input type=\"text\" id=\"sb_service\" name='"+e2eventservicename+"' value='"+e2servicereference+"'\
 	style=\"display:none;\">\
 	<strong>"+e2eventservicename+"</strong></div>\
@@ -226,7 +229,7 @@ $(function(){
 	<div id=\"row1\">\
 	<a href='"+stream_url+"' target=\"_blank\" title=\"Stream\">\
 	<i class=\"fa fa-desktop fa-1x\"></i></a>\
-	<a onclick=\"modal.open();\" title=\"Show EPG\" style=\"cursor:pointer;\"><i class=\"fa fa-list-alt fa-1x\"></i></a> "+e2eventname+"\
+	<a "+epg_sign+" onclick=\"modal.open();\" title=\"Show EPG\" style=\"cursor:pointer;\"><i class=\"fa fa-list-alt fa-1x\"></i></a> "+e2eventname+"\
 	| <input type=\"text\" id=\"sb_service\" value='"+e2servicereference+"' style=\"display:none;\">\
 	<strong>"+e2eventservicename+"</strong></div>\
 	<div style=\"clear:both\"></div>\
@@ -2217,13 +2220,16 @@ function get_all_services(){
 // show services
 function show_all_services(service){
 	
-	if(service == 'search'){ var searchterm = $("#service_searchterm").val(); } else { var searchterm = ''; }
+	if(service == 'search'){ var searchterm = $("#service_searchterm").val(); if(searchterm.length < 2) { return; }; } else { var searchterm = ''; }
 	$("#all_services_list").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
+	
+	var search_area = $("#search_area").val();
 	
 	$.post("functions/services_inc.php",
 	{
 	service: service,
-	searchterm: searchterm
+	searchterm: searchterm,
+	search_area: search_area
 	},
 	function(data){
 	$("#all_services_list").html(data);
