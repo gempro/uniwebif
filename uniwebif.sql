@@ -1,28 +1,23 @@
--- phpMyAdmin SQL Dump
--- version 3.3.2deb1ubuntu1
--- http://www.phpmyadmin.net
 --
--- Host: localhost
--- Erstellungszeit: 07. Mai 2019 um 16:21
--- Server Version: 5.5.58
--- PHP-Version: 5.5.9-1ubuntu4.26
+-- Update structure to 2.0
+--
+-- ALTER TABLE `settings` ADD `highlight_term` TEXT NOT NULL AFTER `extra_rec_time`
+-- ALTER TABLE `saved_search` ADD `searchterm_r` VARCHAR( 255 ) NOT NULL AFTER `searchterm`
+-- ALTER TABLE `saved_search` ADD `device` INT( 2 ) NOT NULL DEFAULT '0'
+-- ALTER TABLE `record_locations` ADD `device` INT( 2 ) NOT NULL DEFAULT '0'
+-- ALTER TABLE `record_locations` ADD `description` VARCHAR( 255 ) NOT NULL DEFAULT 'default'
+-- ALTER TABLE `timer` ADD `timer_repeat` INT( 3 ) NOT NULL DEFAULT '0'
+-- ALTER TABLE `timer` ADD `timer_repeat_d` VARCHAR( 255 ) NOT NULL
 
-SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
 
 --
--- Datenbank: `uniwebif`
+-- Database: `uniwebif`
 --
 
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `all_services`
+-- Structure for table `all_services`
 --
 
 DROP TABLE IF EXISTS `all_services`;
@@ -35,15 +30,11 @@ CREATE TABLE IF NOT EXISTS `all_services` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
---
--- Daten für Tabelle `all_services`
---
-
 
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `bouquet_list`
+-- Structure for table `bouquet_list`
 --
 
 DROP TABLE IF EXISTS `bouquet_list`;
@@ -56,15 +47,11 @@ CREATE TABLE IF NOT EXISTS `bouquet_list` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
---
--- Daten für Tabelle `bouquet_list`
---
-
 
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `box_info`
+-- Structure for table `box_info`
 --
 
 DROP TABLE IF EXISTS `box_info`;
@@ -77,15 +64,11 @@ CREATE TABLE IF NOT EXISTS `box_info` (
   KEY `id` (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
---
--- Daten für Tabelle `box_info`
---
-
 
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `channel_list`
+-- Structure for table `channel_list`
 --
 
 DROP TABLE IF EXISTS `channel_list`;
@@ -107,15 +90,11 @@ CREATE TABLE IF NOT EXISTS `channel_list` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
---
--- Daten für Tabelle `channel_list`
---
-
 
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `device_list`
+-- Structure for table `device_list`
 --
 
 DROP TABLE IF EXISTS `device_list`;
@@ -141,15 +120,11 @@ CREATE TABLE IF NOT EXISTS `device_list` (
   KEY `id` (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
---
--- Daten für Tabelle `device_list`
---
-
 
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `epg_data`
+-- Structure for table `epg_data`
 --
 
 DROP TABLE IF EXISTS `epg_data`;
@@ -199,15 +174,11 @@ CREATE TABLE IF NOT EXISTS `epg_data` (
   FULLTEXT KEY `epgsearch_enc` (`title_enc`,`description_enc`,`descriptionextended_enc`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
---
--- Daten für Tabelle `epg_data`
---
-
 
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `ignore_list`
+-- Structure for table `ignore_list`
 --
 
 DROP TABLE IF EXISTS `ignore_list`;
@@ -222,15 +193,11 @@ CREATE TABLE IF NOT EXISTS `ignore_list` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
---
--- Daten für Tabelle `ignore_list`
---
-
 
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `keywords`
+-- Structure for table `keywords`
 --
 
 DROP TABLE IF EXISTS `keywords`;
@@ -249,15 +216,11 @@ CREATE TABLE IF NOT EXISTS `keywords` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
---
--- Daten für Tabelle `keywords`
---
-
 
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `record_locations`
+-- Structure for table `record_locations`
 --
 
 DROP TABLE IF EXISTS `record_locations`;
@@ -268,15 +231,11 @@ CREATE TABLE IF NOT EXISTS `record_locations` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
---
--- Daten für Tabelle `record_locations`
---
-
 
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `saved_search`
+-- Structure for table `saved_search`
 --
 
 DROP TABLE IF EXISTS `saved_search`;
@@ -302,15 +261,11 @@ CREATE TABLE IF NOT EXISTS `saved_search` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
---
--- Daten für Tabelle `saved_search`
---
-
 
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `settings`
+-- Structure for table `settings`
 --
 
 DROP TABLE IF EXISTS `settings`;
@@ -359,6 +314,7 @@ CREATE TABLE IF NOT EXISTS `settings` (
   `reload_progressbar` int(1) NOT NULL DEFAULT '0',
   `search_list_sort` varchar(255) NOT NULL DEFAULT 'id',
   `extra_rec_time` int(4) NOT NULL DEFAULT '0',
+  `highlight_term` text NOT NULL,
   `cz_activate` int(1) NOT NULL DEFAULT '0',
   `cz_wait_time` int(2) NOT NULL DEFAULT '15',
   `cz_repeat` varchar(10) NOT NULL,
@@ -382,16 +338,16 @@ CREATE TABLE IF NOT EXISTS `settings` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
--- Daten für Tabelle `settings`
+-- Data for table `settings`
 --
 
-INSERT INTO `settings` (`id`, `box_ip`, `box_user`, `box_password`, `url_format`, `server_ip`, `script_folder`, `activate_cron`, `epg_entries_per_channel`, `channel_entries`, `time_format`, `epg_crawler`, `epg_crawler_activ`, `crawler_timestamp`, `crawler_hour`, `crawler_minute`, `crawler_start`, `crawler_end`, `last_epg_crawl`, `last_epg`, `start_epg_crawler`, `after_crawl_action`, `search_crawler`, `last_search_crawl`, `display_old_epg`, `streaming_symbol`, `imdb_symbol`, `timer_ticker`, `show_hidden_ticker`, `ticker_time`, `mark_searchterm`, `send_timer`, `hide_old_timer`, `delete_old_timer`, `delete_receiver_timer`, `delete_further_receiver_timer`, `dummy_timer`, `dummy_timer_time`, `dummy_timer_current`, `delete_old_epg`, `del_time`, `reload_progressbar`, `search_list_sort`, `extra_rec_time`, `cz_activate`, `cz_wait_time`, `cz_repeat`, `cz_hour`, `cz_minute`, `cz_am_pm`, `cz_start_channel`, `cz_timestamp`, `cz_worktime`, `dur_down_broadcast`, `dur_up_broadcast`, `primetime`, `dur_down_primetime`, `dur_up_primetime`, `del_m3u`, `del_m3u_time`, `sort_quickpanel`, `current_git_push`) VALUES
-(0, '127.0.0.1', 'root', 'dreambox', 'http', '127.0.0.1', 'uniwebif', 0, 250, 100, 1, 0, 0, 0, '0', '00', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 604800, 1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 86400, 0, 'id', 0, 0, 15, 'daily', '7', '00', 'AM', '', '0', '0', 300, 1800, 0, 0, 7200, 0, 0, 'e2servicename', 0);
+INSERT INTO `settings` (`id`, `box_ip`, `box_user`, `box_password`, `url_format`, `server_ip`, `script_folder`, `activate_cron`, `epg_entries_per_channel`, `channel_entries`, `time_format`, `epg_crawler`, `epg_crawler_activ`, `crawler_timestamp`, `crawler_hour`, `crawler_minute`, `crawler_start`, `crawler_end`, `last_epg_crawl`, `last_epg`, `start_epg_crawler`, `after_crawl_action`, `search_crawler`, `last_search_crawl`, `display_old_epg`, `streaming_symbol`, `imdb_symbol`, `timer_ticker`, `show_hidden_ticker`, `ticker_time`, `mark_searchterm`, `send_timer`, `hide_old_timer`, `delete_old_timer`, `delete_receiver_timer`, `delete_further_receiver_timer`, `dummy_timer`, `dummy_timer_time`, `dummy_timer_current`, `delete_old_epg`, `del_time`, `reload_progressbar`, `search_list_sort`, `extra_rec_time`, `highlight_term`, `cz_activate`, `cz_wait_time`, `cz_repeat`, `cz_hour`, `cz_minute`, `cz_am_pm`, `cz_start_channel`, `cz_timestamp`, `cz_worktime`, `cz_device`, `dur_down_broadcast`, `dur_up_broadcast`, `primetime`, `dur_down_primetime`, `dur_up_primetime`, `del_m3u`, `del_m3u_time`, `sort_quickpanel`, `current_git_push`) VALUES
+(0, '127.0.0.1', 'root', 'dreambox', 'http', '127.0.0.1', 'uniwebif', 0, 250, 100, 1, 0, 0, 0, '0', '00', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 604800, 1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 86400, 0, 'id', 0, '', 0, 15, 'daily', '7', '00', 'AM', '', '0', '0', 0, 300, 1800, 0, 0, 7200, 0, 0, 'e2servicename', 0);
 
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `timer`
+-- Structure for table `timer`
 --
 
 DROP TABLE IF EXISTS `timer`;
@@ -430,8 +386,4 @@ CREATE TABLE IF NOT EXISTS `timer` (
   `conflict` int(1) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
---
--- Daten für Tabelle `timer`
---
 
