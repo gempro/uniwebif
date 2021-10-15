@@ -1,3 +1,12 @@
+2.0
+
++ Support for IPTV channels added
++ Function to assign saved searches to different Receiver added
++ Function to create manual timer added
++ Function to highlight custom defined words in extended description added
+
+----------------------------------------------------------------------------------------------------------------
+
 Update 11/2020
 
 + Session function for Webinterfaces with activated Anti-Hijacking added
