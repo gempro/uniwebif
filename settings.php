@@ -40,10 +40,10 @@ session_start();
 	// read device info
 	$sql_2 = mysqli_query($dbmysqli, "SELECT * FROM `box_info`");
 	$result_2 = mysqli_fetch_assoc($sql_2);
-	if(!isset($result_2['e2enigmaversion']) or $result_2['e2enigmaversion'] == ""){ $result_2['e2enigmaversion'] = ""; } else { $result_2['e2enigmaversion'] = 'OS:<br>'.$result_2['e2enigmaversion']; }
-	if(!isset($result_2['e2imageversion']) or $result_2['e2imageversion'] == ""){ $result_2['e2imageversion'] = ""; } else { $result_2['e2imageversion'] = 'Image:<br>'.$result_2['e2imageversion']; }
-	if(!isset($result_2['e2webifversion']) or $result_2['e2webifversion'] == ""){ $result_2['e2webifversion'] = ""; } else { $result_2['e2webifversion'] = 'Webinterface:<br>'.$result_2['e2webifversion']; }
-	if(!isset($result_2['e2model']) or $result_2['e2model'] == ""){ $result_2['e2model'] = ""; } else { $result_2['e2model'] = 'Device:<br>'.$result_2['e2model']; }
+	if(!isset($result_2['e2enigmaversion']) or $result_2['e2enigmaversion'] == ''){ $result_2['e2enigmaversion'] = ''; } else { $result_2['e2enigmaversion'] = 'OS:<br>'.$result_2['e2enigmaversion']; }
+	if(!isset($result_2['e2imageversion']) or $result_2['e2imageversion'] == ''){ $result_2['e2imageversion'] = ''; } else { $result_2['e2imageversion'] = 'Image:<br>'.$result_2['e2imageversion']; }
+	if(!isset($result_2['e2webifversion']) or $result_2['e2webifversion'] == ''){ $result_2['e2webifversion'] = ''; } else { $result_2['e2webifversion'] = 'Webinterface:<br>'.$result_2['e2webifversion']; }
+	if(!isset($result_2['e2model']) or $result_2['e2model'] == ''){ $result_2['e2model'] = ''; } else { $result_2['e2model'] = 'Device:<br>'.$result_2['e2model']; }
 	
 	// cz device list
 	$sql_3 = "SELECT * FROM `device_list` ";
@@ -53,9 +53,9 @@ session_start();
 	while ($obj = mysqli_fetch_object($result_3)){
 	{
 	
-	if(!isset($cz_device_list) or $cz_device_list == ""){ $cz_device_list = ""; }
+	if(!isset($cz_device_list) or $cz_device_list == ''){ $cz_device_list = ''; }
 	
-	if($cz_device_no == $obj->id){ $cz_list_selected = "selected=\"selected\""; } else { $cz_list_selected = ""; }
+	if($cz_device_no == $obj->id){ $cz_list_selected = 'selected="selected"'; } else { $cz_list_selected = ''; }
 	
 	$cz_device_list = $cz_device_list.'
 	<option value="'.$obj->id.'" '.$cz_list_selected.'>'.rawurldecode($obj->device_description).'</option>
@@ -121,58 +121,30 @@ animatedcollapse.ontoggle=function($, divobj, state){ //fires each time a DIV is
 //state: "block" or "none", depending on state
 }
 animatedcollapse.init();
-//
-$(function(){
-   $("#display_time_format").val("<?php if (!isset($time_format) or $time_format == ""){ $time_format = '2'; } echo $time_format; ?>");
-// device list
-$.post("functions/device_list_inc.php",
-	{
-	action: 'show'
-	},
-	function(data){
-	$("#device_list").html(data);
-	});
-});
 </script>
 </head>
 <body>
 <a id="top"></a>
-<div id="scroll_top"><a href="#" title="to top"><script>document.write("<i class=\"glyphicon glyphicon-circle-arrow-up fa-"+scrolltop_btn_size+"x\"></i>");</script></a></div>
+<div id="scroll_top"><a href="#" title="top"><script>document.write("<i class=\"glyphicon glyphicon-circle-arrow-up fa-"+scrolltop_btn_size+"x\"></i>");</script></a></div>
 <!--statusbar modal -->
- <span id="showModal"></span>
-  <div id="modal" class="modal">
+  <span id="showModal"></span>
+  <div id="bn_epg_modal" class="modal">
     <div class="modal-dialog animated">
     <div class="modal-content">
-      <div id="sb-modal-header" class="modal-header"></div>
+      <div id="bn-modal-header" class="modal-header"></div>
       <div class="modal-body">
-        <div id="epgframe"></div>
+        <div id="bn_epgframe"></div>
         <hr>
         <div align="right">
-        <button class="btn btn-default btn-sm" type="button" onclick="modal.close();">Close</button>
+        <button class="btn btn-default btn-sm" type="button" onclick="bn_epg_modal.close();">Close</button>
         </div>
       </div>
     </div>
   </div>
 </div>
-<!--statusbar modal -->
-<!--remote control modal -->
- <span id="showModal"></span>
-  <div id="remote_modal" class="modal_rc">
-    <div class="modal-dialog animated">
-    <div class="modal-content">
-      <div class="modal-header">Remote Control <span id="rc_status"></span>
-      </div>
-      <div class="modal-body">
-        <div id="rc_frame"></div>
-        <hr>
-        <div align="right">
-        <button class="btn btn-default btn-sm" type="button" onclick="remote_modal.close();">Close</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-<!--remote control modal -->
+<span id="bn_modal_service" style="display:none"></span>
+<span id="bn_modal_name" style="display:none"></span>
+<!--broadcast now modal -->
 <!--quickpanel modal -->
  <span id="showModal"></span>
   <div id="quickpanel_modal" class="modal">
@@ -190,6 +162,41 @@ $.post("functions/device_list_inc.php",
   </div>
 </div>
 <!--quickpanel modal -->
+<!--manual timer modal -->
+ <span id="showModal"></span>
+  <div id="manual_timer_modal" class="modal">
+    <div class="modal-dialog animated">
+    <div class="modal-content">
+      <div id="timer-modal-header" class="modal-header">Manual timer</div>
+      <div class="modal-body">
+        <div id="quickpanel_timerframe"></div>
+        <hr>
+        <div align="right">
+        <button class="btn btn-default btn-sm" type="button" onclick="manual_timer_modal.close();">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--manual timer modal -->
+<!--remote control modal -->
+ <span id="showModal"></span>
+  <div id="remote_modal" class="modal_rc">
+    <div class="modal-dialog animated">
+    <div class="modal-content">
+      <div class="modal-header">Remote Control <span id="rc_status"><i class="fa fa-wifi gray"></i></span>
+      </div>
+      <div class="modal-body">
+        <div id="rc_frame"></div>
+        <hr>
+        <div align="right">
+        <button class="btn btn-default btn-sm" type="button" onclick="remote_modal.close();">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--remote control modal -->
 <div id="wrapper">
   <div class="navbar navbar-inverse navbar-fixed-top">
     <div class="adjust-nav">
@@ -200,7 +207,7 @@ $.post("functions/device_list_inc.php",
         <ul class="nav navbar-nav navbar-right">
           <div class="row">
             <div class="col-md-12">
-              <div id="navbar_info">oldest: <span class="badge"><?php echo $date_first; echo " - "; echo utf8_encode($first_entry['e2eventservicename']); ?></span> latest: <span class="badge-success"><?php echo $date_latest; echo " - "; echo utf8_encode($last_entry['e2eventservicename']); ?></span> <?php echo $header_date; ?></div>
+              <div id="navbar_info">oldest: <span class="badge"><?php echo $date_first; echo ' - '; echo utf8_encode($first_entry['e2eventservicename']); ?></span> latest: <span class="badge-success"><?php echo $date_latest; echo ' - '; echo utf8_encode($last_entry['e2eventservicename']); ?></span> <?php echo $header_date; ?></div>
               <!--navbar_info-->
             </div>
           </div>
@@ -218,11 +225,11 @@ $.post("functions/device_list_inc.php",
         <li> <a href="timer.php"><i class="fa fa-clock-o"></i>Timer & Saved Search</a> </li>
         <li> <a href="#"><i class="fa fa-wrench"></i>Crawler Tools<span class="fa arrow"></span></a>
           <ul class="nav nav-second-level">
-            <li> <a href="#" onclick="animatedcollapse.toggle('div_crawl_channel_id');"><i class="fa fa-chevron-right"></i>Crawl Channel ID's</a> </li>
-            <li> <a href="#" onclick="animatedcollapse.toggle('div_crawl_complete');"><i class="fa fa-chevron-right"></i>Crawl EPG from Channels</a> </li>
-            <li> <a href="crawl_separate.php"><i class="fa fa-chevron-right"></i>Crawl Channel separate</a> </li>
-            <li> <a href="#" onclick="animatedcollapse.toggle('div_crawl_search');"><i class="fa fa-chevron-right"></i>Crawl Search - Write Timer in Database</a></li>
-            <li> <a href="#" onclick="animatedcollapse.toggle('div_send_timer');"><i class="fa fa-chevron-right"></i>Send Timer from Database to Receiver</a> </li>
+          <li> <a href="crawl_separate.php"><i class="fa fa-chevron-right"></i>Crawl channel separate</a> </li>
+            <li> <a href="#" onclick="animatedcollapse.toggle('div_crawl_channel_id');"><i class="fa fa-chevron-right"></i>Crawl channel ID's</a> </li>
+            <li> <a href="#" onclick="animatedcollapse.toggle('div_crawl_complete');"><i class="fa fa-chevron-right"></i>Crawl EPG from channels</a> </li>
+            <li> <a href="#" onclick="animatedcollapse.toggle('div_crawl_search');"><i class="fa fa-chevron-right"></i>Crawl Search - Write timer in database</a></li>
+            <li> <a href="#" onclick="animatedcollapse.toggle('div_send_timer');"><i class="fa fa-chevron-right"></i>Send timer from database to Receiver</a> </li>
           </ul>
         </li>
         <li role="presentation" class="active"> <a href="#"><i class="fa fa-cog"></i>Settings<span class="fa arrow"></span></a>
@@ -274,7 +281,7 @@ $.post("functions/device_list_inc.php",
       <!--crawl channel id-->
       <div id="div_crawl_channel_id">
       <span class="panel-close" onclick="animatedcollapse.hide('div_crawl_channel_id')"><span aria-hidden="true">x</span></span>
-        <h1>Crawl Channel ID's</h1>
+        <h1>Crawl channel ID's</h1>
         <input type="submit" class="btn btn-success" id="crawl_channel_id_btn" value="Click to confirm" onclick="animatedcollapse.show('crawl_channel_id_status'); crawl_channel_id();">
         <div id="crawl_channel_id_status"><img src="images/loading.gif" width="16" height="16" align="absmiddle"> </div>
         <!--crawl channel id-->
@@ -282,7 +289,7 @@ $.post("functions/device_list_inc.php",
       <!--crawl complete-->
       <div id="div_crawl_complete">
       <span class="panel-close" onclick="animatedcollapse.hide('div_crawl_complete')"><span aria-hidden="true">x</span></span>
-        <h1>Crawl EPG from Channels</h1>
+        <h1>Crawl EPG from channels</h1>
         <input type="submit" class="btn btn-success" id="crawl_complete_btn" value="Click to confirm" onclick="animatedcollapse.show('crawl_complete_status'); crawl_complete();">
         <div id="crawl_complete_status"><img src="images/loading.gif" width="16" height="16" align="absmiddle"> </div>
         <!--status-->
@@ -291,7 +298,7 @@ $.post("functions/device_list_inc.php",
       <!--crawl saved search-->
       <div id="div_crawl_search">
       <span class="panel-close" onclick="animatedcollapse.hide('div_crawl_search')"><span aria-hidden="true">x</span></span>
-        <h1>Crawl Search - Write Timer in Database</h1>
+        <h1>Crawl Search - Write timer in database</h1>
         <input type="submit" class="btn btn-success" id="crawl_search_btn" value="Click to confirm" onclick="animatedcollapse.show('crawl_search_status'); crawl_saved_search();">
         <div id="crawl_search_status"><img src="images/loading.gif" width="16" height="16" align="absmiddle"> </div>
         <!--status-->
@@ -300,7 +307,7 @@ $.post("functions/device_list_inc.php",
       <!--send timer-->
       <div id="div_send_timer">
       <span class="panel-close" onclick="animatedcollapse.hide('div_send_timer')"><span aria-hidden="true">x</span></span>
-        <h1>Send Timer from Database to Receiver</h1>
+        <h1>Send timer from database to Receiver</h1>
         <input type="submit" class="btn btn-success" id="send_timer_btn" value="Click to confirm" onclick="animatedcollapse.show('send_timer_status'); send_timer();">
         <div id="send_timer_status"><img src="images/loading.gif" width="16" height="16" align="absmiddle"> </div>
         <!--status-->
@@ -364,13 +371,13 @@ $.post("functions/device_list_inc.php",
             How many <strong>Channels/Services</strong> per Bouquet should be write in database:
             <input id="channel_entries" size="4" maxlength="4" value="<?php echo $settings['channel_entries']; ?>" />
             <div class="spacer_10"></div>
-            <input type="checkbox" name="" id="search_crawler" onclick="" <?php if($settings['search_crawler'] == '1'){ echo "checked"; } ?> />
+            <input type="checkbox" name="" id="search_crawler" onclick="" <?php if($settings['search_crawler'] == '1'){ echo 'checked'; } ?> />
             <strong>Activate</strong> automatic Search Crawler
             <div class="spacer_10"></div>
-            <input type="checkbox" name="" id="epg_crawler" onclick="" <?php if($settings['epg_crawler'] == '1'){ echo "checked"; } ?> />
+            <input type="checkbox" name="" id="epg_crawler" onclick="" <?php if($settings['epg_crawler'] == '1'){ echo 'checked'; } ?> />
             <strong>Activate</strong> automatic EPG Crawler
             <div class="spacer_10"></div>
-            <input type="checkbox" name="" id="dummy_timer" onclick="" <?php if($settings['dummy_timer'] == '1'){ echo "checked"; } ?> />
+            <input type="checkbox" name="" id="dummy_timer" onclick="" <?php if($settings['dummy_timer'] == '1'){ echo 'checked'; } ?> />
             Send a <strong>dummy timer</strong> to wake up Receiver from Deep Standby, before EPG Crawler start
             <div class="spacer_10"></div>
             Start Crawler at remaining EPG entries
@@ -393,10 +400,10 @@ $.post("functions/device_list_inc.php",
             <div class="spacer_5"></div>
             Next crawling:
             <?php // time format 1
-			if($settings['time_format'] == '1'){ $next_crawling = date("d.m.Y - H:i", $settings['crawler_timestamp']); }
+			if($settings['time_format'] == '1'){ $next_crawling = date('d.m.Y - H:i', $settings['crawler_timestamp']); }
 			// time format 2
-			if($settings['time_format'] == '2'){ $next_crawling = date("n/d/Y - g:i A", $settings['crawler_timestamp']); }
-			if(!isset($next_crawling) or $next_crawling == "") { $next_crawling = ""; }
+			if($settings['time_format'] == '2'){ $next_crawling = date('n/d/Y - g:i A', $settings['crawler_timestamp']); }
+			if(!isset($next_crawling) or $next_crawling == ''){ $next_crawling = ''; }
 			echo $next_crawling; ?>
             <br>
             Duration from last crawling: ~ <?php $crawler_duration = $crawler_end - $crawler_start; 
@@ -408,17 +415,15 @@ $.post("functions/device_list_inc.php",
             <div class="spacer_5"></div>
             <select name="channel_id" id="channel_id" class="form-control">
 			<?php 
-            // get channels			
-			$sql = "SELECT * FROM channel_list ORDER BY e2servicename ASC";
+            // channel dropdown			
+			$sql = "SELECT * FROM `channel_list` ORDER BY `e2servicename` ASC";
 			if ($result = mysqli_query($dbmysqli,$sql))
 			{
-			// Fetch one and one row
 			while ($obj = mysqli_fetch_object($result)) {
 			{
 			// set selected
-			if($obj->zap_start == "1"){ $select = "selected=\"selected\""; } 
-			elseif ($obj->zap_start == "0") { $select = ""; }
-			echo utf8_encode("<option value='$obj->e2servicereference' $select>$obj->e2servicename</option>"); }    
+			if($obj->zap_start == '1'){ $select = 'selected="selected"'; } else { $select = ''; }
+			echo utf8_encode('<option value="'.$obj->e2servicereference.'" '.$select.'>'.$obj->e2servicename.'</option>'); }    
 			}
 			}
 			?>
@@ -432,17 +437,14 @@ $.post("functions/device_list_inc.php",
             </select>
             <div class="spacer_10"></div>
             <h5>Channel Zapper</h5>
-            <input type="checkbox" name="" id="cz_activate" onclick="" <?php if($settings['cz_activate'] == '1'){ echo "checked"; } ?> />
+            <input type="checkbox" name="" id="cz_activate" onclick="" <?php if($settings['cz_activate'] == '1'){ echo 'checked'; } ?> />
             <strong>Activate</strong> automatic Channel Zapper
-            
             <div class="spacer_10"></div>
             Device for zapping 
             <select id="cz_device">
             <option value="0">default</option>
             <?php echo $cz_device_list; ?>
             </select>
-            
-            
             <div class="spacer_10"></div>
             Wait on channel (in seconds)
             <input name="textfield" type="text" id="cz_wait_time" size="2" maxlength="2" value="<?php echo $settings['cz_wait_time']?>" >
@@ -468,19 +470,19 @@ $.post("functions/device_list_inc.php",
             <div class="spacer_10"></div>
             Repeat zapping
             <select id="cz_repeat">
-              <option value="daily" <?php if($settings['cz_repeat'] == 'daily'){ echo "selected"; } ?>>every day</option>
-              <option value="daily_3" <?php if($settings['cz_repeat'] == 'daily_3'){ echo "selected"; } ?>>every 3 days</option>
-              <option value="daily_5" <?php if($settings['cz_repeat'] == 'daily_5'){ echo "selected"; } ?>>every 5 days</option>
-              <option value="daily_7" <?php if($settings['cz_repeat'] == 'daily_7'){ echo "selected"; } ?>>every 7 days</option>
+              <option value="daily" <?php if($settings['cz_repeat'] == 'daily'){ echo 'selected'; } ?>>every day</option>
+              <option value="daily_3" <?php if($settings['cz_repeat'] == 'daily_3'){ echo 'selected'; } ?>>every 3 days</option>
+              <option value="daily_5" <?php if($settings['cz_repeat'] == 'daily_5'){ echo 'selected'; } ?>>every 5 days</option>
+              <option value="daily_7" <?php if($settings['cz_repeat'] == 'daily_7'){ echo 'selected'; } ?>>every 7 days</option>
             </select>
             <div class="spacer_10"></div>
             <p>Next zapping:
               <?php 
 			// time format 1
-			if(!isset($next_day) or $next_day == ""){ $next_day = ""; } else { $next_day = $next_day; }
-			if($settings['time_format'] == '1'){ $next_day = date("d.m.Y - H:i", $settings['cz_timestamp']); }
+			if(!isset($next_day) or $next_day == ''){ $next_day = ''; }
+			if($settings['time_format'] == '1'){ $next_day = date('d.m.Y - H:i', $settings['cz_timestamp']); }
 			// time format 2
-			if($settings['time_format'] == '2'){ $next_day = date("n/d/Y - g:i A", $settings['cz_timestamp']); } echo $next_day; ?>
+			if($settings['time_format'] == '2'){ $next_day = date('n/d/Y - g:i A', $settings['cz_timestamp']); } echo $next_day; ?>
             <br>
             Duration from zapping: ~ <?php echo round($cz_worktime/60,0); ?> min.
             </p>
@@ -488,139 +490,145 @@ $.post("functions/device_list_inc.php",
         </div>
         <div class="col-md-4">
           <h5>Settings</h5>
-          <input type="checkbox" name="" id="activate_cron" onclick="" <?php if($settings['activate_cron'] == '1'){ echo "checked"; } ?> />
+          <input type="checkbox" name="" id="activate_cron" onclick="" <?php if($settings['activate_cron'] == '1'){ echo 'checked'; } ?> />
           <strong>Activate</strong> Cron
           <div class="spacer_10"></div>
           Displayed  time format
           <select id="time_format">
-            <option value="1" <?php if($settings['time_format'] == '1'){ echo "selected"; } ?>>dd.mm.YY 23:59</option>
-            <option value="2" <?php if($settings['time_format'] == '2'){ echo "selected"; } ?>>mm/dd/YY 11:59 PM</option>
+            <option value="1" <?php if($settings['time_format'] == '1'){ echo 'selected'; } ?>>dd.mm.YY 23:59</option>
+            <option value="2" <?php if($settings['time_format'] == '2'){ echo 'selected'; } ?>>mm/dd/YY 11:59 PM</option>
           </select>
           <div class="spacer_10"></div>
           Period of time from <strong>start</strong>, at Broadcast list
           <select id="dur_down_broadcast">
-            <option value="0" <?php if($settings['dur_down_broadcast'] == '0'){ echo "selected"; } ?>>0 minutes</option>
-            <option value="300" <?php if($settings['dur_down_broadcast'] == '300'){ echo "selected"; } ?>>5 minutes</option>
-            <option value="600" <?php if($settings['dur_down_broadcast'] == '600'){ echo "selected"; } ?>>10 minutes</option>
-            <option value="900" <?php if($settings['dur_down_broadcast'] == '900'){ echo "selected"; } ?>>15 minutes</option>
-            <option value="1800" <?php if($settings['dur_down_broadcast'] == '1800'){ echo "selected"; } ?>>30 minutes</option>
-            <option value="2700" <?php if($settings['dur_down_broadcast'] == '2700'){ echo "selected"; } ?>>45 minutes</option>
-            <option value="3600" <?php if($settings['dur_down_broadcast'] == '3600'){ echo "selected"; } ?>>60 minutes</option>
-            <option value="7200" <?php if($settings['dur_down_broadcast'] == '7200'){ echo "selected"; } ?>>120 minutes</option>
-            <option value="10800" <?php if($settings['dur_down_broadcast'] == '10800'){ echo "selected"; } ?>>180 minutes</option>
+            <option value="0" <?php if($settings['dur_down_broadcast'] == '0'){ echo 'selected'; } ?>>0 minutes</option>
+            <option value="300" <?php if($settings['dur_down_broadcast'] == '300'){ echo 'selected'; } ?>>5 minutes</option>
+            <option value="600" <?php if($settings['dur_down_broadcast'] == '600'){ echo 'selected'; } ?>>10 minutes</option>
+            <option value="900" <?php if($settings['dur_down_broadcast'] == '900'){ echo 'selected'; } ?>>15 minutes</option>
+            <option value="1800" <?php if($settings['dur_down_broadcast'] == '1800'){ echo 'selected'; } ?>>30 minutes</option>
+            <option value="2700" <?php if($settings['dur_down_broadcast'] == '2700'){ echo 'selected'; } ?>>45 minutes</option>
+            <option value="3600" <?php if($settings['dur_down_broadcast'] == '3600'){ echo 'selected'; } ?>>60 minutes</option>
+            <option value="7200" <?php if($settings['dur_down_broadcast'] == '7200'){ echo 'selected'; } ?>>120 minutes</option>
+            <option value="10800" <?php if($settings['dur_down_broadcast'] == '10800'){ echo 'selected'; } ?>>180 minutes</option>
           </select>
           <div class="spacer_10"></div>
           Period of time from <strong>end</strong>, at Broadcast list
           <select id="dur_up_broadcast">
-            <option value="300" <?php if($settings['dur_up_broadcast'] == '300'){ echo "selected"; } ?>>5 minutes</option>
-            <option value="600" <?php if($settings['dur_up_broadcast'] == '600'){ echo "selected"; } ?>>10 minutes</option>
-            <option value="900" <?php if($settings['dur_up_broadcast'] == '900'){ echo "selected"; } ?>>15 minutes</option>
-            <option value="1800" <?php if($settings['dur_up_broadcast'] == '1800'){ echo "selected"; } ?>>30 minutes</option>
-            <option value="2700" <?php if($settings['dur_up_broadcast'] == '2700'){ echo "selected"; } ?>>45 minutes</option>
-            <option value="3600" <?php if($settings['dur_up_broadcast'] == '3600'){ echo "selected"; } ?>>60 minutes</option>
-            <option value="7200" <?php if($settings['dur_up_broadcast'] == '7200'){ echo "selected"; } ?>>120 minutes</option>
-            <option value="10800" <?php if($settings['dur_up_broadcast'] == '10800'){ echo "selected"; } ?>>180 minutes</option>
+            <option value="300" <?php if($settings['dur_up_broadcast'] == '300'){ echo 'selected'; } ?>>5 minutes</option>
+            <option value="600" <?php if($settings['dur_up_broadcast'] == '600'){ echo 'selected'; } ?>>10 minutes</option>
+            <option value="900" <?php if($settings['dur_up_broadcast'] == '900'){ echo 'selected'; } ?>>15 minutes</option>
+            <option value="1800" <?php if($settings['dur_up_broadcast'] == '1800'){ echo 'selected'; } ?>>30 minutes</option>
+            <option value="2700" <?php if($settings['dur_up_broadcast'] == '2700'){ echo 'selected'; } ?>>45 minutes</option>
+            <option value="3600" <?php if($settings['dur_up_broadcast'] == '3600'){ echo 'selected'; } ?>>60 minutes</option>
+            <option value="7200" <?php if($settings['dur_up_broadcast'] == '7200'){ echo 'selected'; } ?>>120 minutes</option>
+            <option value="10800" <?php if($settings['dur_up_broadcast'] == '10800'){ echo 'selected'; } ?>>180 minutes</option>
           </select>
           <div class="spacer_10"></div>
           Period of time from <strong>start</strong>, at Primetime list
           <select id="dur_down_primetime">
-            <option value="0" <?php if($settings['dur_down_primetime'] == '0'){ echo "selected"; } ?>>0 minutes</option>
-            <option value="300" <?php if($settings['dur_down_primetime'] == '300'){ echo "selected"; } ?>>5 minutes</option>
-            <option value="600" <?php if($settings['dur_down_primetime'] == '600'){ echo "selected"; } ?>>10 minutes</option>
-            <option value="900" <?php if($settings['dur_down_primetime'] == '900'){ echo "selected"; } ?>>15 minutes</option>
-            <option value="1800" <?php if($settings['dur_down_primetime'] == '1800'){ echo "selected"; } ?>>30 minutes</option>
-            <option value="2700" <?php if($settings['dur_down_primetime'] == '2700'){ echo "selected"; } ?>>45 minutes</option>
-            <option value="3600" <?php if($settings['dur_down_primetime'] == '3600'){ echo "selected"; } ?>>60 minutes</option>
+            <option value="0" <?php if($settings['dur_down_primetime'] == '0'){ echo 'selected'; } ?>>0 minutes</option>
+            <option value="300" <?php if($settings['dur_down_primetime'] == '300'){ echo 'selected'; } ?>>5 minutes</option>
+            <option value="600" <?php if($settings['dur_down_primetime'] == '600'){ echo 'selected'; } ?>>10 minutes</option>
+            <option value="900" <?php if($settings['dur_down_primetime'] == '900'){ echo 'selected'; } ?>>15 minutes</option>
+            <option value="1800" <?php if($settings['dur_down_primetime'] == '1800'){ echo 'selected'; } ?>>30 minutes</option>
+            <option value="2700" <?php if($settings['dur_down_primetime'] == '2700'){ echo 'selected'; } ?>>45 minutes</option>
+            <option value="3600" <?php if($settings['dur_down_primetime'] == '3600'){ echo 'selected'; } ?>>60 minutes</option>
           </select>
           <div class="spacer_10"></div>
           Period of time from <strong>end</strong>, at Primetime list
           <select id="dur_up_primetime">
-            <option value="3600" <?php if($settings['dur_up_primetime'] == '3600'){ echo "selected"; } ?>>1 hour</option>
-            <option value="7200" <?php if($settings['dur_up_primetime'] == '7200'){ echo "selected"; } ?>>2 hours</option>
-            <option value="10800" <?php if($settings['dur_up_primetime'] == '10800'){ echo "selected"; } ?>>3 hours</option>
+            <option value="3600" <?php if($settings['dur_up_primetime'] == '3600'){ echo 'selected'; } ?>>1 hour</option>
+            <option value="7200" <?php if($settings['dur_up_primetime'] == '7200'){ echo 'selected'; } ?>>2 hours</option>
+            <option value="10800" <?php if($settings['dur_up_primetime'] == '10800'){ echo 'selected'; } ?>>3 hours</option>
           </select>
           <div class="spacer_10"></div>
-          <input type="checkbox" name="" id="display_old_epg" onclick="" <?php if($settings['display_old_epg'] == '1'){ echo "checked"; } ?> />
+          <input type="checkbox" name="" id="display_old_epg" onclick="" <?php if($settings['display_old_epg'] == '1'){ echo 'checked'; } ?> />
           Display EPG at search <i class="fa fa-search fa-1x"></i> from broadcasts who already expired
           <div class="spacer_10"></div>
-          <input type="checkbox" name="" id="streaming_symbol" onclick="" <?php if($settings['streaming_symbol'] == '1'){ echo "checked"; } ?> />
+          <input type="checkbox" name="" id="streaming_symbol" onclick="" <?php if($settings['streaming_symbol'] == '1'){ echo 'checked'; } ?> />
           Display Streaming symbol <i class="fa fa-desktop fa-1x"></i> at Broadcast, Primetime and Channel Browser list
           <div class="spacer_10"></div>
-          <input type="checkbox" name="" id="imdb_symbol" onclick="" <?php if($settings['imdb_symbol'] == '1'){ echo "checked"; } ?> />
+          <input type="checkbox" name="" id="imdb_symbol" onclick="" <?php if($settings['imdb_symbol'] == '1'){ echo 'checked'; } ?> />
           Display IMDb symbol <i class="fa fa-info-circle fa-1x"></i> at Broadcast, Primetime and Channel Browser list
           <div class="spacer_10"></div>
-          <input type="checkbox" name="" id="timer_ticker" onclick="" <?php if($settings['timer_ticker'] == '1'){ echo "checked"; } ?> />
+          <input type="checkbox" name="" id="timer_ticker" onclick="" <?php if($settings['timer_ticker'] == '1'){ echo 'checked'; } ?> />
           Display Timer <strong>Ticker</strong> on Startpage
           <div class="spacer_10"></div>
           Period of time from Ticker
           <select id="ticker_time">
-            <option value="86400" <?php if($settings['ticker_time'] == '86400'){ echo "selected"; } ?>>1 day</option>
-            <option value="259200" <?php if($settings['ticker_time'] == '259200'){ echo "selected"; } ?>>3 days</option>
-            <option value="432000" <?php if($settings['ticker_time'] == '432000'){ echo "selected"; } ?>>5 days</option>
-            <option value="604800" <?php if($settings['ticker_time'] == '604800'){ echo "selected"; } ?>>7 days</option>
+            <option value="86400" <?php if($settings['ticker_time'] == '86400'){ echo 'selected'; } ?>>1 day</option>
+            <option value="259200" <?php if($settings['ticker_time'] == '259200'){ echo 'selected'; } ?>>3 days</option>
+            <option value="432000" <?php if($settings['ticker_time'] == '432000'){ echo 'selected'; } ?>>5 days</option>
+            <option value="604800" <?php if($settings['ticker_time'] == '604800'){ echo 'selected'; } ?>>7 days</option>
           </select>
           <div class="spacer_10"></div>
-          <input type="checkbox" name="" id="mark_searchterm" onclick="" <?php if($settings['mark_searchterm'] == '1'){ echo "checked"; } ?> />
+          <input type="checkbox" name="" id="mark_searchterm" onclick="" <?php if($settings['mark_searchterm'] == '1'){ echo 'checked'; } ?> />
           Mark searchterm at search results <i class="fa fa-search fa-1x"></i>
           <div class="spacer_10"></div>
-          <input type="checkbox" name="" id="reload_progressbar" onclick="" <?php if($settings['reload_progressbar'] == '1'){ echo "checked"; } ?> />
+          <input type="checkbox" name="" id="reload_progressbar" onclick="" <?php if($settings['reload_progressbar'] == '1'){ echo 'checked'; } ?> />
           Reload Broadcast today Progressbar on Startpage continously
           <div class="spacer_10"></div>
-          <input type="checkbox" name="" id="delete_old_epg" onclick="" <?php if($settings['delete_old_epg'] == '1'){ echo "checked"; } ?> />
+          <input type="checkbox" name="" id="delete_old_epg" onclick="" <?php if($settings['delete_old_epg'] == '1'){ echo 'checked'; } ?> />
           Delete EPG which is older than
           <select id="del_time">
-            <option value="3600" <?php if($settings['del_time'] == '3600'){ echo "selected"; } ?>>1 hour</option>
-            <option value="10800" <?php if($settings['del_time'] == '10800'){ echo "selected"; } ?>>3 hours</option>
-            <option value="21600" <?php if($settings['del_time'] == '21600'){ echo "selected"; } ?>>6 hours</option>
-            <option value="43200" <?php if($settings['del_time'] == '43200'){ echo "selected"; } ?>>12 hours</option>
-            <option value="86400" <?php if($settings['del_time'] == '86400'){ echo "selected"; } ?>>24 hours</option>
+            <option value="3600" <?php if($settings['del_time'] == '3600'){ echo 'selected'; } ?>>1 hour</option>
+            <option value="10800" <?php if($settings['del_time'] == '10800'){ echo 'selected'; } ?>>3 hours</option>
+            <option value="21600" <?php if($settings['del_time'] == '21600'){ echo 'selected'; } ?>>6 hours</option>
+            <option value="43200" <?php if($settings['del_time'] == '43200'){ echo 'selected'; } ?>>12 hours</option>
+            <option value="86400" <?php if($settings['del_time'] == '86400'){ echo 'selected'; } ?>>24 hours</option>
           </select>
           <div class="spacer_10"></div>
           Connect to Receiver with
           <select id="url_format">
-            <option value="http" <?php if($settings['url_format'] == 'http'){ echo "selected"; } ?>>http</option>
-            <option value="https" <?php if($settings['url_format'] == 'https'){ echo "selected"; } ?>>https</option>
+            <option value="http" <?php if($settings['url_format'] == 'http'){ echo 'selected'; } ?>>http</option>
+            <option value="https" <?php if($settings['url_format'] == 'https'){ echo 'selected'; } ?>>https</option>
           </select>
           <div class="spacer_10"></div>
-          <input type="checkbox" name="" id="del_m3u" onclick="" <?php if($settings['del_m3u'] == '1'){ echo "checked"; } ?> />
+          <input type="checkbox" name="" id="del_m3u" onclick="" <?php if($settings['del_m3u'] == '1'){ echo 'checked'; } ?> />
           Delete m3u files from /tmp
           <div class="spacer_10"></div>
             Sorting channels in Quickpanel
             <select id="sort_quickpanel">
-          <option value="e2servicename" <?php if($settings['sort_quickpanel'] == 'e2servicename'){ echo "selected"; } ?>>Sort by name</option>
-          <option value="id" <?php if($settings['sort_quickpanel'] == 'id'){ echo "selected"; } ?>>Sorting from Receiver</option>
+          <option value="e2servicename" <?php if($settings['sort_quickpanel'] == 'e2servicename'){ echo 'selected'; } ?>>Sort by name</option>
+          <option value="id" <?php if($settings['sort_quickpanel'] == 'id'){ echo 'selected'; } ?>>Sorting from Receiver</option>
         </select>
+        <div class="spacer_10"></div>
+        Highlight term in extended description
+          <i style="cursor:default;" class="glyphicon glyphicon-question-sign fa-1x" title="Seperate terms with ; (semicolon) Case sensitive."></i> 
+          <div class="spacer_10"></div>
+          <textarea id="highlight_term" cols="40" rows="3"><?php echo rawurldecode($highlight_term); ?></textarea>
+          <div class="spacer_20"></div>
         </div>
         <!-- row -->
         <div class="col-md-4">
           <h5>Timer Settings</h5>
           <div class="spacer_10"></div>
-          <input type="checkbox" id="send_timer" onclick="" <?php if($settings['send_timer'] == '1'){ echo "checked"; } ?> />
+          <input type="checkbox" id="send_timer" onclick="" <?php if($settings['send_timer'] == '1'){ echo 'checked'; } ?> />
           Send timer automatic to Receiver
           <div class="spacer_10"></div>
-          <input type="checkbox" id="hide_old_timer" onclick="" <?php if($settings['hide_old_timer'] == '1'){ echo "checked"; } ?> />
+          <input type="checkbox" id="hide_old_timer" onclick="" <?php if($settings['hide_old_timer'] == '1'){ echo 'checked'; } ?> />
           Hide expired timer in timerlist
           <div class="spacer_10"></div>
-          <input type="checkbox" id="show_hidden_ticker" onclick="" <?php if($settings['show_hidden_ticker'] == '1'){ echo "checked"; } ?> />
+          <input type="checkbox" id="show_hidden_ticker" onclick="" <?php if($settings['show_hidden_ticker'] == '1'){ echo 'checked'; } ?> />
           Show hidden timer in Ticker on Startpage
           <div class="spacer_10"></div>
-          <input type="checkbox" id="delete_old_timer" onclick="" <?php if($settings['delete_old_timer'] == '1'){ echo "checked"; } ?> />
+          <input type="checkbox" id="delete_old_timer" onclick="" <?php if($settings['delete_old_timer'] == '1'){ echo 'checked'; } ?> />
           Delete expired timer from database
           <div class="spacer_10"></div>
-          <input type="checkbox" id="delete_receiver_timer" onclick="" <?php if($settings['delete_receiver_timer'] == '1'){ echo "checked"; } ?> />
+          <input type="checkbox" id="delete_receiver_timer" onclick="" <?php if($settings['delete_receiver_timer'] == '1'){ echo 'checked'; } ?> />
           Delete expired timer from Receiver
           <div class="spacer_10"></div>
-          <input type="checkbox" id="delete_further_receiver_timer" onclick="" <?php if($settings['delete_further_receiver_timer'] == '1'){ echo "checked"; } ?> />
+          <input type="checkbox" id="delete_further_receiver_timer" onclick="" <?php if($settings['delete_further_receiver_timer'] == '1'){ echo 'checked'; } ?> />
           Delete expired timer from  additional Receiver
           <div class="spacer_10"></div>
           Additional record time at end from broadcast
           <select id="extra_rec_time">
-            <option value="0" <?php if($settings['extra_rec_time'] == '0'){ echo "selected"; } ?>>0 minutes</option>
-            <option value="300" <?php if($settings['extra_rec_time'] == '300'){ echo "selected"; } ?>>5 minutes</option>
-            <option value="600" <?php if($settings['extra_rec_time'] == '600'){ echo "selected"; } ?>>10 minutes</option>
-            <option value="900" <?php if($settings['extra_rec_time'] == '900'){ echo "selected"; } ?>>15 minutes</option>
-            <option value="1800" <?php if($settings['extra_rec_time'] == '1800'){ echo "selected"; } ?>>30 minutes</option>
-            <option value="3600" <?php if($settings['extra_rec_time'] == '3600'){ echo "selected"; } ?>>60 minutes</option>
+            <option value="0" <?php if($settings['extra_rec_time'] == '0'){ echo 'selected'; } ?>>0 minutes</option>
+            <option value="300" <?php if($settings['extra_rec_time'] == '300'){ echo 'selected'; } ?>>5 minutes</option>
+            <option value="600" <?php if($settings['extra_rec_time'] == '600'){ echo 'selected'; } ?>>10 minutes</option>
+            <option value="900" <?php if($settings['extra_rec_time'] == '900'){ echo 'selected'; } ?>>15 minutes</option>
+            <option value="1800" <?php if($settings['extra_rec_time'] == '1800'){ echo 'selected'; } ?>>30 minutes</option>
+            <option value="3600" <?php if($settings['extra_rec_time'] == '3600'){ echo 'selected'; } ?>>60 minutes</option>
           </select>
         </div>
       </div>
@@ -725,11 +733,22 @@ $.post("functions/device_list_inc.php",
 <!---->
 <script>
 $(function(){
-   var statusbar = '<?php if(!isset($_SESSION["statusbar"]) or $_SESSION["statusbar"] == "") { $_SESSION["statusbar"] = ""; } echo $_SESSION["statusbar"]; ?>';
+   $("#display_time_format").val("<?php if (!isset($time_format) or $time_format == ''){ $time_format = '2'; } echo $time_format; ?>");
+// device list
+$.post("functions/device_list_inc.php",
+	{
+	action: 'show'
+	},
+	function(data){
+	$("#device_list").html(data);
+	});
+});
+$(function(){
+   var statusbar = '<?php if(!isset($_SESSION['statusbar']) or $_SESSION['statusbar'] == ''){ $_SESSION['statusbar'] = ''; } echo $_SESSION['statusbar']; ?>';
    if (statusbar == '1'){ $("#statusbar_outer").removeClass("statusbar_outer"); }
    //
    var cookies = navigator.cookieEnabled;
-   if(cookies == false){ $("#cookie_js").html("To use all functions of the website, it's required to accept Cookies."); }
+   if(cookies == false){ $("#cookie_js").html("To use all functions of the website, it's required to accept cookies."); }
 });
 </script>
 </body>

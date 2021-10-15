@@ -4,7 +4,7 @@ session_start();
 	include("inc/dashboard_config.php");
 	include_once("inc/header_info.php");
 	
-	// Channel list
+	// channel list
 	$sql = "SELECT * FROM `channel_list` ORDER BY `e2servicename` ASC";
 	
 	// delete selected channels
@@ -16,19 +16,19 @@ session_start();
 	
 	$del_id = $checkbox_delete[$i];
 	
-	// delete epg from channel
-	$sql = mysqli_query($dbmysqli, "SELECT `e2servicereference` FROM `channel_list` WHERE `id` = '$del_id' ");
+	$sql = mysqli_query($dbmysqli, "SELECT `e2servicereference` FROM `channel_list` WHERE `id` = '".$del_id."' ");
 	$result = mysqli_fetch_assoc($sql);
+	$e2servicereference = $result['e2servicereference'];
 	
-	$sql = mysqli_query($dbmysqli, "DELETE FROM `epg_data` WHERE `e2eventservicereference` = '".$result['e2servicereference']."' ");
+	// delete epg from channel
+	mysqli_query($dbmysqli, "DELETE FROM `epg_data` WHERE `e2eventservicereference` = '".$e2servicereference."' ");
 	
 	// delete channel
-	$sql = "DELETE FROM `channel_list` WHERE `id` = '$del_id' ";
-	$result = mysqli_query($dbmysqli, $sql);
-	$sql = mysqli_query($dbmysqli, "OPTIMIZE TABLE `channel_list`");
+	mysqli_query($dbmysqli, "DELETE FROM `channel_list` WHERE `id` = '".$del_id."' ");
+	mysqli_query($dbmysqli, "OPTIMIZE TABLE `channel_list`");
 	}
 	if($result){
-	Header("Location: channel_list.php"); 
+	Header('Location: channel_list.php');
 	exit();
 	}
 	}
@@ -36,72 +36,66 @@ session_start();
 	// select crawl
 	if(isset($_POST['select_all_crawl']))
 	{
-	$sql = "UPDATE `channel_list` SET `crawl` = '1' ";
-	$result = mysqli_query($dbmysqli, $sql);
-	Header("Location: channel_list.php"); 
+	mysqli_query($dbmysqli, "UPDATE `channel_list` SET `crawl` = '1' ");
+	Header('Location: channel_list.php');
 	exit();
 	}
 	
 	// unselect all crawl
 	if(isset($_POST['unselect_all_crawl']))
 	{
-	$sql = "UPDATE `channel_list` SET `crawl` = '0' ";
-	$result = mysqli_query($dbmysqli, $sql);
-	Header("Location: channel_list.php"); 
+	mysqli_query($dbmysqli, "UPDATE `channel_list` SET `crawl` = '0' ");
+	Header('Location: channel_list.php');
 	exit();
 	}
 	
 	// select zap
 	if(isset($_POST['select_all_zap']))
 	{
-	$sql = "UPDATE `channel_list` SET `zap` = '1' ";
-	$result = mysqli_query($dbmysqli, $sql);
-	Header("Location: channel_list.php"); 
+	mysqli_query($dbmysqli, "UPDATE `channel_list` SET `zap` = '1' ");
+	Header('Location: channel_list.php');
 	exit();
 	}
 	
 	// unselect all zap
 	if(isset($_POST['unselect_all_zap']))
 	{
-	$sql = "UPDATE `channel_list` SET `zap` = '0' ";
-	$result = mysqli_query($dbmysqli, $sql);
-	Header("Location: channel_list.php"); 
+	mysqli_query($dbmysqli, "UPDATE `channel_list` SET `zap` = '0' ");
+	Header('Location: channel_list.php');
 	exit();
 	}
 
 	if ($result = mysqli_query($dbmysqli,$sql))
 	{
-	// Fetch one and one row
 	while ($obj = mysqli_fetch_object($result)) {
 	{
-	
-	if ($obj->crawl == "1")
+	if($obj->e2providername == 'IPTV;')
 	{
-	$checked_crawl = "checked";
-	}
-	elseif ($obj->crawl == "0")
-	{
-	$checked_crawl = ""; }
+	$obj->e2servicereference = rawurldecode($obj->e2servicereference);
+	$obj->e2servicereference = str_replace('%3a', ':', $obj->e2servicereference);
+	$e2service_reference_title = $obj->e2servicereference;
+	$obj->e2servicereference = str_replace('4097:0:1:0:0:0:0:0:0:0:', '', $obj->e2servicereference);
+	if(strlen($obj->e2servicereference) > '30'){ $obj->e2servicereference = substr($obj->e2servicereference, 0, 30); $obj->e2servicereference .= ' ... '; }
+	$chkbox = 'disabled'; 
+	} else { $chkbox = ''; $e2service_reference_title = ''; }
 	
-	if ($obj->zap == "1")
-	{
-	$checked_zap = "checked";
-	}
-	elseif ($obj->zap == "0")
-	{
-	$checked_zap = ""; }
+	$obj->e2providername = str_replace(';', '', $obj->e2providername);
 	
-	if(!isset($channel_list) or $channel_list == "") { $channel_list = ""; }
+	if($obj->crawl == '1'){ $checked_crawl = 'checked'; }
+	if($obj->crawl == '0'){ $checked_crawl = ''; }
+	if($obj->zap == '1'){ $checked_zap = 'checked'; }
+	if($obj->zap == '0'){ $checked_zap = ''; }
 	
-	if(!isset($obj->e2providername) or $obj->e2providername == "") { $obj->e2providername = ""; }
+	if(!isset($channel_list) or $channel_list == ''){ $channel_list = ''; }
+	if(!isset($obj->e2providername) or $obj->e2providername == ''){ $obj->e2providername = ''; }
 	
-	$channel_list = $channel_list."
+	$channel_list .= "
 	<div id=\"channel_list_content\">
 	<div id=\"row1\"><!--channel crawl-->
-	  <input id=\"set_crawl_channel_$obj->id\" name=\"checkbox_crawl[]\" type=\"checkbox\" onClick=\"set_crawl_channel(this.id)\" $checked_crawl>
+	  <input id=\"set_crawl_channel_$obj->id\" name=\"checkbox_crawl[]\" type=\"checkbox\" onClick=\"set_crawl_channel(this.id)\" $checked_crawl $chkbox>
 	</div>
 	<div id=\"row2\"><!--channel zap-->
-	  <input id=\"set_zap_channel_$obj->id\" name=\"checkbox_zap[]\" type=\"checkbox\" onClick=\"set_zap_channel(this.id)\" $checked_zap>
+	  <input id=\"set_zap_channel_$obj->id\" name=\"checkbox_zap[]\" type=\"checkbox\" onClick=\"set_zap_channel(this.id)\" $checked_zap $chkbox>
 	</div>
 	<div id=\"row3\"><!--channel delete-->
 	  <input id=\"checkbox_del\" name=\"checkbox_delete[]\" type=\"checkbox\" value=\"$obj->id\">
@@ -111,11 +105,14 @@ session_start();
 	<div id=\"row5\"><!--channel provider-->
 	$obj->e2providername
 	</div>
+	<div id=\"row6\" title=\"$e2service_reference_title\"><!--channel provider-->
+	$obj->e2servicereference
+	</div>
 	<div style=\"clear:both\">&nbsp;</div>
 	</div>";
 	}
     }
-	}
+}
 ?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -175,42 +172,26 @@ animatedcollapse.init()
 </head>
 <body>
 <a id="top"></a>
-<div id="scroll_top" class="scroll_top"><a href="#" title="to top"><script>document.write("<i class=\"glyphicon glyphicon-circle-arrow-up fa-"+scrolltop_btn_size+"x\"></i>");</script></a></div>
+<div id="scroll_top" class="scroll_top"><a href="#" title="top"><script>document.write("<i class=\"glyphicon glyphicon-circle-arrow-up fa-"+scrolltop_btn_size+"x\"></i>");</script></a></div>
 <!--statusbar modal -->
- <span id="showModal"></span>
-  <div id="modal" class="modal">
+  <span id="showModal"></span>
+  <div id="bn_epg_modal" class="modal">
     <div class="modal-dialog animated">
     <div class="modal-content">
-      <div id="sb-modal-header" class="modal-header"></div>
+      <div id="bn-modal-header" class="modal-header"></div>
       <div class="modal-body">
-        <div id="epgframe"></div>
+        <div id="bn_epgframe"></div>
         <hr>
         <div align="right">
-        <button class="btn btn-default btn-sm" type="button" onclick="modal.close();">Close</button>
+        <button class="btn btn-default btn-sm" type="button" onclick="bn_epg_modal.close();">Close</button>
         </div>
       </div>
     </div>
   </div>
 </div>
-<!--statusbar modal -->
-<!--remote control modal -->
- <span id="showModal"></span>
-  <div id="remote_modal" class="modal_rc">
-    <div class="modal-dialog animated">
-    <div class="modal-content">
-      <div class="modal-header">Remote Control <span id="rc_status"></span>
-      </div>
-      <div class="modal-body">
-        <div id="rc_frame"></div>
-        <hr>
-        <div align="right">
-        <button class="btn btn-default btn-sm" type="button" onclick="remote_modal.close();">Close</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-<!--remote control modal -->
+<span id="bn_modal_service" style="display:none"></span>
+<span id="bn_modal_name" style="display:none"></span>
+<!--broadcast now modal -->
 <!--quickpanel modal -->
  <span id="showModal"></span>
   <div id="quickpanel_modal" class="modal">
@@ -228,6 +209,41 @@ animatedcollapse.init()
   </div>
 </div>
 <!--quickpanel modal -->
+<!--manual timer modal -->
+ <span id="showModal"></span>
+  <div id="manual_timer_modal" class="modal">
+    <div class="modal-dialog animated">
+    <div class="modal-content">
+      <div id="timer-modal-header" class="modal-header">Manual timer</div>
+      <div class="modal-body">
+        <div id="quickpanel_timerframe"></div>
+        <hr>
+        <div align="right">
+        <button class="btn btn-default btn-sm" type="button" onclick="manual_timer_modal.close();">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--manual timer modal -->
+<!--remote control modal -->
+ <span id="showModal"></span>
+  <div id="remote_modal" class="modal_rc">
+    <div class="modal-dialog animated">
+    <div class="modal-content">
+      <div class="modal-header">Remote Control <span id="rc_status"><i class="fa fa-wifi gray"></i></span>
+      </div>
+      <div class="modal-body">
+        <div id="rc_frame"></div>
+        <hr>
+        <div align="right">
+        <button class="btn btn-default btn-sm" type="button" onclick="remote_modal.close();">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--remote control modal -->
 <div id="wrapper">
   <div class="navbar navbar-inverse navbar-fixed-top">
     <div class="adjust-nav">
@@ -238,7 +254,7 @@ animatedcollapse.init()
         <ul class="nav navbar-nav navbar-right">
           <div class="row">
             <div class="col-md-12">
-              <div id="navbar_info">oldest: <span class="badge"><?php echo $date_first; echo " - "; echo utf8_encode($first_entry['e2eventservicename']); ?></span> latest: <span class="badge-success"><?php echo $date_latest; echo " - "; echo utf8_encode($last_entry['e2eventservicename']); ?></span> <?php echo $header_date; ?></div>
+              <div id="navbar_info">oldest: <span class="badge"><?php echo $date_first; echo ' - '; echo utf8_encode($first_entry['e2eventservicename']); ?></span> latest: <span class="badge-success"><?php echo $date_latest; echo ' - '; echo utf8_encode($last_entry['e2eventservicename']); ?></span> <?php echo $header_date; ?></div>
               <!--navbar_info-->
             </div>
           </div>
@@ -256,11 +272,11 @@ animatedcollapse.init()
         <li> <a href="timer.php"><i class="fa fa-clock-o"></i>Timer & Saved Search</a> </li>
         <li> <a href="#"><i class="fa fa-wrench"></i>Crawler Tools<span class="fa arrow"></span></a>
           <ul class="nav nav-second-level">
-            <li> <a href="#" onclick="animatedcollapse.toggle('div_crawl_channel_id');"><i class="fa fa-chevron-right"></i>Crawl Channel ID's</a> </li>
-            <li> <a href="#" onclick="animatedcollapse.toggle('div_crawl_complete');"><i class="fa fa-chevron-right"></i>Crawl EPG from Channels</a> </li>
-            <li> <a href="crawl_separate.php"><i class="fa fa-chevron-right"></i>Crawl Channel separate</a> </li>
-            <li> <a href="#" onclick="animatedcollapse.toggle('div_crawl_search');"><i class="fa fa-chevron-right"></i>Crawl Search - Write Timer in Database</a></li>
-            <li> <a href="#" onclick="animatedcollapse.toggle('div_send_timer');"><i class="fa fa-chevron-right"></i>Send Timer from Database to Receiver</a> </li>
+          <li> <a href="crawl_separate.php"><i class="fa fa-chevron-right"></i>Crawl channel separate</a> </li>
+            <li> <a href="#" onclick="animatedcollapse.toggle('div_crawl_channel_id');"><i class="fa fa-chevron-right"></i>Crawl channel ID's</a> </li>
+            <li> <a href="#" onclick="animatedcollapse.toggle('div_crawl_complete');"><i class="fa fa-chevron-right"></i>Crawl EPG from channels</a> </li>
+            <li> <a href="#" onclick="animatedcollapse.toggle('div_crawl_search');"><i class="fa fa-chevron-right"></i>Crawl Search - Write timer in database</a></li>
+            <li> <a href="#" onclick="animatedcollapse.toggle('div_send_timer');"><i class="fa fa-chevron-right"></i>Send timer from database to Receiver</a> </li>
           </ul>
         </li>
         <li role="presentation" class="active"> <a href="#"><i class="fa fa-cog"></i>Settings<span class="fa arrow"></span></a>
@@ -310,7 +326,7 @@ animatedcollapse.init()
       <!--crawl channel id-->
       <div id="div_crawl_channel_id">
       <span class="panel-close" onclick="animatedcollapse.hide('div_crawl_channel_id')"><span aria-hidden="true">x</span></span>
-        <h1>Crawl Channel ID's</h1>
+        <h1>Crawl channel ID's</h1>
         <input type="submit" class="btn btn-success" id="crawl_channel_id_btn" value="Click to confirm" onclick="animatedcollapse.show('crawl_channel_id_status'); crawl_channel_id();">
         <div id="crawl_channel_id_status"><img src="images/loading.gif" width="16" height="16" align="absmiddle"> </div>
         <!--crawl channel id-->
@@ -318,7 +334,7 @@ animatedcollapse.init()
       <!--crawl complete-->
       <div id="div_crawl_complete">
       <span class="panel-close" onclick="animatedcollapse.hide('div_crawl_complete')"><span aria-hidden="true">x</span></span>
-        <h1>Crawl EPG from Channels</h1>
+        <h1>Crawl EPG from channels</h1>
         <input type="submit" class="btn btn-success" id="crawl_complete_btn" value="Click to confirm" onclick="animatedcollapse.show('crawl_complete_status'); crawl_complete();">
         <div id="crawl_complete_status"><img src="images/loading.gif" width="16" height="16" align="absmiddle"> </div>
         <!--status-->
@@ -327,7 +343,7 @@ animatedcollapse.init()
       <!--crawl saved search-->
       <div id="div_crawl_search">
       <span class="panel-close" onclick="animatedcollapse.hide('div_crawl_search')"><span aria-hidden="true">x</span></span>
-        <h1>Crawl Search - Write Timer in Database</h1>
+        <h1>Crawl Search - Write timer in database</h1>
         <input type="submit" class="btn btn-success" id="crawl_search_btn" value="Click to confirm" onclick="animatedcollapse.show('crawl_search_status'); crawl_saved_search();">
         <div id="crawl_search_status"><img src="images/loading.gif" width="16" height="16" align="absmiddle"> </div>
         <!--status-->
@@ -336,7 +352,7 @@ animatedcollapse.init()
       <!--send timer-->
       <div id="div_send_timer">
       <span class="panel-close" onclick="animatedcollapse.hide('div_send_timer')"><span aria-hidden="true">x</span></span>
-        <h1>Send Timer from Database to Receiver</h1>
+        <h1>Send timer from database to Receiver</h1>
         <input type="submit" class="btn btn-success" id="send_timer_btn" value="Click to confirm" onclick="animatedcollapse.show('send_timer_status'); send_timer();">
         <div id="send_timer_status"><img src="images/loading.gif" width="16" height="16" align="absmiddle"> </div>
         <!--status-->
@@ -372,7 +388,7 @@ animatedcollapse.init()
               <div id="row2"><input name="unselect_all_zap" type="submit" class="btn btn-xs btn-primary" value="unselect all">
               </div>
               <div id="row3">
-                Channel for Zapper 
+                Channel for zapper 
               </div>
               <div style="clear:both"></div>
             </div>
@@ -382,29 +398,32 @@ animatedcollapse.init()
               </div>
               <div id="row2">
               </div>
-              <div id="row3">Delete channel from list              </div>
+              <div id="row3">Delete channel from list</div>
               <div style="clear:both"></div>
                <div class="spacer_10"></div>
               <div class="row">
-              <div class="col-md-4">Channel Name:<input id="channel_name" type="text" class="form-control" size="10">
+              <div class="col-md-4">Channel Name:<input id="channel_name" type="text" class="form-control" size="10" tabindex="1">
               <div class="spacer_5"></div>
               </div>
-              <div class="col-md-4">Service Reference:<input id="service_reference" type="text" class="form-control" size="50">
+              <div class="col-md-4">Service Reference:<span style="float:right;">
+              <input id="iptv_channel" type="checkbox" tabindex="3"> IPTV
+              <i style="cursor:default;" class="glyphicon glyphicon-question-sign fa-1x" title="Format: http://domain.com/stream.m3u8 or rtsp://<?php echo $box_ip; ?>:554/stream" ></i></span>
+              <input id="service_reference" type="text" class="form-control" size="50" tabindex="2">
               <div class="spacer_5"></div>
               </div>
               <div class="col-md-4"></div>
               </div><!-- ROW -->
               <div class="row">
-              <div class="col-md-2">
+              <div class="col-md-3">
               <div class="spacer_5"></div>
-              <a onclick="add_single_channel()" class="btn btn-default">Add channel</a>
+              <a onclick="add_single_channel()" class="btn btn-default" tabindex="4">Add channel</a>
               <span id="add_single_channel_status"></span>
               </div>
               </div><!-- ROW -->
             </div>
             <hr>
             <div id="channel_list">
-			<?php if(!isset($channel_list) or $channel_list == "") { $channel_list = ""; } else { echo utf8_encode($channel_list); } ?>
+			<?php if(!isset($channel_list) or $channel_list == ''){ $channel_list = ''; } else { echo utf8_encode($channel_list); } ?>
             </div>
             <!-- Channel list -->
           </form>
@@ -433,11 +452,11 @@ animatedcollapse.init()
 <!---->
 <script>
 $(function(){
-   var statusbar = '<?php if(!isset($_SESSION["statusbar"]) or $_SESSION["statusbar"] == "") { $_SESSION["statusbar"] = ""; } echo $_SESSION["statusbar"]; ?>';
+   var statusbar = '<?php if(!isset($_SESSION['statusbar']) or $_SESSION['statusbar'] == ''){ $_SESSION['statusbar'] = ''; } echo $_SESSION['statusbar']; ?>';
    if (statusbar == '1'){ $("#statusbar_outer").removeClass("statusbar_outer"); }
    //
    var cookies = navigator.cookieEnabled;
-   if(cookies == false){ $("#cookie_js").html("To use all functions of the website, it's required to accept Cookies."); }
+   if(cookies == false){ $("#cookie_js").html("To use all functions of the website, it's required to accept cookies."); }
 });
 </script>
 </body>

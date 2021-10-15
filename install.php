@@ -44,7 +44,9 @@ function save_sql(){
 	var sql_host = $("#sql_host").val();
 	var sql_user = $("#sql_user").val();
 	var sql_pass = $("#sql_pass").val();
+	
 	$("#sql_status").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
+	
 	$.post("functions/install_inc.php",
 	{
 	setting: 'sql',
@@ -53,10 +55,8 @@ function save_sql(){
 	sql_pass: sql_pass
 	},
 	function(data){
-	// write data in container
 	$("#sql_status").html(data);
 	if (data == 'Connection OK!'){ 
-	//$('#receiver_settings').fadeIn();
 	animatedcollapse.show('receiver_settings');
 	}
 	});
@@ -67,7 +67,9 @@ function save_receiver(){
 	var receiver_ip = $("#receiver_ip").val();
 	var receiver_user = $("#receiver_user").val();
 	var receiver_pass = $("#receiver_pass").val();
+	
 	$("#receiver_status").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
+	
 	$.post("functions/install_inc.php",
 	{
 	setting: 'receiver',
@@ -76,22 +78,23 @@ function save_receiver(){
 	receiver_pass: receiver_pass
 	},
 	function(data){
-	// write data in container
 	$("#receiver_status").html(data);
 	if (data == 'Connection OK!'){
-	//$('#sql_done').fadeIn();
 	animatedcollapse.show('sql_done');
 	}
 	});
 }
 //
 function install(){
-	$("#install_status").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
+	
 	var receiver_ip = $("#receiver_ip").val();
 	var receiver_user = $("#receiver_user").val();
 	var receiver_pass = $("#receiver_pass").val();
 	var server_ip = $("#server_ip").val();
 	var script_folder = $("#script_folder").val();
+	
+	$("#install_status").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
+	
 	$.post("functions/install_inc.php",
 	{
 	setting: 'install',
@@ -101,11 +104,9 @@ function install(){
 	server_ip: server_ip,
 	script_folder: script_folder
 	},
-	function(data){
-	// write data in container
+	function(data){ 
 	$("#install_status").html(data);
-	if (data == 'SQL Installation OK!'){
-	//$('#steps').fadeIn();
+	if (data == 'SQL Installation OK!'){ 
 	animatedcollapse.show('steps');	
 	}}
 );}
@@ -271,7 +272,7 @@ function install(){
         </div>
         <div class="col-md-4">
           <div class="spacer_20"></div>
-          If Settings done, click install!
+          If settings done, click install!
           <input type="submit" class="btn btn-success btn-xs" value="Install" onclick="install()">
           <div class="spacer_5"></div>
         </div>
@@ -289,41 +290,48 @@ function install(){
             <div id="steps" style="display:none;">
               <p>User uniwebif with password uniwebif, USAGE rights for database `uniwebif` created.. <i class='glyphicon glyphicon-ok green'></i></p>
               <p>Database `uniwebif` with 12 tables created.. <i class='glyphicon glyphicon-ok green'></i></p>
-              <p>Bouquets and Record locations added to database.. <i class='glyphicon glyphicon-ok green'></i></p>
+              <p>Bouquets and record locations added to database.. <i class='glyphicon glyphicon-ok green'></i></p>
               <hr>
-              <p>Please do follow steps now:<br>
+              <p>Please do follow steps now:</p>
                 <br>
+                <div class="div_install_info">
                 <strong>1.</strong> Open your FTP program and make CHMOD 755 for folder /uniwebif/<strong>tmp</strong><br>
                 When you want stream a recorded file from Receiver, the m3u playlist file will be stored there.<br>
-              <p><strong>2.</strong> Open the Bouquet list in Browser - <a href="bouquet_list.php" target="_blank">Link</a> <br>
+                </p>
+                </div>
+                <div class="div_install_info">
+              <p><strong>2.</strong> Open the bouquet list in Browser - <strong><a href="bouquet_list.php" target="_blank">Link</a></strong><br>
                 Select the bouqet which includes channels, you wanna have the EPG from.<br>
                 After selecting, open the menue "Crawler Tools" and click <b>"Crawl channel ID's"</b>.<br>
                 Click confirm button to start.<br>
-                Now the channels from the selected Bouquet are in database.<br>
-                <br>
-                <strong>3.</strong> Open "Channel list" in Browser - <a href="channel_list.php" target="_blank">Link</a> <br>
+                Now the channels from the selected bouquet are in database.<br>
+                </p>
+                </div>
+                <div class="div_install_info">
+                <strong>3.</strong> Open "Channel list" in Browser - <strong><a href="channel_list.php" target="_blank">Link</a></strong><br>
                 Select here the channels, from which you wanna have the EPG in database. <br>
                 After selecting, open again the menue "Crawler Tools" and click <b>"Crawl EPG from channels"</b>.<br>
                 Click confirm button to start.<br>
                 Now you have the EPG from selected channels in database. </p>
               <strong>Automate the crawling</strong><br>
               To have always the current EPG in database, make these steps.<br>
-              Open menue 'Main Settings' in Browser and scroll bottom to Crawler - <a href="settings.php" target="_blank">Link</a><br>
+              Open menue 'Main Settings' in Browser and scroll bottom to Crawler - <strong><a href="settings.php" target="_blank">Link</a></strong><br>
               Make there your prefered settings and select "<strong>Activate automatic EPG Crawler</strong>" and "<strong>Activate Cron</strong>".<br>
               Scroll bottom and click save Settings.<br>
               It's also possible to get the EPG from each channel manual. Open Menue "Crawler Tools" and click "Crawl channel seperate".<br>
               <br>
               <strong>Automate the search within the EPG</strong><br>
               To have always the timer from your desired broadcasts in timerlist, make these steps.<br>
-              Open 'Search' in Browser - <a href="search.php" target="_blank">Link</a><br>
+              Open 'Search' in Browser - <strong><a href="search.php" target="_blank">Link</a></strong><br>
               Type in any term and click 'Search trough'. After that click 'Save this search for timer'.<br>
               Now this term is saved under Timer & Saved Search. Open menue 'Main Settings' and select there 'Activate automatic Search Crawler'.<br>
               <br>
               Now create a <strong>Cron</strong>, which called may every 3 minutes the file /uniwebif/inc/<strong>cron.php</strong><br>
+              </div>
               <h2>Ready!</h2>
               Most important settings are done, and the script was working.<br>
-              For more Information read the <a href="help/guide.html" target="_blank">Guide</a> or <a href="http://uniwebif-demo.techweb.at/faq.php" target="_blank">FAQ</a><br>
-              Tutorial Video which show the main functions is <a href="https://www.youtube.com/watch?v=lj4EOlJzquk" target="_blank">here</a>.<br>
+              For more information read the <a href="help/guide.html" target="_blank">Guide</a> or <a href="https://uniwebif-demo.techweb.at/faq.php" target="_blank">FAQ</a><br>
+              Tutorial video which show the main functions is <a href="https://www.youtube.com/watch?v=lj4EOlJzquk" target="_blank">here</a>.<br>
               For any questions, issues or suggestions visit <a href="https://github.com/gempro/uniwebif/issues" target="_blank">Github</a>.</div>
           	 </div>
           	<!-- col -->

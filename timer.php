@@ -3,7 +3,6 @@ session_start();
 //
 	include("inc/dashboard_config.php");
 	include_once("inc/header_info.php");
-	
 ?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -23,6 +22,8 @@ session_start();
 <link href="assets/css/noty/noty.css" rel="stylesheet" />
 <link href="assets/css/noty/animate.css" rel="stylesheet" />
 <link href="assets/css/noty/themes/mint.css" rel="stylesheet" />
+<!-- Ladda -->
+<link href="assets/css/ladda/ladda-themeless.min.css" rel="stylesheet">
 <!-- favicon -->
 <link rel="apple-touch-icon" sizes="180x180" href="images/icon/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="images/icon/favicon-32x32.png">
@@ -68,43 +69,27 @@ animatedcollapse.init()
 </head>
 <body>
 <a id="top"></a>
-<div id="scroll_top"><a href="#" title="to top"><script>document.write("<i class=\"glyphicon glyphicon-circle-arrow-up fa-"+scrolltop_btn_size+"x\"></i>");</script></a></div>
-<div id="scroll_top_saved_search"><a href="#" title="to Saved Search"><script>document.write ("<i class=\"glyphicon glyphicon-circle-arrow-up fa-"+saved_search_btn_size+"x\"></i>");</script></a></div>
+<div id="scroll_top"><a href="#" title="top"><script>document.write("<i class=\"glyphicon glyphicon-circle-arrow-up fa-"+scrolltop_btn_size+"x\"></i>");</script></a></div>
+<div id="scroll_top_saved_search"><a href="#" title="Saved Search"><script>document.write ("<i class=\"glyphicon glyphicon-circle-arrow-up fa-"+saved_search_btn_size+"x\"></i>");</script></a></div>
 <!--statusbar modal -->
- <span id="showModal"></span>
-  <div id="modal" class="modal">
+  <span id="showModal"></span>
+  <div id="bn_epg_modal" class="modal">
     <div class="modal-dialog animated">
     <div class="modal-content">
-      <div id="sb-modal-header" class="modal-header"></div>
+      <div id="bn-modal-header" class="modal-header"></div>
       <div class="modal-body">
-        <div id="epgframe"></div>
+        <div id="bn_epgframe"></div>
         <hr>
         <div align="right">
-        <button class="btn btn-default btn-sm" type="button" onclick="modal.close();">Close</button>
+        <button class="btn btn-default btn-sm" type="button" onclick="bn_epg_modal.close();">Close</button>
         </div>
       </div>
     </div>
   </div>
 </div>
-<!--statusbar modal -->
-<!--remote control modal -->
- <span id="showModal"></span>
-  <div id="remote_modal" class="modal_rc">
-    <div class="modal-dialog animated">
-    <div class="modal-content">
-      <div class="modal-header">Remote Control <span id="rc_status"></span>
-      </div>
-      <div class="modal-body">
-        <div id="rc_frame"></div>
-        <hr>
-        <div align="right">
-        <button class="btn btn-default btn-sm" type="button" onclick="remote_modal.close();">Close</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-<!--remote control modal -->
+<span id="bn_modal_service" style="display:none"></span>
+<span id="bn_modal_name" style="display:none"></span>
+<!--broadcast now modal -->
 <!--quickpanel modal -->
  <span id="showModal"></span>
   <div id="quickpanel_modal" class="modal">
@@ -122,6 +107,41 @@ animatedcollapse.init()
   </div>
 </div>
 <!--quickpanel modal -->
+<!--manual timer modal -->
+ <span id="showModal"></span>
+  <div id="manual_timer_modal" class="modal">
+    <div class="modal-dialog animated">
+    <div class="modal-content">
+      <div id="timer-modal-header" class="modal-header">Manual timer</div>
+      <div class="modal-body">
+        <div id="quickpanel_timerframe"></div>
+        <hr>
+        <div align="right">
+        <button class="btn btn-default btn-sm" type="button" onclick="manual_timer_modal.close();">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--manual timer modal -->
+<!--remote control modal -->
+ <span id="showModal"></span>
+  <div id="remote_modal" class="modal_rc">
+    <div class="modal-dialog animated">
+    <div class="modal-content">
+      <div class="modal-header">Remote Control <span id="rc_status"><i class="fa fa-wifi gray"></i></span>
+      </div>
+      <div class="modal-body">
+        <div id="rc_frame"></div>
+        <hr>
+        <div align="right">
+        <button class="btn btn-default btn-sm" type="button" onclick="remote_modal.close();">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--remote control modal -->
 <div id="wrapper">
   <div class="navbar navbar-inverse navbar-fixed-top">
     <div class="adjust-nav">
@@ -132,7 +152,7 @@ animatedcollapse.init()
         <ul class="nav navbar-nav navbar-right">
           <div class="row">
             <div class="col-md-12">
-              <div id="navbar_info">oldest: <span class="badge"><?php echo $date_first; echo " - "; echo utf8_encode($first_entry['e2eventservicename']); ?></span> latest: <span class="badge-success"><?php echo $date_latest; echo " - "; echo utf8_encode($last_entry['e2eventservicename']); ?></span> <?php echo $header_date; ?></div>
+              <div id="navbar_info">oldest: <span class="badge"><?php echo $date_first; echo ' - '; echo utf8_encode($first_entry['e2eventservicename']); ?></span> latest: <span class="badge-success"><?php echo $date_latest; echo ' - '; echo utf8_encode($last_entry['e2eventservicename']); ?></span> <?php echo $header_date; ?></div>
               <!--navbar_info-->
             </div>
           </div>
@@ -150,11 +170,11 @@ animatedcollapse.init()
         <li> <a href="timer.php"><i class="fa fa-clock-o"></i><strong>Timer & Saved Search</strong></a> </li>
         <li> <a href="#"><i class="fa fa-wrench"></i>Crawler Tools<span class="fa arrow"></span></a>
           <ul class="nav nav-second-level">
-            <li> <a href="#" onclick="animatedcollapse.toggle('div_crawl_channel_id');"><i class="fa fa-chevron-right"></i>Crawl Channel ID's</a> </li>
-            <li> <a href="#" onclick="animatedcollapse.toggle('div_crawl_complete');"><i class="fa fa-chevron-right"></i>Crawl EPG from Channels</a> </li>
-            <li> <a href="crawl_separate.php"><i class="fa fa-chevron-right"></i>Crawl Channel separate</a> </li>
-            <li> <a href="#" onclick="animatedcollapse.toggle('div_crawl_search');"><i class="fa fa-chevron-right"></i>Crawl Search - Write Timer in Database</a></li>
-            <li> <a href="#" onclick="animatedcollapse.toggle('div_send_timer');"><i class="fa fa-chevron-right"></i>Send Timer from Database to Receiver</a> </li>
+          <li> <a href="crawl_separate.php"><i class="fa fa-chevron-right"></i>Crawl channel separate</a> </li>
+            <li> <a href="#" onclick="animatedcollapse.toggle('div_crawl_channel_id');"><i class="fa fa-chevron-right"></i>Crawl channel ID's</a> </li>
+            <li> <a href="#" onclick="animatedcollapse.toggle('div_crawl_complete');"><i class="fa fa-chevron-right"></i>Crawl EPG from channels</a> </li>
+            <li> <a href="#" onclick="animatedcollapse.toggle('div_crawl_search');"><i class="fa fa-chevron-right"></i>Crawl Search - Write timer in database</a></li>
+            <li> <a href="#" onclick="animatedcollapse.toggle('div_send_timer');"><i class="fa fa-chevron-right"></i>Send timer from database to Receiver</a> </li>
           </ul>
         </li>
         <li> <a href="#"><i class="fa fa-cog"></i>Settings<span class="fa arrow"></span></a>
@@ -204,7 +224,7 @@ animatedcollapse.init()
       <!--crawl channel id-->
       <div id="div_crawl_channel_id">
       <span class="panel-close" onclick="animatedcollapse.hide('div_crawl_channel_id')"><span aria-hidden="true">x</span></span>
-        <h1>Crawl Channel ID's</h1>
+        <h1>Crawl channel ID's</h1>
         <input type="submit" class="btn btn-success" id="crawl_channel_id_btn" value="Click to confirm" onclick="animatedcollapse.show('crawl_channel_id_status'); crawl_channel_id();">
         <div id="crawl_channel_id_status"><img src="images/loading.gif" width="16" height="16" align="absmiddle"> </div>
         <!--crawl channel id-->
@@ -212,7 +232,7 @@ animatedcollapse.init()
       <!--crawl complete-->
       <div id="div_crawl_complete">
       <span class="panel-close" onclick="animatedcollapse.hide('div_crawl_complete')"><span aria-hidden="true">x</span></span>
-        <h1>Crawl EPG from Channels</h1>
+        <h1>Crawl EPG from channels</h1>
         <input type="submit" class="btn btn-success" id="crawl_complete_btn" value="Click to confirm" onclick="animatedcollapse.show('crawl_complete_status'); crawl_complete();">
         <div id="crawl_complete_status"><img src="images/loading.gif" width="16" height="16" align="absmiddle"> </div>
         <!--status-->
@@ -221,7 +241,7 @@ animatedcollapse.init()
       <!--crawl saved search-->
       <div id="div_crawl_search">
       <span class="panel-close" onclick="animatedcollapse.hide('div_crawl_search')"><span aria-hidden="true">x</span></span>
-        <h1>Crawl Search - Write Timer in Database</h1>
+        <h1>Crawl Search - Write timer in database</h1>
         <input type="submit" class="btn btn-success" id="crawl_search_btn" value="Click to confirm" onclick="animatedcollapse.show('crawl_search_status'); crawl_saved_search();">
         <div id="crawl_search_status"><img src="images/loading.gif" width="16" height="16" align="absmiddle"> </div>
         <!--status-->
@@ -230,7 +250,7 @@ animatedcollapse.init()
       <!--send timer-->
       <div id="div_send_timer">
       <span class="panel-close" onclick="animatedcollapse.hide('div_send_timer')"><span aria-hidden="true">x</span></span>
-        <h1>Send Timer from Database to Receiver</h1>
+        <h1>Send timer from database to Receiver</h1>
         <input type="submit" class="btn btn-success" id="send_timer_btn" value="Click to confirm" onclick="animatedcollapse.show('send_timer_status'); send_timer();">
         <div id="send_timer_status"><img src="images/loading.gif" width="16" height="16" align="absmiddle"> </div>
         <!--status-->
@@ -257,6 +277,7 @@ animatedcollapse.init()
           <div id="timerlist_main">
           <div class="timer_panel">
           <span class="timerlist_checkbox"><input id="select_all" type="checkbox" onClick="select_timer_checkbox()"></span>
+          <button id="load_timerlist_btn" type="button" class="ladda-button btn btn-default-2 btn-xs" data-style="expand-right" Title="Reload Timer List" onclick="load_timerlist();"> Reload</button>
           <input id="send" type="button" class="btn btn-success btn-xs" value="send" title="Send timer to Receiver" onClick="timerlist_panel(this.id)">
           <input id="hide" type="button" class="btn btn-primary btn-xs" value="hide" title="Hide timer from list" onClick="timerlist_panel(this.id)">
           <input id="delete" type="button" class="btn btn-danger btn-xs" value="delete" title="Delete timer from list" onClick="timerlist_panel(this.id)">
@@ -287,7 +308,8 @@ animatedcollapse.init()
               <option value="search_option" <?php if($search_list_sort == 'search_option'){ echo 'selected'; } ?>>Sort by searcharea</option>
               <option value="e2location" <?php if($search_list_sort == 'e2location'){ echo 'selected'; } ?>>Sort by record location</option>
               <option value="activ" <?php if($search_list_sort == 'activ'){ echo 'selected'; } ?>>Sort by status</option>
-            </select>
+            </select> 
+            <button type="button" id="reload_saved_search_list_btn" class="ladda-button btn btn-default-2 btn-xs" data-style="expand-right" title="Reload Search List" onClick="load_saved_search();"> Reload</button>
           </h4>
           <div id="search_list"></div>
         </div>
@@ -309,6 +331,10 @@ animatedcollapse.init()
 <!-- Noty -->
 <script src="js/noty.min.js"></script>
 <script src="js/noty-msg.js"></script>
+<!-- Ladda -->
+<script src="assets/js/ladda/spin.min.js"></script>
+<script src="assets/js/ladda/ladda.min.js"></script>
+<script src="assets/js/ladda/ladda.jquery.min.js"></script>
 <!-- Modal-->
 <script type="text/javascript" src="js/rmodal.js"></script>
 <!---->
@@ -326,10 +352,10 @@ $(function(){
 	var obj = JSON.parse(data)
 	$("#saved_search_panel").html("<span class=\"timer_panel_info\">"+obj[0].summary_total+"\
 	<a style=\"cursor:pointer\" onclick=\"javascript:$('html, body').animate({ scrollTop: ($(saved_search_row).offset().top)}, 'slow');\">\
-	Saved Search</a> for Auto Timer</span>");
+	Saved Search</a> for Auto Timer | <a style=\"cursor:pointer;\" onClick=\"quickpanel('manual_timer')\">Manual Timer</a></span>");
 	//
 	$("#saved_search_panel2").html(obj[0].summary_total+" Saved Search for Auto Timer | <span class=\"timer_panel_info\">\
-	<span class=\"saved_search_panel_info\">"+obj[0].activ+" activ | "+obj[0].inactiv+" inactiv | </span>");
+	<span class=\"saved_search_panel_info\">"+obj[0].activ+" activ | "+obj[0].inactiv+" inactiv | </span></span>");
 	});
 	// saved search list
 	$.post("functions/search_list_inc.php",
@@ -338,59 +364,11 @@ $(function(){
 	});
 });
 //
-function sortby(){
-	
-	var search_list_sort = $("#sort_setting").val();
-	$.post("functions/search_list_inc.php",
-	{
-	sort_list: search_list_sort
-	},
-	function(data){
-	$("#search_list").html(data);
-	});
-}
-//
-function load_timer_list_panel(){
-	
-	var list_hidden_status = $("#show_unhide").attr("title");
-	if(list_hidden_status == 'hide'){ var list_hidden_status = '1'; } else { var list_hidden_status = '0'; }
-	if(list_hidden_status == '1'){ var action = 'reload_timerlist()'; var title = 'hide'; } else { var action = 'timerlist_panel(this.id)'; var title = 'show'; }
-	
-	$.post("functions/timer_list_panel_inc.php",
-	function(data){
-	var obj = JSON.parse(data);
-	// hidden timer
-	if(obj[0].hidden_timer > '0'){
-	$("#timerlist_panel").html(obj[0].timer_total+" Timer in Database | <span class=\"timer_panel_info\">\
-	"+obj[0].sent_timer+" sent | "+obj[0].timer_today+" today ("+obj[0].hidden_timer_today+" hidden) | <a id=\"show_unhide\" onclick=\""+action+"\" title=\""+title+"\" style=\"cursor:pointer;\">\
-	"+obj[0].hidden_timer+" hidden</a> | "+obj[0].receiver_timer+" on Receiver</span>");
-	}
-	// no hidden timer
-	if(obj[0].hidden_timer == '0'){
-	$("#timerlist_panel").html(obj[0].timer_total+" Timer in Database | <span class=\"timer_panel_info\">\
-	"+obj[0].sent_timer+" sent | "+obj[0].timer_today+" today | "+obj[0].hidden_timer+" hidden | "+obj[0].receiver_timer+" on Receiver</span>");
-	}
-	});
-}
-//
-function reload_saved_search_panel(){
-	$.post("functions/search_list_panel.php",
-	function(data){
-	var obj = JSON.parse(data)
-	$("#saved_search_panel").html("<span class=\"timer_panel_info\">"+obj[0].summary_total+"\
-	<a style=\"cursor:pointer\" onclick=\"javascript:$('html, body').animate({ scrollTop: ($(saved_search_row).offset().top)}, 'slow');\">\
-	Saved Search</a> for Auto Timer</span>");
-	//
-	$("#saved_search_panel2").html(obj[0].summary_total+" Saved Search for Auto Timer | <span class=\"timer_panel_info\">\
-	<span class=\"saved_search_panel_info\">"+obj[0].activ+" activ | "+obj[0].inactiv+" inactiv | </span>");
-	});
-}
-//
 $(function(){
-   var statusbar = '<?php if(!isset($_SESSION["statusbar"]) or $_SESSION["statusbar"] == "") { $_SESSION["statusbar"] = ""; } echo $_SESSION["statusbar"]; ?>';
+   var statusbar = '<?php if(!isset($_SESSION['statusbar']) or $_SESSION['statusbar'] == ''){ $_SESSION['statusbar'] = ''; } echo $_SESSION['statusbar']; ?>';
    if (statusbar == '1'){ $("#statusbar_outer").removeClass("statusbar_outer"); }
    var cookies = navigator.cookieEnabled;
-   if(cookies == false){ $("#cookie_js").html("To use all functions of the website, it's required to accept Cookies."); }
+   if(cookies == false){ $("#cookie_js").html("To use all functions of the website, it's required to accept cookies."); }
 });
 function search_list_scroll(id){ 
 	if($('#list_'+id).length){ $('html, body').animate({ scrollTop: ($('#list_'+id).offset().top-50)}, 'slow'); }
