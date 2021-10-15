@@ -295,7 +295,7 @@ function install(){
               <p>Please do follow steps now:</p>
                 <br>
                 <div class="div_install_info">
-                <strong>1.</strong> Open your FTP program and make CHMOD 755 for folder /uniwebif/<strong>tmp</strong><br>
+                <strong>1.</strong> Open your FTP program and make CHMOD 777 for folder /uniwebif/<strong>tmp</strong><br>
                 When you want stream a recorded file from Receiver, the m3u playlist file will be stored there.<br>
                 </p>
                 </div>
