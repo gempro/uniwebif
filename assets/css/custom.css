@@ -45,14 +45,14 @@ body {
 	height: auto;
 }
 #statusbar #row1 {
-	width: 90%;
-	min-width: 90%;
+	width: 88%;
+	min-width: 88%;
 	height: auto;
 	float: left;
 }
 #statusbar #row2 {
-	min-width: 10%;
-	max-width: 10%;
+	min-width: 12%;
+	max-width: 12%;
 	height: auto;
 	float: left;
 	text-align: right;
@@ -142,6 +142,16 @@ body {
 	padding: 15px;
 	margin-bottom: 5px;
 }
+.div_install_info {
+	background-color: #EFEFEF;
+	width: 90%;
+	text-align: center;
+	border: thin solid #D0D0D0;
+	-webkit-border-radius: 4px 4px 4px 4px;
+	border-radius: 4px 4px 4px 4px;
+	padding: 15px;
+	margin-bottom: 5px;
+}
 .panel-close {
 	color: #000;
 	cursor: pointer;
@@ -224,26 +234,30 @@ body {
 }
 #btn-group {
 	width: auto;
-	height:auto;
 }
 #btn-group #btn1 {
 	width: auto;
-	height: auto;
 	padding-right: 10px;
 	float: left;
 }
 #btn-group #btn2 {
-	width: auto;
+	min-width: 70%;
+	max-width: 70%;
+	padding-top: 6px;
+	float: right;
+}
+#btn-group-2 {
+	width: 100%;
 	height: auto;
-	padding-top: 5px;
-	padding-right: 10px;
+}
+#btn-group-2 #btn3 {
+	width: 50%;
 	float: left;
 }
-#btn-group #btn3 {
-	width: auto;
-	height: auto;
+#btn-group-2 #btn4 {
+	width: 50%;
 	float: left;
-	padding-top: 5px;
+	padding-left: 25px;
 }
 #broadcast-tab-button-group {
 	width: 100%;
@@ -270,7 +284,7 @@ body {
 	max-width:90%;
 	float: left;
 	margin-right: 5px;
-	padding-top: 6px;
+	/*padding-top: 6px;*/
 }
 #channel_list_content {
 	width: 100%;
@@ -295,16 +309,22 @@ body {
 	text-align: center;
 }
 #channel_list_content #row4 {
-	width: 40%;
+	width: 30%;
 	float: left;
 	background-color: #F5F5F5;
 	padding-left: 5px;
 	border: 1px solid #F5F5F5;
 }
 #channel_list_content #row5 {
-	width: 30%;
+	width: 25%;
 	float: left;
 	background-color: #DFDFDF;
+	padding-left: 5px;
+	border: 1px solid #F5F5F5;
+}
+#channel_list_content #row6 {
+	width: 25%;
+	float: left;
 	padding-left: 5px;
 	border: 1px solid #F5F5F5;
 }
@@ -342,6 +362,43 @@ body {
 	padding-left: 5px;
 	border: 1px solid #F5F5F5;
 }
+#channel_list_content #row6 {
+	display:none;
+}
+#btn-group #btn1 {
+	width: auto;
+	height: auto;
+	padding-right: 10px;
+	float: left;
+}
+#btn-group #btn2 {
+	width: auto;
+	height: auto;
+	padding-left: 0px;
+	float: left;
+}
+#btn-group-2 {
+	width: 100%;
+}
+#btn-group-2 #btn3 {
+	width: 100%;
+	float: left;
+}
+#btn-group-2 #btn4 {
+	width: 100%;
+	float: left;
+	padding-left: 0px;
+	margin-bottom: 10px;
+}
+.search_list_device {
+	max-width:50%;
+}
+.manual_timer_form {
+	margin-bottom: 10px;
+}
+.manual_timer_form2 {
+	margin-bottom: 5px;
+}
 }
 #channel-list-button-group {
 	width: 100%;
@@ -366,10 +423,35 @@ body {
 	font-weight: bold;
 	
 }
+select[id*="timerlist_rec_location_device"] {
+	max-width: 25%;
+	min-width: 25%;
+}
+.manual_timer_t {
+	width: 10%;
+}
 }
 @media (max-width: 399px) {
 #channel-list-button-group #row1 {
  padding-right: 30px;
+}
+}
+/* For very small screen */
+@media (max-width: 321px) {
+select[id*="timerlist_device_dropdown"] {
+	max-width: 50%;
+	min-width: 50%;
+}
+select[id*="timerlist_rec_location_device"] {
+	width: 95%;
+	min-width: 95%;
+	margin-top: 5px;
+}
+.rec_location_search_list {
+	width: 95%;
+}
+.manual_timer_t {
+	width: 25%;
 }
 }
 @media (max-width: 1200px) {
@@ -626,9 +708,16 @@ div[id*="timerlist_inner"] #cnt_channel {
 	float: left;
 }
 }
+div[id*="timerlist_div_outer_"] div:hover {
+    background-color: #FAFAFA;
+}
 .timerlist_hide {
 	/*background-color: rgba(255,211,80,.7);*/
 	opacity: 0.7;
+}
+.timerlist_select_device {
+	min-width:20%;
+	max-width:20%;
 }
 .timer_panel {
 	padding-bottom: 9px;
@@ -719,7 +808,7 @@ div[id*="timerlist_inner"] #cnt_channel {
 	width: 100%;
 	height: auto;
 	border-collapse: collapse !important;
-	border: 1px solid #ddd !important;
+	/*border: 1px solid #ddd !important;*/
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
@@ -733,10 +822,22 @@ div[id*="timerlist_inner"] #cnt_channel {
 #saved_search_list .search_list_mg {
 	color:#DFDFDF;
 }
+.saved_search_chkbox {
+	padding-left: 10px;
+}
+.chkbox_info {
+	display:none;
+}
 /* For small screen */    
 @media (max-width: 768px) {
 .search_list_term {
 	width:100%;
+}
+.saved_search_chkbox {
+	padding-left: 0px;
+}
+.chkbox_info {
+	display:inline;
 }
 }
 @media (min-width: 900px) {
@@ -750,7 +851,7 @@ div[id*="timerlist_inner"] #cnt_channel {
 	width:100%;
 }
 .search_list_rec_location {
-	width:100%;
+	width:95%;
 }
 .search_list_wildcard {
 	width:100%;
@@ -760,6 +861,12 @@ div[id*="timerlist_inner"] #cnt_channel {
 }
 .search_list_replay {
 	width:30%;
+}
+.device_list {
+	width:30%;
+}
+.record_location_search {
+	width:50%;
 }
 }
 @media (max-width: 768px) {
@@ -947,6 +1054,19 @@ div[id*="timerlist_inner"] #cnt_channel {
 .exclude_extdescription_field {
 	border: thin solid #0000CC;
 }
+.record_location_search {
+	width:65%;
+}
+.search_list_device {
+	width: 70%;
+}
+.rec_location_search_list {
+	max-width: 68%;
+	min-width: 68%;
+}
+.device_list {
+	width:100%;
+}
 #channel_ul ul {
 	font-size: small;
 	border: thin solid #000;
@@ -1060,7 +1180,7 @@ div[id*="timerlist_inner"] #cnt_channel {
 }
 .rec_location_dropdown {
 	min-width:25%;
-	max-width:90%;
+	max-width:25%;
 }
 .device_dropdown {
 	min-width:15%;
@@ -1068,7 +1188,7 @@ div[id*="timerlist_inner"] #cnt_channel {
 }
 @media (max-width: 400px) {
 .rec_location_dropdown {
-	min-width:90%;
+	min-width:50%;
 }
 .device_dropdown {
 	min-width:90%;
