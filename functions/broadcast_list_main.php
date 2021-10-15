@@ -22,16 +22,16 @@ include("../inc/dashboard_config.php");
 	
 	$time = $_REQUEST['time'];
 	
-	if(!isset($time) or $time == ""){ echo "time data missed"; }
-	if(!isset($_SESSION["browse_timestamp"]) or $_SESSION["browse_timestamp"] == ""){ $_SESSION["browse_timestamp"] = time(); }
+	if(!isset($time) or $time == ''){ echo 'time data missed'; }
+	if(!isset($_SESSION['browse_timestamp']) or $_SESSION['browse_timestamp'] == ''){ $_SESSION['browse_timestamp'] = time(); }
 	
-	if($time == 'now_today'){ $_SESSION["browse_timestamp"] = time(); }
+	if($time == 'now_today'){ $_SESSION['browse_timestamp'] = time(); }
 	
 	// save timestamp in session
-	if($time == 'time_forward'){ $_SESSION["browse_timestamp"] = $_SESSION["browse_timestamp"] + $dur_up_broadcast; }
-	if($time == 'time_backward'){ $_SESSION["browse_timestamp"] = $_SESSION["browse_timestamp"] - $dur_up_broadcast; }
-	if($time == 'day_forward'){ $_SESSION["browse_timestamp"] = $_SESSION["browse_timestamp"] + 86400; }
-	if($time == 'day_backward'){ $_SESSION["browse_timestamp"] = $_SESSION["browse_timestamp"] - 86400; }
+	if($time == 'time_forward'){ $_SESSION['browse_timestamp'] = $_SESSION['browse_timestamp'] + $dur_up_broadcast; }
+	if($time == 'time_backward'){ $_SESSION['browse_timestamp'] = $_SESSION['browse_timestamp'] - $dur_up_broadcast; }
+	if($time == 'day_forward'){ $_SESSION['browse_timestamp'] = $_SESSION['browse_timestamp'] + 86400; }
+	if($time == 'day_backward'){ $_SESSION['browse_timestamp'] = $_SESSION['browse_timestamp'] - 86400; }
 	
 	// set time
 	if($time == 'show_time' ){
@@ -45,36 +45,35 @@ include("../inc/dashboard_config.php");
 	}
 	
 	//
-	$set_time = date("d.m.Y, ".$hour.":".$minute."", $_SESSION["browse_timestamp"]);
-	$_SESSION["browse_timestamp"] = strtotime($set_time) + $dur_down_broadcast;
+	$set_time = date('d.m.Y, '.$hour.':'.$minute.'', $_SESSION['browse_timestamp']);
+	$_SESSION['browse_timestamp'] = strtotime($set_time) + $dur_down_broadcast;
 	}
 	
-	$time_start = $_SESSION["browse_timestamp"] - $dur_down_broadcast;
-	$time_end = $_SESSION["browse_timestamp"] + $dur_up_broadcast;
+	$time_start = $_SESSION['browse_timestamp'] - $dur_down_broadcast;
+	$time_end = $_SESSION['browse_timestamp'] + $dur_up_broadcast;
 	
-	//
+	// time format 1
 	if($time_format == '1')
 	{
-	// time format 1
-	$date_from_day = date("l, d.m", $time_start);
+	$date_from_day = date('l, d.m', $time_start);
 	echo '<p>' .$date_from_day. '</p>';
 	}
 	
+	// time format 2
 	if($time_format == '2')
 	{
-	// time format 2
-	$date_from_day = date("l, n/d", $time_start);
+	$date_from_day = date('l, n/d', $time_start);
 	echo '<p>' .$date_from_day. '</p>';
 	}
 	
-	// get record locations
+	// record locations
 	$sql = "SELECT * FROM `record_locations` ORDER BY `id` ASC";
 	if ($result = mysqli_query($dbmysqli,$sql))
 	{
 	while ($obj = mysqli_fetch_object($result)) {	
 	{
-	if(!isset($rec_dropdown_broadcast) or $rec_dropdown_broadcast == ""){ $rec_dropdown_broadcast = ""; }
-	$rec_dropdown_broadcast = $rec_dropdown_broadcast."<option value=\"$obj->id\">$obj->e2location</option>"; }
+	if(!isset($rec_dropdown_broadcast) or $rec_dropdown_broadcast == ''){ $rec_dropdown_broadcast = ''; }
+	$rec_dropdown_broadcast .= '<option value="'.$obj->id.'">'.$obj->e2location.'</option>'; }
 	}
 	}
 	
@@ -88,48 +87,43 @@ include("../inc/dashboard_config.php");
 	$id = $obj->id;
 	$device_description = rawurldecode($obj->device_description);
 	
-	if(!isset($device_dropdown) or $device_dropdown == ""){ $device_dropdown = ""; }
+	if(!isset($device_dropdown) or $device_dropdown == ''){ $device_dropdown = ''; }
 
-	$device_dropdown = $device_dropdown."<option value=\"$id\">$device_description</option>"; 
+	$device_dropdown .= '<option value="'.$id.'">'.$device_description.'</option>'; 
 	}
 	}
 	} // device
 
-	$sql = "SELECT * FROM `epg_data` WHERE `e2eventstart` BETWEEN '$time_start' and '$time_end' ORDER BY `e2eventstart` ASC";
+	$sql = "SELECT * FROM `epg_data` WHERE `e2eventstart` BETWEEN '".$time_start."' and '".$time_end."' ORDER BY `e2eventstart` ASC";
 
 	if ($result = mysqli_query($dbmysqli,$sql))
 	{
 	while ($obj = mysqli_fetch_object($result)) {
 	
-	if(!isset($broadcast_list) or $broadcast_list == "") { $broadcast_list = ""; }
+	if(!isset($broadcast_list) or $broadcast_list == '') { $broadcast_list = ''; }
 	
-	$obj->title_enc = str_replace("%5Cn", " ", $obj->title_enc);
-	$obj->description_enc = str_replace("%5Cn", " ", $obj->description_enc);
-	$obj->descriptionextended_enc = str_replace("%5Cn", " ", $obj->descriptionextended_enc);
 	$title_enc = rawurldecode($obj->title_enc);
 	$servicename_enc = rawurldecode($obj->servicename_enc);
 	$description_enc = rawurldecode($obj->description_enc);
 	$descriptionextended_enc = rawurldecode($obj->descriptionextended_enc);
+	$e2eventstart = $obj->e2eventstart;
+	$e2eventend = $obj->e2eventend;
 	$e2eventduration = $obj->e2eventduration;
 	
+	// time format 1
 	if($time_format == '1')
 	{
-	// time format 1
-	$e2eventstart = $obj->e2eventstart;
-	$date_start = date("l, d.m.Y", $e2eventstart);
-	$e2eventend = $obj->e2eventend;
-	$broadcast_time = date("H:i", $e2eventstart).' - '.date("H:i", $e2eventend);
+	$date_start = date('l, d.m.Y', $e2eventstart);
+	$broadcast_time = date('H:i', $e2eventstart).' - '.date('H:i', $e2eventend);
 	$td_spacer = 'cnt_time';
 	}
 	
+	// time format 2
 	if($time_format == '2')
 	{
-	// time format 2
-	$e2eventstart = $obj->e2eventstart;
-	$date_start = date("l, n/d/Y", $e2eventstart);
-	$e2eventend = $obj->e2eventend;
+	$date_start = date('l, n/d/Y', $e2eventstart);
 	$date_end = date("l, n/d/Y - g:i A", $e2eventend);
-	$broadcast_time = date("g:i A", $e2eventstart).' - '.date("g:i A", $e2eventend);
+	$broadcast_time = date('g:i A', $e2eventstart).' - '.date('g:i A', $e2eventend);
 	$td_spacer = 'cnt_time_2';
 	}
 	
@@ -140,7 +134,8 @@ include("../inc/dashboard_config.php");
 	$stream_broadcast = '';
 	}
 	
-	if($imdb_symbol == '1'){
+	if($imdb_symbol == '1')
+	{
 	$imdb_broadcast = '<a href="https://www.imdb.com/find?ref_=nv_sr_fn&q='.$title_enc.'" target="_blank" title="Info on IMDb">
 	<i class="fa fa-info-circle fa-1x"></i></a>'; 
 	} else { 
@@ -148,7 +143,7 @@ include("../inc/dashboard_config.php");
 	}
 	
 	// mark existing timer
-	if ($obj->timer == '1'){ $timer = "timer"; } else { $timer = ""; }
+	if ($obj->timer == '1'){ $timer = 'timer'; } else { $timer = ''; }
 	
 	$rand = substr(str_shuffle(str_repeat('0123456789',3)),0,3);
 	
@@ -157,7 +152,16 @@ include("../inc/dashboard_config.php");
 	$event_duration = $e2eventduration / 60;
 	$event_duration = $spacer_d.round($event_duration, 0).' min.';
 	
-	if(!isset($device_dropdown) or $device_dropdown == ""){ $device_dropdown = ""; }
+	// highlight term
+	if($highlight_term !== '')
+	{
+	$terms = explode(rawurldecode(';'), rawurldecode($highlight_term));
+	foreach($terms as $i =>$key) { $i > 0;
+	$descriptionextended_enc = str_replace($key, '<strong>'.$key.'</strong>', $descriptionextended_enc);
+	}
+	}
+	
+	if(!isset($device_dropdown) or $device_dropdown == ''){ $device_dropdown = ''; }
 
 	$broadcast_list = $broadcast_list."
 		<div id=\"broadcast_main\">
@@ -183,11 +187,11 @@ include("../inc/dashboard_config.php");
 		<div class=\"spacer_5\"></div>
 		<div id=\"broadcast-tab-button-group\">
   <div id=\"row1\">
-    <input id=\"broadcast_timer_btn_$rand$obj->hash\" type=\"submit\" onClick=\"broadcast_timer(this.id,'record')\" value=\"SET TIMER\" class=\"btn btn-success btn-sm\" title=\"Send timer to Receiver\"/> </div>
+    <input id=\"broadcast_timer_btn_$rand$obj->hash\" type=\"submit\" onClick=\"broadcast_timer(this.id,'record')\" value=\"SET TIMER\" class=\"btn btn-success btn-xs\" title=\"Send timer to Receiver\"/> </div>
 	<div id=\"row2\">
-    <input id=\"broadcast_timer_btn_$rand$obj->hash\" type=\"submit\" onClick=\"broadcast_timer(this.id,'zap')\" value=\"ZAP TIMER\" class=\"btn btn-warning btn-sm\" title=\"Send zap timer to Receiver\"/> </div>
+    <input id=\"broadcast_timer_btn_$rand$obj->hash\" type=\"submit\" onClick=\"broadcast_timer(this.id,'zap')\" value=\"ZAP TIMER\" class=\"btn btn-warning btn-xs\" title=\"Send zap timer to Receiver\"/> </div>
   <div id=\"row3\">
-    <input id=\"broadcast_zap_btn_$rand$obj->hash\" name=\"$obj->e2eventservicereference\" type=\"submit\" onClick=\"broadcast_zap(this.id,this.name)\" value=\"ZAP TO CHANNEL\" class=\"btn btn-default btn-sm\"/> </div>
+    <input id=\"broadcast_zap_btn_$rand$obj->hash\" name=\"$obj->e2eventservicereference\" type=\"submit\" onClick=\"broadcast_zap(this.id,this.name)\" value=\"ZAP TO CHANNEL\" class=\"btn btn-default btn-xs\"/> </div>
   <div id=\"row4\">
 	<span id=\"broadcast_status_zap_$rand$obj->hash\"></span> <span id=\"broadcast_status_timer_$rand$obj->hash\"></span> </div>
 	<div style=\"clear:both\"></div>
@@ -208,7 +212,7 @@ include("../inc/dashboard_config.php");
 	<div class=\"spacer_10\"></div>";
 	}
 	}
-	if(!isset($broadcast_list) or $broadcast_list == "") { $broadcast_list = "No data for this day."; }
+	if(!isset($broadcast_list) or $broadcast_list == ''){ $broadcast_list = 'No data for this day.'; }
 	
 	echo $broadcast_list;
 	

@@ -13,7 +13,7 @@ include("../inc/dashboard_config.php");
 	$action = $_REQUEST['action'];	
 	
 	if($action == 'delete'){
-	mysqli_query($dbmysqli, "DELETE FROM `saved_search` WHERE `id` = '$id' ");
+	mysqli_query($dbmysqli, "DELETE FROM `saved_search` WHERE `id` = '".$id."' ");
 	
 	// answer for ajax
 	echo "data:done";
@@ -21,6 +21,7 @@ include("../inc/dashboard_config.php");
 	} else {
 	
 	$searchterm = rawurlencode($_REQUEST['searchterm']);
+	$searchterm_r = $_REQUEST['searchterm'];
 	$searcharea = utf8_decode($_REQUEST['searcharea']);
 	$exclude_channel = strtolower($_REQUEST["exclude_channel"]);
 	$exclude_channel = rawurlencode($exclude_channel);
@@ -31,6 +32,7 @@ include("../inc/dashboard_config.php");
 	$exclude_extdescription = strtolower($_REQUEST["exclude_extdescription"]);
 	$exclude_extdescription = rawurlencode($exclude_extdescription);
 	$rec_replay = $_REQUEST['rec_replay'];
+	$device = $_REQUEST['device'];
 	$channel = $_REQUEST['channel'];
 	$record_location = utf8_decode($_REQUEST['record_location']);
 	$active = $_REQUEST['active'];
@@ -60,20 +62,21 @@ include("../inc/dashboard_config.php");
 	sort($sorted_extdescription, SORT_STRING); 
 	$exclude_extdescription = implode("%3B", $sorted_extdescription);
 	
-	// get record location id
-	$sql = mysqli_query($dbmysqli, "SELECT * FROM `record_locations` WHERE `e2location` = '".$record_location."' LIMIT 0,1");
+	// record location
+	$sql = mysqli_query($dbmysqli, "SELECT * FROM `record_locations` WHERE `id` = '".$record_location."' LIMIT 0,1");
 	$result = mysqli_fetch_assoc($sql);
 	$rec_location_id = $result['id'];
+	$e2location = $result['e2location'];
 	
-	// get channel name
-	$sql = mysqli_query($dbmysqli, "SELECT `e2servicename`, `servicename_enc` FROM `channel_list` WHERE `e2servicereference` = '$channel' ");
+	// channel name
+	$sql = mysqli_query($dbmysqli, "SELECT `e2servicename`, `servicename_enc` FROM `channel_list` WHERE `e2servicereference` = '".$channel."' ");
 	$result = mysqli_fetch_assoc($sql);
 	
 	$e2servicename = $result['e2servicename'];
 	$servicename_enc = $result['servicename_enc'];
 	
 	if($channel == 'NULL'){ $e2servicename = 'NULL'; }
-	if($searchterm == ''){ $searchterm_sql = ''; } else { $searchterm_sql = 'searchterm = "'.$searchterm.'"'; }
+	if($searchterm == ''){ $searchterm_sql = ''; } else { $searchterm_sql = 'searchterm = "'.$searchterm.'", searchterm_r = "'.$searchterm_r.'" '; }
 	if($searcharea == ''){ $searcharea_sql = ''; } else { $searcharea_sql = ', search_option = "'.$searcharea.'"'; }
 	
 	if($exclude_channel == ''){ $exclude_channel_sql = ', exclude_channel = ""'; $exclude_channel = ''; } else { $exclude_channel_sql = ', exclude_channel = "'.$exclude_channel.'"'; }
@@ -82,11 +85,28 @@ include("../inc/dashboard_config.php");
 	if($exclude_extdescription == ''){ $exclude_extdescription_sql = ', exclude_extdescription = ""'; } else { $exclude_extdescription_sql = ', exclude_extdescription = "'.$exclude_extdescription.'"'; }
 	if($rec_replay == 'yes'){ $rec_replay_sql = ', rec_replay = "on"'; } else { $rec_replay_sql = ', rec_replay = "off"'; }
 	
+	if($device != ''){ $device_sql = ', device = "'.$device.'"'; } else { $device_sql = ''; }
+	
 	if($channel == ''){ $channel_sql = ''; } else { $channel_sql = ', e2eventservicereference = "'.$channel.'", e2eventservicename = "'.$e2servicename.'", servicename_enc = "'.$servicename_enc.'" '; }
-	if($record_location == ''){ $rec_location_sql =  ''; } else { $rec_location_sql = ', e2location = "'.$record_location.'"'; }
+	if($record_location == ''){ $rec_location_sql =  ''; } else { $rec_location_sql = ', e2location = "'.$e2location.'"'; }
 	if($active == ''){ $active_sql = ''; } else { $active_sql = ', activ = "'.$active.'"'; }
 	
-	mysqli_query($dbmysqli, "UPDATE `saved_search` SET $searchterm_sql $searcharea_sql $exclude_channel_sql $exclude_title_sql $exclude_description_sql $exclude_extdescription_sql $rec_replay_sql $channel_sql $rec_location_sql, last_change = '$time', crawled = '0' $active_sql WHERE `id` = '$id' ");
+	mysqli_query($dbmysqli, "UPDATE `saved_search` SET 
+	$searchterm_sql 
+	$searcharea_sql 
+	$exclude_channel_sql 
+	$exclude_title_sql 
+	$exclude_description_sql 
+	$exclude_extdescription_sql 
+	$rec_replay_sql 
+	$device_sql 
+	$channel_sql 
+	$rec_location_sql, 
+	last_change = '$time', 
+	crawled = '0' 
+	$active_sql 
+	WHERE `id` = '$id' 
+	");
 	
 	// answer for ajax
 	if($time_format == "1")
@@ -112,7 +132,7 @@ include("../inc/dashboard_config.php");
 	if($rec_replay == 'yes'){ $rec_replay = 'on'; } else { $rec_replay = 'off'; }
 	
 	$json['last_change'] = $last_change;
-	$json['search_link'] = 'search.php?searchterm='.$searchterm.'&option='.$searcharea.'&record_location='.$rec_location_id.'&exclude_channel='.$exclude_channel.'&exclude_title='.$exclude_title.'&exclude_description='.$exclude_description.'&exclude_extdescription='.$exclude_extdescription.'&search_channel='.$search_channel.'&channel_id='.$channel_id.'&rec_replay='.$rec_replay.'&search_id='.$id.'';
+	$json['search_link'] = 'search.php?searchterm='.$searchterm.'&option='.$searcharea.'&device='.$device.'&record_location='.$rec_location_id.'&exclude_channel='.$exclude_channel.'&exclude_title='.$exclude_title.'&exclude_description='.$exclude_description.'&exclude_extdescription='.$exclude_extdescription.'&search_channel='.$search_channel.'&channel_id='.$channel_id.'&rec_replay='.$rec_replay.'&search_id='.$id.'';
 	
 	echo json_encode($json);
 	

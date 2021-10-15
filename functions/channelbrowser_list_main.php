@@ -24,22 +24,22 @@ include("../inc/dashboard_config.php");
 	$channel = $_REQUEST['channel'];
 	
 	mysqli_query($dbmysqli, "UPDATE `channel_list` SET `cb_selected` = '0' ");
-	mysqli_query($dbmysqli, "UPDATE `channel_list` SET `cb_selected` = '1' WHERE `e2servicereference` = '$channel' ");
+	mysqli_query($dbmysqli, "UPDATE `channel_list` SET `cb_selected` = '1' WHERE `e2servicereference` = '".$channel."' ");
 	
-	$date_for_cb = date("d.m.Y");
+	$date_for_cb = date('d.m.Y');
 	$date_start = $date_for_cb.'00:00';
 	$date_end = $date_for_cb.'23:59';
 	
 	$cb_time_start = strtotime($date_start);
 	$cb_time_end = strtotime($date_end);
 	
-	if(!isset($time) or $time == "") 
+	if(!isset($time) or $time == '') 
 	{ 
 	echo "time data missed"; 
 	
 	} else {
 	
-	if(!isset($_SESSION["sum_channelbrowser_days"]) or $_SESSION["sum_channelbrowser_days"] == ""){ $_SESSION["sum_channelbrowser_days"] = ""; }
+	if(!isset($_SESSION['sum_channelbrowser_days']) or $_SESSION['sum_channelbrowser_days'] == ''){ $_SESSION['sum_channelbrowser_days'] = ''; }
 	
 	$timestamp = time();
 	$today_start = $cb_time_start;
@@ -49,15 +49,15 @@ include("../inc/dashboard_config.php");
 	
 	if ($time == 'cb_day_forward')
 	{
-	$summary = $_SESSION["sum_channelbrowser_days"] +1;
+	$summary = $_SESSION['sum_channelbrowser_days'] +1;
 	}
 	
 	if ($time == 'cb_day_backward')
 	{
-	$summary = $_SESSION["sum_channelbrowser_days"] -1;
+	$summary = $_SESSION['sum_channelbrowser_days'] -1;
 	}
 				
-	$_SESSION["sum_channelbrowser_days"] = $summary;
+	$_SESSION['sum_channelbrowser_days'] = $summary;
 	
 	$timestamp_dup = $summary * 86400;
 	
@@ -67,31 +67,30 @@ include("../inc/dashboard_config.php");
 	$time_start = $timestamp_forward_start;
 	$time_end = $timestamp_forward_end;
 	
-	//
+	// time format 1
 	if ($time_format == '1')
 	{
-	// time format 1
-	$date_from_day = date("l, d.m", $time_start);
+	$date_from_day = date('l, d.m', $time_start);
 	echo '<p>' .$date_from_day. '</p>';
 	}
 	
+	// time format 2
 	if ($time_format == '2')
 	{
-	// time format 2
-	$date_from_day = date("l, n/d", $time_start);
+	$date_from_day = date('l, n/d', $time_start);
 	echo '<p>' .$date_from_day. '</p>';
 	}
 	
 	}	
 	}
-	// get record locations
+	// record locations
 	$sql = "SELECT * FROM `record_locations` ORDER BY `id` ASC";
 	if ($result = mysqli_query($dbmysqli,$sql))
 	{
 	while ($obj = mysqli_fetch_object($result)) {	
 	{
-	if(!isset($rec_dropdown_channelbrowser) or $rec_dropdown_channelbrowser == "") { $rec_dropdown_channelbrowser = ""; }
-	$rec_dropdown_channelbrowser = $rec_dropdown_channelbrowser."<option value=\"$obj->id\">$obj->e2location</option>"; }
+	if(!isset($rec_dropdown_channelbrowser) or $rec_dropdown_channelbrowser == ''){ $rec_dropdown_channelbrowser = ''; }
+	$rec_dropdown_channelbrowser .= '<option value="'.$obj->id.'">'.$obj->e2location.'</option>'; }
 	}
 	}
 	
@@ -105,9 +104,9 @@ include("../inc/dashboard_config.php");
 	$id = $obj->id;
 	$device_description = rawurldecode($obj->device_description);
 	
-	if(!isset($device_dropdown) or $device_dropdown == ""){ $device_dropdown = ""; }
+	if(!isset($device_dropdown) or $device_dropdown == ''){ $device_dropdown = ''; }
 
-	$device_dropdown = $device_dropdown."<option value=\"$id\">$device_description</option>"; 
+	$device_dropdown .= '<option value="'.$id.'">'.$device_description.'</option>'; 
 	}
 	}
 	} // device
@@ -115,44 +114,39 @@ include("../inc/dashboard_config.php");
 	if($time == 'cb_now_today'){ $time_start = $today_start; $time_end = $today_end; unset($_SESSION['sum_channelbrowser_days']);  //session_destroy(); 
 	}
 	
-	if(!isset($time_start) or $time_start == "") { $time_start = $cb_time_start; }
-	if(!isset($time_end) or $time_end == "") { $time_end = $cb_time_end; }
+	if(!isset($time_start) or $time_start == '') { $time_start = $cb_time_start; }
+	if(!isset($time_end) or $time_end == ''){ $time_end = $cb_time_end; }
 	
-	$sql = "SELECT * FROM `epg_data` WHERE `e2eventservicereference` = '$channel' AND `e2eventstart` BETWEEN '$time_start' and '$time_end' ORDER BY `e2eventstart` ASC";
+	$sql = "SELECT * FROM `epg_data` WHERE `e2eventservicereference` = '".$channel."' AND `e2eventstart` BETWEEN '".$time_start."' and '".$time_end."' ORDER BY `e2eventstart` ASC";
 
 	if ($result = mysqli_query($dbmysqli,$sql))
 	{
 	while ($obj = mysqli_fetch_object($result)) {
 	
-	if(!isset($channelbrowser_list) or $channelbrowser_list == "") { $channelbrowser_list = ""; }
-	
-	$obj->title_enc = str_replace("%5Cn", " ", $obj->title_enc);
-	$obj->description_enc = str_replace("%5Cn", " ", $obj->description_enc);
-	$obj->descriptionextended_enc = str_replace("%5Cn", " ", $obj->descriptionextended_enc);
+	if(!isset($channelbrowser_list) or $channelbrowser_list == ''){ $channelbrowser_list = ''; }
+
 	$title_enc = rawurldecode($obj->title_enc);
 	$servicename_enc = rawurldecode($obj->servicename_enc);
 	$description_enc = rawurldecode($obj->description_enc);
 	$descriptionextended_enc = rawurldecode($obj->descriptionextended_enc);
+	$e2eventstart = $obj->e2eventstart;
+	$e2eventend = $obj->e2eventend;
 	$e2eventduration = $obj->e2eventduration;
 	
+	// time format 1
 	if ($time_format == '1')
 	{
-	// time format 1
-	$e2eventstart = $obj->e2eventstart;
-	$date_start = date("l, d.m.Y", $e2eventstart);
-	$e2eventend = $obj->e2eventend;
-	$broadcast_time = date("H:i", $e2eventstart).' - '.date("H:i", $e2eventend);
+	$date_start = date('l, d.m.Y', $e2eventstart);
+	$broadcast_time = date('H:i', $e2eventstart).' - '.date('H:i', $e2eventend);
 	$td_spacer = 'cnt_time';
 	}
 	
+	// time format 2
 	if ($time_format == '2')
 	{
-	// time format 2
-	$e2eventstart = $obj->e2eventstart;
-	$date_start = date("l, n/d/Y", $e2eventstart);
-	$e2eventend = $obj->e2eventend;
-	$date_end = date("l, n/d/Y - g:i A", $e2eventend);
-	$broadcast_time = date("g:i A", $e2eventstart).' - '.date("g:i A", $e2eventend);
+	$date_start = date('l, n/d/Y', $e2eventstart);
+	$date_end = date('l, n/d/Y - g:i A', $e2eventend);
+	$broadcast_time = date('g:i A', $e2eventstart).' - '.date('g:i A', $e2eventend);
 	$td_spacer = 'cnt_time_2';
 	}
 	
@@ -168,7 +162,7 @@ include("../inc/dashboard_config.php");
 	$imdb_broadcast = ''; }
 	
 	// mark existing timer
-	if ($obj->timer == '1'){ $timer = "timer"; } else { $timer = ""; }
+	if ($obj->timer == '1'){ $timer = 'timer'; } else { $timer = ''; }
 	
 	$rand = substr(str_shuffle(str_repeat('0123456789',3)),0,3);
 	
@@ -177,9 +171,18 @@ include("../inc/dashboard_config.php");
 	$event_duration = $e2eventduration / 60;
 	$event_duration = $spacer_d.round($event_duration, 0).' min.';
 	
-	if(!isset($device_dropdown) or $device_dropdown == ""){ $device_dropdown = ""; }
+	// highlight term
+	if($highlight_term !== '')
+	{
+	$terms = explode(rawurldecode(';'), rawurldecode($highlight_term));
+	foreach($terms as $i =>$key) { $i > 0;
+	$descriptionextended_enc = str_replace($key, '<strong>'.$key.'</strong>', $descriptionextended_enc);
+	}
+	}
+	
+	if(!isset($device_dropdown) or $device_dropdown == ''){ $device_dropdown = ''; }
 
-$channelbrowser_list = $channelbrowser_list."
+	$channelbrowser_list = $channelbrowser_list."
 		<div id=\"channelbrowser_main\">
 	  <div id=\"channelbrowser_$rand$obj->hash\" style=\"cursor: pointer;\" onclick=\"channelbrowser_list_desc(this.id);\">
 		<div id=\"$td_spacer\"> <span class=\"$timer\">$broadcast_time</span> </div>
@@ -201,11 +204,11 @@ $channelbrowser_list = $channelbrowser_list."
 		<div class=\"spacer_5\"></div>
 <div id=\"broadcast-tab-button-group\">
   <div id=\"row1\">
-    <input id=\"channelbrowser_timer_btn_$rand$obj->hash\" type=\"submit\" onClick=\"channelbrowser_timer(this.id,'record')\" value=\"SET TIMER\" class=\"btn btn-success btn-sm\" title=\"Send timer to Receiver\"/> </div>
+    <input id=\"channelbrowser_timer_btn_$rand$obj->hash\" type=\"submit\" onClick=\"channelbrowser_timer(this.id,'record')\" value=\"SET TIMER\" class=\"btn btn-success btn-xs\" title=\"Send timer to Receiver\"/> </div>
 	<div id=\"row2\">
-    <input id=\"channelbrowser_timer_btn_$rand$obj->hash\" type=\"submit\" onClick=\"channelbrowser_timer(this.id,'zap')\" value=\"ZAP TIMER\" class=\"btn btn-warning btn-sm\" title=\"Send zap timer to Receiver\"/> </div>
+    <input id=\"channelbrowser_timer_btn_$rand$obj->hash\" type=\"submit\" onClick=\"channelbrowser_timer(this.id,'zap')\" value=\"ZAP TIMER\" class=\"btn btn-warning btn-xs\" title=\"Send zap timer to Receiver\"/> </div>
   <div id=\"row3\">
-    <input id=\"channelbrowser_zap_btn_$rand$obj->hash\" type=\"submit\" name=\"$obj->e2eventservicereference\" onClick=\"channelbrowser_zap(this.id,this.name)\" value=\"ZAP TO CHANNEL\" class=\"btn btn-default btn-sm\"/> </div>
+    <input id=\"channelbrowser_zap_btn_$rand$obj->hash\" type=\"submit\" name=\"$obj->e2eventservicereference\" onClick=\"channelbrowser_zap(this.id,this.name)\" value=\"ZAP TO CHANNEL\" class=\"btn btn-default btn-xs\"/> </div>
   <div id=\"row4\">
   <span id=\"channelbrowser_status_zap_$rand$obj->hash\"></span>
   <span id=\"channelbrowser_status_timer_$rand$obj->hash\"></span>
@@ -226,7 +229,7 @@ $channelbrowser_list = $channelbrowser_list."
   <div class=\"spacer_10\"></div>";
 	}
 	}
-	if(!isset($channelbrowser_list) or $channelbrowser_list == "") { $channelbrowser_list = "No data for this day"; }
+	if(!isset($channelbrowser_list) or $channelbrowser_list == ''){ $channelbrowser_list = 'No data for this day'; }
 	
 	echo $channelbrowser_list;
 

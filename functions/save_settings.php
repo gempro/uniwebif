@@ -40,6 +40,7 @@ include("../inc/dashboard_config.php");
 	$del_time = $_REQUEST['del_time'];
 	$reload_progressbar = $_REQUEST['reload_progressbar'];
 	$extra_rec_time = $_REQUEST['extra_rec_time'];
+	$highlight_term = rawurlencode($_REQUEST['highlight_term']);
 	$cz_activate = $_REQUEST['cz_activate'];
 	$cz_device = $_REQUEST['cz_device'];
 	$cz_wait_time = $_REQUEST['cz_wait_time'];
@@ -69,13 +70,13 @@ include("../inc/dashboard_config.php");
 	$crawler_start = $date_for_crawler.$crawler_hour.':'.$crawler_minute.$crawler_am_pm;
 	if(strtotime($crawler_start) > $time){ $crawler_timestamp = strtotime($crawler_start); } else { $crawler_timestamp = strtotime($crawler_start) + 86400; }
 	
-	if(!isset($epg_entries_per_channel) or $epg_entries_per_channel == "" or !isset($channel_entries) or $channel_entries == "") 
+	if(!isset($epg_entries_per_channel) or $epg_entries_per_channel == '' or !isset($channel_entries) or $channel_entries == '') 
 	{ 
 	echo "data missed"; 
 	
 	} else {
 	
-	$sql = mysqli_query($dbmysqli, "
+	mysqli_query($dbmysqli, "
 	UPDATE `settings` SET 
 	server_ip = '$server_ip', 
 	script_folder = '$script_folder', 
@@ -114,6 +115,7 @@ include("../inc/dashboard_config.php");
 	del_time = '$del_time', 
 	reload_progressbar = '$reload_progressbar', 
 	extra_rec_time = '$extra_rec_time', 
+	highlight_term = '$highlight_term',
 	cz_activate = '$cz_activate', 
 	cz_device = '$cz_device', 
 	cz_wait_time = '$cz_wait_time', 
@@ -124,17 +126,13 @@ include("../inc/dashboard_config.php");
 	cz_start_channel = '$cz_start_channel',
 	cz_timestamp = '$cz_timestamp' WHERE `id` = '0' ");
 	
-	$sql = mysqli_query($dbmysqli, "UPDATE `channel_list` SET `zap_start` = '0' ");
-	$sql = mysqli_query($dbmysqli, "UPDATE `channel_list` SET `zap_start` = '1' WHERE `e2servicereference` = '$cz_start_channel' ");
+	mysqli_query($dbmysqli, "UPDATE `channel_list` SET `zap_start` = '0' ");
 	
-	if($hide_old_timer == '0')
-	{
-	$sql = mysqli_query($dbmysqli, "UPDATE `timer` SET `expired` = '0' WHERE `e2eventend` < '$time' AND `expired` = '1' ");
-	}
-	if($hide_old_timer == '1')
-	{
-	$sql = mysqli_query($dbmysqli, "UPDATE `timer` SET `expired` = '1' WHERE `e2eventend` < '$time' AND `expired` NOT LIKE '1' ");
-	}
+	mysqli_query($dbmysqli, "UPDATE `channel_list` SET `zap_start` = '1' WHERE `e2servicereference` = '$cz_start_channel' ");
+	
+	if($hide_old_timer == '0'){ mysqli_query($dbmysqli, "UPDATE `timer` SET `expired` = '0' WHERE `e2eventend` < '$time' AND `expired` = '1' "); }
+	
+	if($hide_old_timer == '1'){ mysqli_query($dbmysqli, "UPDATE `timer` SET `expired` = '1' WHERE `e2eventend` < '$time' AND `expired` NOT LIKE '1' "); }
 	
 	sleep(1);
 	

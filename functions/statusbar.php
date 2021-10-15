@@ -9,7 +9,6 @@ session_start();
  	header('Content-Type: text/html;');
 	header('Cache-Control: no-cache');
 	
-	//
 	if(!ini_get('allow_url_fopen'))
 	{
 	echo '[{"statusbar":"2"}]';
@@ -28,8 +27,6 @@ session_start();
 	$_SESSION["statusbar"] = '3';
 	exit;
 	}
-
-if ($xml){
 
 	if(!isset($xml->e2service->e2servicereference) or $xml->e2service->e2servicereference == ''){ $xml->e2service->e2servicereference = ''; }
 	
@@ -52,20 +49,12 @@ if ($xml){
 	$e2eventremaining = $xml->e2eventlist->e2event->e2eventremaining;
 	$e2eventdescriptionextended = $xml->e2eventlist->e2event->e2eventdescriptionextended;
 	$e2eventend = $e2eventstart + $e2eventduration;
-	
 	$time_complete = round($e2eventduration/60,0);
 	$time_remaining = round($e2eventremaining/60,0);
 	
-	if(strlen($e2eventname) > "70" )
-	{
-	$e2eventname = substr($e2eventname, 0, 70);
-	$e2eventname = $e2eventname . '...';
-	}
-	
-	if($e2eventname == "")
-	{
-	$e2eventname = ' No EPG available ';
-	}
+	if(strlen($e2eventname) > '100'){ $e2eventname = substr($e2eventname, 0, 100); $e2eventname = $e2eventname . ' ... '; }
+	if(strlen($e2eventservicename) > '50'){ $e2eventservicename = substr($e2eventservicename, 0, 50); $e2eventservicename = $e2eventservicename . ' ... '; }
+	if($e2eventname == ''){ $e2eventname = ' No EPG available '; }
 	
 	if($e2videowidth == 'N/A' and $e2eventname == '')
 	{
@@ -78,18 +67,26 @@ if ($xml){
 	$channel_name = str_replace(' ', '+', $e2eventservicename);
 	
 	if($e2videowidth == 'N/A'){ $e2videowidth = ''; }
-	
 	if($e2videoheight == 'N/A'){ $e2videoheight = ''; }
 	
 	$stream_url = $url_format.'://'.$box_ip.'/web/stream.m3u?ref='.$e2servicereference.'&name='.$channel_name;
+	$media = '';
 	
+	// file
 	if(preg_match('(^(?=.*[a-z]).+$)', $e2servicereference))
 	{
 	$media = 'file';
 	$e2servicereference = str_replace('1:0:0:0:0:0:0:0:0:0:', '', $e2servicereference);
 	$stream_url = $url_format.'://'.$box_ip.'/file?file='.$e2servicereference.'&name='.$channel_name;
-	} else {
-	$media = '';
+	} 
+	
+	// iptv
+	if(preg_match('/\b4097:0:1:0:0:0:0:0:0:0:\b/i', $e2servicereference))
+	{
+	$media = 'stream';
+	$stream_url = str_replace('4097:0:1:0:0:0:0:0:0:0:', '', $e2servicereference);
+	$stream_url = str_replace('%3a', ':', $stream_url);
+	$stream_url = str_replace(':'.$e2eventservicename, '', $stream_url);
 	}
 	
 	$_SESSION['statusbar'] = '1';
@@ -110,7 +107,6 @@ if ($xml){
 	"e2eventend":"'.$e2eventend.'",
 	"time_complete":"'.$time_complete.'",
 	"time_remaining":"'.$time_remaining.'\r"}]';
-	}
 	}
 }
 ?>

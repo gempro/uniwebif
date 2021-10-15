@@ -2,7 +2,7 @@
 //
 include("../inc/dashboard_config.php");
 
-	if(!isset($_REQUEST['action']) or $_REQUEST['action'] == ""){ $_REQUEST['action'] = ""; }
+	if(!isset($_REQUEST['action']) or $_REQUEST['action'] == ''){ $_REQUEST['action'] = ''; }
 	$action = $_REQUEST['action'];
 
 	header('Content-Type: text/event-stream');
@@ -23,16 +23,14 @@ include("../inc/dashboard_config.php");
 	if($status != 'sent')
 	{
 	// send to different device
-	if($device != "0" and $device != "")
+	if($device != '0' and $device != '')
 	{
 	$sql_2 = mysqli_query($dbmysqli, "SELECT * FROM `device_list` WHERE `id` = '".$device."' ");
 	$result_2 = mysqli_fetch_assoc($sql_2);
 	$box_ip = $result_2['device_ip'];
 	$box_user = $result_2['device_user'];
 	$box_password = $result_2['device_password'];
-	//$e2location = $result3['device_record_location'];
-	$timer_request = str_replace("%22", "%60", $timer_request);
-	$timer_request = str_replace("%27", "%60", $timer_request);
+	
 	$webrequest = stream_context_create(array (
 	'http' => array (
 	'method' => 'POST',
@@ -42,8 +40,14 @@ include("../inc/dashboard_config.php");
 	'verify_peer_name' => false,
 	))
 	));
+	// remove " and ' from request
+	$timer_request = str_replace("%22", "%60", $timer_request);
+	$timer_request = str_replace("%27", "%60", $timer_request);
+	
 	$send_timer_request = @file_get_contents($timer_request, false, $webrequest);
+	
 	sleep(1);
+	
 	} // send to different device
 	
 	else {
@@ -51,22 +55,24 @@ include("../inc/dashboard_config.php");
 	// remove " and ' from request
 	$timer_request = str_replace("%22", "%60", $timer_request);
 	$timer_request = str_replace("%27", "%60", $timer_request);
+	
 	$send_timer_request = @file_get_contents($timer_request, false, $webrequest);
 	
 	sleep(1);
+	
 	} // send to default receiver
 	
 	// mark as done
 	if($action == "manual")
 	{
-	mysqli_query($dbmysqli, "UPDATE `timer` SET `status` = 'manual' WHERE `id` = '$id' "); 
+	mysqli_query($dbmysqli, "UPDATE `timer` SET `status` = 'manual' WHERE `id` = '".$id."' "); 
 	
 	} else {
 	
-	mysqli_query($dbmysqli, "UPDATE `timer` SET `status` = 'sent' WHERE `id` = '$id' ");
+	mysqli_query($dbmysqli, "UPDATE `timer` SET `status` = 'sent' WHERE `id` = '".$id."' ");
 	}
 	
-	mysqli_query($dbmysqli, "UPDATE `epg_data` SET `timer` = '1' WHERE `hash` = '$hash' ");
+	mysqli_query($dbmysqli, "UPDATE `epg_data` SET `timer` = '1' WHERE `hash` = '".$hash."' ");
 	}
 	}
 	}

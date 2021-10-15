@@ -20,10 +20,10 @@ include("../inc/dashboard_config.php");
 	header('Cache-Control: no-cache');
 	sleep(1);
 	
-	if(!isset($_REQUEST['record_location']) or $_REQUEST['record_location'] == ""){ $_REQUEST['record_location'] = ""; }
-	if(!isset($_REQUEST['action']) or $_REQUEST['action'] == ""){ $_REQUEST['action'] = ""; }
-	if(!isset($_REQUEST['del_id']) or $_REQUEST['del_id'] == ""){ $_REQUEST['del_id'] = ""; }
-	if(!isset($_REQUEST['device']) or $_REQUEST['device'] == ""){ $_REQUEST['device'] = ""; }
+	if(!isset($_REQUEST['record_location']) or $_REQUEST['record_location'] == ''){ $_REQUEST['record_location'] = ''; }
+	if(!isset($_REQUEST['action']) or $_REQUEST['action'] == ''){ $_REQUEST['action'] = ''; }
+	if(!isset($_REQUEST['del_id']) or $_REQUEST['del_id'] == ''){ $_REQUEST['del_id'] = ''; }
+	if(!isset($_REQUEST['device']) or $_REQUEST['device'] == ''){ $_REQUEST['device'] = ''; }
 	
 	$record_location = $_REQUEST['record_location'];
 	$action = $_REQUEST['action'];
@@ -46,6 +46,7 @@ include("../inc/dashboard_config.php");
 	$box_user = $result['device_user'];
 	$box_password = $result['device_password'];
 	$url_format = $result['url_format'];
+	
 	// Webrequest
 	$rl_webrequest = stream_context_create(array (
 	'http' => array (
@@ -56,11 +57,20 @@ include("../inc/dashboard_config.php");
 	'verify_peer_name' => false,
 	))
 	));
+	
+	// check if token session is required
+	$xmlfile = $url_format.'://'.$box_ip.'/web/session?sessionid=0';
+	$session_info = @file_get_contents($xmlfile, false, $rl_webrequest);
+	$e2sessionid = simplexml_load_string($session_info);
+	
+	if($e2sessionid != ''){ $session_part_2 = '&sessionid='.$e2sessionid; } else { $session_part_2 = ''; }
+	
 	$delete_request = $url_format.'://'.$box_ip.'/web/moviedelete?sRef='.$del_id.$session_part_2;
 	$delete_record = @file_get_contents($delete_request, false, $rl_webrequest);
-	}
 	
-	if($record_location == ""){ echo 'No files to display..'; exit; }
+	} // delete
+	
+	if($record_location == ''){ echo 'No files to display..'; exit; }
 	
 	// calculate filesize
 	function formatBytes($size, $precision = 2)
@@ -72,17 +82,22 @@ include("../inc/dashboard_config.php");
 	return round(pow(1024, $base - floor($base)), $precision) .' '. $suffixes[floor($base)];
 	}
 	}
+	
+	$sql = mysqli_query($dbmysqli, "SELECT e2location FROM `record_locations` WHERE `id` = '".$record_location."' ");
+	$result = mysqli_fetch_assoc($sql);
+	$record_location = $result['e2location'];
 
 	// recorded files default receiver
-	if($device == "0")
+	if($device == '0')
 	{
 	$xmlfile = $url_format.'://'.$box_ip.'/web/movielist?dirname='.$record_location.$session_part_2;
 	$getRecords_request = @file_get_contents($xmlfile, false, $webrequest);
 	$xml = simplexml_load_string($getRecords_request);
-	if(!isset($xml) or $xml == ""){ echo 'Data could not received'; exit; }
+	if(!isset($xml) or $xml == ''){ echo 'Data could not received'; exit; }
 	}	
 	
-	if($device != "0")
+	// recorded files differnt device
+	if($device != '0')
 	{
 	$sql = mysqli_query($dbmysqli, "SELECT * FROM `device_list` WHERE `id` = '".$device."' ");
 	$result = mysqli_fetch_assoc($sql);
@@ -90,6 +105,7 @@ include("../inc/dashboard_config.php");
 	$box_user = $result['device_user'];
 	$box_password = $result['device_password'];
 	$url_format = $result['url_format'];
+	
 	// Webrequest
 	$rl_webrequest = stream_context_create(array (
 	'http' => array (
@@ -100,10 +116,11 @@ include("../inc/dashboard_config.php");
 	'verify_peer_name' => false,
 	))
 	));
+	
 	$xmlfile = $url_format.'://'.$box_ip.'/web/movielist?dirname='.$record_location.$session_part_2;
 	$getRecords_request = @file_get_contents($xmlfile, false, $rl_webrequest);
 	$xml = simplexml_load_string($getRecords_request);
-	if(!isset($xml) or $xml == ""){ echo 'Data could not received'; exit; }
+	if(!isset($xml) or $xml == ''){ echo 'Data could not received'; exit; }
 	}
 	
 if($xml){
@@ -113,8 +130,10 @@ if($xml){
 	$filespace = 0;
 	
 	for ($i = 0; $i <= 500; $i++){
-	if(!isset($xml->e2movie[$i]->e2servicereference) or $xml->e2movie[$i]->e2servicereference == ""){ $xml->e2movie[$i]->e2servicereference = ""; }
-	if($xml->e2movie[$i]->e2servicereference != "")
+	
+	if(!isset($xml->e2movie[$i]->e2servicereference) or $xml->e2movie[$i]->e2servicereference == ''){ $xml->e2movie[$i]->e2servicereference = ''; }
+	
+	if($xml->e2movie[$i]->e2servicereference != '')
 	{
 	$e2servicereference = rawurlencode($xml->e2movie[$i]->e2servicereference);
 	$e2title = rawurldecode($xml->e2movie[$i]->e2title);
@@ -130,25 +149,25 @@ if($xml){
 	if($time_format == '1')
 	{
 	// time format 1
-	$record_date = date("d.m.Y - H:i |", "".$e2time."");
-	$day_today = date("d.m.Y", time());
-	$today_record = date("d.m.Y", "".$e2time."");
+	$record_date = date('d.m.Y - H:i |', ''.$e2time.'');
+	$day_today = date('d.m.Y', time());
+	$today_record = date('d.m.Y', ''.$e2time.'');
 	if($day_today == $today_record){ $sum_today = $sum_today +1; }
 	}
 	
 	if($time_format == '2')
 	{
 	// time format 2
-	$record_date = date("n/d/Y - g:i A |", "".$e2time."");
-	$day_today = date("n/d/Y", time());
-	$today_record = date("n/d/Y", "".$e2time."");
+	$record_date = date('n/d/Y - g:i A |', ''.$e2time.'');
+	$day_today = date('n/d/Y', time());
+	$today_record = date('n/d/Y', $e2time);
 	if($day_today == $today_record){ $sum_today = $sum_today +1; }
 	}
 	
-	$record_filesize = formatBytes("".$e2filesize."");
+	$record_filesize = formatBytes(''.$e2filesize.'');
 	$record_hash = hash('md4',$e2filename);
 	
-	if(!isset($record_list) or $record_list == ""){ $record_list = ""; }
+	if(!isset($record_list) or $record_list == ''){ $record_list = ''; }
 	
 	$imdb_broadcast = '';
 	if($imdb_symbol == '1')
@@ -157,6 +176,15 @@ if($xml){
 	}
 	
 	if($e2length and $record_filesize == ''){ $show_info = 'display:none;'; } else { $show_info = ''; }
+	
+	// highlight term
+	if($highlight_term !== '')
+	{
+	$terms = explode(rawurldecode(';'), rawurldecode($highlight_term));
+	foreach($terms as $x =>$key) { $x > 0;
+	$e2descriptionextended = str_replace($key, '<strong>'.$key.'</strong>', $e2descriptionextended);
+	}
+	}
 	
 	$record_list = $record_list."
 	<div id=\"record_entry_$i\">
@@ -189,20 +217,22 @@ if($xml){
 		</div>
 	</div>
 	<div class=\"spacer_10\"></div></div>";
+	
 	$files_summary = $i+1;
 	}
 	}
 	}
-	if(!isset($record_list) or $record_list == ""){ $record_list = "No files to display.."; }
+	if(!isset($record_list) or $record_list == ''){ $record_list = 'No files to display..'; }
 	
-	$filespace_total = formatBytes("".$filespace."");
+	$filespace_total = formatBytes(''.$filespace.'');
 	
-	if($filespace == "0"){ $filespace_total = "0 kB"; }
+	if($filespace == '0'){ $filespace_total = '0 kB'; }
 	
 	echo '<span id="record_info">Records in folder: <strong>
 	'.$files_summary.'</strong> | Today recorded: '.$sum_today.' | Diskspace used: '.$filespace_total.'</span>
 	<div class="spacer_20"></div>'.$record_list;
 	
 ?>
+
 </body>
 </html>

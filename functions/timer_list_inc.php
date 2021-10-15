@@ -2,13 +2,13 @@
 //
 	include("../inc/dashboard_config.php");
 	
-	if(!isset($_REQUEST['action']) or $_REQUEST['action'] == ""){ $_REQUEST['action'] = ""; }
+	if(!isset($_REQUEST['action']) or $_REQUEST['action'] == ''){ $_REQUEST['action'] = ''; }
 	$action = $_REQUEST['action'];
 	
-	if(!isset($_REQUEST['timer_id']) or $_REQUEST['timer_id'] == ""){ $_REQUEST['timer_id'] = ""; }
+	if(!isset($_REQUEST['timer_id']) or $_REQUEST['timer_id'] == ''){ $_REQUEST['timer_id'] = ''; }
 	$timer_id = $_REQUEST['timer_id'];
 	
-	if($timer_id != "")
+	if($timer_id != '')
 	{
 	// hide single timer
 	if($action == 'hide')
@@ -43,7 +43,7 @@
 
 	$string_hash = hash('md4',$keyword_lower.$search_term.$summary_title.$summary_description.$summary_extdescription);
 
-	$sql = mysqli_query($dbmysqli, "SELECT COUNT(*) FROM `keywords` WHERE `hash` = '".$string_hash."' ");
+	$sql = mysqli_query($dbmysqli, "SELECT COUNT(id) FROM `keywords` WHERE `hash` = '".$string_hash."' ");
 	$result = mysqli_fetch_row($sql);
 	$summary = $result[0];
 	
@@ -136,20 +136,28 @@
 	exit;
 	} // add broadcast to ignore list
 
+
 	// delete timer
 	if($action == 'delete')
 	{
-	if(!isset($_REQUEST['hash']) or $_REQUEST['hash'] == ""){ $_REQUEST['hash'] = ""; }
-	if(!isset($_REQUEST['delete_from_box']) or $_REQUEST['delete_from_box'] == ""){ $_REQUEST['delete_from_box'] = ""; }
-	if(!isset($_REQUEST['delete_from_db']) or $_REQUEST['delete_from_db'] == ""){ $_REQUEST['delete_from_db'] = ""; }
-	if(!isset($_REQUEST['device']) or $_REQUEST['device'] == ""){ $_REQUEST['device'] = ""; }
+	sleep(1);
+	if(!isset($_REQUEST['timer_id']) or $_REQUEST['timer_id'] == ''){ $_REQUEST['timer_id'] = ''; }
+	if(!isset($_REQUEST['hash']) or $_REQUEST['hash'] == ''){ $_REQUEST['hash'] = ''; }
+	if(!isset($_REQUEST['delete_from_box']) or $_REQUEST['delete_from_box'] == ''){ $_REQUEST['delete_from_box'] = ''; }
+	if(!isset($_REQUEST['delete_from_db']) or $_REQUEST['delete_from_db'] == ''){ $_REQUEST['delete_from_db'] = ''; }
+	if(!isset($_REQUEST['device']) or $_REQUEST['device'] == ''){ $_REQUEST['device'] = ''; }
 	
 	$timer_id = $_REQUEST['timer_id'];
 	$hash = $_REQUEST['hash'];
 	$delete_from_db = $_REQUEST['delete_from_db'];
 	$device = $_REQUEST['device'];
 	
-	$sql_2 = mysqli_query($dbmysqli, "SELECT * FROM `timer` WHERE `id` = '".$timer_id."' AND `device` = '".$device."' ");
+	$sql = mysqli_query($dbmysqli, "SELECT COUNT(id) FROM `timer` WHERE `id` = '".$timer_id."' AND `device` = '".$device."' ");
+	$result = mysqli_fetch_row($sql);
+	
+	if($result[0] == 0){ echo 'data:incorrect'; exit; }
+	
+	$sql_2 = mysqli_query($dbmysqli, "SELECT * FROM `timer` WHERE `id` = '".$timer_id."' ");
 	$result_2 = mysqli_fetch_assoc($sql_2);
 	$e2eventservicereference = $result_2['e2eventservicereference'];
 	$e2eventstart = $result_2['e2eventstart'];
@@ -157,18 +165,14 @@
 	$record_location = $result_2['record_location'];
 	$status = $result_2['status'];
 	
-	if($device == ""){ $device = $result['device']; }
-	
 	if($status == 'manual' or $status == 'sent')
 	{
-	// unmark timer
+	// unmark epg entry
 	mysqli_query($dbmysqli, "UPDATE `epg_data` SET `timer` = '0' WHERE `hash` = '".$hash."' ");
 	}
-
-	sleep(1);
 	
 	// delete timer from different device
-	if($device != "0")
+	if($device != '0')
 	{
 	$sql_3 = mysqli_query($dbmysqli, "SELECT * FROM `device_list` WHERE `id` = '".$device."' ");
 	$result_3 = mysqli_fetch_assoc($sql_3);
@@ -192,20 +196,24 @@
 	
 	} else {
 	
-	// delete from default receiver
 	$deleteTimer = $url_format.'://'.$box_ip.'/web/timerdelete?sRef='.$e2eventservicereference.'&begin='.$e2eventstart.'&end='.$e2eventend.$session_part_2;
 	$deleteTimer_request = @file_get_contents($deleteTimer, false, $webrequest);
 	}
-	// mysqli_query($dbmysqli, "UPDATE `timer` SET `status` = 'waiting' WHERE `id` = '".$timer_id."' AND `device` = '".$device."' ");
-	mysqli_query($dbmysqli, "UPDATE `timer` SET `status` = 'waiting' WHERE `hash` = '".$hash."' AND `device` = '".$device."' ");
-	}
+	
+	mysqli_query($dbmysqli, "UPDATE `timer` SET `status` = 'waiting' WHERE `id` = '".$timer_id."' ");
+	
+	} // delete from default receiver
 	
 	// delete timer from database
 	if($delete_from_db == '1')
 	{
-	// mysqli_query($dbmysqli, "DELETE FROM `timer` WHERE `id` = '".$timer_id."' AND `device` = '".$device."' ");
-	mysqli_query($dbmysqli, "DELETE FROM `timer` WHERE `hash` = '".$hash."' AND `device` = '".$device."' ");
-	//
+	$sql = mysqli_query($dbmysqli, "SELECT COUNT(id) FROM `timer` WHERE `id` = '".$timer_id."' AND `device` = '".$device."' ");
+	$result = mysqli_fetch_row($sql);
+	
+	if($result[0] == 0){ echo 'data:incorrect'; exit; }
+	
+	mysqli_query($dbmysqli, "DELETE FROM `timer` WHERE `id` = '".$timer_id."' AND `device` = '".$device."' ");
+	
 	echo "data:deleted_db";
 	exit;
 	
@@ -215,6 +223,7 @@
 	exit;
 	}
 	} // delete timer
+	//
 	
 	// device dropdown
 	$sql_4 = "SELECT * FROM `device_list` ORDER BY `id` ASC";
@@ -224,11 +233,11 @@
 	{
 	$id = $obj_4->id;
 	$device_description = rawurldecode($obj_4->device_description);
-	if(!isset($device_dropdown) or $device_dropdown == ""){ $device_dropdown = ""; }
-	$device_dropdown = $device_dropdown."<option name=\"$device_description\" value=\"$id\">$device_description</option>"; 
+	if(!isset($device_dropdown) or $device_dropdown == ''){ $device_dropdown = ''; }
+	$device_dropdown .= '<option name="'.$device_description.'" value="'.$id.'">'.$device_description.'</option>'; 
 	}
 	}
-	} // device dropdown
+	}
 	
 	// unhide
 	if($action == 'unhide')
@@ -244,11 +253,8 @@
 	{
 	while ($obj = mysqli_fetch_object($result_5)) {
 	
-	if(!isset($timerlist) or $timerlist == ""){ $timerlist = ""; }
-	
-	$obj->title_enc = str_replace("%5Cn", " ", $obj->title_enc);
-	$obj->description_enc = str_replace("%5Cn", " ", $obj->description_enc);
-	$obj->descriptionextended_enc = str_replace("%5Cn", " ", $obj->descriptionextended_enc);
+	if(!isset($timerlist) or $timerlist == ''){ $timerlist = ''; }
+
 	$title_enc = rawurldecode($obj->title_enc);
 	$servicename_enc = rawurldecode($obj->servicename_enc);
 	$description_enc = rawurldecode($obj->description_enc);
@@ -258,6 +264,8 @@
 	$exclude_title = rawurldecode($obj->exclude_title);
 	$exclude_description = rawurldecode($obj->exclude_description);
 	$exclude_extdescription = rawurldecode($obj->exclude_extdescription);
+	$e2eventstart = $obj->e2eventstart;
+	$e2eventend = $obj->e2eventend;
 	$record_status = $obj->record_status;
 	$rec_replay = $obj->rec_replay;
 	$is_replay = $obj->is_replay;
@@ -265,36 +273,34 @@
 	$device_no = $obj->device;
 	$search_id = $obj->search_id;
 	$timer_conflict = $obj->conflict;
+	$timer_repeat = $obj->timer_repeat;
+	$timer_repeat_d = $obj->timer_repeat_d;
 	
-	if(!isset($exclude_channel) or $exclude_channel == "") { $exclude_channel = ""; }
-	if(!isset($exclude_title) or $exclude_title == "") { $exclude_title = ""; }
-	if(!isset($exclude_description) or $exclude_description == "") { $exclude_description = ""; }
-	if(!isset($exclude_extdescription) or $exclude_extdescription == "") { $exclude_extdescription = ""; }
+	if(!isset($exclude_channel) or $exclude_channel == ''){ $exclude_channel = ''; }
+	if(!isset($exclude_title) or $exclude_title == ''){ $exclude_title = ''; }
+	if(!isset($exclude_description) or $exclude_description == ''){ $exclude_description = ''; }
+	if(!isset($exclude_extdescription) or $exclude_extdescription == ''){ $exclude_extdescription = ''; }
 
-	$exclude_channel = str_replace(";", "; ", $exclude_channel);
-	$exclude_title = str_replace(";", "; ", $exclude_title);
-	$exclude_description = str_replace(";", "; ", $exclude_description);
-	$exclude_extdescription = str_replace(";", "; ", $exclude_extdescription);
+	$exclude_channel = str_replace(';', '; ', $exclude_channel);
+	$exclude_title = str_replace(';', '; ', $exclude_title);
+	$exclude_description = str_replace(';', '; ', $exclude_description);
+	$exclude_extdescription = str_replace(';', '; ', $exclude_extdescription);
 	
 	if($time_format == '1')
 	{
-	// time format 1
-	$e2eventstart = $obj->e2eventstart;
-	$date_start = date("l, d.m.Y", $e2eventstart);
-	$e2eventend = $obj->e2eventend;
-	$broadcast_time = date("H:i", $e2eventstart).' - '.date("H:i", $e2eventend);
-	$broadcast_date = date("d.m", $e2eventstart);
+	// time format 1	
+	$date_start = date('l, d.m.Y', $e2eventstart);
+	$broadcast_time = date('H:i', $e2eventstart).' - '.date('H:i', $e2eventend);
+	$broadcast_date = date('d.m', $e2eventstart);
 	$time_class = 'cnt_time';
 	}
 	
 	if($time_format == '2')
 	{
 	// time format 2
-	$e2eventstart = $obj->e2eventstart;
-	$date_start = date("l n/d/Y", $e2eventstart);
-	$e2eventend = $obj->e2eventend;
-	$broadcast_time = date("g:i A", $e2eventstart).' - '.date("g:i A", $e2eventend);
-	$broadcast_date = date("n/d", $e2eventstart);
+	$date_start = date('l n/d/Y', $e2eventstart);
+	$broadcast_time = date('g:i A', $e2eventstart).' - '.date('g:i A', $e2eventend);
+	$broadcast_date = date('n/d', $e2eventstart);
 	$time_class = 'cnt_time_2';
 	}
 	//
@@ -321,7 +327,7 @@ if($obj->status == 'sent')
 	<i id="tl_glyphicon_status_m_'.$obj->id.'" class="fa fa-search fa-1x" style="color:#000" title="Automatic search"></i>  
 	<i id="tl_glyphicon_status_'.$obj->id.'" class="glyphicon glyphicon-export" style="color:#5CB85C" title="sent"></i>
 	';
-	if($timer_conflict == "1")
+	if($timer_conflict == '1')
 	{
 	$status = '
 	<i id="tl_glyphicon_status_m_'.$obj->id.'" class="fa fa-search fa-1x" style="color:#000" title="Automatic search"></i>  
@@ -336,7 +342,7 @@ if($obj->status == 'manual')
 	<i id="tl_glyphicon_status_m_'.$obj->id.'" class="fa fa-hand-o-up fa-1x" style="color:#000" title="manual"></i>  
 	<i id="tl_glyphicon_status_'.$obj->id.'" class="glyphicon glyphicon-export" style="color:#5CB85C" title="sent"></i>
 	';
-	if($timer_conflict == "1")
+	if($timer_conflict == '1')
 	{
 	$status = '
 	<i id="tl_glyphicon_status_m_'.$obj->id.'" class="fa fa-search fa-1x" style="color:#000" title="Automatic search"></i>  
@@ -366,13 +372,35 @@ if($obj->record_status == 'c_expired')
 	';
 	}
 	
+if($obj->timer_repeat != '0')
+	{
+	$timer_repeat_d = '';
+	$days = explode(';' , $obj->timer_repeat_d);
+	foreach($days as $i => $key){ $i > 0; 
+	if($key == '1'){ $timer_repeat_d .= 'Monday; '; }
+	if($key == '2'){ $timer_repeat_d .= 'Tuesday; '; }
+	if($key == '4'){ $timer_repeat_d .= 'Wednesday; '; }
+	if($key == '8'){ $timer_repeat_d .= 'Thursday; '; }
+	if($key == '16'){ $timer_repeat_d .= 'Friday; '; }
+	if($key == '32'){ $timer_repeat_d .= 'Saturday; '; }
+	if($key == '64'){ $timer_repeat_d .= 'Sunday; '; }
+	if($key == '31'){ $timer_repeat_d .= 'Monday - Friday; '; }
+	if($key == '127'){ $timer_repeat_d .= 'Monday - Sunday; '; }
+	}
+	
+	$record_status = '
+	<i class="glyphicon glyphicon-time" style="color:#CCC" title="repeating event"></i>
+	';
+	$repeat_timer = ' | <i class="fa fa-repeat"></i> '.$timer_repeat_d;
+	} else { $repeat_timer = ''; }
+	
 if($obj->record_location == 'zap_timer' and $obj->status == 'manual')
 	{
 	$status = '
 	<i id="tl_glyphicon_status_m_'.$obj->id.'" class="fa fa-arrow-up fa-1x" style="color:#000" title="Zap timer"></i>  
 	<i id="tl_glyphicon_status_'.$obj->id.'" class="glyphicon glyphicon-export" style="color:#5CB85C" title="sent"></i>
 	';
-	if($timer_conflict == "1")
+	if($timer_conflict == '1')
 	{
 	$status = '
 	<i id="tl_glyphicon_status_m_'.$obj->id.'" class="fa fa-arrow-up fa-1x" style="color:#000" title="Zap timer"></i>  
@@ -387,7 +415,7 @@ if($obj->record_location == 'zap_timer' and $obj->status == 'waiting')
 	<i id="tl_glyphicon_status_m_'.$obj->id.'" class="fa fa-arrow-up fa-1x" style="color:#000" title="Zap timer"></i>  
 	<i id="tl_glyphicon_status_'.$obj->id.'" class="glyphicon glyphicon-export" style="color:#D9534F" title="sent"></i>
 	';
-	if($timer_conflict == "1")
+	if($timer_conflict == '1')
 	{
 	$status = '
 	<i id="tl_glyphicon_status_m_'.$obj->id.'" class="fa fa-arrow-up fa-1x" style="color:#000" title="Zap timer"></i>  
@@ -409,50 +437,56 @@ if($imdb_symbol == '1')
 	if($obj->exclude_description != ''){ $description_status = 'Excluded in <strong>description</strong>: '.$exclude_description.'<br>'; } else { $description_status = ''; }
 	if($obj->exclude_extdescription != ''){ $extdescription_status = 'Excluded in <strong>extended description</strong>: '.$exclude_extdescription.'<br>'; } else { $extdescription_status = ''; }
 	if($channel_status != '' or $title_status != '' or $description_status != '' or $extdescription_status != ''){
-	$show_exclude_text = "<div class=\"spacer_5\"></div><a id=\"$obj->id\" style=\"cursor:pointer;\" onclick=\"timerlist_show_exclude(this.id)\">Show excluded term(s)</a>"; } else { $show_exclude_text = ""; }
+	$show_exclude_text = '<div class="spacer_5"></div><a id="'.$obj->id.'" style="cursor:pointer;" onclick="timerlist_show_exclude(this.id)">Show excluded term(s)</a>'; } else { $show_exclude_text = ''; }
 	
-	if($obj->rec_replay == 'on'){ $replay_status = '| Timer for Replays: '.$rec_replay.''; } else { $replay_status = ''; }
+	if($obj->rec_replay == 'on'){ $replay_status = '| Timer for replays: '.$rec_replay.''; } else { $replay_status = ''; }
 	$spacer = '';
 	
 	// get record location id
-	$sql_6 = mysqli_query($dbmysqli, "SELECT * FROM `record_locations` WHERE `e2location` = '".$obj->record_location."' LIMIT 0,1");
+	$sql_6 = mysqli_query($dbmysqli, "SELECT id FROM `record_locations` WHERE `e2location` = '".$obj->record_location."' ");
 	$result_6 = mysqli_fetch_assoc($sql_6);
 	$rec_location_id = $result_6['id'];
 	
-	// get device
-	if($obj->device != "0"){ 
+	// device
+	if($obj->device != '0')
+	{ 
 	$sql_7 = mysqli_query($dbmysqli, "SELECT * FROM `device_list` WHERE `id` = '".$obj->device."' ");
 	$result_7 = mysqli_fetch_assoc($sql_7);
 	$device_name = rawurldecode($result_7['device_description']);
 	$device_color = $result_7['device_color'];
 	} else {
-	$device_name = "default"; 
+	$device_name = 'default'; 
 	$device_color = "#DDDDDD";
 	}
 		
 	if($is_replay == '1'){ $replay_sign = '<i class="fa fa-repeat"></i>'; } else { $replay_sign = ''; }
 	
-	if($hidden == '1'){ $hidden_class = 'class="opac_70"'; 
-	$hide_button = "<input id=\"timerlist_unhide_timer_btn_$obj->id\" name=\"null\" type=\"submit\" onClick=\"timerlist_unhide_timer(this.id,this.name)\" value=\"UNHIDE\" class=\"btn btn-primary btn-sm\" title=\"Unhide timer from list\"/>"; 
+	if($e2eventend < time() and $timer_repeat_d != '0'){ $tr_disabled = 'disabled'; $tr_checked = 'checked'; } else { $tr_disabled = ''; $tr_checked = ''; }
+	
+	if($hidden == '1')
+	{ 
+	$hidden_class = 'class="opac_70"'; 
+	$hide_button = "<input id=\"timerlist_unhide_timer_btn_$obj->id\" name=\"null\" type=\"submit\" onClick=\"timerlist_unhide_timer(this.id,this.name)\" value=\"UNHIDE\" class=\"btn btn-primary btn-xs\" title=\"Unhide timer from list\"/>"; 
 	
 	} else { 
 	
 	$hidden_class = ''; 
-	$hide_button = "<input id=\"timerlist_hide_timer_btn_$obj->id\" name=\"hide_$obj->hash\" type=\"submit\" onClick=\"timerlist_hide_timer(this.id,this.name)\" value=\"HIDE\" class=\"btn btn-primary btn-sm\" title=\"Hide timer from list\"/>";
+	$hide_button = "<input id=\"timerlist_hide_timer_btn_$obj->id\" name=\"hide_$obj->hash\" type=\"submit\" onClick=\"timerlist_hide_timer(this.id,this.name)\" value=\"HIDE\" class=\"btn btn-primary btn-xs\" title=\"Hide timer from list\"/>";
 	}
 	
-	if(!isset($device_dropdown) or $device_dropdown == ""){ $device_dropdown = ""; }
+	if(!isset($device_dropdown) or $device_dropdown == ''){ $device_dropdown = ''; }
 	
-	if($search_term != ""){
+	if($search_term != '')
+	{
 	$scroll_search = "<strong>$search_term</strong> <i id=\"sid_$search_id\" onclick=\"scroll_saved_search(this.id,'timer_scroll_$obj->id')\" class=\"fa fa-edit fa-1x\" style=\"cursor:pointer\" title=\"Edit saved search\"></i>";
-	} else { $scroll_search = ""; }
+	} else { $scroll_search = ''; }
 	
 	$searcharea = '';
 	if($obj->search_option == 'title'){ $searcharea = 'Title'; }
 	if($obj->search_option == 'description'){ $searcharea = 'Description'; }
 	if($obj->search_option == 'extdescription'){ $searcharea = 'Extended description'; }
 	
-	if($search_term == "" and $searcharea == ""){ $search_info = ''; } else { $search_info = 'Searchterm: '.$scroll_search.' | Searcharea: '.$searcharea.' | '; }
+	if($search_term == '' and $searcharea == ''){ $search_info = ''; } else { $search_info = 'Searchterm: '.$scroll_search.' | Searcharea: '.$searcharea.' | '; }
 	
 	// broadcast length
 	if($descriptionextended_enc == ''){ $spacer_d = ''; } else { $spacer_d = '<br>'; }
@@ -460,25 +494,40 @@ if($imdb_symbol == '1')
 	$event_duration = $event_duration / 60;
 	$event_duration = $spacer_d.round($event_duration, 0).' min.';
 	
-	if($obj->record_location == "zap_timer")
+	if($obj->record_location == 'zap_timer')
 	{
 	$sql_8 = mysqli_query($dbmysqli, "SELECT e2eventstart, e2eventend FROM `epg_data` WHERE `hash` LIKE '".$obj->hash."' ");
 	$result_8 = mysqli_fetch_assoc($sql_8);
 	$event_duration = $result_8['e2eventend'] - $result_8['e2eventstart'];
 	$event_duration = $event_duration / 60;
+	
+	if($event_duration == 0)
+	{
+	$event_duration = $obj->e2eventend - $obj->e2eventstart;
+	$event_duration = $event_duration / 60;
+	}
 	$event_duration = $spacer_d.round($event_duration, 0).' min.';
 	
-	$obj->record_location = "Zap timer"; 
-	$action = "zap"; 
+	$obj->record_location = 'Zap timer'; 
+	$action = 'zap'; 
 	$btn_status = 'disabled'; 
 	} else { 
-	$action = "record"; $btn_status = ''; 
+	$action = 'record'; 
+	$btn_status = ''; 
 	}
-	//if($obj->device != 0){ $dropdown_status = 'disabled'; } else { $dropdown_status = ''; }
+	
+	// highlight term
+	if($highlight_term !== '')
+	{
+	$terms = explode(rawurldecode(';'), rawurldecode($highlight_term));
+	foreach($terms as $i =>$key) { $i > 0;
+	$descriptionextended_enc = str_replace($key, '<strong>'.$key.'</strong>', $descriptionextended_enc);
+	}
+	}
 	
 	$timerlist = $timerlist."<div id=\"timerlist_div_outer_$obj->id\" $hidden_class>
 	<div id=\"timerlist_inner_$obj->id\" style=\"border: 1px solid $device_color !important;\">
-	<div id=\"cnt_checkbox\"><input id=\"box_$obj->id\" type=\"checkbox\" name=\"timerlist_checkbox[]\" value=\"$obj->id\" onclick=\"count_selected()\"/>
+	<div id=\"cnt_checkbox\"><input id=\"box_$obj->id\" type=\"checkbox\" name=\"timerlist_checkbox[]\" value=\"$obj->id\" onclick=\"count_selected()\" $tr_disabled/>
 	</div>
 	<div id=\"timer_$obj->id\" style=\"cursor: pointer;\" onclick=\"timerlist_desc(this.id);\">
 	<div id=\"$time_class\"> $status  $record_status | $broadcast_time | $broadcast_date
@@ -491,7 +540,7 @@ if($imdb_symbol == '1')
 	</div>
 	<div style=\"clear:both\"></div>
 	</div>
-	  <div id=\"timerlist_btn_$obj->id\" style=\"display:none;\">
+	  <div id=\"timerlist_cnt_$obj->id\" style=\"display:none;\">
 	  <div class=\"spacer_5\"></div>
 	  <strong>$date_start</strong>
 	  <div class=\"spacer_5\"></div>
@@ -502,12 +551,12 @@ if($imdb_symbol == '1')
 	  </div>
 	  $imdb_broadcast
 	  <a href=\"search.php?searchterm=$title_enc&option=title\" target=\"_blank\" title=\"Search title\"><i class=\"fa fa-search fa-1x\"></i></a>
-	  $search_info Record location: $obj->record_location | Receiver: <span id=\"device_name_$obj->id\">$device_name</span> $replay_status $show_exclude_text
+	  $search_info Record location: $obj->record_location | Receiver: <span id=\"device_name_$obj->id\">$device_name</span> $replay_status $show_exclude_text $repeat_timer
 	  <input id=\"timerlist_device_no_$obj->id\" type=\"hidden\" value=\"$device_no\">
 	  <span id=\"timerlist_rec_location_$obj->hash\" style=\"display:none;\">$rec_location_id</span>  
 	<div class=\"spacer_5\"></div>
 	<span>Receiver: </span>
-	<select id=\"timerlist_device_dropdown_$obj->id\" onChange=\"change_timerlist_device(this.id,'".$action."')\">
+	<select id=\"timerlist_device_dropdown_$obj->id\" onChange=\"change_timerlist_device(this.id,'$action')\">
 	<option selected disabled>$device_name</option>
 	<option name=\"default\" value=\"0\">default</option>
 	$device_dropdown
@@ -519,37 +568,22 @@ if($imdb_symbol == '1')
 	  <div class=\"spacer_5\"></div>
 	  </div>
 	  <div class=\"spacer_5\"></div>
-	  <input id=\"timerlist_send_timer_btn_$obj->hash\" name=\"$obj->id\" type=\"submit\" onClick=\"timerlist_send_timer(this.id,this.name,'record')\" value=\"SEND\" class=\"btn btn-success btn-sm\" title=\"Send timer to Receiver\" $btn_status/>
-	  <input id=\"timerlist_zap_timer_btn_$obj->hash\" name=\"$obj->id\" type=\"submit\" onClick=\"timerlist_send_timer(this.id,this.name,'zap')\" value=\"ZAP TIMER\" class=\"btn btn-warning btn-sm\" title=\"Send zap timer to Receiver\"/>
+	  <input id=\"timerlist_send_timer_btn_$obj->hash\" name=\"$obj->id\" type=\"submit\" onClick=\"timerlist_send_timer(this.id,this.name,'record')\" value=\"SEND\" class=\"btn btn-success btn-xs\" title=\"Send timer to Receiver\" $btn_status $tr_disabled/>
+	  <input id=\"timerlist_zap_timer_btn_$obj->hash\" name=\"$obj->id\" type=\"submit\" onClick=\"timerlist_send_timer(this.id,this.name,'zap')\" value=\"ZAP TIMER\" class=\"btn btn-warning btn-xs\" title=\"Send zap timer to Receiver\" $tr_disabled/>
 	  $hide_button
-	  <input id=\"ignore_timer_btn_$obj->id\" type=\"submit\" onclick=\"timerlist_ignore(this.id);\" value=\"IGNORE\" class=\"btn btn-default btn-sm\" title=\"Add broadcast to ignore list\">
-	  <input id=\"delete_timer_btn_$obj->id\" type=\"submit\" onClick=\"timerlist_delete_timer(this.id,'$obj->hash')\" value=\"DELETE\" class=\"btn btn-danger btn-sm\" title=\"Delete timer from Receiver\"/>
-	  <label style=\"font-weight: normal;\"><span class=\"del_checkbox\"><input id=\"timerlist_delete_db_$obj->id\" type=\"checkbox\"> Delete also from database</span></label>
+	  <input id=\"ignore_timer_btn_$obj->id\" type=\"submit\" onclick=\"timerlist_ignore(this.id);\" value=\"IGNORE\" class=\"btn btn-default btn-xs\" title=\"Add broadcast to ignore list\">
+	  <input id=\"delete_timer_btn_$obj->id\" type=\"submit\" onClick=\"timerlist_delete_timer(this.id,'$obj->hash')\" value=\"DELETE\" class=\"btn btn-danger btn-xs\" title=\"Delete timer from Receiver\"/>
+	  <label style=\"font-weight: normal;\"><span class=\"del_checkbox\"><input id=\"timerlist_delete_db_$obj->id\" type=\"checkbox\" $tr_checked $tr_disabled> Delete also from database</span></label>
 	  <span id=\"timerlist_status_$obj->id\"></span>
 	  </div>
-	</div><div class=\"spacer_10\"></div>
-	</div>";
+	</div>
+	<div style=\"background-color:#FFF\" class=\"spacer_10\"></div>
+	</div>
+	";
 	}
 	}
-	if(!isset($timerlist) or $timerlist == "") { $timerlist = "No timer present.."; } 
+	if(!isset($timerlist) or $timerlist == '') { $timerlist = 'No timer present..'; } 
 	
 	echo $timerlist;
 
 ?>
-<script type="text/javascript">
-// timerlist hover
-$(document).ready(function(){
-	$("#timerlist*").hover(function(){
-	$(this).css("background-color", "#FAFAFA");
-	}, function(){
-	$(this).css("background-color", "white");
-	});
-});
-//$(document).ready(function(){
-//	$("#timerlist*").hover(function(){
-//	$(this).css("background-color", "#9D5F00");
-//	}, function(){
-//	$(this).css("background-color", "#533200");
-//	});
-//});
-</script>

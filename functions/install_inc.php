@@ -1,25 +1,25 @@
 <?php 
 session_start();
 //
-	if(!isset($_REQUEST['setting']) or $_REQUEST['setting'] == "") { $_REQUEST['setting'] = ""; }
+	if(!isset($_REQUEST['setting']) or $_REQUEST['setting'] == ''){ $_REQUEST['setting'] = ''; }
 	
 	$setting = $_REQUEST['setting'];
-	$url_format = "http";
+	$url_format = 'http';
 	
-	if(!isset($_REQUEST['sql_host']) or $_REQUEST['sql_host'] == "") { $_REQUEST['sql_host'] = ""; }
-	if(!isset($_REQUEST['sql_user']) or $_REQUEST['sql_user'] == "") { $_REQUEST['sql_user'] = ""; }
-	if(!isset($_REQUEST['sql_pass']) or $_REQUEST['sql_pass'] == "") { $_REQUEST['sql_pass'] = ""; }
+	if(!isset($_REQUEST['sql_host']) or $_REQUEST['sql_host'] == ''){ $_REQUEST['sql_host'] = ''; }
+	if(!isset($_REQUEST['sql_user']) or $_REQUEST['sql_user'] == ''){ $_REQUEST['sql_user'] = ''; }
+	if(!isset($_REQUEST['sql_pass']) or $_REQUEST['sql_pass'] == ''){ $_REQUEST['sql_pass'] = ''; }
 	
 	$sql_host = $_REQUEST['sql_host'];
 	$sql_user = $_REQUEST['sql_user'];
 	$sql_pass = $_REQUEST['sql_pass'];
 	
-	if(!isset($_REQUEST['receiver_ip']) or $_REQUEST['receiver_ip'] == "") { $_REQUEST['receiver_ip'] = ""; }
-	if(!isset($_REQUEST['receiver_user']) or $_REQUEST['receiver_user'] == "") { $_REQUEST['receiver_user'] = ""; }
-	if(!isset($_REQUEST['receiver_pass']) or $_REQUEST['receiver_pass'] == "") { $_REQUEST['receiver_pass'] = ""; }
+	if(!isset($_REQUEST['receiver_ip']) or $_REQUEST['receiver_ip'] == ''){ $_REQUEST['receiver_ip'] = ''; }
+	if(!isset($_REQUEST['receiver_user']) or $_REQUEST['receiver_user'] == ''){ $_REQUEST['receiver_user'] = ''; }
+	if(!isset($_REQUEST['receiver_pass']) or $_REQUEST['receiver_pass'] == ''){ $_REQUEST['receiver_pass'] = ''; }
 	
-	if(!isset($_REQUEST['server_ip']) or $_REQUEST['server_ip'] == "") { $_REQUEST['server_ip'] = ""; }
-	if(!isset($_REQUEST['script_folder']) or $_REQUEST['script_folder'] == "") { $_REQUEST['script_folder'] = ""; }
+	if(!isset($_REQUEST['server_ip']) or $_REQUEST['server_ip'] == ''){ $_REQUEST['server_ip'] = ''; }
+	if(!isset($_REQUEST['script_folder']) or $_REQUEST['script_folder'] == ''){ $_REQUEST['script_folder'] = ''; }
 	
 	sleep(1);
 	
@@ -60,24 +60,6 @@ session_start();
 	if($receiver_pass == ''){ echo 'Receiver Password missing<br>'; }
 	
 	// check if session is needed
-//	$webrequest = stream_context_create(array (
-//	'http' => array (
-//	'method' => 'POST',
-//	'header' => 'Authorization: Basic ' . base64_encode("$box_user:$box_password"),
-//	'ssl' =>array (
-//	'verify_peer' => false,
-//	'verify_peer_name' => false,
-//	))
-//	));
-	
-	$xmlfile = $url_format.'://'.$receiver_ip.'/web/session?sessionid=0';
-	$session_info = @file_get_contents($xmlfile, false, $webrequest);
-	$e2sessionid = simplexml_load_string($session_info);
-	
-	if($e2sessionid != ''){ $session_part = '?sessionid='.$e2sessionid; } else { $session_part = ''; }
-	
-	if($receiver_ip != '' and $receiver_user != '' and $receiver_pass != '')
-	{
 	$webrequest = stream_context_create(array (
 	'http' => array (
 	'method' => 'POST',
@@ -87,6 +69,15 @@ session_start();
 	'verify_peer_name' => false,
 	))
 	));
+	
+	$xmlfile = $url_format.'://'.$receiver_ip.'/web/session?sessionid=0';
+	$session_info = @file_get_contents($xmlfile, false, $webrequest);
+	$e2sessionid = simplexml_load_string($session_info);
+	
+	if($e2sessionid != ''){ $session_part = '?sessionid='.$e2sessionid; } else { $session_part = ''; }
+	
+	if($receiver_ip != '' and $receiver_user != '' and $receiver_pass != '')
+	{
 	$request = $url_format.'://'.$receiver_ip.'/web/powerstate'.$session_part;
 	$status = @file_get_contents($request, false, $webrequest);
 	
@@ -106,14 +97,14 @@ session_start();
 
 	if($setting == 'install'){
 	
-	$sql_host = $_SESSION["sql_host"];
-	$sql_user = $_SESSION["sql_user"];
-	$sql_pass = $_SESSION["sql_pass"];
+	$sql_host = $_SESSION['sql_host'];
+	$sql_user = $_SESSION['sql_user'];
+	$sql_pass = $_SESSION['sql_pass'];
 	$sql_db = 'uniwebif';
 	
-	$receiver_ip = $_SESSION["receiver_ip"];
-	$receiver_user = $_SESSION["receiver_user"];
-	$receiver_pass = $_SESSION["receiver_pass"];
+	$receiver_ip = $_SESSION['receiver_ip'];
+	$receiver_user = $_SESSION['receiver_user'];
+	$receiver_pass = $_SESSION['receiver_pass'];
 	
 	$server_ip = $_REQUEST['server_ip'];
 	$script_folder = $_REQUEST['script_folder'];
@@ -309,6 +300,8 @@ session_start();
 	  `id` int(11) NOT NULL AUTO_INCREMENT,
 	  `e2location` varchar(255) NOT NULL,
 	  `selected` int(1) NOT NULL DEFAULT '0',
+	  `device` INT(2) NOT NULL DEFAULT '0',
+	  `description` VARCHAR(255) NOT NULL DEFAULT 'default',
 	  PRIMARY KEY (`id`)
 	) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 	");
@@ -319,6 +312,7 @@ session_start();
 	CREATE TABLE IF NOT EXISTS `uniwebif`.`saved_search` (
 	  `id` int(11) NOT NULL AUTO_INCREMENT,
 	  `searchterm` varchar(255) NOT NULL,
+	  `searchterm_r` varchar(255) NOT NULL,
 	  `search_option` varchar(255) NOT NULL,
 	  `exclude_channel` text NOT NULL,
 	  `exclude_title` text NOT NULL,
@@ -335,6 +329,7 @@ session_start();
 	  `activ` varchar(255) NOT NULL,
 	  `action` varchar(255) NOT NULL,
 	  `rec_replay` varchar(255) NOT NULL DEFAULT 'off',
+	  `device` INT(2) NOT NULL DEFAULT '0',
 	  PRIMARY KEY (`id`)
 	) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 	");
@@ -387,6 +382,7 @@ session_start();
 	  `reload_progressbar` int(1) NOT NULL DEFAULT '0',
 	  `search_list_sort` varchar(255) NOT NULL DEFAULT 'id',
 	  `extra_rec_time` int(4) NOT NULL DEFAULT '0',
+	  `highlight_term` TEXT NOT NULL,
 	  `cz_activate` int(1) NOT NULL DEFAULT '0',
 	  `cz_wait_time` int(2) NOT NULL DEFAULT '15',
 	  `cz_repeat` varchar(10) NOT NULL,
@@ -442,13 +438,15 @@ session_start();
 	  `status` varchar(255) NOT NULL,
 	  `record_status` varchar(255) NOT NULL,
 	  `show_ticker` int(1) NOT NULL DEFAULT '1',
-	  `rec_replay` varchar(255) NOT NULL,
+	  `rec_replay` varchar(255) NOT NULL DEFAULT 'off',
 	  `is_replay` int(1) NOT NULL,
 	  `expired` int(1) NOT NULL DEFAULT '0',
 	  `hide` int(1) NOT NULL DEFAULT '0',
 	  `device` int(4) NOT NULL,
 	  `search_id` int(4) NOT NULL,
 	  `conflict` int(1) NOT NULL,
+	  `timer_repeat` int(3) NOT NULL DEFAULT '0',
+	  `timer_repeat_d` varchar(255) NOT NULL,
 	  PRIMARY KEY (`id`)
 	) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 	");

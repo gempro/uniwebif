@@ -2,11 +2,15 @@
 //
 include("../inc/dashboard_config.php");
 	
-	if(!isset($_REQUEST['device']) or $_REQUEST['device'] == ""){ $_REQUEST['device'] = ""; }
-	if(!isset($_REQUEST['record_location']) or $_REQUEST['record_location'] == ""){ $_REQUEST['record_location'] = ""; }
+	if(!isset($_REQUEST['device']) or $_REQUEST['device'] == ''){ $_REQUEST['device'] = ''; }
+	if(!isset($_REQUEST['record_location']) or $_REQUEST['record_location'] == ''){ $_REQUEST['record_location'] = ''; }
 	
 	$device = $_REQUEST['device'];
 	$record_location = $_REQUEST['record_location'];
+	
+	$sql = mysqli_query($dbmysqli, "SELECT `e2location` FROM `record_locations` WHERE `id` = '".$record_location."' AND `device` = '".$device."' ");
+	$result = mysqli_fetch_assoc($sql);
+	$record_location = $result['e2location'];
 	
 	// calculate filesize
 	function formatBytes($size, $precision = 2)
@@ -20,7 +24,7 @@ include("../inc/dashboard_config.php");
 	}
 
 	// recorded files default receiver
-	if($device == "0")
+	if($device == '0')
 	{
 	$xmlfile = $url_format.'://'.$box_ip.'/web/movielist?dirname='.$record_location.$session_part_2;
 	$getRecords_request = @file_get_contents($xmlfile, false, $webrequest);
@@ -32,10 +36,10 @@ include("../inc/dashboard_config.php");
 	$xml2 = simplexml_load_string($storageInfo_request);
 	for ($i = 0; $i <= 10; $i++)
 	{
-	if(!isset($xml2->e2hdds[$i]->e2hdd) or $xml2->e2hdds[$i]->e2hdd == ""){ $xml2->e2hdds[$i]->e2hdd = ""; }
-	if($xml2->e2hdds->e2hdd[$i] != "")
+	if(!isset($xml2->e2hdds[$i]->e2hdd) or $xml2->e2hdds[$i]->e2hdd == ''){ $xml2->e2hdds[$i]->e2hdd = ''; }
+	if($xml2->e2hdds->e2hdd[$i] != '')
 	{
-	if(!isset($storage_data) or $storage_data == ""){ $storage_data = ""; }
+	if(!isset($storage_data) or $storage_data == ''){ $storage_data = ''; }
 	$e2model = $xml2->e2hdds->e2hdd[$i]->e2model;
 	$e2capacity = $xml2->e2hdds->e2hdd[$i]->e2capacity;
 	$e2free = $xml2->e2hdds->e2hdd[$i]->e2free;
@@ -45,13 +49,15 @@ include("../inc/dashboard_config.php");
 	}
 	
 	// recorded files different device
-	if($device != "0"){
+	if($device != '0')
+	{
 	$sql = mysqli_query($dbmysqli, "SELECT * FROM `device_list` WHERE `id` = '".$device."' ");
 	$result = mysqli_fetch_assoc($sql);
 	$box_ip = $result['device_ip'];
 	$box_user = $result['device_user'];
 	$box_password = $result['device_password'];
 	$url_format = $result['url_format'];
+	
 	// Webrequest
 	$rl_webrequest = stream_context_create(array (
 	'http' => array (
@@ -62,20 +68,35 @@ include("../inc/dashboard_config.php");
 	'verify_peer_name' => false,
 	))
 	));
-	$xmlfile = $url_format.'://'.$box_ip.'/web/movielist?dirname='.$record_location.'';
+	
+	// check if token session is required
+	$xmlfile = $url_format.'://'.$box_ip.'/web/session?sessionid=0';
+	$session_info = @file_get_contents($xmlfile, false, $rl_webrequest);
+	$e2sessionid = simplexml_load_string($session_info);
+	
+	if($e2sessionid != '')
+	{ 
+	$session_part = '?sessionid='.$e2sessionid; 
+	$session_part_2 = '&sessionid='.$e2sessionid; 
+	} else { 
+	$session_part = ''; 
+	$session_part_2 = ''; 
+	}
+	
+	$xmlfile = $url_format.'://'.$box_ip.'/web/movielist?dirname='.$record_location.$session_part_2;
 	$getRecords_request = @file_get_contents($xmlfile, false, $rl_webrequest);
 	$xml = simplexml_load_string($getRecords_request);
 	
 	// storage info
-	$xmlfile = $url_format.'://'.$box_ip.'/web/deviceinfo';
+	$xmlfile = $url_format.'://'.$box_ip.'/web/deviceinfo'.$session_part;
 	$storageInfo_request = @file_get_contents($xmlfile, false, $rl_webrequest);
 	$xml2 = simplexml_load_string($storageInfo_request);
 	for ($i = 0; $i <= 10; $i++)
 	{
-	if(!isset($xml2->e2hdds[$i]->e2hdd) or $xml2->e2hdds[$i]->e2hdd == ""){ $xml2->e2hdds[$i]->e2hdd = ""; }
-	if($xml2->e2hdds->e2hdd[$i] != "")
+	if(!isset($xml2->e2hdds[$i]->e2hdd) or $xml2->e2hdds[$i]->e2hdd == ''){ $xml2->e2hdds[$i]->e2hdd = ''; }
+	if($xml2->e2hdds->e2hdd[$i] != '')
 	{
-	if(!isset($storage_data) or $storage_data == ""){ $storage_data = ""; }
+	if(!isset($storage_data) or $storage_data == ''){ $storage_data = ''; }
 	$e2model = $xml2->e2hdds->e2hdd[$i]->e2model;
 	$e2capacity = $xml2->e2hdds->e2hdd[$i]->e2capacity;
 	$e2free = $xml2->e2hdds->e2hdd[$i]->e2free;
@@ -91,8 +112,8 @@ if($xml){
 	$filespace = 0;
 	
 	for ($i = 0; $i <= 500; $i++){
-	if(!isset($xml->e2movie[$i]->e2servicereference) or $xml->e2movie[$i]->e2servicereference == ""){ $xml->e2movie[$i]->e2servicereference = ""; }
-	if($xml->e2movie[$i]->e2servicereference != "")
+	if(!isset($xml->e2movie[$i]->e2servicereference) or $xml->e2movie[$i]->e2servicereference == ''){ $xml->e2movie[$i]->e2servicereference = ''; }
+	if($xml->e2movie[$i]->e2servicereference != '')
 	{
 	$e2time = $xml->e2movie[$i]->e2time;
 	$e2filesize = $xml->e2movie[$i]->e2filesize;
@@ -106,23 +127,23 @@ if($xml){
 	if($time_format == '1')
 	{
 	// time format 1
-	$record_date = date("d.m.Y - H:i |", "".$e2time."");
-	$day_today = date("d.m.Y", time());
-	$today_record = date("d.m.Y", "".$e2time."");
+	$record_date = date('d.m.Y - H:i |', ''.$e2time.'');
+	$day_today = date('d.m.Y', time());
+	$today_record = date('d.m.Y', ''.$e2time.'');
 	if($day_today == $today_record){ $sum_today = $sum_today +1; }
 	}
 	
 	if($time_format == '2')
 	{
 	// time format 2
-	$record_date = date("n/d/Y - g:i A |", "".$e2time."");
-	$day_today = date("n/d/Y", time());
-	$today_record = date("n/d/Y", "".$e2time."");
+	$record_date = date('n/d/Y - g:i A |', ''.$e2time.'');
+	$day_today = date('n/d/Y', time());
+	$today_record = date('n/d/Y', ''.$e2time.'');
 	if($day_today == $today_record){ $sum_today = $sum_today +1; }
 	}
 	
-	$filespace_total = formatBytes("".$filespace."");
-	if($filespace == "0"){ $filespace_total = "0 kB"; }
+	$filespace_total = formatBytes(''.$filespace.'');
+	if($filespace == '0'){ $filespace_total = '0 kB'; }
 	
 	// panel
 	echo '

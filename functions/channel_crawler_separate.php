@@ -49,14 +49,32 @@ include("../inc/dashboard_config.php");
 	$e2eventend = $e2eventstart + $e2eventduration;
 	
 	// remove special chars
-	$e2eventtitle = str_replace("'", "", $e2eventtitle);
-	$e2eventtitle = str_replace("\"", "", $e2eventtitle);
+//	$e2eventtitle = str_replace("'", "", $e2eventtitle);
+//	$e2eventtitle = str_replace("\"", "", $e2eventtitle);
+//	$title_enc = str_replace("'", "%20", $title_enc);
+//	$title_enc = str_replace("\"", "%20", $title_enc);
+//	$title_enc = str_replace("%5Cn", "%20", $title_enc);
+//	$title_enc = str_replace("%C2%8A", "%20", $title_enc);
+//	$e2eventdescription = str_replace("'", "", $e2eventdescription);
+//	$e2eventdescription = str_replace("\"", "", $e2eventdescription);
+//	$e2eventdescription = str_replace("%5Cn", "%20", $e2eventdescription);
+//	$e2eventdescription = str_replace("%C2%8A", "%20", $e2eventdescription);
+//	$description_enc = str_replace("'", "", $description_enc);
+//	$description_enc = str_replace("\"", "", $description_enc);
+//	$description_enc = str_replace("%5Cn", "%20", $description_enc);
+//	$description_enc = str_replace("%C2%8A", "%20", $description_enc);
+//	$e2eventdescriptionextended = str_replace("'", "", $e2eventdescriptionextended);
+//	$e2eventdescriptionextended = str_replace("\"", "", $e2eventdescriptionextended);
+//	$descriptionextended_enc = str_replace("%5Cn", "%20", $descriptionextended_enc);
+//	$descriptionextended_enc = str_replace("%C2%8A", "%20", $descriptionextended_enc);
 	
-	$e2eventdescription = str_replace("'", "", $e2eventdescription);
-	$e2eventdescription = str_replace("\"", "", $e2eventdescription);
-	
-	$e2eventdescriptionextended = str_replace("'", "", $e2eventdescriptionextended);
-	$e2eventdescriptionextended = str_replace("\"", "", $e2eventdescriptionextended);
+	$replace = array('\'' => '', '"' => '', '%5Cn' => '%20', '%C2%8A' => '%20');
+	$e2eventtitle = strtr($e2eventtitle, $replace);
+	$title_enc = strtr($title_enc, $replace);
+	$e2eventdescription = strtr($e2eventdescription, $replace);
+	$description_enc = strtr($description_enc, $replace);
+	$e2eventdescriptionextended = strtr($e2eventdescriptionextended, $replace);
+	$descriptionextended_enc = strtr($descriptionextended_enc, $replace);
 	
 	// timestamp start
 	$start_day = date("d",$starttime);
@@ -105,7 +123,6 @@ include("../inc/dashboard_config.php");
 	// if last epg <
 	if($last_epg < $e2eventstart)
 	{
-	
 	mysqli_query($dbmysqli, "INSERT INTO `epg_data`
 	(
 	e2eventtitle, 
@@ -181,23 +198,24 @@ include("../inc/dashboard_config.php");
 	'$channel_hash'
 	)");
 	}
+	
 	}
 	}
 	}
 	// latest entry
-	$sql = mysqli_query($dbmysqli, "SELECT `e2eventend` FROM `epg_data` WHERE `channel_hash` = '$channel_hash' ORDER BY `e2eventend` DESC LIMIT 0 , 1");
+	$sql = mysqli_query($dbmysqli, "SELECT `e2eventend` FROM `epg_data` WHERE `channel_hash` = '".$channel_hash."' ORDER BY `e2eventend` DESC LIMIT 0 , 1");
 	$result = mysqli_fetch_assoc($sql);
 	$last_epg = $result['e2eventend'];
 	
 	// last crawl / last entry
-	mysqli_query($dbmysqli, "UPDATE `channel_list` SET `last_crawl` = '$time', `last_epg` = '$last_epg' WHERE `channel_hash` = '$channel_hash' ");
+	mysqli_query($dbmysqli, "UPDATE `channel_list` SET `last_crawl` = '".$time."', `last_epg` = '".$last_epg."' WHERE `channel_hash` = '".$channel_hash."' ");
 	
 	// update last epg timestamp // settings
 	$sql = mysqli_query($dbmysqli, "SELECT `e2eventend` FROM `epg_data` ORDER BY `e2eventend` DESC LIMIT 0 , 1");
 	$result = mysqli_fetch_assoc($sql);
 	$last_epg = $result['e2eventend'];
 	
-	mysqli_query($dbmysqli, "UPDATE `settings` SET `last_epg` = '$last_epg' WHERE `id` = '0' ");
+	mysqli_query($dbmysqli, "UPDATE `settings` SET `last_epg` = '".$last_epg."' WHERE `id` = '0' ");
 	
 	// reset saved search
 	mysqli_query($dbmysqli, "UPDATE `saved_search` SET `crawled` = '0' WHERE `activ` = 'yes' ");
@@ -209,8 +227,12 @@ include("../inc/dashboard_config.php");
 	$result = mysqli_fetch_row($sql);
 	$summary = $result[0];
 	
+	if($time_format == '1'){ $last_crawl = date('d.m.Y, H:i', $time); }
+	if($time_format == '2'){ $last_crawl = date('n/d/Y, g:i A', $time); }
+	
 	// answer for ajax
 	$json['status'] = 'done';
+	$json['last_crawl'] = $last_crawl;
 	$json['summary'] = $summary;
 	
 	echo json_encode($json);

@@ -1,6 +1,8 @@
 <?php 
 //
-include("../inc/dashboard_config.php");
+	sleep(5);
+	
+	include("../inc/dashboard_config.php");
 
 	$channel_id = $_REQUEST["channel_id"];
 	
@@ -16,9 +18,9 @@ include("../inc/dashboard_config.php");
 
 	for($i = 0; $i <= $epg_entries_per_channel; $i++)
 	{
-	if(!isset($xml->e2event[$i]->e2eventtitle) or $xml->e2event[$i]->e2eventtitle == ""){ $xml->e2event[$i]->e2eventtitle = ""; }
+	if(!isset($xml->e2event[$i]->e2eventtitle) or $xml->e2event[$i]->e2eventtitle == ''){ $xml->e2event[$i]->e2eventtitle = ''; }
 	
-	if($xml->e2event[$i]->e2eventtitle != "")
+	if($xml->e2event[$i]->e2eventtitle != '')
 	{
 	$e2eventtitle = utf8_decode($xml->e2event[$i]->e2eventtitle);
 	$title_enc = rawurlencode($xml->e2event[$i]->e2eventtitle);
@@ -36,38 +38,36 @@ include("../inc/dashboard_config.php");
 	$starttime = $e2eventstart / 1;
 	$e2eventend = $e2eventstart + $e2eventduration;
 	
-	// remove special chars
-	$e2eventtitle = str_replace("'", "", $e2eventtitle);
-	$e2eventtitle = str_replace("\"", "", $e2eventtitle);
-	
-	$e2eventdescription = str_replace("'", "", $e2eventdescription);
-	$e2eventdescription = str_replace("\"", "", $e2eventdescription);
-	
-	$e2eventdescriptionextended = str_replace("'", "", $e2eventdescriptionextended);
-	$e2eventdescriptionextended = str_replace("\"", "", $e2eventdescriptionextended);
+	$replace = array('\'' => '', '"' => '', '%5Cn' => '%20', '%C2%8A' => '%20');
+	$e2eventtitle = strtr($e2eventtitle, $replace);
+	$title_enc = strtr($title_enc, $replace);
+	$e2eventdescription = strtr($e2eventdescription, $replace);
+	$description_enc = strtr($description_enc, $replace);
+	$e2eventdescriptionextended = strtr($e2eventdescriptionextended, $replace);
+	$descriptionextended_enc = strtr($descriptionextended_enc, $replace);
 	
 	// timestamp start
-	$start_day = date("d",$starttime);
-	$start_weekday = date("l",$starttime);
-	$start_month = date("m",$starttime);
-	$start_year = date("Y",$starttime);
-	$start_hour = date("H",$starttime);
-	$start_minute = date("i",$starttime);
-	$start_date = date("d.m.Y H:i", $starttime);
-	$us_start_date = date("m/d/Y H:i A", $starttime);
+	$start_day = date('d',$starttime);
+	$start_weekday = date('l',$starttime);
+	$start_month = date('m',$starttime);
+	$start_year = date('Y',$starttime);
+	$start_hour = date('H',$starttime);
+	$start_minute = date('i',$starttime);
+	$start_date = date('d.m.Y H:i', $starttime);
+	$us_start_date = date('m/d/Y H:i A', $starttime);
 		
 	// timestamp end
-	$end_day = date("d",$e2eventend);
-	$end_weekday = date("l",$e2eventend);
-	$end_month = date("m",$e2eventend);
-	$end_year = date("Y",$e2eventend);
-	$end_hour = date("H",$e2eventend);
-	$end_minute = date("i",$e2eventend);
-	$end_date = date("d.m.Y H:i", $e2eventend);
-	$us_end_date = date("m/d/Y H:i A", $e2eventend);
+	$end_day = date('d',$e2eventend);
+	$end_weekday = date('l',$e2eventend);
+	$end_month = date('m',$e2eventend);
+	$end_year = date('Y',$e2eventend);
+	$end_hour = date('H',$e2eventend);
+	$end_minute = date('i',$e2eventend);
+	$end_date = date('d.m.Y H:i', $e2eventend);
+	$us_end_date = date('m/d/Y H:i A', $e2eventend);
 	
 	// mark hd channels
-	if(preg_match("/\bHD\b/i", $e2eventservicename)){
+	if(preg_match('/\bHD\b/i', $e2eventservicename)){
 	$hd_channel = 'yes';
 	} else {
 	$hd_channel = 'no';
@@ -89,7 +89,7 @@ include("../inc/dashboard_config.php");
 	
 	// channel hash
 	$channel_hash = hash('md4',$e2eventservicename);
-	if(!isset($channel_hash) or $channel_hash == ""){ $channel_hash = ""; }
+	if(!isset($channel_hash) or $channel_hash == ''){ $channel_hash = ''; }
 	
 	// if last epg <
 	if($last_epg < $e2eventstart)
@@ -175,7 +175,7 @@ include("../inc/dashboard_config.php");
 	
 	} // xml
 	
-	if(!isset($channel_hash) or $channel_hash == ""){ $channel_hash = ""; }
+	if(!isset($channel_hash) or $channel_hash == ''){ $channel_hash = ''; }
 	
 	// latest entry
 	$sql = mysqli_query($dbmysqli, "SELECT `e2eventend` FROM `epg_data` WHERE `channel_hash` = '".$channel_hash."' ORDER BY `e2eventend` DESC LIMIT 0 , 1");
@@ -189,9 +189,9 @@ include("../inc/dashboard_config.php");
 	mysqli_query($dbmysqli, "UPDATE `settings` SET `last_epg` = '".$last_epg."' WHERE `id` = '0' ");
 	
 	// update channel name
-	if(!isset($e2eventservicename) or $e2eventservicename == ""){ $e2eventservicename = ""; }
-	if(!isset($servicename_enc) or $servicename_enc == ""){ $servicename_enc = ""; }
-	if(!isset($e2eventservicereference) or $e2eventservicereference == ""){ $e2eventservicereference = ""; }
+	if(!isset($e2eventservicename) or $e2eventservicename == ''){ $e2eventservicename = ''; }
+	if(!isset($servicename_enc) or $servicename_enc == ''){ $servicename_enc = ''; }
+	if(!isset($e2eventservicereference) or $e2eventservicereference == ''){ $e2eventservicereference = ''; }
 	
 	if($e2eventservicename != '' and $servicename_enc != '' and $e2eventservicereference != '')
 	{

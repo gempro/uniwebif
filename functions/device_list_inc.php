@@ -2,15 +2,14 @@
 //
 	include("../inc/dashboard_config.php");
 	
-	if(!isset($_REQUEST['id']) or $_REQUEST['id'] == ""){ $_REQUEST['id'] = ""; }
-	if(!isset($_REQUEST['action']) or $_REQUEST['action'] == ""){ $_REQUEST['action'] = ""; }
-	if(!isset($_REQUEST['device_description']) or $_REQUEST['device_description'] == ""){ $_REQUEST['device_description'] = ""; }
-	if(!isset($_REQUEST['device_ip']) or $_REQUEST['device_ip'] == ""){ $_REQUEST['device_ip'] = ""; }
-	if(!isset($_REQUEST['device_user']) or $_REQUEST['device_user'] == ""){ $_REQUEST['device_user'] = ""; }
-	if(!isset($_REQUEST['device_password']) or $_REQUEST['device_password'] == ""){ $_REQUEST['device_password'] = ""; }
-	//if(!isset($_REQUEST['device_record_location']) or $_REQUEST['device_record_location'] == ""){ $_REQUEST['device_record_location'] = ""; }
-	if(!isset($_REQUEST['device_color']) or $_REQUEST['device_color'] == ""){ $_REQUEST['device_color'] = ""; }
-	if(!isset($_REQUEST['url_format']) or $_REQUEST['url_format'] == ""){ $_REQUEST['url_format'] = ""; }
+	if(!isset($_REQUEST['id']) or $_REQUEST['id'] == ''){ $_REQUEST['id'] = ''; }
+	if(!isset($_REQUEST['action']) or $_REQUEST['action'] == ''){ $_REQUEST['action'] = ''; }
+	if(!isset($_REQUEST['device_description']) or $_REQUEST['device_description'] == ''){ $_REQUEST['device_description'] = ''; }
+	if(!isset($_REQUEST['device_ip']) or $_REQUEST['device_ip'] == ''){ $_REQUEST['device_ip'] = ''; }
+	if(!isset($_REQUEST['device_user']) or $_REQUEST['device_user'] == ''){ $_REQUEST['device_user'] = ''; }
+	if(!isset($_REQUEST['device_password']) or $_REQUEST['device_password'] == ''){ $_REQUEST['device_password'] = ''; }
+	if(!isset($_REQUEST['device_color']) or $_REQUEST['device_color'] == ''){ $_REQUEST['device_color'] = ''; }
+	if(!isset($_REQUEST['url_format']) or $_REQUEST['url_format'] == ''){ $_REQUEST['url_format'] = ''; }
 	
 	$id = $_REQUEST['id'];
 	$action = $_REQUEST['action'];
@@ -18,23 +17,20 @@
 	$device_ip = $_REQUEST['device_ip'];
 	$device_user = $_REQUEST['device_user'];
 	$device_password = $_REQUEST['device_password'];
-	//$device_record_location = $_REQUEST['device_record_location'];
 	$device_color = $_REQUEST['device_color'];
 	$url_format = $_REQUEST['url_format'];
 	
 	$device_description = preg_replace('/\s+/', ' ', $device_description);
-	//$device_record_location = preg_replace('/\s+/', '', $device_record_location);
 	
 	//
-	if($action == "show"){
-	
-	$sql = "SELECT * FROM `device_list`";
-	
-	if ($result = mysqli_query($dbmysqli,$sql))
+	if($action == 'show')
 	{
-	while ($obj = mysqli_fetch_object($result)){	
-	{
+	$sql_0 = "SELECT * FROM `device_list`";
 	
+	if ($result_0 = mysqli_query($dbmysqli,$sql_0))
+	{
+	while ($obj = mysqli_fetch_object($result_0)){	
+	{
 	$id = $obj->id;
 	$device_description = rawurldecode($obj->device_description);
 	$device_ip = $obj->device_ip;
@@ -44,20 +40,20 @@
 	$device_color = $obj->device_color;
 	$url_format = $obj->url_format;
 	
-	if(!isset($device_list) or $device_list == ""){ $device_list = ""; }
+	if(!isset($device_list) or $device_list == ''){ $device_list = ''; }
 	
-	$color = "#DDDDDD";
-	if($device_color == "#DDDDDD"){ $gray = "selected"; $color = "#DDDDDD"; } else { $gray = ""; }
-	if($device_color == "#000000"){ $black = "selected"; $color = "#000000"; } else { $black = ""; }
-	if($device_color == "#428BCA"){ $blue = "selected"; $color = "#428BCA"; } else { $blue = ""; }
-	if($device_color == "#999999"){ $darkgray = "selected"; $color = "#999999"; } else { $darkgray = ""; }
-	if($device_color == "#5CB85C"){ $green = "selected"; $color = "#5CB85C"; } else { $green = ""; }
-	if($device_color == "#F0AD4E"){ $orange = "selected"; $color = "#F0AD4E"; } else { $orange = ""; }
-	if($device_color == "#D9534F"){ $red = "selected"; $color = "#D9534F"; } else { $red = ""; }
-	if($device_color == "#FFFF00"){ $yellow = "selected"; $color = "#FFFF00"; } else { $yellow = ""; }
+	$color = '#DDDDDD';
+	if($device_color == '#DDDDDD'){ $gray = 'selected'; $color = '#DDDDDD'; } else { $gray = ''; }
+	if($device_color == '#000000'){ $black = 'selected'; $color = '#000000'; } else { $black = ''; }
+	if($device_color == '#428BCA'){ $blue = 'selected'; $color = '#428BCA'; } else { $blue = ''; }
+	if($device_color == '#999999'){ $darkgray = 'selected'; $color = '#999999'; } else { $darkgray = ''; }
+	if($device_color == '#5CB85C'){ $green = 'selected'; $color = '#5CB85C'; } else { $green = ''; }
+	if($device_color == '#F0AD4E'){ $orange = 'selected'; $color = '#F0AD4E'; } else { $orange = ''; }
+	if($device_color == '#D9534F'){ $red = 'selected'; $color = '#D9534F'; } else { $red = ''; }
+	if($device_color == '#FFFF00'){ $yellow = 'selected'; $color = '#FFFF00'; } else { $yellow = ''; }
 	
-	if($url_format == "http"){ $http_selected = "selected"; } else { $http_selected = ""; }
-	if($url_format == "https"){ $https_selected = "selected"; } else { $https_selected = ""; }
+	if($url_format == 'http'){ $http_selected = 'selected="selected"'; } else { $http_selected = ''; }
+	if($url_format == 'https'){ $https_selected = 'selected="selected"'; } else { $https_selected = ''; }
 	
 	$device_list = $device_list. "
 	<div class=\"row\">
@@ -114,21 +110,37 @@
 	}
 	}
 	}
-	if(!isset($device_list) or $device_list == ""){ $device_list = ""; } 
+	if(!isset($device_list) or $device_list == ''){ $device_list = ''; } 
 	echo $device_list;
 	exit;
 	} // show
 	
 	// add receiver
-	if($action == "add")
+	if($action == 'add')
 	{
 	sleep(1);
-	$sql = mysqli_query($dbmysqli, "SELECT COUNT(*) FROM `device_list` WHERE `device_ip` = '".$device_ip."' ");
-	$result = mysqli_fetch_row($sql);
-	$summary = $result[0];
-	if($summary != "0"){ echo "data:duplicate"; exit; }
+	$sql_1 = mysqli_query($dbmysqli, "SELECT COUNT(id) FROM `device_list` WHERE `device_ip` = '".$device_ip."' ");
+	$result_1 = mysqli_fetch_row($sql_1);
+	$summary = $result_1[0];
+	if($summary != '0'){ echo 'data:duplicate'; exit; }
 	
-	$sql = mysqli_query($dbmysqli, "INSERT INTO `device_list` (`device_description`, `device_ip`, `device_user`, `device_password`, `device_color`, `url_format`) VALUES ('".$device_description."', '".$device_ip."', '".$device_user."', '".$device_password."', '".$device_color."', '".$url_format."')");
+	mysqli_query($dbmysqli, "INSERT INTO `device_list` 
+	(
+	`device_description`, 
+	`device_ip`, 
+	`device_user`, 
+	`device_password`, 
+	`device_color`, 
+	`url_format`
+	) VALUES (
+	'".$device_description."', 
+	'".$device_ip."', 
+	'".$device_user."', 
+	'".$device_password."', 
+	'".$device_color."', 
+	'".$url_format."'
+	)"
+	);
 	
 	// get record locations from receiver
 	$rl_webrequest = stream_context_create(array (
@@ -139,40 +151,118 @@
 	'verify_peer_name' => false,
 	))
 	));
-	$xmlfile = $url_format.'://'.$device_ip.'/web/getlocations';
+	$xmlfile = $url_format.'://'.$device_ip.'/web/getlocations'.$session_part;
 	$getlocations_request = @file_get_contents($xmlfile, false, $rl_webrequest);
 	$xml = simplexml_load_string($getlocations_request);
 	
-	if($xml == ""){ echo "data:connection_error"; exit; }
+	if($xml == ''){ echo 'data:connection_error'; exit; }
 	
 	if($xml){
+	
+	$sql_2 = mysqli_query($dbmysqli, "SELECT `id` FROM `device_list` WHERE `device_ip` LIKE '".$device_ip."' ");
+	$result_2 = mysqli_fetch_assoc($sql_2);
+	$device_number = $result_2['id'];
+	
     for ($i = 0; $i <= 9; $i++){
 	
-	if(!isset($xml->e2location[$i]) or $xml->e2location[$i] == ""){ $xml->e2location[$i] = ""; }
+	if(!isset($xml->e2location[$i]) or $xml->e2location[$i] == ''){ $xml->e2location[$i] = ''; }
 	
-	if($xml->e2location[$i] != "")
+	if($xml->e2location[$i] != '')
 	{
 	$e2location = utf8_decode($xml->e2location[$i]);
-	$sql = mysqli_query($dbmysqli, "UPDATE `device_list` SET `rec_location".$i."` = ('".$e2location."') WHERE `device_ip` = '".$device_ip."' ");
+	
+	mysqli_query($dbmysqli, "UPDATE `device_list` SET `rec_location".$i."` = '".$e2location."' WHERE `device_ip` = '".$device_ip."' ");
+	
+	mysqli_query($dbmysqli, "INSERT INTO `record_locations` 
+	(
+	`e2location`, 
+	`device`, 
+	`description` 
+	) VALUES ( 
+	'".$e2location."', 
+	'".$device_number."', 
+	'".$device_description."' 
+	)
+	");
+	
 	}
-	if($xml->e2location[$i] == ""){ echo "data:done".$i; exit; }
+	if($xml->e2location[$i] == ''){ echo 'data:done'.$i; exit; }
 	}
 	}
 	}
 	
 	// edit existing receiver
-	if($action == "save")
+	if($action == 'save')
 	{
+	mysqli_query($dbmysqli, "UPDATE `device_list` SET 
+	`device_description` = '".$device_description."', 
+	`device_ip` = '".$device_ip."', 
+	`device_user` = '".$device_user."', 
+	`device_password` = '".$device_password."', 
+	`device_color` = '".$device_color."', 
+	`url_format` = '".$url_format."' WHERE `id` = '".$id."' ");
+	
 	sleep(1);
-	$sql = mysqli_query($dbmysqli, "UPDATE `device_list` SET `device_description` = '".$device_description."', `device_ip` = '".$device_ip."', `device_user` = '".$device_user."', `device_password` = '".$device_password."', `device_color` = '".$device_color."', `url_format` = '".$url_format."' WHERE `id` = '".$id."' ");
+	
+	// get record locations from receiver
+	$rl_webrequest = stream_context_create(array (
+	'http' => array (
+	'header' => 'Authorization: Basic ' . base64_encode("$device_user:$device_password"),
+	'ssl' =>array (
+	'verify_peer' => false,
+	'verify_peer_name' => false,
+	))
+	));
+	$xmlfile = $url_format.'://'.$device_ip.'/web/getlocations'.$session_part;
+	$getlocations_request = @file_get_contents($xmlfile, false, $rl_webrequest);
+	$xml = simplexml_load_string($getlocations_request);
+	
+	if($xml == ''){ echo 'data:connection_error'; exit; }
+	
+	if($xml)
+	{
+	
+//	$sql_3 = mysqli_query($dbmysqli, "SELECT `id` FROM `device_list` WHERE `device_ip` LIKE '".$device_ip."' ");
+//	$result_3 = mysqli_fetch_assoc($sql_3);
+//	$device_number = $result_3['id'];
+	
+	mysqli_query($dbmysqli, "DELETE FROM `record_locations` WHERE `device` = '".$id."' ");
+	
+    for ($i = 0; $i <= 9; $i++){
+	
+	if(!isset($xml->e2location[$i]) or $xml->e2location[$i] == ''){ $xml->e2location[$i] = ''; }
+	
+	if($xml->e2location[$i] != '')
+	{
+	$e2location = utf8_decode($xml->e2location[$i]);
+	
+	mysqli_query($dbmysqli, "UPDATE `device_list` SET `rec_location".$i."` = '".$e2location."' WHERE `device_ip` = '".$device_ip."' ");
+	
+	mysqli_query($dbmysqli, "INSERT INTO `record_locations` 
+	(
+	`e2location`, 
+	`device`, 
+	`description` 
+	) VALUES ( 
+	'".$e2location."', 
+	'".$id."', 
+	'".$device_description."' 
+	)
+	");
+	
+	}
+	if($xml->e2location[$i] == ''){ echo 'data:done'.$i; exit; }
+	}
+	}
 	}
 	
 	// delete receiver 
-	if($action == "delete")
+	if($action == 'delete')
 	{
 	sleep(1);
-	$sql = mysqli_query($dbmysqli, "DELETE FROM `device_list` WHERE `id` = '".$id."' ");
-	echo "data:deleted";
+	mysqli_query($dbmysqli, "DELETE FROM `device_list` WHERE `id` = '".$id."' ");
+	mysqli_query($dbmysqli, "DELETE FROM `record_locations` WHERE `device` = '".$id."' ");
+	echo 'data:deleted';
 	}
 
 ?>
