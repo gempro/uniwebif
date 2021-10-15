@@ -65,6 +65,15 @@ function broadcast_main(id){
 }
 
 // broadcast list browse time
+$(function(){
+	$("#broadcast_mm, #broadcast_hh").keypress(function(a){
+	if (a.which == 13){
+	$("#show_time").click();
+	broadcast_show_time('show_time'); 
+	}
+	})
+});
+
 function broadcast_show_time(id){
 	
 	var time_format = $("#time_format").val();
@@ -216,11 +225,11 @@ $(function(){
 	<div id=\"row1\">\
 	<a href=\""+stream_url+"\" target=\"_blank\" title=\"Stream\">\
 	<i class=\"fa fa-desktop fa-1x\"></i></a>\
-	<a "+epg_sign+" onclick=\"modal.open();\" title=\"Show EPG\" style=\"cursor:pointer;\"><i class=\"fa fa-list-alt fa-1x\"></i></a> "+e2eventname+"\
+	<a "+epg_sign+" onclick=\"open_bn_modal('"+e2servicereference+"','"+e2eventservicename+"')\" title=\"Show EPG\" style=\"cursor:pointer;\"><i class=\"fa fa-list-alt fa-1x\"></i></a> "+e2eventname+"\
 	| +"+obj[0].time_remaining+" of "+obj[0].time_complete+" min | <input type=\"text\" id=\"sb_service\" name='"+e2eventservicename+"' value='"+e2servicereference+"'\
 	style=\"display:none;\">\
 	<strong>"+e2eventservicename+"</strong></div>\
-	<div id=\"row2\">"+obj[0].e2videowidth+"p x "+obj[0].e2videoheight+"p</div>\
+	<div id=\"row2\">"+obj[0].e2videowidth+" x "+obj[0].e2videoheight+"</div>\
 	<div style=\"clear:both\"></div>\
 	</div>");
 	} else {
@@ -229,13 +238,12 @@ $(function(){
 	<div id=\"row1\">\
 	<a href='"+stream_url+"' target=\"_blank\" title=\"Stream\">\
 	<i class=\"fa fa-desktop fa-1x\"></i></a>\
-	<a "+epg_sign+" onclick=\"modal.open();\" title=\"Show EPG\" style=\"cursor:pointer;\"><i class=\"fa fa-list-alt fa-1x\"></i></a> "+e2eventname+"\
+	<a "+epg_sign+" onclick=\"open_bn_modal(e2servicereference,service_name)\" title=\"Show EPG\" style=\"cursor:pointer;\"><i class=\"fa fa-list-alt fa-1x\"></i></a> "+e2eventname+"\
 	| <input type=\"text\" id=\"sb_service\" value='"+e2servicereference+"' style=\"display:none;\">\
 	<strong>"+e2eventservicename+"</strong></div>\
 	<div style=\"clear:both\"></div>\
 	</div>");
 	}
-	
 	if(obj[0].statusbar == "1"){
 	animatedcollapse.addDiv('statusbar_outer', 'fade=1,height=auto');
 	animatedcollapse.init()
@@ -253,23 +261,32 @@ $(function(){
 	}
 });
 
-// statusbar modal
+function open_bn_modal(e2servicereference,service_name){
+	$("#bn_modal_service").html(e2servicereference);
+	$("#bn_modal_name").html(service_name);
+	bn_epg_modal.open();
+}
+
+// broadcast now, statusbar modal
 $(function(){
 		   
-	var modal = new RModal(document.getElementById('modal'), {
+	var bn_epg_modal = new RModal(document.getElementById('bn_epg_modal'), {
 	beforeOpen: function(next) {
-	var e2servicereference = $("#sb_service").val();
-	var service_name = $("#sb_service").attr('name');
+	var e2servicereference = $("#bn_modal_service").html();
+	var service_name = $("#bn_modal_name").html();	
+	var height = document.querySelector('html').clientHeight;
+	height = height - 300;
+	if(height < 250){ height = 250; }
 	
-	$("#sb-modal-header*").html(service_name);
-	
-	$.post("functions/modal_info.php",
+	$("#bn-modal-header").html(service_name);
+	$.post("functions/modal_epg.php",
 	{
 	e2servicereference: e2servicereference
 	},
 	function(data){
-	$('#epgframe').animate({scrollTop : 0},800);
-	$("#epgframe").html(data);
+	$('#bn_epgframe').animate({scrollTop : 0},800);
+	$("#bn_epgframe").html(data);
+	$("#bn_epgframe").attr({ style:"height:"+height+'px;' });
 	next();
 	});
 	},
@@ -284,17 +301,17 @@ $(function(){
 	//console.log('closed');
 	}
 	});
-	document.getElementById('modal').addEventListener('click', function(e) {
+	document.getElementById('bn_epg_modal').addEventListener('click', function(e) {
     if( e.target !== e.currentTarget ) {
 	e.stopPropagation();
 	return;
     }
-    modal.close();
+    bn_epg_modal.close();
 	}, false);
 	document.addEventListener('keydown', function(ev) {
-	modal.keydown(ev);
+	bn_epg_modal.keydown(ev);
 	}, false);
-	window.modal = modal;
+	window.bn_epg_modal = bn_epg_modal;
 });
 
 // remote control modal
@@ -302,7 +319,6 @@ $(function(){
 		   
 	var remote_modal = new RModal(document.getElementById('remote_modal'), {
 	beforeOpen: function(next) {
-	
 	$.post("functions/remote_control.php",
 	function(data){
 	$("#rc_frame").html(data);
@@ -340,16 +356,20 @@ $(function(){
 	beforeOpen: function(next) {
 	var service_reference = $("#quickpanel_dropdown").val();
 	var service_name = $("#quickpanel_dropdown option:selected").text();
+	var height = document.querySelector('html').clientHeight;
+	height = height - 300;
+	if(height < 250){ height = 250; }
 	
 	$("#quickpanel-modal-header*").html(service_name);
 	
-	$.post("functions/modal_info.php",
+	$.post("functions/modal_epg.php",
 	{
 	e2servicereference: service_reference
 	},
 	function(data){
 	$('#quickpanel_epgframe').animate({scrollTop : 0},800);
 	$("#quickpanel_epgframe").html(data);
+	$("#quickpanel_epgframe").attr({ style:"height:"+height+'px;' });
 	next();
 	});
 	},
@@ -377,11 +397,149 @@ $(function(){
 	window.quickpanel_modal = quickpanel_modal;
 });
 
+// manual timer modal
+$(function(){
+
+	var manual_timer_modal = new RModal(document.getElementById('manual_timer_modal'), {
+	beforeOpen: function(next) {
+	var service_reference = $("#quickpanel_dropdown").val();
+	var service_name = $("#quickpanel_dropdown option:selected").text();
+	
+	$.post("functions/modal_timer.php",
+	{
+	e2servicereference: service_reference
+	},
+	function(data){
+	$('#quickpanel_timerframe').animate({scrollTop : 0},800);
+	$("#quickpanel_timerframe").html(data);
+	next();
+	});
+	},
+	afterOpen: function() {
+	//console.log('opened');
+	},
+	beforeClose: function(next) {
+	//console.log('beforeClose');
+	next();
+	},
+	afterClose: function() {
+	//console.log('closed');
+	}
+	});
+	document.getElementById('manual_timer_modal').addEventListener('click', function(e) {
+    if( e.target !== e.currentTarget ) {
+	e.stopPropagation();
+	return;
+    }
+    manual_timer_modal.close();
+	}, false);
+	document.addEventListener('keydown', function(ev) {
+	manual_timer_modal.keydown(ev);
+	}, false);
+	window.manual_timer_modal = manual_timer_modal;
+});
+
+function timer_days(value){ 
+
+	if(value == '1' || value == '2' || value == '4' || value == '8' || value == '16' || value == '32' || value == '64'){ 
+	$("[id=week31]").prop("checked", false); $("[id=week127]").prop("checked", false); } 
+	if(value == '31'){ $("[id=week127]").prop("checked", false); $("[id^=day]").prop("checked", false); }
+	if(value == '127'){ $("[id=week31]").prop("checked", false); $("[id^=day]").prop("checked", false); }
+}
+
+// send manual timer
+function manual_timer(action){
+
+	var timer = $("#manual_timer option:selected").val();
+	var service_name = $("#manual_timer_channel option:selected").text();
+	var service_reference = $("#manual_timer_channel option:selected").val();
+	var device = $("#manual_timer_device option:selected").val();
+	var record_location = $("#rec_location_manual_timer option:selected").val();
+	var title = $("#manual_timer_title").val();
+	var description = $("#manual_timer_description").val();
+	var start_day = $("#start_day").val();
+	var start_month = $("#start_month").val();
+	var start_year = $("#start_year").val();
+	var start_hour = $("#start_hour").val();
+	var start_minute = $("#start_minute").val();
+	var am_pm_start = $("#am_pm_start option:selected").val();
+	var end_day = $("#end_day").val();
+	var end_month = $("#end_month").val();
+	var end_year = $("#end_year").val();
+	var end_hour = $("#end_hour").val();
+	var end_minute = $("#end_minute").val();
+	var am_pm_end = $("#am_pm_end option:selected").val();
+	
+	if(title == '' && description == ''){ 
+	$("#manual_timer_title").attr({ style:"width:100%; border: 2px solid #000;" }); return; 
+	} else {  
+	$("#manual_timer_title").attr({ style:"width:100%" }); }
+								  
+	if(isFinite(String(start_hour)) == false || isFinite(String(start_minute)) == false || isFinite(String(end_hour)) == false || isFinite(String(end_minute)) == false){ return; }
+
+	var checked = [];
+	var day_data = [];
+	$("input[name='tdays[]']:checked").each(function ()
+	{
+	checked.push(parseInt($(this).val()));
+	day_data.push($(this).attr('data'));
+	});
+	var repeat_days = checked.join(';');
+	var weekday = day_data[0];
+	
+	$("#manual_timer_status").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
+	
+	$.post("functions/send_timer_instant.php",
+	{
+	action: 'manual_timer',
+	timer: timer,
+	service_name: service_name,
+	service_reference: service_reference,
+	device: device,
+	record_location: record_location,
+	title: title,
+	description: description,
+	start_day: start_day,
+	start_month: start_month,
+	start_year: start_year,
+	start_hour: start_hour,
+	start_minute: start_minute,
+	am_pm_start: am_pm_start,
+	end_day: end_day,
+	end_month: end_month,
+	end_year: end_year,
+	end_hour: end_hour,
+	end_minute: end_minute,
+	am_pm_end: am_pm_end,
+	repeat_days: repeat_days,
+	weekday: weekday
+	},
+	function(data){
+	$("#manual_timer_status").html(data);
+	if(!location.pathname.match(/timer.php/g)){ return; }
+	if(data.match(/sent/g)){ load_timer_list_panel(); reload_timerlist(); }
+	});
+}
+
+//
+//
+function modal_timer_device(){
+	
+	var device = $("#manual_timer_device option:selected").val();
+	$.post("functions/device_rec_location.php",
+	{
+	device: device
+	},
+	function(data){
+	$("#rec_location_manual_timer").html(data);
+	});
+}
+
 // send timer broadcast list main
 function broadcast_timer(id,action){
 	
 	var this_id = id.replace(/broadcast_timer_btn_/g, "");
-	var res = this_id.substr(3);
+	var hash = this_id.substr(3);
 	var record_location = $("#rec_location_broadcast_"+this_id).val();
 	var device = $("#broadcast_device_dropdown_"+this_id).val();
 	
@@ -390,7 +548,7 @@ function broadcast_timer(id,action){
 	$.post("functions/send_timer_instant.php",
 	{
 	action: action,
-	hash: res,
+	hash: hash,
 	record_location: record_location,
 	device: device
 	},
@@ -404,7 +562,6 @@ function broadcast_zap(id,name){
 	
 	var this_id = id.replace(/broadcast_zap_btn_/g, "");
 	var device = $("#broadcast_device_dropdown_"+this_id).val();
-	var res = this_id.substr(3);
 	
 	$("#broadcast_status_zap_"+this_id).fadeIn();
 	$("#broadcast_status_zap_"+this_id).html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
@@ -654,6 +811,14 @@ function primetime_zap(id,name){
 }
 
 // set primetime
+$(function(){
+	$("#primetime_mm, #primetime_hh").keypress(function(a){
+	if (a.which == 13){
+	set_primetime();
+	}
+	})
+});
+
 function set_primetime(){
 	
 	$("#set_status").fadeIn();
@@ -764,10 +929,10 @@ $('#scroll_top_channelbrowser_list').click(function(){
 });
 
 // send timer channelbrowser list / epg modal
-function channelbrowser_timer(id,action,location){
+function channelbrowser_timer(id,action){
 	
 	var this_id = id.replace(/channelbrowser_timer_btn_/g, "");
-	var res = this_id.substr(3);
+	var hash = this_id.substr(3);
 	var record_location = $("#rec_location_channelbrowser_"+this_id).val();
 	var device = $("#channelbrowser_device_dropdown_"+this_id).val();
 
@@ -776,17 +941,15 @@ function channelbrowser_timer(id,action,location){
 	$.post("functions/send_timer_instant.php",
 	{
 	action: action,
-	hash: res,
+	hash: hash,
 	record_location: record_location,
 	device: device
 	},
 	function(data){
 	$("#channelbrowser_status_timer_"+this_id).html(data);
-	if(location == "modal")
-	{
+	if(!location.pathname.match(/timer.php/g)){ return; }
 	load_timer_list_panel();
 	reload_timerlist();
-	}
 	});
 }
 
@@ -795,7 +958,6 @@ function channelbrowser_zap(id,name){
 	
 	var this_id = id.replace(/channelbrowser_zap_btn_/g, "");
 	var device = $("#channelbrowser_device_dropdown_"+this_id).val();
-	var res = this_id.substr(3);
 	
 	$("#channelbrowser_status_zap_"+this_id+"").fadeIn();
 	$("#channelbrowser_status_zap_"+this_id).html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
@@ -814,7 +976,7 @@ function channelbrowser_zap(id,name){
 	});
 }
 
-// change target device
+// change device
 function channelbrowser_change_device(id){
 	
 	var this_id = id.replace(/channelbrowser_device_dropdown_/g, "");
@@ -833,9 +995,9 @@ function channelbrowser_change_device(id){
 function timerlist_desc(id){
 	
 	var this_id = id.replace(/timer_/g, "");
-	animatedcollapse.addDiv('timerlist_btn_'+this_id, 'fade=1,height=auto');
+	animatedcollapse.addDiv('timerlist_cnt_'+this_id, 'fade=1,height=auto');
 	animatedcollapse.init()
-	animatedcollapse.toggle('timerlist_btn_'+this_id);
+	animatedcollapse.toggle('timerlist_cnt_'+this_id);
 }
 
 // timerlist delete timer
@@ -857,8 +1019,14 @@ function timerlist_delete_timer(id,hash){
 	device: device
 	},
 	function(data){
+		
+	if(data != 'data:incorrect'){ 
 	$("#timerlist_status_"+this_id).html("<i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i> Timer deleted");
-	$("#tl_glyphicon_status_"+this_id+"").attr({style:"color:#D9534F", title:"not sent"});
+	$("#tl_glyphicon_status_"+this_id+"").attr({style:"color:#D9534F", title:"not sent"}); 
+	} else { 
+	$("#timerlist_status_"+this_id).html("<i class=\"glyphicon glyphicon-remove fa-1x\" style=\"color:#D9534F\"></i> Wrong device"); 
+	return; 
+	}
 	
 	if(data == "data:deleted_db")
 	{
@@ -888,51 +1056,52 @@ function timerlist_delete_timer(id,hash){
 }
 
 // timerlist send timer
-function timerlist_send_timer(id,name,action){
+function timerlist_send_timer(id,timer_id,action){
 	
 	var this_id = id.replace(/timerlist_send_timer_btn_/g, "");
 	if(action == 'zap'){ var this_id = id.replace(/timerlist_zap_timer_btn_/g, ""); }
-	var record_location = $("#timerlist_rec_location_"+this_id).text();
-	var device = $("#timerlist_device_no_"+name).val();
 	
-	if(device != '0'){
-	var record_location = $("#timerlist_rec_location_device_"+name).val();
-	}
+	var record_location = $("#timerlist_rec_location_device_"+timer_id).val();
+	var device = $("#timerlist_device_no_"+timer_id).val();
 	
-	$("#timerlist_status_"+name).html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
+	$("#timerlist_status_"+timer_id).html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
 	
 	$.post("functions/send_timer_instant.php",
 	{
 	action: action,
 	location: 'timerlist',
 	hash: this_id,
+	timer_id: timer_id,
 	record_location: record_location,
 	device: device
 	},
 	function(data){
 	var obj = JSON.parse(data);
 	if(obj[0].conflict == '0'){
-	$("#timerlist_status_"+name).html(obj[0].timer_status);
-	$("#tl_glyphicon_status_"+name+"").attr({style:"color:#5CB85C", title:"sent"});
+	$("#timerlist_status_"+timer_id).html(obj[0].timer_status);
+	$("#tl_glyphicon_status_"+timer_id+"").attr({style:"color:#5CB85C", title:"sent"});
 	}
 	if(obj[0].conflict == '1'){
-	$("#timerlist_status_"+name).html(obj[0].timer_status);
-	$("#tl_glyphicon_status_"+name+"").attr({style:"color:#F0AD4E", title:"Conflict on Receiver"});
+	$("#timerlist_status_"+timer_id).html(obj[0].timer_status);
+	$("#tl_glyphicon_status_"+timer_id+"").attr({style:"color:#F0AD4E", title:"Conflict on Receiver"});
 	}
-	if(action == 'zap'){ $("#tl_glyphicon_status_m_"+name).attr({class:"fa fa-arrow-up fa-1x", title:"Zap timer", style:"color:#000" }); }
-	if(obj[0].device_c != ''){ $("#timerlist_inner_"+name).attr({ style:"border: 1px solid "+obj[0].device_c+" !important; lol" }); }
 	
-	if(device != '0'){ 
+	if(action == 'zap'){ $("#tl_glyphicon_status_m_"+timer_id).attr({class:"fa fa-arrow-up fa-1x", title:"Zap timer", style:"color:#000" }); }
+	if(obj[0].device_c != '' && obj[0].conflict != '1'){ $("#timerlist_inner_"+timer_id).attr({ style:"border: 1px solid "+obj[0].device_c+" !important;" }); }
+	
+	if(device != '0' && obj[0].conflict != '1'){ 
 	$("#timerlist_send_timer_btn_"+this_id).prop('disabled', true);
 	$("#timerlist_zap_timer_btn_"+this_id).prop('disabled', true);
-	$("#timerlist_hide_timer_btn_"+name).prop('disabled', true);
-	$("#delete_timer_btn_"+name).prop('disabled', true);
+	$("#timerlist_hide_timer_btn_"+timer_id).prop('disabled', true);
+	$("#delete_timer_btn_"+timer_id).prop('disabled', true);
+	$("#box_"+timer_id).attr('checked', false);
+	$("#box_"+timer_id).prop('disabled', true);
+	$("#box_"+timer_id).attr({ value:"null" });
 	}
 	
 	load_timer_list_panel();
 	});
 }
-
 //
 function change_timerlist_device(id,action){
 	
@@ -940,7 +1109,7 @@ function change_timerlist_device(id,action){
 	var device_no = $("#timerlist_device_dropdown_"+this_id).val();
 	var device_name = $("#timerlist_device_dropdown_"+this_id+" option:selected").text();
 	
-	if(device_no != 0){
+	//if(device_no != 0){
 	$("#rec_location_device_"+this_id).fadeIn();
 	
 	$.post("functions/device_rec_location.php",
@@ -954,7 +1123,7 @@ function change_timerlist_device(id,action){
 	$("#rec_location_device_"+this_id).html(data);
 	}
 	});
-	} else { $("#rec_location_device_"+this_id).fadeOut(); }
+	//} else { $("#rec_location_device_"+this_id).fadeOut(); }
 
 	$("#timerlist_device_no_"+this_id).val(device_no);
 }
@@ -1205,6 +1374,48 @@ function timerlist_panel(id){
 	});
 }
 
+// load timerlist panel
+function load_timer_list_panel(){
+	
+	var list_hidden_status = $("#show_unhide").attr("title");
+	if(list_hidden_status == 'hide'){ var list_hidden_status = '1'; } else { var list_hidden_status = '0'; }
+	if(list_hidden_status == '1'){ var action = 'reload_timerlist()'; var title = 'hide'; } else { var action = 'timerlist_panel(this.id)'; var title = 'show'; }
+	
+	$.post("functions/timer_list_panel_inc.php",
+	function(data){
+	var obj = JSON.parse(data);
+	// hidden timer
+	if(obj[0].hidden_timer > '0'){
+	$("#timerlist_panel").html(obj[0].timer_total+" Timer in Database | <span class=\"timer_panel_info\">\
+	"+obj[0].sent_timer+" sent | "+obj[0].timer_today+" today ("+obj[0].hidden_timer_today+" hidden) | <a id=\"show_unhide\" onclick=\""+action+"\" title=\""+title+"\" style=\"cursor:pointer;\">\
+	"+obj[0].hidden_timer+" hidden</a> | "+obj[0].receiver_timer+" on Receiver</span>");
+	}
+	// no hidden timer
+	if(obj[0].hidden_timer == '0'){
+	$("#timerlist_panel").html(obj[0].timer_total+" Timer in Database | <span class=\"timer_panel_info\">\
+	"+obj[0].sent_timer+" sent | "+obj[0].timer_today+" today | "+obj[0].hidden_timer+" hidden | "+obj[0].receiver_timer+" on Receiver</span>");
+	}
+	});
+}
+
+// button load timerlist
+function load_timerlist(){
+
+	var load_timerlist_btn = $("#load_timerlist_btn").ladda();
+	var btn_status = $("#panel_unhide").attr('style');
+	if(btn_status.match(/none/g)){ var action = ''; } else { var action = 'unhide'; }	
+	load_timerlist_btn.ladda("start");
+	$.post("functions/timer_list_inc.php",
+	{
+	action: action
+	},
+	function(data){
+	load_timerlist_btn.ladda("stop");
+	load_timer_list_panel();
+	$("#timerlist_inc").html(data);
+	});
+}
+
 // display record list
 function browse_records(){
 	
@@ -1350,7 +1561,7 @@ function scroll_saved_search(id,timer){
 	animatedcollapse.init()
 	animatedcollapse.show('saved_search_list_div_'+this_id);
 	show_all_exclude_fields(this_id);
-	$("#saved_search_list_scroll_timer_"+this_id).html("<input type=\"submit\" onClick=\"$('html, body').animate({scrollTop : ($(timer_"+timer_id+").offset().top-70)},800)\" value=\"BACK\" title=\"Back to timer\" class=\"btn btn-default btn-sm\"/>");
+	$("#saved_search_list_scroll_timer_"+this_id).html("<input type=\"submit\" onClick=\"$('html, body').animate({scrollTop : ($(timer_"+timer_id+").offset().top-70)},800)\" value=\"BACK\" title=\"Back to timer\" class=\"btn btn-default btn-xs\"/>");
 }
 
 // edit saved search list
@@ -1364,10 +1575,11 @@ function saved_search_list_save(id){
 	var exclude_description = $('[name=exclude_description_'+this_id+']').val();
 	var exclude_extdescription = $('[name=exclude_extdescription_'+this_id+']').val();
 	var rec_replay = $("#rec_replay_"+this_id).val();
+	var device = $("#rec_device_"+this_id).val();
 	var channel = $("#channel_dropdown_saved_search_list_"+this_id).val();
 	var record_location = $("#rec_dropdown_saved_search_list_"+this_id).val();
-	var active = $("#active_"+this_id).val();
-
+	if($("#active_"+this_id).is(':checked')){ var active = 'yes'; } else { var active = 'no'; }
+	
 	$("#saved_search_list_status_"+this_id).html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
 	
 	$.post("functions/search_list_edit.php",
@@ -1381,6 +1593,7 @@ function saved_search_list_save(id){
 	exclude_description: exclude_description,
 	exclude_extdescription: exclude_extdescription,
 	rec_replay: rec_replay,
+	device: device,
 	channel: channel,
 	record_location: record_location,
 	active: active
@@ -1419,6 +1632,23 @@ function saved_search_list_delete(id){
 	});
 	} else { return; }
 }
+
+// saved search list change device
+function saved_search_change_device(id){
+	
+	var this_id = id.replace(/rec_device_/g, "");
+	var device = $("#rec_device_"+this_id).val();
+	
+	$.post("functions/device_rec_location.php",
+	{
+	device: device
+	},
+	function(data){
+	// write data in container
+	$("#rec_dropdown_saved_search_list_"+this_id).html(data);
+	});
+	
+	}
 
 // collapse excluded fields
 function show_all_exclude_fields(id){
@@ -1485,6 +1715,21 @@ function show_exclude_extdescription(id){
 	animatedcollapse.addDiv('exclude_extdescription_field_'+this_id, 'fade=1,height=auto');
 	animatedcollapse.init()
 	animatedcollapse.toggle('exclude_extdescription_field_'+this_id);
+}
+
+// change device search list
+function search_list_change_device(){
+	
+	var device = $("#search_list_device option:selected").val();
+	
+	$.post("functions/device_rec_location.php",
+	{
+	location: 'search_list',
+	device: device
+	},
+	function(data){
+	$("#searchlist_record_location").html(data);
+	});
 }
 
 function crawl_channel_id(){
@@ -1567,6 +1812,7 @@ function channel_crawler(id){
 	if(obj.status == 'done'){
 	$("#channel_crawler_status_"+this_id).html("<i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i>");
 	$("#channel_crawler_"+this_id).prop('disabled', false);
+	$("#last_crawl_"+this_id).html(obj.last_crawl);
 	$("#channel_crawler_summary_"+this_id).html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
 	setTimeout(function() { $("#channel_crawler_summary_"+this_id).html(obj.summary); }, 1000);
 	}
@@ -1604,6 +1850,47 @@ function hide_div_crawl_savedsearch(){
 	}
 	window.setTimeout(reset_crawl_search_btn, 3500);
 	} // data
+	});
+}
+
+// reload saved search panel
+function reload_saved_search_panel(){
+	
+	$.post("functions/search_list_panel.php",
+	function(data){
+	var obj = JSON.parse(data)
+	$("#saved_search_panel").html("<span class=\"timer_panel_info\">"+obj[0].summary_total+"\
+	<a style=\"cursor:pointer\" onclick=\"javascript:$('html, body').animate({ scrollTop: ($(saved_search_row).offset().top)}, 'slow');\">\
+	Saved Search</a> for Auto Timer | <a style=\"cursor:pointer;\" onClick=\"quickpanel('manual_timer')\">Manual Timer</a></span>");
+	//
+	$("#saved_search_panel2").html(obj[0].summary_total+" Saved Search for Auto Timer | <span class=\"timer_panel_info\">\
+	<span class=\"saved_search_panel_info\">"+obj[0].activ+" activ | "+obj[0].inactiv+" inactiv | </span></span>");
+	});
+}
+
+// button load saved search
+function load_saved_search(){
+
+	var reload_saved_search_list_btn = $("#reload_saved_search_list_btn").ladda();
+	reload_saved_search_list_btn.ladda("start");
+	$.post("functions/search_list_inc.php",
+	function(data){
+	reload_saved_search_panel();
+	reload_saved_search_list_btn.ladda("stop");
+	$("#search_list").html(data);
+	});
+}
+
+// saved search sortby
+function sortby(){
+	
+	var search_list_sort = $("#sort_setting").val();
+	$.post("functions/search_list_inc.php",
+	{
+	sort_list: search_list_sort
+	},
+	function(data){
+	$("#search_list").html(data);
 	});
 }
 
@@ -1758,6 +2045,7 @@ function save_settings(){
 	var sort_quickpanel = $("#sort_quickpanel").val();
 	var del_time = $("#del_time").val();
 	var extra_rec_time = $("#extra_rec_time").val();
+	var highlight_term = $("#highlight_term").val();
 
 	if($("#reload_progressbar").is(':checked')){ var reload_progressbar = '1'; } else { var reload_progressbar = '0'; }
 	if($("#mark_searchterm").is(':checked')){ var mark_searchterm = '1'; } else { var mark_searchterm = '0'; }
@@ -1813,6 +2101,7 @@ function save_settings(){
 	del_time: del_time,
 	reload_progressbar: reload_progressbar,
 	extra_rec_time: extra_rec_time,
+	highlight_term: highlight_term,
 	mark_searchterm: mark_searchterm,
 	cz_activate: cz_activate,
 	cz_device: cz_device,
@@ -1928,7 +2217,7 @@ function device_list(id,action){
 	$("#device_password").val(device_password);
 	$("#device_list_status_"+this_id).html("");
 	$("#device_list_status").html("");
-	alert("Device saved with Connection Error to Receiver");
+	alert("A connection error to device has occured!");
 	}
 	if(data == "data:duplicate"){
 	$("#device_list_status").html("<i class=\"glyphicon glyphicon-remove fa-1x\" style=\"color:#D9534F\"></i>");
@@ -1937,7 +2226,7 @@ function device_list(id,action){
 	$("#device_user").val(device_user);
 	$("#device_password").val(device_password);
 	$("#device_list_status").html("");
-	alert("Device already exist");
+	alert("Device already exists");
 	return; 
 	}
 	
@@ -1991,18 +2280,20 @@ function add_single_channel(){
 
 	var channel_name = $("#channel_name").val();
 	var service_reference = $("#service_reference").val();
-	$("#add_single_channel_status").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
+	if(channel_name == '' || service_reference == ''){ alert("error"); return; }
+	if($("#iptv_channel").is(':checked')){ var iptv_channel = '1'; } else { var iptv_channel = '0'; }
 	
+	$("#add_single_channel_status").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
 	$.post("functions/channel_list_inc.php",
 	{
 	action: 'add',
 	channel_name: channel_name,
-	service_reference: service_reference
+	service_reference: service_reference,
+	iptv_channel: iptv_channel
 	},
 	function(data){
-	if(data == 'data:done'){
-	$("#add_single_channel_status").html("<i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i>");
-	}
+	if(data == 'data:done'){ $("#add_single_channel_status").html("<i class=\"glyphicon glyphicon-ok fa-1x\" style=\"color:#5CB85C\"></i>"); }
+	if(data == 'data:exists'){ $("#add_single_channel_status").html("<i class=\"glyphicon glyphicon-remove fa-1x\" style=\"color:#D9534F\"></i> Already exists"); }
 	});
 }
 
@@ -2132,6 +2423,8 @@ function quickpanel(action){
 	
 	var service_reference = $("#quickpanel_dropdown").val();
 	
+	if(action == 'change')
+	{
 	$.post("functions/quickpanel_inc.php",
 	{
 	action: 'change_channel',
@@ -2140,10 +2433,11 @@ function quickpanel(action){
 	function(data){
 	$("#quickpanel_stream_icon").html(data);
 	});
-	if(action == 'epg')
-	{ 
-	quickpanel_modal.open();
 	}
+	
+	if(action == 'manual_timer'){ manual_timer_modal.open(); }
+	
+	if(action == 'epg'){ quickpanel_modal.open(); }
 	
 	if(action == 'zap')
 	{ 
@@ -2239,7 +2533,7 @@ function show_all_services(service){
 // ignore list delete
 function ignore_list_delete(id){
 	
-	var this_id = id.replace(/ignore_list_/g, "");
+	var this_id = id.replace(/ignore_list_btn_/g, "");
 	$("#ignore_list_status_"+this_id).html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
 	
 	$.post("functions/ignore_list_inc.php",
@@ -2252,6 +2546,10 @@ function ignore_list_delete(id){
 	});
 }
 
+function ignore_list_focus(id){
+	alert(id);
+	}
+
 function remote_control(command){
 
 	$("#rc_status").html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
@@ -2261,7 +2559,7 @@ function remote_control(command){
 	command: command
 	},
 	function(data){
-	$("#rc_status").html("");
+	$("#rc_status").html("<i class=\"fa fa-wifi fa-1x gray\"></i>");
 	});
 }
 //function check_git_update(){
