@@ -160,7 +160,7 @@ if($xml){
 	// time format 2
 	$record_date = date('n/d/Y - g:i A |', ''.$e2time.'');
 	$day_today = date('n/d/Y', time());
-	$today_record = date('n/d/Y', $e2time);
+	$today_record = date('n/d/Y', ''.$e2time.'');
 	if($day_today == $today_record){ $sum_today = $sum_today +1; }
 	}
 	
