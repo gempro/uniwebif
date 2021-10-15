@@ -270,7 +270,7 @@ body.modal-open {
 	margin: 0 auto;
 }
 }
-#epgframe {
+#sb_epgframe {
 	background-color:#fff;
 	width: 100%;
 	height: 250px;
@@ -278,6 +278,13 @@ body.modal-open {
 	padding-right: 5px;
 }
 #quickpanel_epgframe {
+	background-color:#fff;
+	width: 100%;
+	height: 250px;
+	overflow: auto;
+	padding-right: 5px;
+}
+#quickpanel_timerframe {
 	background-color:#fff;
 	width: 100%;
 	height: 250px;

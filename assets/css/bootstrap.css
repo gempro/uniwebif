@@ -2079,6 +2079,7 @@ fieldset[disabled] .btn-default.active {
   color: #fff;
   background-color: #333;
 }
+
 /**/
 .btn-default-2 {
   color: #333;
@@ -2157,8 +2158,54 @@ fieldset[disabled] .btn-default-3.active {
   background-color: #fff;
   border-color: #fff;
 }
-/**/
 
+/**/
+.btn-black {
+  color: #fff;
+  background-color: #000;
+  border-color: #ccc;
+}
+.btn-black:hover,
+.btn-black:focus,
+.btn-black:active,
+.btn-black.active,
+.open .dropdown-toggle.btn-black {
+  color: #fff;
+  background-color: #000;
+  border-color: #ccc;
+}
+.btn-black:active,
+.btn-black.active,
+.open .dropdown-toggle.btn-black {
+  color: #fff;
+  background-color: #000;
+  border-color: #ccc;
+  background-image: none;
+}
+.btn-black.disabled,
+.btn-black[disabled],
+fieldset[disabled] .btn-black,
+.btn-black.disabled:hover,
+.btn-black[disabled]:hover,
+fieldset[disabled] .btn-black:hover,
+.btn-black.disabled:focus,
+.btn-black[disabled]:focus,
+fieldset[disabled] .btn-black:focus,
+.btn-black.disabled:active,
+.btn-black[disabled]:active,
+fieldset[disabled] .btn-black:active,
+.btn-black.disabled.active,
+.btn-black[disabled].active,
+fieldset[disabled] .btn-black.active {
+  color: #fff;
+  background-color: #000;
+  border-color: #ccc;
+}
+.btn-black .badge {
+  color: #fff;
+  background-color: #000;
+}
+/**/
 
 .btn-primary {
   color: #fff;
