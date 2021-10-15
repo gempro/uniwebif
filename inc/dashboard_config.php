@@ -64,6 +64,7 @@
 	$reload_progressbar = $result['reload_progressbar'];
 	$search_list_sort = $result['search_list_sort'];
 	$extra_rec_time = $result['extra_rec_time'];
+	$highlight_term = $result['highlight_term'];
 	$cz_activate = $result['cz_activate'];
 	$cz_wait_time = $result['cz_wait_time'];
 	$cz_repeat = $result['cz_repeat'];
@@ -96,8 +97,8 @@
 	
 	// time date
 	$time = time();
-
-	// check if session is needed
+	
+	// check if token session is required
 	$xmlfile = $url_format.'://'.$box_ip.'/web/session?sessionid=0';
 	$session_info = @file_get_contents($xmlfile, false, $webrequest);
 	$e2sessionid = simplexml_load_string($session_info);
