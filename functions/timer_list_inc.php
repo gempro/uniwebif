@@ -443,7 +443,7 @@ if($imdb_symbol == '1')
 	$spacer = '';
 	
 	// get record location id
-	$sql_6 = mysqli_query($dbmysqli, "SELECT id FROM `record_locations` WHERE `e2location` = '".$obj->record_location."' ");
+	$sql_6 = mysqli_query($dbmysqli, "SELECT id FROM `record_locations` WHERE `e2location` = '".$obj->record_location."' AND `device` = '".$device_no."' ");
 	$result_6 = mysqli_fetch_assoc($sql_6);
 	$rec_location_id = $result_6['id'];
 	
