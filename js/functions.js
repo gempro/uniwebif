@@ -1062,6 +1062,8 @@ function timerlist_send_timer(id,timer_id,action){
 	if(action == 'zap'){ var this_id = id.replace(/timerlist_zap_timer_btn_/g, ""); }
 	
 	var record_location = $("#timerlist_rec_location_device_"+timer_id).val();
+	if(record_location === undefined || record_location === null){ var record_location = $("#timerlist_rec_location_"+this_id).html(); }
+	
 	var device = $("#timerlist_device_no_"+timer_id).val();
 	
 	$("#timerlist_status_"+timer_id).html("<img src=\"images/loading.gif\" width=\"16\" height=\"16\" align=\"absmiddle\">");
@@ -1403,7 +1405,8 @@ function load_timerlist(){
 
 	var load_timerlist_btn = $("#load_timerlist_btn").ladda();
 	var btn_status = $("#panel_unhide").attr('style');
-	if(btn_status.match(/none/g)){ var action = ''; } else { var action = 'unhide'; }	
+	if(btn_status.match(/none/g)){ var action = ''; } else { var action = 'unhide'; }
+	$("#selected_box_sum").fadeOut(500);
 	load_timerlist_btn.ladda("start");
 	$.post("functions/timer_list_inc.php",
 	{
