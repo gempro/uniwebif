@@ -94,7 +94,7 @@ session_start();
 	}
 	
 	// record location in dropdown / result list
-	$sql_2 = "SELECT * FROM `record_locations` ORDER BY `id` ASC";
+	$sql_2 = "SELECT * FROM `record_locations` WHERE `device` = '0' ORDER BY `id` ASC";
 	if($result_2 = mysqli_query($dbmysqli,$sql_2))
 	{
 	while ($obj = mysqli_fetch_object($result_2)){
