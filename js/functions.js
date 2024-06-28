@@ -238,7 +238,7 @@ $(function(){
 	<div id=\"row1\">\
 	<a href='"+stream_url+"' target=\"_blank\" title=\"Stream\">\
 	<i class=\"fa fa-desktop fa-1x\"></i></a>\
-	<a "+epg_sign+" onclick=\"open_bn_modal(e2servicereference,service_name)\" title=\"Show EPG\" style=\"cursor:pointer;\"><i class=\"fa fa-list-alt fa-1x\"></i></a> "+e2eventname+"\
+	<a "+epg_sign+" onclick=\"open_bn_modal('"+e2servicereference+"','"+e2eventservicename+"')\" title=\"Show EPG\" style=\"cursor:pointer;\"><i class=\"fa fa-list-alt fa-1x\"></i></a> "+e2eventname+"\
 	| <input type=\"text\" id=\"sb_service\" value='"+e2servicereference+"' style=\"display:none;\">\
 	<strong>"+e2eventservicename+"</strong></div>\
 	<div style=\"clear:both\"></div>\
